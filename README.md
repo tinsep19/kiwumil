@@ -59,6 +59,34 @@ Diagram.render([a_actor, a_uc, system_boundary], y_hint)
 
 ---
 
+
+```mermaid
+graph TD
+  subgraph model
+    Node["class Node"]
+    Relation["class Relation"]
+    Hint["class LayoutHint"]
+  end
+
+  subgraph layout
+    Solver["LayoutSolver (kiwi.js wrapper)"]
+  end
+
+  subgraph renderer
+    SVGRenderer["SVGRenderer"]
+  end
+
+  DSL["DSL (TS API)"] --> model
+  model --> layout
+  layout --> renderer
+```
+
+* model — Actor, UseCase, Containerなどの定義
+* layout — LayoutHintをkiwi.js制約に変換して座標を求める
+* renderer — 結果をSVGに描画
+
+---
+
 ## 📁 プロジェクト構造
 
 ```
