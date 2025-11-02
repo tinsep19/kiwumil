@@ -34,13 +34,13 @@ const a_uc = UseCase.new("Login")
 const system_boundary = Container.new("System")
 
 Relation.use(a_actor, a_uc)
-system_boundary << a_uc
+system_boundary.push(a_uc)
 
 const y_hint = LayoutHint.horizontal()
-y_hint << a_actor << a_uc
+y_hint.push(a_actor, a_uc)
 
 Diagram.render([a_actor, a_uc, system_boundary], y_hint)
-````
+```
 
 このような宣言的な構文で、
 アクターとユースケースが同じ高さで左から右に並び、
