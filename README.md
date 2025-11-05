@@ -26,25 +26,25 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ## 🧩 使用イメージ
 
 ```ts
-// (今後 DSL化予定)
-// 例: ユースケース図のような構造
 
-const a_actor = Actor.new("User")
-const a_uc = UseCase.new("Login")
-const system_boundary = Container.new("System")
+Diagram
+  .use(FirstPlugin, SecondPlugin)
+  .usecase("Login System", (element, relation, hint) => {
 
-Relation.use(a_actor, a_uc)
-system_boundary.push(a_uc)
+    const user = element.actor("User")
+    const signin = element.usecase("Signin")
 
-const y_hint = LayoutHint.horizontal()
-y_hint.push(a_actor, a_uc)
+    const user_can_signin = relation.use(user, signin)
 
-Diagram.render([a_actor, a_uc, system_boundary], y_hint)
+    hint.horizontal(user, signin)
+
+  }).render("output.svg")
+
 ```
 
 このような宣言的な構文で、
 アクターとユースケースが同じ高さで左から右に並び、
-システム境界内に配置された図を生成することを目指します。
+システム境界内にユースケースが配置された図を生成することを目指します。
 
 ---
 
@@ -61,46 +61,101 @@ Diagram.render([a_actor, a_uc, system_boundary], y_hint)
 
 
 ```mermaid
-graph TD
-  subgraph model
-    Node["class Node"]
-    Relation["class Relation"]
-    Hint["class LayoutHint"]
+
+flowchart LR
+  subgraph DSL["DSL 層"]
+    D[Diagram DSL]
   end
 
-  subgraph layout
-    Solver["LayoutSolver (kiwi.js wrapper)"]
+  subgraph Model["Model 層"]
+    M[SymbolBase / RelationshipBase]
   end
 
-  subgraph renderer
-    SVGRenderer["SVGRenderer"]
+  subgraph Layout["Layout 層"]
+    L[Layout Engine powered by kiwi]
   end
 
-  DSL["DSL (TS API)"] --> model
-  model --> layout
-  layout --> renderer
+  subgraph Render["Render 層"]
+    R[SVG Renderer]
+  end
+
+  subgraph Plugin["Plugin 層"]
+    P[SymbolRegistry / RelationshipFactory]
+  end
+
+  D --> M
+  M --> L
+  L --> R
+  P --> M
+  P --> D
+
 ```
 
-* model — Actor, UseCase, Containerなどの定義
-* layout — LayoutHintをkiwi.js制約に変換して座標を求める
-* renderer — 結果をSVGに描画
+* DSL: actor, usecase の呼び出しを SymbolRegistry から解決
+* Model: SymbolBase / RelationshipBase のインスタンスを構築
+* Layout: Cassowary 制約で位置を自動計算
+* Render: SvgRenderer により描画（矢印は折れ線）
+* Plugin: ユーザ追加のシンボル・関係も透過的に統合
 
 ---
 
 ## 📁 プロジェクト構造
 
 ```
-kiumlwi/
-├─ bunfig.toml
-├─ package.json
-├─ src/
-│  ├─ core/
-│  │  └─ layout_engine.ts     # kiwi を使った制約レイアウトロジック
-│  └─ render/
-│     └─ svg_renderer.ts      # (今後) SVG描画用
-└─ examples/
-   ├─ horizontal_usecase.ts        # 水平レイアウトの例
-   └─ vertical_layout.ts       # 垂直レイアウトの例
+kiwumil/
+├── src/
+│   ├── dsl/                        # DSL・プラグインシステム層
+│   │   ├── diagram.ts              # Diagramクラス（エントリポイント）
+│   │   ├── plugin_manager.ts       # Plugin管理・登録
+│   │   ├── element_factory.ts      # SymbolRegistryをProxyでラップ
+│   │   ├── relationship_factory.ts # Relationship生成
+│   │   └── hint_factory.ts         # hint.horizontal/verticalなどのDSL補助
+│   │
+│   ├── model/                      # モデル層（UML構造定義）
+│   │   ├── symbol_base.ts          # Symbol基底クラス
+│   │   ├── symbol_registry.ts      # Symbol型の登録・生成
+│   │   ├── relationship_base.ts    # 関係の基底クラス
+│   │   └── types.ts                # 共通型定義（座標・サイズ・IDなど）
+│   │
+│   ├── layout/                     # レイアウト層（Cassowary等）
+│   │   ├── layout_engine.ts        # レイアウト計算メイン
+│   │   ├── constraint_solver.ts    # Cassowaryラッパ
+│   │   └── layout_types.ts         # 位置・制約型定義
+│   │
+│   ├── render/                     # レンダリング層（SVGなど）
+│   │   ├── svg_renderer.ts         # SVG出力
+│   │   ├── svg_utils.ts            # SVG組み立て用ヘルパ
+│   │   └── theme.ts                # 色・線幅などのスタイル定義
+│   │
+│   ├── plugin/                     # 組み込み・外部プラグイン郡
+│   │   ├── core_plugin.ts          # actor/usecase/classなど基本シンボル
+│   │   ├── component_plugin.ts     # 例: Componentノード追加
+│   │   └── ...                     # 他のUML拡張プラグイン
+│   │
+│   ├── core/                       # 共通インフラ・ユーティリティ
+│   │   ├── id_generator.ts         # シンボルID管理
+│   │   ├── error.ts                # 共通例外
+│   │   ├── logger.ts               # デバッグ出力
+│   │   └── utils.ts                # 共通関数
+│   │
+│   ├── index.ts                    # エントリポイント (Diagramエクスポート)
+│   └── types.d.ts                  # 外部型定義補助（Plugin APIなど）
+│
+├── examples/
+│   ├── usecase-basic.ts            # 基本のユースケース図
+│   ├── use-with-plugin.ts          # プラグイン例（componentなど）
+│   └── sequence.ts                 # 将来的な拡張例
+│
+├── tests/
+│   ├── plugin.test.ts
+│   ├── symbol_registry.test.ts
+│   ├── render_svg.test.ts
+│   └── layout_engine.test.ts
+│
+├── package.json
+├── tsconfig.json
+└── README.md
+
 ```
 
 ---
@@ -111,49 +166,6 @@ kiumlwi/
 bun init
 bun add @lume/kiwi
 ```
-
----
-
-## 💻 最小のレイアウト例
-
-```ts
-import { LayoutEngine } from "./src/core/layout_engine.ts"
-
-const engine = new LayoutEngine()
-
-const a = engine.addNode("a")
-const b = engine.addNode("b")
-const c = engine.addNode("c")
-
-engine.anchorNode(a, 0, 0)
-engine.addHorizontalLayout([a, b, c], 50)
-
-const result = engine.solve()
-console.log(result)
-```
-
-出力：
-
-```json
-{
-  "a": { "x": 0, "y": 0, "w": 100, "h": 60 },
-  "b": { "x": 150, "y": 0, "w": 100, "h": 60 },
-  "c": { "x": 300, "y": 0, "w": 100, "h": 60 }
-}
-```
-
----
-
-## 🧭 実装済みのレイアウト機能
-
-| 機能                      | 説明            |
-| ----------------------- | ------------- |
-| `addHorizontalLayout()` | ノードを左から右に並べる  |
-| `addVerticalLayout()`   | ノードを上から下に並べる  |
-| `anchorNode()`          | ノードの原点を固定する   |
-| `solve()`               | 制約を解いて座標を出力する |
-
----
 
 ## 🚧 今後の予定
 
