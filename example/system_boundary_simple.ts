@@ -5,8 +5,8 @@ Diagram
   .build("System Boundary Example", (element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
-    const boundary = element.systemBoundary("Auth System", [login])
+    const boundary = element.systemBoundary("Auth System")
     
-    // Note: Relations would need to be added when relation support is implemented
+    hint.pack(boundary, [login])
   })
   .render("example/system_boundary_simple.svg")

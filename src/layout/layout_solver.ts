@@ -57,6 +57,8 @@ export class LayoutSolver {
         this.addHorizontalConstraints(hint.symbolIds, hint.gap || 80)
       } else if (hint.type === "vertical") {
         this.addVerticalConstraints(hint.symbolIds, hint.gap || 50)
+      } else if (hint.type === "pack") {
+        this.addPackConstraints(hint.containerId!, hint.childIds!)
       }
     }
 
@@ -120,6 +122,56 @@ export class LayoutSolver {
           new kiwi.Expression(b.x),
           kiwi.Operator.Eq,
           new kiwi.Expression(a.x)
+        )
+      )
+    }
+  }
+
+  private addPackConstraints(containerId: string, childIds: string[]) {
+    const container = this.vars.get(containerId)!
+    const padding = 20
+
+    for (const childId of childIds) {
+      const child = this.vars.get(childId)!
+
+      // Child must be inside container with padding
+      // child.x >= container.x + padding
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(child.x),
+          kiwi.Operator.Ge,
+          new kiwi.Expression(container.x, padding),
+          kiwi.Strength.required
+        )
+      )
+
+      // child.y >= container.y + padding + 30 (for label space)
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(child.y),
+          kiwi.Operator.Ge,
+          new kiwi.Expression(container.y, 50),
+          kiwi.Strength.required
+        )
+      )
+
+      // child.x + child.width <= container.x + container.width - padding
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(child.x, child.width),
+          kiwi.Operator.Le,
+          new kiwi.Expression(container.x, container.width, -padding),
+          kiwi.Strength.required
+        )
+      )
+
+      // child.y + child.height <= container.y + container.height - padding
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(child.y, child.height),
+          kiwi.Operator.Le,
+          new kiwi.Expression(container.y, container.height, -padding),
+          kiwi.Strength.required
         )
       )
     }

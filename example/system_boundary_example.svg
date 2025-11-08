@@ -5,10 +5,24 @@
      viewBox="0 0 540 300">
   <rect width="100%" height="100%" fill="white"/>
   
-      <line x1="80" y1="90" x2="60" y2="30"
+      <line x1="80" y1="90" x2="270" y2="130"
             stroke="black" stroke-width="1.5"/>
     
   
+      <g id="systemBoundary_2">
+        <!-- System Boundary Rectangle -->
+        <rect x="190" y="50" width="300" height="200" 
+              fill="#f8f8f8" stroke="#999" stroke-width="2"/>
+        
+        <!-- Label at top -->
+        <text x="200" y="69" 
+              font-size="14" font-family="Arial" font-weight="bold"
+              fill="black">
+          Auth System
+        </text>
+      </g>
+    
+
       <g id="actor_0">
         <!-- Head -->
         <circle cx="80" cy="65" r="10" 
@@ -39,45 +53,15 @@
 
       <g id="usecase_1">
         <!-- Ellipse -->
-        <ellipse cx="60" cy="30" rx="60" ry="30" 
+        <ellipse cx="270" cy="130" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="60" y="35" 
+        <text x="270" y="135" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Login
         </text>
-      </g>
-    
-
-      <g id="systemBoundary_2">
-        <!-- System Boundary Rectangle -->
-        <rect x="190" y="50" width="300" height="200" 
-              fill="#f8f8f8" stroke="#999" stroke-width="2"/>
-        
-        <!-- Label at top -->
-        <text x="200" y="69" 
-              font-size="14" font-family="Arial" font-weight="bold"
-              fill="black">
-          Auth System
-        </text>
-
-        <!-- Children -->
-        
-      <g id="usecase_1">
-        <!-- Ellipse -->
-        <ellipse cx="60" cy="30" rx="60" ry="30" 
-                 fill="white" stroke="black" stroke-width="2"/>
-        
-        <!-- Label -->
-        <text x="60" y="35" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Login
-        </text>
-      </g>
-    
       </g>
     
 </svg>

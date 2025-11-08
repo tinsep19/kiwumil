@@ -9,8 +9,15 @@ Diagram
     const logout = element.usecase("Logout")
     const manage = element.usecase("Manage Users")
     
-    // Create system boundary with multiple children
-    const authSystem = element.systemBoundary("Auth System", [login, logout])
-    const adminSystem = element.systemBoundary("Admin System", [manage])
+    // Create system boundaries
+    const authSystem = element.systemBoundary("Auth System")
+    const adminSystem = element.systemBoundary("Admin System")
+    
+    // Pack use cases into boundaries
+    hint.pack(authSystem, [login, logout])
+    hint.pack(adminSystem, [manage])
+    
+    // Layout boundaries
+    hint.horizontal(authSystem, adminSystem)
   })
   .render("example/system_boundary_complex.svg")
