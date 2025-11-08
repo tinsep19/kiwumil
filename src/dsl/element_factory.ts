@@ -26,15 +26,7 @@ export class ElementFactory {
     return this.create("usecase", label)
   }
 
-  systemBoundary(label: string, children: SymbolId[] = []): SymbolId {
-    const id = this.create("systemBoundary", label)
-    const symbol = this.symbols.find(s => s.id === id)
-    if (symbol && "children" in symbol) {
-      const childSymbols = children.map(childId => 
-        this.symbols.find(s => s.id === childId)
-      ).filter((s): s is SymbolBase => s !== undefined)
-      ;(symbol as any).children = childSymbols
-    }
-    return id
+  systemBoundary(label: string): SymbolId {
+    return this.create("systemBoundary", label)
   }
 }

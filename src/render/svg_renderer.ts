@@ -16,7 +16,16 @@ export class SvgRenderer {
   }
 
   render(): string {
-    const symbolsSvg = this.symbols.map(s => s.toSVG()).join("\n")
+    // Sort symbols to render boundaries first (in background)
+    const sortedSymbols = [...this.symbols].sort((a, b) => {
+      const aIsBoundary = a.constructor.name === "SystemBoundarySymbol"
+      const bIsBoundary = b.constructor.name === "SystemBoundarySymbol"
+      if (aIsBoundary && !bIsBoundary) return -1
+      if (!aIsBoundary && bIsBoundary) return 1
+      return 0
+    })
+    
+    const symbolsSvg = sortedSymbols.map(s => s.toSVG()).join("\n")
     
     // Create symbol map for relationship rendering
     const symbolMap = new Map<SymbolId, SymbolBase>()

@@ -2,7 +2,6 @@
 import { SymbolBase } from "../symbol_base"
 
 export class SystemBoundarySymbol extends SymbolBase {
-  children: SymbolBase[] = []
   defaultWidth = 300
   defaultHeight = 200
   background = "#f8f8f8"
@@ -10,10 +9,6 @@ export class SystemBoundarySymbol extends SymbolBase {
 
   getDefaultSize() {
     return { width: this.defaultWidth, height: this.defaultHeight }
-  }
-
-  getLayoutHints() {
-    return this.children.map(c => ({ inside: [this, c] }))
   }
 
   toSVG(): string {
@@ -28,9 +23,6 @@ export class SystemBoundarySymbol extends SymbolBase {
     const fontSize = this.theme?.fontSize.usecase || 14
     const textColor = this.theme?.colors.text || "black"
 
-    // Render children
-    const childrenSVG = this.children.map(child => child.toSVG()).join("\n")
-
     return `
       <g id="${this.id}">
         <!-- System Boundary Rectangle -->
@@ -43,9 +35,6 @@ export class SystemBoundarySymbol extends SymbolBase {
               fill="${textColor}">
           ${this.label}
         </text>
-
-        <!-- Children -->
-        ${childrenSVG}
       </g>
     `
   }

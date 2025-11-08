@@ -2,9 +2,11 @@
 import type { SymbolId } from "../model/types"
 
 export interface LayoutHint {
-  type: "horizontal" | "vertical"
+  type: "horizontal" | "vertical" | "pack"
   symbolIds: SymbolId[]
   gap?: number
+  containerId?: SymbolId
+  childIds?: SymbolId[]
 }
 
 export class HintFactory {
@@ -23,6 +25,15 @@ export class HintFactory {
       type: "vertical",
       symbolIds,
       gap: 50
+    })
+  }
+
+  pack(containerId: SymbolId, childIds: SymbolId[]) {
+    this.hints.push({
+      type: "pack",
+      symbolIds: [],
+      containerId,
+      childIds
     })
   }
 }
