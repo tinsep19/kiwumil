@@ -6,7 +6,7 @@ const diagram = Diagram.use(CorePlugin).build("Usecase with Actor", (element, re
   const logout = element.usecase("Logout")
   
   hint.horizontal(user, login)
-  hint.horizontal(login, logout)
+  hint.vertical(login, logout)
 })
 
 diagram.render("output/usecase_with_actor.svg")
