@@ -1,27 +1,27 @@
 // src/dsl/hint_factory.ts
-import type { SymbolBase } from "../model/symbol_base"
+import type { SymbolId } from "../model/types"
 
 export interface LayoutHint {
   type: "horizontal" | "vertical"
-  symbols: SymbolBase[]
+  symbolIds: SymbolId[]
   gap?: number
 }
 
 export class HintFactory {
   constructor(private hints: LayoutHint[]) {}
 
-  horizontal(...symbols: SymbolBase[]) {
+  horizontal(...symbolIds: SymbolId[]) {
     this.hints.push({
       type: "horizontal",
-      symbols,
+      symbolIds,
       gap: 80
     })
   }
 
-  vertical(...symbols: SymbolBase[]) {
+  vertical(...symbolIds: SymbolId[]) {
     this.hints.push({
       type: "vertical",
-      symbols,
+      symbolIds,
       gap: 50
     })
   }

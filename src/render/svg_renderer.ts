@@ -1,15 +1,29 @@
 // src/render/svg_renderer.ts
 import type { SymbolBase } from "../model/symbol_base"
+import type { Association } from "../model/relationships/association"
+import type { SymbolId } from "../model/types"
 
 export class SvgRenderer {
   private symbols: SymbolBase[]
+  private relationships: Association[]
 
-  constructor(symbols: SymbolBase[]) {
+  constructor(symbols: SymbolBase[], relationships: Association[] = []) {
     this.symbols = symbols
+    this.relationships = relationships
   }
 
   render(): string {
     const symbolsSvg = this.symbols.map(s => s.toSVG()).join("\n")
+    
+    // Create symbol map for relationship rendering
+    const symbolMap = new Map<SymbolId, SymbolBase>()
+    for (const symbol of this.symbols) {
+      symbolMap.set(symbol.id, symbol)
+    }
+    
+    const relationshipsSvg = this.relationships
+      .map(r => r.toSVG(symbolMap))
+      .join("\n")
     
     // Calculate canvas size
     let maxX = 0, maxY = 0
@@ -29,6 +43,7 @@ export class SvgRenderer {
      height="${height}" 
      viewBox="0 0 ${width} ${height}">
   <rect width="100%" height="100%" fill="white"/>
+  ${relationshipsSvg}
   ${symbolsSvg}
 </svg>`
   }

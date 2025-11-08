@@ -54,9 +54,9 @@ export class LayoutSolver {
     // ヒントに基づく制約を追加
     for (const hint of hints) {
       if (hint.type === "horizontal") {
-        this.addHorizontalConstraints(hint.symbols, hint.gap || 80)
+        this.addHorizontalConstraints(hint.symbolIds, hint.gap || 80)
       } else if (hint.type === "vertical") {
-        this.addVerticalConstraints(hint.symbols, hint.gap || 50)
+        this.addVerticalConstraints(hint.symbolIds, hint.gap || 50)
       }
     }
 
@@ -75,10 +75,10 @@ export class LayoutSolver {
     }
   }
 
-  private addHorizontalConstraints(symbols: SymbolBase[], gap: number) {
-    for (let i = 0; i < symbols.length - 1; i++) {
-      const a = this.vars.get(symbols[i].id)!
-      const b = this.vars.get(symbols[i + 1].id)!
+  private addHorizontalConstraints(symbolIds: string[], gap: number) {
+    for (let i = 0; i < symbolIds.length - 1; i++) {
+      const a = this.vars.get(symbolIds[i])!
+      const b = this.vars.get(symbolIds[i + 1])!
 
       // b.x = a.x + a.width + gap
       this.solver.addConstraint(
@@ -100,10 +100,10 @@ export class LayoutSolver {
     }
   }
 
-  private addVerticalConstraints(symbols: SymbolBase[], gap: number) {
-    for (let i = 0; i < symbols.length - 1; i++) {
-      const a = this.vars.get(symbols[i].id)!
-      const b = this.vars.get(symbols[i + 1].id)!
+  private addVerticalConstraints(symbolIds: string[], gap: number) {
+    for (let i = 0; i < symbolIds.length - 1; i++) {
+      const a = this.vars.get(symbolIds[i])!
+      const b = this.vars.get(symbolIds[i + 1])!
 
       // b.y = a.y + a.height + gap
       this.solver.addConstraint(
