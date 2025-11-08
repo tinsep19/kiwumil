@@ -62,7 +62,7 @@ Diagram
 
 ```mermaid
 
-flowchart LR
+flowchart TD
   subgraph DSL["DSL 層"]
     D[Diagram DSL]
   end
@@ -104,47 +104,47 @@ flowchart LR
 ```
 kiwumil/
 ├── src/
-│   ├── dsl/                        # DSL・プラグインシステム層
-│   │   ├── diagram.ts              # Diagramクラス（エントリポイント）
-│   │   ├── plugin_manager.ts       # Plugin管理・登録
-│   │   ├── element_factory.ts      # SymbolRegistryをProxyでラップ
-│   │   ├── relationship_factory.ts # Relationship生成
-│   │   └── hint_factory.ts         # hint.horizontal/verticalなどのDSL補助
+│   ├── dsl/                         # DSL・プラグインシステム層
+│   │   ├── diagram.ts               # Diagramクラス（エントリポイント）
+│   │   ├── plugin_manager.ts        # Plugin管理・登録
+│   │   ├── element_factory.ts       # SymbolRegistryをProxyでラップ
+│   │   ├── relationship_factory.ts  # Relationship生成
+│   │   └── hint_factory.ts          # hint.horizontal/verticalなどのDSL補助
 │   │
-│   ├── model/                      # モデル層（UML構造定義）
-│   │   ├── symbol_base.ts          # Symbol基底クラス
-│   │   ├── symbol_registry.ts      # Symbol型の登録・生成
-│   │   ├── relationship_base.ts    # 関係の基底クラス
-│   │   └── types.ts                # 共通型定義（座標・サイズ・IDなど）
+│   ├── model/                       # モデル層（UML構造定義）
+│   │   ├── symbol_base.ts           # Symbol基底クラス
+│   │   ├── symbol_registry.ts       # Symbol型の登録・生成
+│   │   ├── relationship_base.ts     # 関係の基底クラス
+│   │   ├── relationship_registry.ts # 関係の基底クラス
+│   │   └── types.ts                 # 共通型定義（座標・サイズ・IDなど）
 │   │
-│   ├── layout/                     # レイアウト層（Cassowary等）
-│   │   ├── layout_engine.ts        # レイアウト計算メイン
-│   │   ├── constraint_solver.ts    # Cassowaryラッパ
-│   │   └── layout_types.ts         # 位置・制約型定義
+│   ├── layout/                      # レイアウト層（Cassowary等）
+│   │   ├── layout_engine.ts         # レイアウト計算メイン
+│   │   ├── constraint_solver.ts     # Cassowaryラッパ
+│   │   └── layout_types.ts          # 位置・制約型定義
 │   │
-│   ├── render/                     # レンダリング層（SVGなど）
-│   │   ├── svg_renderer.ts         # SVG出力
-│   │   ├── svg_utils.ts            # SVG組み立て用ヘルパ
-│   │   └── theme.ts                # 色・線幅などのスタイル定義
+│   ├── render/                      # レンダリング層（SVGなど）
+│   │   ├── svg_renderer.ts          # SVG出力
+│   │   ├── svg_utils.ts             # SVG組み立て用ヘルパ
+│   │   └── theme.ts                 # 色・線幅などのスタイル定義
 │   │
-│   ├── plugin/                     # 組み込み・外部プラグイン郡
-│   │   ├── core_plugin.ts          # actor/usecase/classなど基本シンボル
-│   │   ├── component_plugin.ts     # 例: Componentノード追加
-│   │   └── ...                     # 他のUML拡張プラグイン
+│   ├── plugin/                      # 組み込み・外部プラグイン郡
+│   │   ├── core_plugin.ts           # actor/usecase/classなどUML基本シンボル
+│   │   └── ...                      # その他の拡張プラグイン
 │   │
-│   ├── core/                       # 共通インフラ・ユーティリティ
-│   │   ├── id_generator.ts         # シンボルID管理
-│   │   ├── error.ts                # 共通例外
-│   │   ├── logger.ts               # デバッグ出力
-│   │   └── utils.ts                # 共通関数
+│   ├── core/                        # 共通インフラ・ユーティリティ
+│   │   ├── id_generator.ts          # シンボルID管理
+│   │   ├── error.ts                 # 共通例外
+│   │   ├── logger.ts                # デバッグ出力
+│   │   └── utils.ts                 # 共通関数
 │   │
-│   ├── index.ts                    # エントリポイント (Diagramエクスポート)
-│   └── types.d.ts                  # 外部型定義補助（Plugin APIなど）
+│   ├── index.ts                     # エントリポイント (Diagramエクスポート)
+│   └── types.d.ts                   # 外部型定義補助（Plugin APIなど）
 │
 ├── examples/
-│   ├── usecase-basic.ts            # 基本のユースケース図
-│   ├── use-with-plugin.ts          # プラグイン例（componentなど）
-│   └── sequence.ts                 # 将来的な拡張例
+│   ├── usecase-basic.ts             # 基本のユースケース図
+│   ├── use-with-plugin.ts           # プラグイン例（componentなど）
+│   └── sequence.ts                  # 将来的な拡張例
 │
 ├── tests/
 │   ├── plugin.test.ts
