@@ -27,7 +27,8 @@
         
         <!-- Label -->
         <text x="80" y="130" 
-              text-anchor="middle" font-size="12" font-family="Arial">
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
           User
         </text>
       </g>

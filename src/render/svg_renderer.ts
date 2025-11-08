@@ -2,14 +2,17 @@
 import type { SymbolBase } from "../model/symbol_base"
 import type { Association } from "../model/relationships/association"
 import type { SymbolId } from "../model/types"
+import type { Theme } from "../core/theme"
 
 export class SvgRenderer {
   private symbols: SymbolBase[]
   private relationships: Association[]
+  private theme?: Theme
 
-  constructor(symbols: SymbolBase[], relationships: Association[] = []) {
+  constructor(symbols: SymbolBase[], relationships: Association[] = [], theme?: Theme) {
     this.symbols = symbols
     this.relationships = relationships
+    this.theme = theme
   }
 
   render(): string {
@@ -36,13 +39,14 @@ export class SvgRenderer {
 
     const width = maxX + 50
     const height = maxY + 50
+    const bgColor = this.theme?.colors.background || "white"
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
      width="${width}" 
      height="${height}" 
      viewBox="0 0 ${width} ${height}">
-  <rect width="100%" height="100%" fill="white"/>
+  <rect width="100%" height="100%" fill="${bgColor}"/>
   ${relationshipsSvg}
   ${symbolsSvg}
 </svg>`
