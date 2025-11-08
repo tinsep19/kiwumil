@@ -167,6 +167,72 @@ Diagram
 
 ---
 
+## Theme Examples
+
+### Blue Theme
+
+ブルーテーマを適用した例。
+
+**Code:**
+```typescript
+// example/usecase_with_actor_blue.ts
+import { Diagram, CorePlugin, themes } from "../src/index"
+
+Diagram
+  .use(CorePlugin)
+  .theme(themes.blue)
+  .build("Usecase with Actor (Blue Theme)", (element, relation, hint) => {
+    const user = element.actor("User")
+    const login = element.usecase("Login")
+    const logout = element.usecase("Logout")
+    
+    relation.associate(user, login)
+    relation.associate(user, logout)
+    
+    hint.horizontal(user, login)
+    hint.vertical(login, logout)
+  })
+  .render("example/usecase_with_actor_blue.svg")
+```
+
+**Output:**
+
+![Usecase with Actor (Blue Theme)](example/usecase_with_actor_blue.svg)
+
+---
+
+### Dark Theme
+
+ダークテーマを適用した例。
+
+**Code:**
+```typescript
+// example/usecase_with_actor_dark.ts
+import { Diagram, CorePlugin, themes } from "../src/index"
+
+Diagram
+  .use(CorePlugin)
+  .theme(themes.dark)
+  .build("Usecase with Actor (Dark Theme)", (element, relation, hint) => {
+    const user = element.actor("User")
+    const login = element.usecase("Login")
+    const logout = element.usecase("Logout")
+    
+    relation.associate(user, login)
+    relation.associate(user, logout)
+    
+    hint.horizontal(user, login)
+    hint.vertical(login, logout)
+  })
+  .render("example/usecase_with_actor_dark.svg")
+```
+
+**Output:**
+
+![Usecase with Actor (Dark Theme)](example/usecase_with_actor_dark.svg)
+
+---
+
 ## Contributing
 
 新しい例を追加したい場合は、`example/`ディレクトリに新しいTypeScriptファイルを作成し、同名のSVGファイルを生成してください。

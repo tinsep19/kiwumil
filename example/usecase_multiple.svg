@@ -13,7 +13,8 @@
         
         <!-- Label -->
         <text x="110" y="85" 
-              text-anchor="middle" font-size="12" font-family="Arial">
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
           Login
         </text>
       </g>
@@ -26,7 +27,8 @@
         
         <!-- Label -->
         <text x="310" y="85" 
-              text-anchor="middle" font-size="12" font-family="Arial">
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
           Register
         </text>
       </g>
@@ -39,7 +41,8 @@
         
         <!-- Label -->
         <text x="510" y="85" 
-              text-anchor="middle" font-size="12" font-family="Arial">
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
           View Profile
         </text>
       </g>

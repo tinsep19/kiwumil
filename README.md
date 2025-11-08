@@ -26,25 +26,28 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ## 🧩 使用イメージ
 
 ```ts
+import { Diagram, CorePlugin, themes } from "kiwumil"
 
 Diagram
-  .use(FirstPlugin, SecondPlugin)
-  .usecase("Login System", (element, relation, hint) => {
-
+  .use(CorePlugin)
+  .theme(themes.blue)  // オプション: blue, dark, またはカスタムテーマ
+  .build("Login System", (element, relation, hint) => {
     const user = element.actor("User")
-    const signin = element.usecase("Signin")
+    const login = element.usecase("Login")
+    const logout = element.usecase("Logout")
 
-    const user_can_signin = relation.use(user, signin)
+    relation.associate(user, login)
+    relation.associate(user, logout)
 
-    hint.horizontal(user, signin)
-
-  }).render("output.svg")
-
+    hint.horizontal(user, login)
+    hint.vertical(login, logout)
+  })
+  .render("output.svg")
 ```
 
 このような宣言的な構文で、
-アクターとユースケースが同じ高さで左から右に並び、
-システム境界内にユースケースが配置された図を生成することを目指します。
+アクターとユースケースが整列され、
+関連線で接続された美しい図を生成します。
 
 ---
 
@@ -169,10 +172,12 @@ bun add @lume/kiwi
 
 ## 🚧 今後の予定
 
-* [ ] `LayoutHint` クラスによる宣言的API (`LayoutHint.horizontal(a, b, c)`)
+* [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal(a, b, c)`)
+* [x] SVG レンダラー
+* [x] テーマシステム (default, blue, dark)
 * [ ] `Container` による矩形グループ制約
 * [ ] 矢印・関係線の自動ルーティング
-* [ ] SVG / Canvas レンダラー
+* [ ] Canvas レンダラー
 * [ ] PlantUML / Mermaid.js 風 DSL の追加
 * [ ] Webアプリデモ
 
