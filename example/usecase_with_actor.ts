@@ -12,4 +12,4 @@ const diagram = Diagram.use(CorePlugin).build("Usecase with Actor", (element, re
   hint.vertical(login, logout)
 })
 
-diagram.render("output/usecase_with_actor.svg")
+diagram.render("example/usecase_with_actor.svg")

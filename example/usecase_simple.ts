@@ -4,4 +4,4 @@ const diagram = Diagram.use(CorePlugin).build("Simple Usecase", (element) => {
   element.usecase("Login")
 })
 
-diagram.render("output/usecase_simple.svg")
+diagram.render("example/usecase_simple.svg")

@@ -9,4 +9,4 @@ const diagram = Diagram.use(CorePlugin).build("Multiple Usecases", (element, rel
   hint.horizontal(register, profile)
 })
 
-diagram.render("output/usecase_multiple.svg")
+diagram.render("example/usecase_multiple.svg")

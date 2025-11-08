@@ -5,4 +5,4 @@ const diagram = Diagram.use(CorePlugin).build("Simple Actor", (element, relation
   const user = element.actor("User")
 })
 
-diagram.render("output/actor_simple.svg")
+diagram.render("example/actor_simple.svg")

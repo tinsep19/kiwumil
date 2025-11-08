@@ -9,4 +9,4 @@ const diagram = Diagram.use(CorePlugin).build("Vertical Actors", (element, relat
   hint.vertical(user1, user2, user3)
 })
 
-diagram.render("output/actor_vertical.svg")
+diagram.render("example/actor_vertical.svg")

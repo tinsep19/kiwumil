@@ -9,4 +9,4 @@ const diagram = Diagram.use(CorePlugin).build("Horizontal Actors", (element, rel
   hint.horizontal(user1, user2, user3)
 })
 
-diagram.render("output/actor_horizontal.svg")
+diagram.render("example/actor_horizontal.svg")
