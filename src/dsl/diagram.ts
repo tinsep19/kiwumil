@@ -8,6 +8,7 @@ import { HintFactory, LayoutHint } from "./hint_factory"
 import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
 import type { SymbolBase } from "../model/symbol_base"
+import type { Association } from "../model/relationships/association"
 
 type DiagramCallback = (
   element: ElementFactory,
@@ -28,10 +29,11 @@ export class Diagram {
 
   build(name: string, callback: DiagramCallback) {
     const symbols: SymbolBase[] = []
+    const relationships: Association[] = []
     const hints: LayoutHint[] = []
 
     const element = new ElementFactory(this.symbolRegistry, symbols)
-    const relation = new RelationshipFactory()
+    const relation = new RelationshipFactory(relationships)
     const hint = new HintFactory(hints)
 
     callback(element, relation, hint)
@@ -42,8 +44,9 @@ export class Diagram {
 
     return {
       symbols,
+      relationships,
       render: (filepath: string) => {
-        const renderer = new SvgRenderer(symbols)
+        const renderer = new SvgRenderer(symbols, relationships)
         renderer.saveToFile(filepath)
       }
     }

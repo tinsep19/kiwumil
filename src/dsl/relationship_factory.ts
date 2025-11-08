@@ -1,5 +1,11 @@
 // src/dsl/relationship_factory.ts
+import { Association } from "../model/relationships/association"
+import type { SymbolId } from "../model/types"
 
 export class RelationshipFactory {
-  // 将来的に関係を管理
+  constructor(private relationships: Association[]) {}
+
+  associate(from: SymbolId, to: SymbolId): void {
+    this.relationships.push(new Association(from, to))
+  }
 }
