@@ -13,11 +13,12 @@
 // example/actor_simple.ts
 import { Diagram, CorePlugin } from "../src/index"
 
-const diagram = Diagram.use(CorePlugin).build("Simple Actor", (element, relation, hint) => {
-  const user = element.actor("User")
-})
-
-diagram.render("example/actor_simple.svg")
+Diagram
+  .use(CorePlugin)
+  .build("Simple Actor", (element, relation, hint) => {
+    element.actor("User")
+  })
+  .render("example/actor_simple.svg")
 ```
 
 **Output:**
@@ -35,15 +36,16 @@ diagram.render("example/actor_simple.svg")
 // example/actor_horizontal.ts
 import { Diagram, CorePlugin } from "../src/index"
 
-const diagram = Diagram.use(CorePlugin).build("Horizontal Actors", (element, relation, hint) => {
-  const user1 = element.actor("User")
-  const user2 = element.actor("Admin")
-  const user3 = element.actor("Guest")
+Diagram
+  .use(CorePlugin)
+  .build("Horizontal Actors", (element, relation, hint) => {
+    const user1 = element.actor("User")
+    const user2 = element.actor("Admin")
+    const user3 = element.actor("Guest")
 
-  hint.horizontal(user1, user2, user3)
-})
-
-diagram.render("example/actor_horizontal.svg")
+    hint.horizontal(user1, user2, user3)
+  })
+  .render("example/actor_horizontal.svg")
 ```
 
 **Output:**
@@ -61,15 +63,16 @@ diagram.render("example/actor_horizontal.svg")
 // example/actor_vertical.ts
 import { Diagram, CorePlugin } from "../src/index"
 
-const diagram = Diagram.use(CorePlugin).build("Vertical Actors", (element, relation, hint) => {
-  const user1 = element.actor("User")
-  const user2 = element.actor("Admin")
-  const user3 = element.actor("Guest")
+Diagram
+  .use(CorePlugin)
+  .build("Vertical Actors", (element, relation, hint) => {
+    const user1 = element.actor("User")
+    const user2 = element.actor("Admin")
+    const user3 = element.actor("Guest")
 
-  hint.vertical(user1, user2, user3)
-})
-
-diagram.render("example/actor_vertical.svg")
+    hint.vertical(user1, user2, user3)
+  })
+  .render("example/actor_vertical.svg")
 ```
 
 **Output:**
@@ -89,11 +92,12 @@ diagram.render("example/actor_vertical.svg")
 // example/usecase_simple.ts
 import { Diagram, CorePlugin } from "../src/index"
 
-const diagram = Diagram.use(CorePlugin).build("Simple Usecase", (element, relation, hint) => {
-  const login = element.usecase("Login")
-})
-
-diagram.render("example/usecase_simple.svg")
+Diagram
+  .use(CorePlugin)
+  .build("Simple Usecase", (element, relation, hint) => {
+    element.usecase("Login")
+  })
+  .render("example/usecase_simple.svg")
 ```
 
 **Output:**
@@ -111,16 +115,17 @@ diagram.render("example/usecase_simple.svg")
 // example/usecase_multiple.ts
 import { Diagram, CorePlugin } from "../src/index"
 
-const diagram = Diagram.use(CorePlugin).build("Multiple Usecases", (element, relation, hint) => {
-  const login = element.usecase("Login")
-  const register = element.usecase("Register")
-  const profile = element.usecase("View Profile")
-  
-  hint.horizontal(login, register)
-  hint.horizontal(register, profile)
-})
-
-diagram.render("example/usecase_multiple.svg")
+Diagram
+  .use(CorePlugin)
+  .build("Multiple Usecases", (element, relation, hint) => {
+    const login = element.usecase("Login")
+    const register = element.usecase("Register")
+    const profile = element.usecase("View Profile")
+    
+    hint.horizontal(login, register)
+    hint.horizontal(register, profile)
+  })
+  .render("example/usecase_multiple.svg")
 ```
 
 **Output:**
@@ -140,19 +145,20 @@ diagram.render("example/usecase_multiple.svg")
 // example/usecase_with_actor.ts
 import { Diagram, CorePlugin } from "../src/index"
 
-const diagram = Diagram.use(CorePlugin).build("Usecase with Actor", (element, relation, hint) => {
-  const user = element.actor("User")
-  const login = element.usecase("Login")
-  const logout = element.usecase("Logout")
-  
-  relation.associate(user, login)
-  relation.associate(user, logout)
-  
-  hint.horizontal(user, login)
-  hint.vertical(login, logout)
-})
-
-diagram.render("example/usecase_with_actor.svg")
+Diagram
+  .use(CorePlugin)
+  .build("Usecase with Actor", (element, relation, hint) => {
+    const user = element.actor("User")
+    const login = element.usecase("Login")
+    const logout = element.usecase("Logout")
+    
+    relation.associate(user, login)
+    relation.associate(user, logout)
+    
+    hint.horizontal(user, login)
+    hint.vertical(login, logout)
+  })
+  .render("example/usecase_with_actor.svg")
 ```
 
 **Output:**
