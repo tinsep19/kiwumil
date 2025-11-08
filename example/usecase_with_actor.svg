@@ -43,11 +43,12 @@
       <g id="usecase_1">
         <!-- Ellipse -->
         <ellipse cx="250" cy="80" rx="60" ry="30" 
-                 fill="none" stroke="black" stroke-width="2"/>
+                 fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         <text x="250" y="85" 
-              text-anchor="middle" font-size="12" font-family="Arial">
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
           Login
         </text>
       </g>
@@ -56,11 +57,12 @@
       <g id="usecase_2">
         <!-- Ellipse -->
         <ellipse cx="250" cy="190" rx="60" ry="30" 
-                 fill="none" stroke="black" stroke-width="2"/>
+                 fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         <text x="250" y="195" 
-              text-anchor="middle" font-size="12" font-family="Arial">
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
           Logout
         </text>
       </g>

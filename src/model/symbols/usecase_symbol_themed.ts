@@ -1,5 +1,5 @@
-// src/model/symbols/usecase_symbol.ts
-import { SymbolBase } from "../symbol_base"
+// src/model/symbols/usecase_symbol_themed.ts
+import { SymbolBase } from "../symbol_base_themed"
 
 export class UsecaseSymbol extends SymbolBase {
   getDefaultSize() {
@@ -17,22 +17,20 @@ export class UsecaseSymbol extends SymbolBase {
     const rx = width / 2
     const ry = height / 2
 
-    const fill = this.theme?.colors.usecaseFill || "white"
-    const stroke = this.theme?.colors.usecaseStroke || "black"
-    const strokeWidth = this.theme?.strokeWidth.usecase || 2
-    const fontSize = this.theme?.fontSize.usecase || 12
-    const textColor = this.theme?.colors.text || "black"
-
     return `
       <g id="${this.id}">
         <!-- Ellipse -->
         <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" 
-                 fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+                 fill="${this.theme.colors.usecaseFill}" 
+                 stroke="${this.theme.colors.usecaseStroke}" 
+                 stroke-width="${this.theme.strokeWidth.usecase}"/>
         
         <!-- Label -->
         <text x="${cx}" y="${cy + 5}" 
-              text-anchor="middle" font-size="${fontSize}" font-family="Arial"
-              fill="${textColor}">
+              text-anchor="middle" 
+              font-size="${this.theme.fontSize.usecase}" 
+              font-family="Arial"
+              fill="${this.theme.colors.text}">
           ${this.label}
         </text>
       </g>

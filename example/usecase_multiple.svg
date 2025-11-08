@@ -9,7 +9,7 @@
       <g id="usecase_0">
         <!-- Ellipse -->
         <ellipse cx="110" cy="80" rx="60" ry="30" 
-                 fill="none" stroke="black" stroke-width="2"/>
+                 fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         <text x="110" y="85" 
@@ -22,7 +22,7 @@
       <g id="usecase_1">
         <!-- Ellipse -->
         <ellipse cx="310" cy="80" rx="60" ry="30" 
-                 fill="none" stroke="black" stroke-width="2"/>
+                 fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         <text x="310" y="85" 
@@ -35,7 +35,7 @@
       <g id="usecase_2">
         <!-- Ellipse -->
         <ellipse cx="510" cy="80" rx="60" ry="30" 
-                 fill="none" stroke="black" stroke-width="2"/>
+                 fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         <text x="510" y="85" 
