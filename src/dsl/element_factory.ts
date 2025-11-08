@@ -20,4 +20,8 @@ export class ElementFactory {
   actor(label: string): SymbolBase {
     return this.create("actor", label)
   }
+
+  usecase(label: string): SymbolBase {
+    return this.create("usecase", label)
+  }
 }
