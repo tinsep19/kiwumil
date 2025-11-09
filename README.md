@@ -25,29 +25,36 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 
 ## 🧩 使用イメージ
 
-```ts
+```typescript
 import { Diagram, CorePlugin, themes } from "kiwumil"
 
 Diagram
   .use(CorePlugin)
-  .theme(themes.blue)  // オプション: blue, dark, またはカスタムテーマ
-  .build("Login System", (element, relation, hint) => {
-    const user = element.actor("User")
-    const login = element.usecase("Login")
-    const logout = element.usecase("Logout")
+  .theme(themes.blue)  // オプション: default, blue, dark
+  .build("Use Case Diagram", (el, rel, hint) => {
+    // 1. シンボルを定義
+    const user = el.actor("User")
+    const login = el.usecase("Login")
+    const logout = el.usecase("Logout")
+    const boundary = el.systemBoundary("Auth System")
 
-    relation.associate(user, login)
-    relation.associate(user, logout)
+    // 2. レイアウトヒントを設定
+    hint.pack(boundary, [login, logout])  // 境界内に配置
+    hint.vertical(login, logout)          // 垂直に並べる
+    hint.horizontal(user, boundary)       // 水平に並べる
 
-    hint.horizontal(user, login)
-    hint.vertical(login, logout)
+    // 3. 関係を定義
+    rel.associate(user, login)
+    rel.associate(user, logout)
   })
   .render("output.svg")
 ```
 
-このような宣言的な構文で、
-アクターとユースケースが整列され、
-関連線で接続された美しい図を生成します。
+**特徴:**
+- 🎨 **テーマシステム** - default, blue, dark の3つのプリセットテーマ
+- 📦 **システム境界** - `hint.pack()` でシンボルをコンテナ内に配置
+- 🔧 **制約ベースレイアウト** - Cassowary アルゴリズムによる自動整列
+- 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
 
 ---
 
@@ -172,11 +179,16 @@ bun add @lume/kiwi
 
 ## 🚧 今後の予定
 
-* [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal(a, b, c)`)
+* [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal()`, `hint.vertical()`)
 * [x] SVG レンダラー
 * [x] テーマシステム (default, blue, dark)
-* [ ] `Container` による矩形グループ制約
+* [x] `SystemBoundary` によるコンテナ制約 (`hint.pack()`)
+* [x] Z-Index ベースのレンダリング（ネスト構造対応）
+* [ ] Include / Extend 関係（ユースケース図）
+* [ ] Generalization 関係（継承矢印）
+* [ ] Note シンボル（注釈）
 * [ ] 矢印・関係線の自動ルーティング
+* [ ] クラス図対応（Class, Interface, Package）
 * [ ] Canvas レンダラー
 * [ ] PlantUML / Mermaid.js 風 DSL の追加
 * [ ] Webアプリデモ
