@@ -5,6 +5,8 @@
 Kiwumil のレイアウトシステムは、制約ベースの自動レイアウトエンジンです。
 Cassowary アルゴリズムを使用して、宣言的なレイアウトヒントから最適な配置を計算します。
 
+**🎉 First Milestone 達成済み:** Pack内要素の自動配置が実装されました。
+
 ---
 
 ## 設計哲学
@@ -37,6 +39,22 @@ hint.alignCenterX(a, b, c)       // X軸中央を揃える
 
 ## API 設計
 
+### 実装状況
+
+| カテゴリ | メソッド | 状態 |
+|---------|---------|------|
+| Arrange | `arrangeHorizontal` | ✅ 実装済み |
+| Arrange | `arrangeVertical` | ✅ 実装済み |
+| Align | `alignLeft` | ✅ 実装済み |
+| Align | `alignRight` | ✅ 実装済み |
+| Align | `alignTop` | ✅ 実装済み |
+| Align | `alignBottom` | ✅ 実装済み |
+| Align | `alignCenterX` | ✅ 実装済み |
+| Align | `alignCenterY` | ✅ 実装済み |
+| Container | `pack` | ✅ 実装済み（将来削除予定） |
+| Legacy | `horizontal` | ✅ 実装済み（deprecated） |
+| Legacy | `vertical` | ✅ 実装済み（deprecated） |
+
 ### Arrange（配置）- 要素を並べる
 
 #### `arrangeHorizontal(...elements: SymbolId[])`
@@ -52,6 +70,38 @@ hint.arrangeHorizontal(a, b, c)
 - 要素間の距離が等しい
 - 左から右の順序で配置
 - デフォルト間隔: 80px
+- 制約強度: STRONG（pack制約より優先）
+
+**実装詳細:**
+```typescript
+// layout_solver.ts
+private addHorizontalConstraints(symbolIds: string[], gap: number) {
+  for (let i = 0; i < symbolIds.length - 1; i++) {
+    const a = this.vars.get(symbolIds[i])!
+    const b = this.vars.get(symbolIds[i + 1])!
+    
+    // b.x = a.x + a.width + gap (STRONG strength)
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(b.x),
+        kiwi.Operator.Eq,
+        new kiwi.Expression(a.x, a.width, gap),
+        kiwi.Strength.strong
+      )
+    )
+    
+    // Y軸を揃える (STRONG strength)
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(b.y),
+        kiwi.Operator.Eq,
+        new kiwi.Expression(a.y),
+        kiwi.Strength.strong
+      )
+    )
+  }
+}
+```
 
 #### `arrangeVertical(...elements: SymbolId[])`
 要素を垂直方向に等間隔で並べます。
@@ -71,6 +121,38 @@ c
 - 要素間の距離が等しい
 - 上から下の順序で配置
 - デフォルト間隔: 50px
+- 制約強度: STRONG（pack制約より優先）
+
+**実装詳細:**
+```typescript
+// layout_solver.ts
+private addVerticalConstraints(symbolIds: string[], gap: number) {
+  for (let i = 0; i < symbolIds.length - 1; i++) {
+    const a = this.vars.get(symbolIds[i])!
+    const b = this.vars.get(symbolIds[i + 1])!
+    
+    // b.y = a.y + a.height + gap (STRONG strength)
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(b.y),
+        kiwi.Operator.Eq,
+        new kiwi.Expression(a.y, a.height, gap),
+        kiwi.Strength.strong
+      )
+    )
+    
+    // X軸を揃える (STRONG strength)
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(b.x),
+        kiwi.Operator.Eq,
+        new kiwi.Expression(a.x),
+        kiwi.Strength.strong
+      )
+    )
+  }
+}
+```
 
 ---
 
@@ -177,20 +259,113 @@ hint.pack(boundary, [a, b, c])
 **制約:**
 - 子要素がコンテナ内に収まる
 - コンテナがパディングを持つ
+- **コンテナサイズが自動的に子要素に合わせて拡大**
 - 子要素の配置は別途 `arrange` で指定
 
 **⚠️ 注意:**
 `pack` は将来的に削除予定です。代わりに `arrange` + `align` の組み合わせを使用してください。
 
-**現在の問題:**
+**✅ 現在の実装:**
 ```typescript
-// ❌ 子要素が重なる
+// コンテナと子要素を組み合わせて使う
 hint.pack(boundary, [a, b, c])
+hint.arrangeVertical(a, b, c)  // ✅ 重ならずに配置される
 
-// ✅ arrangeと組み合わせて使う
-hint.pack(boundary, [a, b, c])
-hint.arrangeVertical(a, b, c)
+結果:
+┌─────────┐
+│    a    │
+│    b    │  ← 自動的に縦に並ぶ
+│    c    │
+└─────────┘
+ ↑ コンテナが自動拡大
 ```
+
+**実装詳細:**
+
+1. **コンテナのサイズ制約:**
+```typescript
+// コンテナは最小サイズのみ指定（WEAK）
+const isContainer = hints.some(h => h.type === "pack" && h.containerId === symbol.id)
+
+if (isContainer) {
+  // 最小サイズのみ（子要素に合わせて拡大可能）
+  this.solver.addConstraint(
+    new kiwi.Constraint(
+      new kiwi.Expression(v.width), 
+      kiwi.Operator.Ge, 
+      100, 
+      kiwi.Strength.weak
+    )
+  )
+  this.solver.addConstraint(
+    new kiwi.Constraint(
+      new kiwi.Expression(v.height), 
+      kiwi.Operator.Ge, 
+      100, 
+      kiwi.Strength.weak
+    )
+  )
+}
+```
+
+2. **Pack制約（子要素の配置とコンテナの拡大）:**
+```typescript
+private addPackConstraints(containerId: string, childIds: string[]) {
+  const container = this.vars.get(containerId)!
+  const padding = 20
+
+  for (const childId of childIds) {
+    const child = this.vars.get(childId)!
+
+    // 子要素の最小位置制約（コンテナ内に配置）
+    // child.x >= container.x + padding
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(child.x),
+        kiwi.Operator.Ge,
+        new kiwi.Expression(container.x, padding),
+        kiwi.Strength.required
+      )
+    )
+
+    // child.y >= container.y + 50 (ラベルスペース考慮)
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(child.y),
+        kiwi.Operator.Ge,
+        new kiwi.Expression(container.y, 50),
+        kiwi.Strength.required
+      )
+    )
+
+    // コンテナを子要素に合わせて拡大（重要！）
+    // container.width + container.x >= child.x + child.width + padding
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(container.width, container.x),
+        kiwi.Operator.Ge,
+        new kiwi.Expression(child.x, child.width, padding),
+        kiwi.Strength.required
+      )
+    )
+
+    // container.height + container.y >= child.y + child.height + padding
+    this.solver.addConstraint(
+      new kiwi.Constraint(
+        new kiwi.Expression(container.height, container.y),
+        kiwi.Operator.Ge,
+        new kiwi.Expression(child.y, child.height, padding),
+        kiwi.Strength.required
+      )
+    )
+  }
+}
+```
+
+**キーポイント:**
+- コンテナのサイズは固定せず、最小サイズのみ指定（WEAK制約）
+- 子要素の位置に応じてコンテナが自動的に拡大（REQUIRED制約）
+- `arrange` 制約（STRONG）と `pack` 制約（REQUIRED）は競合しない
 
 ---
 
@@ -282,15 +457,17 @@ a.y + a.height <= container.y + container.height - padding
 ```typescript
 export interface LayoutHint {
   type: 
-    | "arrangeHorizontal"
-    | "arrangeVertical"
-    | "alignLeft"
-    | "alignRight"
-    | "alignTop"
-    | "alignBottom"
-    | "alignCenterX"
-    | "alignCenterY"
-    | "pack"
+    | "horizontal"           // deprecated: use arrangeHorizontal
+    | "vertical"             // deprecated: use arrangeVertical
+    | "arrangeHorizontal"    // ✅ 実装済み
+    | "arrangeVertical"      // ✅ 実装済み
+    | "alignLeft"            // ✅ 実装済み
+    | "alignRight"           // ✅ 実装済み
+    | "alignTop"             // ✅ 実装済み
+    | "alignBottom"          // ✅ 実装済み
+    | "alignCenterX"         // ✅ 実装済み
+    | "alignCenterY"         // ✅ 実装済み
+    | "pack"                 // ✅ 実装済み（将来削除予定）
   symbolIds: SymbolId[]
   gap?: number
   containerId?: SymbolId
@@ -298,37 +475,104 @@ export interface LayoutHint {
 }
 ```
 
+### 制約強度の設定
+
+| 制約タイプ | 強度 | 理由 |
+|-----------|------|------|
+| Arrange (horizontal/vertical) | STRONG | 要素間の間隔を厳密に保つ |
+| Align (left/right/top/bottom/centerX/centerY) | STRONG | 整列を厳密に保つ |
+| Pack (子要素の最小位置) | REQUIRED | 子要素が必ずコンテナ内に配置される |
+| Pack (コンテナの拡大) | REQUIRED | コンテナが必ず子要素を含むサイズになる |
+| コンテナの最小サイズ | WEAK | 子要素に応じて拡大可能 |
+| 非コンテナのサイズ | REQUIRED (Eq) | サイズは固定 |
+
 ---
 
-## First Milestone: Pack内要素の自動配置
+## First Milestone: Pack内要素の自動配置 ✅ 達成
 
-### 現状の問題
+### 目標
+コンテナ（SystemBoundary）内の複数要素を自動的に配置し、重ならないようにする。
+
+### 実装前の問題
 
 ```typescript
 hint.pack(boundary, [a, b, c])
 // ❌ a, b, c が重なる（デフォルトで同じ位置に配置される）
 ```
 
-### 解決方法
+### 解決方法 ✅ 実装完了
 
 ```typescript
 hint.pack(boundary, [a, b, c])
 hint.arrangeVertical(a, b, c)  // ✅ pack + arrange で並ぶ
 ```
 
-### 実装の課題
+**実装結果:**
+```
+usecase_0 (A): x=50, y=50, w=120, h=60
+usecase_1 (B): x=50, y=160, w=120, h=60  ← gap=50
+usecase_2 (C): x=50, y=270, w=120, h=60  ← gap=50
+systemBoundary (Container): x=30, y=0, w=160, h=350  ← 自動拡大！
+```
 
+### 実装の課題と解決策
+
+#### 課題1: 制約の競合
 以前は `pack` と `arrange` の制約が競合してエラーになっていました：
 
 ```typescript
 hint.arrangeVertical(a, b, c)     // まず垂直制約を追加
-hint.pack(boundary, [a, b, c])    // ❌ pack制約と競合
+hint.pack(boundary, [a, b, c])    // ❌ pack制約と競合してエラー
 ```
 
 **解決策:**
-1. `pack` 制約を先に追加
-2. `arrange` 制約を後から追加
-3. 制約の優先度を調整（pack は WEAK、arrange は MEDIUM）
+1. コンテナのサイズを固定せず、変数化（WEAK制約）
+2. `arrange` 制約を STRONG に設定
+3. `pack` の位置制約を REQUIRED に設定
+4. コンテナサイズ拡大制約を REQUIRED に設定
+
+制約の優先順位:
+- **REQUIRED**: Pack制約（子要素の最小位置、コンテナの拡大）
+- **STRONG**: Arrange制約（要素間の間隔）
+- **WEAK**: コンテナの最小サイズ
+
+この優先順位により、制約が競合せずに解決されます。
+
+#### 課題2: コンテナサイズの固定
+以前はコンテナサイズが固定値（300x200）でした。
+
+**解決策:**
+- コンテナを検出（`isContainer`フラグ）
+- コンテナは最小サイズのみ指定（`width >= 100`, `height >= 100`）
+- 子要素の配置に応じて自動的に拡大
+
+```typescript
+// コンテナ検出
+const isContainer = hints.some(h => 
+  h.type === "pack" && h.containerId === symbol.id
+)
+
+if (isContainer) {
+  // 最小サイズのみ（拡大可能）
+  this.solver.addConstraint(
+    new kiwi.Constraint(
+      new kiwi.Expression(v.width), 
+      kiwi.Operator.Ge, 
+      100, 
+      kiwi.Strength.weak
+    )
+  )
+}
+```
+
+### 結果
+
+✅ **Pack + Arrange の組み合わせが正常に動作**  
+✅ **要素が重ならずに配置される**  
+✅ **コンテナサイズが自動的に拡大**  
+✅ **制約の競合が解決**
+
+**First Milestone 達成！** 🎉
 
 ---
 
@@ -401,7 +645,30 @@ Kiwumil のレイアウトシステムは、宣言的で直感的な API を提�
 
 ✅ **Arrange** で要素を並べる  
 ✅ **Align** で位置を揃える  
+✅ **自動サイズ調整コンテナ** でレイアウトを簡素化  
 ✅ 制約の組み合わせで複雑なレイアウトを実現  
 ✅ 将来的に Grid, Distribute, Flexbox 風レイアウトにも対応予定
 
-現在の First Milestone は、Pack 内要素の自動配置をサポートし、ユーザーが直感的にレイアウトを記述できるようにすることです。
+**First Milestone 達成！** 🎉  
+Pack 内要素の自動配置をサポートし、ユーザーが直感的にレイアウトを記述できるようになりました。
+
+### 実装済み機能（v0.1.x）
+
+- ✅ arrangeHorizontal / arrangeVertical
+- ✅ alignLeft / alignRight / alignTop / alignBottom
+- ✅ alignCenterX / alignCenterY
+- ✅ Pack + Arrange の組み合わせ
+- ✅ 自動サイズ調整コンテナ
+- ✅ 制約の優先度調整による競合解決
+
+### 次のステップ
+
+**Phase 2: 高度なレイアウト**
+- Grid Layout (`arrangeGrid`)
+- Distribute（等間隔配置）
+- Flexbox風レイアウト
+
+**Phase 3: Pack の段階的削除**
+- SystemBoundary が自動的に子要素を囲むように改善
+- Pack を deprecate
+- 最終的に削除（v1.0.x）
