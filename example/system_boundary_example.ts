@@ -7,8 +7,8 @@ Diagram
     const login = el.usecase("Login")
     const boundary = el.systemBoundary("Auth System")
 
-    rel.associate(user, login)
-    hint.horizontal(user, boundary)
     hint.pack(boundary, [login])
+    hint.horizontal(user, boundary)
+    rel.associate(user, login)
   })
   .render("example/system_boundary_example.svg")

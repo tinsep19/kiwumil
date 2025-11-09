@@ -12,7 +12,7 @@
       <line x1="80" y1="90" x2="250" y2="190"
             stroke="black" stroke-width="1.5"/>
     
-  
+
       <g id="actor_0">
         <!-- Head -->
         <circle cx="80" cy="65" r="10" 

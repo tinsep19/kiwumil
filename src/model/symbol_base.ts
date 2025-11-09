@@ -7,6 +7,8 @@ export abstract class SymbolBase {
   readonly label: string
   bounds?: Bounds
   protected theme?: Theme
+  nestLevel: number = 0
+  containerId?: SymbolId
 
   constructor(id: SymbolId, label: string) {
     this.id = id
