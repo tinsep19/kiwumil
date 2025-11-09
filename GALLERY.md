@@ -169,11 +169,11 @@ Diagram
 
 ## System Boundary Examples
 
-### First Milestone - Complete Use Case Example
+### First Milestone - Complete Use Case Example ✅
 
 複数のアクターとユースケース、システム境界を組み合わせた実用的な例。
 
-**⚠️ 注意:** 現在、システム境界内の複数ユースケースが重なって表示されます。これを改善することが最初のマイルストーンです。
+**🎉 First Milestone 達成！** 新しい `arrangeVertical` API により、システム境界内の複数ユースケースが重ならずに配置されます。
 
 **Code:**
 ```typescript
@@ -200,10 +200,11 @@ Diagram
     rel.associate(admin, logout)
     rel.associate(admin, manage_users)
     
-    // 3. レイアウトヒントを設定
-    hint.vertical(user, admin)
-    hint.horizontal(user, system_boundary)
+    // 3. レイアウトヒントを設定（新しいAPI）
+    hint.arrangeVertical(user, admin)
+    hint.arrangeHorizontal(user, system_boundary)
     hint.pack(system_boundary, [login, logout, manage_users])
+    hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
   })
   .render("example/first_milestone.svg")
 ```

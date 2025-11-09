@@ -49,9 +49,10 @@ Diagram
     rel.associate(admin, manage_users)
     
     // 3. レイアウトヒントを設定
-    hint.vertical(user, admin)
-    hint.horizontal(user, system_boundary)
+    hint.arrangeVertical(user, admin)
+    hint.arrangeHorizontal(user, system_boundary)
     hint.pack(system_boundary, [login, logout, manage_users])
+    hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
   })
   .render("output.svg")
 ```
@@ -62,16 +63,14 @@ Diagram
 
 **特徴:**
 - 🎨 **テーマシステム** - default, blue, dark の3つのプリセットテーマ
-- 📦 **システム境界** - `hint.pack()` でシンボルをコンテナ内に配置
+- 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
 - 🔧 **制約ベースレイアウト** - Cassowary アルゴリズムによる自動整列
 - 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
+- ✨ **Arrange + Align API** - 直感的なレイアウト記述
 
-**🚧 現在の制約:**
+**🎉 New!** Pack内要素の自動配置をサポート。`hint.arrangeVertical()` と組み合わせることで、要素が重ならずに配置されます。
 
-現在、`hint.pack()` 内の複数要素は自動的に配置されず、重なって表示されます（上図では Manage Users のみ表示）。
-**これを改善することが最初のマイルストーンです。**
-
-詳細は [TODO_UML-1_5.md](TODO_UML-1_5.md) を参照してください。
+詳細は [LAYOUT_DESIGN.md](LAYOUT_DESIGN.md) を参照してください。
 
 ---
 
