@@ -41,26 +41,37 @@ Diagram
     
     const system_boundary = el.systemBoundary("システム化範囲")
     
-    // 2. レイアウトヒントを設定
-    hint.pack(system_boundary, [login, logout, manage_users])
-    hint.vertical(user, admin)
-    hint.horizontal(user, system_boundary)
-    
-    // 3. 関係を定義
+    // 2. 関係を定義
     rel.associate(user, login)
     rel.associate(user, logout)
     rel.associate(admin, login)
     rel.associate(admin, logout)
     rel.associate(admin, manage_users)
+    
+    // 3. レイアウトヒントを設定
+    hint.vertical(user, admin)
+    hint.horizontal(user, system_boundary)
+    hint.pack(system_boundary, [login, logout, manage_users])
   })
   .render("output.svg")
 ```
+
+**出力イメージ:**
+
+![First Milestone](example/first_milestone.svg)
 
 **特徴:**
 - 🎨 **テーマシステム** - default, blue, dark の3つのプリセットテーマ
 - 📦 **システム境界** - `hint.pack()` でシンボルをコンテナ内に配置
 - 🔧 **制約ベースレイアウト** - Cassowary アルゴリズムによる自動整列
 - 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
+
+**🚧 現在の制約:**
+
+現在、`hint.pack()` 内の複数要素は自動的に配置されず、重なって表示されます（上図では Manage Users のみ表示）。
+**これを改善することが最初のマイルストーンです。**
+
+詳細は [TODO_UML-1_5.md](TODO_UML-1_5.md) を参照してください。
 
 ---
 

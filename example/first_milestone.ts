@@ -3,6 +3,7 @@ import { Diagram, CorePlugin } from "../src/index"
 Diagram
   .use(CorePlugin)
   .build("First Milestone", (el, rel, hint) => {
+    // 1. シンボルを定義
     const user = el.actor("User")
     const admin = el.actor("Admin")
     
@@ -12,18 +13,16 @@ Diagram
     
     const system_boundary = el.systemBoundary("システム化範囲")
     
-    // Pack first to establish container relationship
-    hint.pack(system_boundary, [login, logout, manage_users])
-    
-    // Then layout hints
-    hint.vertical(user, admin)
-    hint.horizontal(user, system_boundary)
-    
-    // Relations
+    // 2. 関係を定義
     rel.associate(user, login)
     rel.associate(user, logout)
     rel.associate(admin, login)
     rel.associate(admin, logout)
     rel.associate(admin, manage_users)
+    
+    // 3. レイアウトヒントを設定
+    hint.vertical(user, admin)
+    hint.horizontal(user, system_boundary)
+    hint.pack(system_boundary, [login, logout, manage_users])
   })
   .render("example/first_milestone.svg")

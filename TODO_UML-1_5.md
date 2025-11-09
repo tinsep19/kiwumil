@@ -115,6 +115,17 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
 
 🗂️ **Next Steps**
 
+### 🎯 優先度：最高（First Milestone）
+
+**🚧 Pack内要素の自動配置**
+- 現状: `hint.pack()` で複数要素を指定すると重なって表示される
+- 目標: コンテナ内の複数要素を自動的に配置（vertical/horizontal/grid）
+- 実装案:
+  - `hint.pack()` に layout オプションを追加
+  - `hint.pack(container, children, { layout: 'vertical' })`
+  - または `hint.packVertical()`, `hint.packHorizontal()` を追加
+  - pack制約とvertical/horizontal制約の競合を解決
+
 ### 🎯 優先度：高（Use Case Diagram の完成）
 1. **IncludeRelationship** を実装
    - `«include»` ステレオタイプ付き破線矢印
