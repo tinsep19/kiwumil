@@ -3,7 +3,18 @@ import type { SymbolId } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
 
 export interface LayoutHint {
-  type: "horizontal" | "vertical" | "pack"
+  type: 
+    | "horizontal"           // deprecated: use arrangeHorizontal
+    | "vertical"             // deprecated: use arrangeVertical
+    | "arrangeHorizontal"
+    | "arrangeVertical"
+    | "alignLeft"
+    | "alignRight"
+    | "alignTop"
+    | "alignBottom"
+    | "alignCenterX"
+    | "alignCenterY"
+    | "pack"
   symbolIds: SymbolId[]
   gap?: number
   containerId?: SymbolId
@@ -29,6 +40,66 @@ export class HintFactory {
       type: "vertical",
       symbolIds,
       gap: 50
+    })
+  }
+
+  // New Arrange methods
+  arrangeHorizontal(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "arrangeHorizontal",
+      symbolIds,
+      gap: 80
+    })
+  }
+
+  arrangeVertical(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "arrangeVertical",
+      symbolIds,
+      gap: 50
+    })
+  }
+
+  // New Align methods
+  alignLeft(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignLeft",
+      symbolIds
+    })
+  }
+
+  alignRight(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignRight",
+      symbolIds
+    })
+  }
+
+  alignTop(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignTop",
+      symbolIds
+    })
+  }
+
+  alignBottom(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignBottom",
+      symbolIds
+    })
+  }
+
+  alignCenterX(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignCenterX",
+      symbolIds
+    })
+  }
+
+  alignCenterY(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignCenterY",
+      symbolIds
     })
   }
 

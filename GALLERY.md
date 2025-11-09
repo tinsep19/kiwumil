@@ -43,7 +43,7 @@ Diagram
     const user2 = element.actor("Admin")
     const user3 = element.actor("Guest")
 
-    hint.horizontal(user1, user2, user3)
+    hint.arrangeHorizontal(user1, user2, user3)
   })
   .render("example/actor_horizontal.svg")
 ```
@@ -70,7 +70,7 @@ Diagram
     const user2 = element.actor("Admin")
     const user3 = element.actor("Guest")
 
-    hint.vertical(user1, user2, user3)
+    hint.arrangeVertical(user1, user2, user3)
   })
   .render("example/actor_vertical.svg")
 ```
@@ -122,8 +122,8 @@ Diagram
     const register = element.usecase("Register")
     const profile = element.usecase("View Profile")
     
-    hint.horizontal(login, register)
-    hint.horizontal(register, profile)
+    hint.arrangeHorizontal(login, register)
+    hint.arrangeHorizontal(register, profile)
   })
   .render("example/usecase_multiple.svg")
 ```
@@ -155,8 +155,8 @@ Diagram
     relation.associate(user, login)
     relation.associate(user, logout)
     
-    hint.horizontal(user, login)
-    hint.vertical(login, logout)
+    hint.arrangeHorizontal(user, login)
+    hint.arrangeVertical(login, logout)
   })
   .render("example/usecase_with_actor.svg")
 ```
@@ -169,11 +169,11 @@ Diagram
 
 ## System Boundary Examples
 
-### First Milestone - Complete Use Case Example
+### First Milestone - Complete Use Case Example ✅
 
 複数のアクターとユースケース、システム境界を組み合わせた実用的な例。
 
-**⚠️ 注意:** 現在、システム境界内の複数ユースケースが重なって表示されます。これを改善することが最初のマイルストーンです。
+**🎉 First Milestone 達成！** 新しい `arrangeVertical` API により、システム境界内の複数ユースケースが重ならずに配置されます。
 
 **Code:**
 ```typescript
@@ -200,10 +200,11 @@ Diagram
     rel.associate(admin, logout)
     rel.associate(admin, manage_users)
     
-    // 3. レイアウトヒントを設定
-    hint.vertical(user, admin)
-    hint.horizontal(user, system_boundary)
+    // 3. レイアウトヒントを設定（新しいAPI）
+    hint.arrangeVertical(user, admin)
+    hint.arrangeHorizontal(user, system_boundary)
     hint.pack(system_boundary, [login, logout, manage_users])
+    hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
   })
   .render("example/first_milestone.svg")
 ```
@@ -231,7 +232,7 @@ Diagram
     const boundary = el.systemBoundary("Auth System")
 
     hint.pack(boundary, [login])
-    hint.horizontal(user, boundary)
+    hint.arrangeHorizontal(user, boundary)
     rel.associate(user, login)
   })
   .render("example/system_boundary_example.svg")
@@ -265,8 +266,8 @@ Diagram
     relation.associate(user, login)
     relation.associate(user, logout)
     
-    hint.horizontal(user, login)
-    hint.vertical(login, logout)
+    hint.arrangeHorizontal(user, login)
+    hint.arrangeVertical(login, logout)
   })
   .render("example/usecase_with_actor_blue.svg")
 ```
@@ -297,8 +298,8 @@ Diagram
     relation.associate(user, login)
     relation.associate(user, logout)
     
-    hint.horizontal(user, login)
-    hint.vertical(login, logout)
+    hint.arrangeHorizontal(user, login)
+    hint.arrangeVertical(login, logout)
   })
   .render("example/usecase_with_actor_dark.svg")
 ```
