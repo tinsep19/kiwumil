@@ -26,26 +26,32 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ## 🧩 使用イメージ
 
 ```typescript
-import { Diagram, CorePlugin, themes } from "kiwumil"
+import { Diagram, CorePlugin } from "kiwumil"
 
 Diagram
   .use(CorePlugin)
-  .theme(themes.blue)  // オプション: default, blue, dark
-  .build("Use Case Diagram", (el, rel, hint) => {
+  .build("First Milestone", (el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
+    const admin = el.actor("Admin")
+    
     const login = el.usecase("Login")
     const logout = el.usecase("Logout")
-    const boundary = el.systemBoundary("Auth System")
-
+    const manage_users = el.usecase("Manage Users")
+    
+    const system_boundary = el.systemBoundary("システム化範囲")
+    
     // 2. レイアウトヒントを設定
-    hint.pack(boundary, [login, logout])  // 境界内に配置
-    hint.vertical(login, logout)          // 垂直に並べる
-    hint.horizontal(user, boundary)       // 水平に並べる
-
+    hint.pack(system_boundary, [login, logout, manage_users])
+    hint.vertical(user, admin)
+    hint.horizontal(user, system_boundary)
+    
     // 3. 関係を定義
     rel.associate(user, login)
     rel.associate(user, logout)
+    rel.associate(admin, login)
+    rel.associate(admin, logout)
+    rel.associate(admin, manage_users)
   })
   .render("output.svg")
 ```
