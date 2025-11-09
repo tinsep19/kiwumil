@@ -40,12 +40,13 @@ export class Association {
     const toX = toSymbol.bounds.x + toSymbol.bounds.width / 2
     const toY = toSymbol.bounds.y + toSymbol.bounds.height / 2
 
-    const stroke = this.theme?.colors.relationshipStroke || "black"
-    const strokeWidth = this.theme?.strokeWidth.relationship || 1.5
+    // テーマから色を取得（relationshipはdefaultConfigを使用）
+    const strokeColor = this.theme?.defaultConfig.strokeColor || "black"
+    const strokeWidth = this.theme?.defaultConfig.strokeWidth || 1.5
 
     return `
       <line x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"
-            stroke="${stroke}" stroke-width="${strokeWidth}"/>
+            stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
     `
   }
 }

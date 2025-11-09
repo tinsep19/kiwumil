@@ -1,88 +1,118 @@
 // src/core/theme.ts
 
-export interface ThemeColors {
-  background: string
-  usecaseFill: string
-  usecaseStroke: string
-  actorStroke: string
-  relationshipStroke: string
-  text: string
+export type SymbolName = 
+  | "actor"
+  | "usecase"
+  | "systemBoundary"
+  | "class"
+  | "interface"
+  | "package"
+  | "note"
+  | "component"
+  | "node"
+
+export interface StyleSet {
+  textColor: string
+  fontSize: number
+  strokeWidth: number
+  strokeColor: string
+  fillColor: string
+  backgroundColor?: string
 }
 
 export interface Theme {
   name: string
-  colors: ThemeColors
-  strokeWidth: {
-    usecase: number
-    actor: number
-    relationship: number
-  }
-  fontSize: {
-    usecase: number
-    actor: number
-  }
+  defaultConfig: StyleSet
+  symbols?: Partial<Record<SymbolName, Partial<StyleSet>>>
 }
 
 export const defaultTheme: Theme = {
   name: 'default',
-  colors: {
-    background: 'white',
-    usecaseFill: 'white',
-    usecaseStroke: 'black',
-    actorStroke: 'black',
-    relationshipStroke: 'black',
-    text: 'black'
+  defaultConfig: {
+    textColor: 'black',
+    fontSize: 12,
+    strokeWidth: 2,
+    strokeColor: 'black',
+    fillColor: 'white',
+    backgroundColor: 'white'
   },
-  strokeWidth: {
-    usecase: 2,
-    actor: 2,
-    relationship: 1.5
-  },
-  fontSize: {
-    usecase: 12,
-    actor: 12
+  symbols: {
+    actor: {
+      strokeWidth: 2,
+      strokeColor: 'black',
+      textColor: 'black',
+      fontSize: 12
+    },
+    usecase: {
+      fillColor: 'white',
+      strokeColor: 'black',
+      strokeWidth: 2,
+      textColor: 'black',
+      fontSize: 12
+    },
+    systemBoundary: {
+      fillColor: '#f8f8f8',
+      strokeColor: '#999',
+      strokeWidth: 2,
+      textColor: 'black',
+      fontSize: 14
+    }
   }
 }
 
 export const blueTheme: Theme = {
   name: 'blue',
-  colors: {
-    background: '#f0f8ff',
-    usecaseFill: '#e6f3ff',
-    usecaseStroke: '#0066cc',
-    actorStroke: '#003366',
-    relationshipStroke: '#0066cc',
-    text: '#003366'
+  defaultConfig: {
+    textColor: '#003366',
+    fontSize: 12,
+    strokeWidth: 2,
+    strokeColor: '#0066cc',
+    fillColor: '#e6f3ff',
+    backgroundColor: '#f0f8ff'
   },
-  strokeWidth: {
-    usecase: 2,
-    actor: 2,
-    relationship: 1.5
-  },
-  fontSize: {
-    usecase: 12,
-    actor: 12
+  symbols: {
+    actor: {
+      strokeColor: '#003366',
+      textColor: '#003366'
+    },
+    usecase: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc',
+      textColor: '#003366'
+    },
+    systemBoundary: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc',
+      textColor: '#003366'
+    }
   }
 }
 
 export const darkTheme: Theme = {
   name: 'dark',
-  colors: {
-    background: '#1e1e1e',
-    usecaseFill: '#2d2d2d',
-    usecaseStroke: '#569cd6',
-    actorStroke: '#4ec9b0',
-    relationshipStroke: '#808080',
-    text: '#d4d4d4'
+  defaultConfig: {
+    textColor: '#d4d4d4',
+    fontSize: 12,
+    strokeWidth: 2,
+    strokeColor: '#569cd6',
+    fillColor: '#2d2d2d',
+    backgroundColor: '#1e1e1e'
   },
-  strokeWidth: {
-    usecase: 2,
-    actor: 2,
-    relationship: 1.5
-  },
-  fontSize: {
-    usecase: 12,
-    actor: 12
+  symbols: {
+    actor: {
+      strokeColor: '#4ec9b0',
+      textColor: '#d4d4d4'
+    },
+    usecase: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#569cd6',
+      textColor: '#d4d4d4'
+    },
+    systemBoundary: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#808080',
+      textColor: '#d4d4d4'
+    }
   }
 }
 
@@ -93,3 +123,16 @@ export const themes = {
 }
 
 export type ThemeName = keyof typeof themes
+
+// ヘルパー関数: シンボル用のスタイルを取得
+export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSet {
+  const symbolStyle = theme.symbols?.[symbolName] || {}
+  return {
+    textColor: symbolStyle.textColor ?? theme.defaultConfig.textColor,
+    fontSize: symbolStyle.fontSize ?? theme.defaultConfig.fontSize,
+    strokeWidth: symbolStyle.strokeWidth ?? theme.defaultConfig.strokeWidth,
+    strokeColor: symbolStyle.strokeColor ?? theme.defaultConfig.strokeColor,
+    fillColor: symbolStyle.fillColor ?? theme.defaultConfig.fillColor,
+    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultConfig.backgroundColor
+  }
+}

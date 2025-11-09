@@ -1,11 +1,10 @@
 // src/model/symbols/system_boundary_symbol.ts
 import { SymbolBase } from "../symbol_base"
+import { getStyleForSymbol } from "../../core/theme"
 
 export class SystemBoundarySymbol extends SymbolBase {
   defaultWidth = 300
   defaultHeight = 200
-  background = "#f8f8f8"
-  borderColor = "#999"
 
   getDefaultSize() {
     return { width: this.defaultWidth, height: this.defaultHeight }
@@ -17,22 +16,27 @@ export class SystemBoundarySymbol extends SymbolBase {
     }
 
     const { x, y, width, height } = this.bounds
-    const stroke = this.borderColor
-    const fill = this.background
-    const strokeWidth = this.theme?.strokeWidth.usecase || 2
-    const fontSize = this.theme?.fontSize.usecase || 14
-    const textColor = this.theme?.colors.text || "black"
+
+    // テーマからスタイルを取得
+    const style = this.theme ? getStyleForSymbol(this.theme, 'systemBoundary') : {
+      strokeColor: '#999',
+      strokeWidth: 2,
+      fillColor: '#f8f8f8',
+      textColor: 'black',
+      fontSize: 14,
+      backgroundColor: '#f8f8f8'
+    }
 
     return `
       <g id="${this.id}">
         <!-- System Boundary Rectangle -->
         <rect x="${x}" y="${y}" width="${width}" height="${height}" 
-              fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+              fill="${style.fillColor}" stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
         
         <!-- Label at top -->
-        <text x="${x + 10}" y="${y + fontSize + 5}" 
-              font-size="${fontSize}" font-family="Arial" font-weight="bold"
-              fill="${textColor}">
+        <text x="${x + 10}" y="${y + style.fontSize + 5}" 
+              font-size="${style.fontSize}" font-family="Arial" font-weight="bold"
+              fill="${style.textColor}">
           ${this.label}
         </text>
       </g>

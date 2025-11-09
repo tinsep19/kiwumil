@@ -70,7 +70,7 @@ export class SvgRenderer {
 
     const width = maxX + 50
     const height = maxY + 50
-    const bgColor = this.theme?.colors.background || "white"
+    const bgColor = this.theme?.defaultConfig.backgroundColor || "white"
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
