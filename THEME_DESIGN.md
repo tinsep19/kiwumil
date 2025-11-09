@@ -1,0 +1,324 @@
+# Kiwumil テーマシステム設計書
+
+## 概要
+
+Kiwumil のテーマシステムは、UML図の視覚的スタイル（色、線幅、フォントサイズなど）を統一的に管理するための仕組みです。
+
+---
+
+## アーキテクチャ
+
+### 1. 基本構造
+
+```typescript
+// 統一されたスタイルセット
+export interface StyleSet {
+  textColor: string        // テキストの色
+  fontSize: number         // フォントサイズ
+  strokeWidth: number      // 線の太さ
+  strokeColor: string      // 線の色
+  fillColor: string        // 塗りつぶし色
+  backgroundColor?: string // 背景色（オプション）
+}
+
+// テーマ定義
+export interface Theme {
+  name: string                                               // テーマ名
+  defaultConfig: StyleSet                                    // デフォルトスタイル
+  symbols?: Partial<Record<SymbolName, Partial<StyleSet>>>  // シンボル毎の上書き
+}
+```
+
+### 2. シンボル名の型定義
+
+```typescript
+export type SymbolName = 
+  | "actor"           // アクター（棒人形）
+  | "usecase"         // ユースケース（楕円）
+  | "systemBoundary"  // システム境界（矩形コンテナ）
+  | "class"           // クラス（将来対応）
+  | "interface"       // インターフェース（将来対応）
+  | "package"         // パッケージ（将来対応）
+  | "note"            // 注釈（将来対応）
+  | "component"       // コンポーネント（将来対応）
+  | "node"            // ノード（将来対応）
+```
+
+---
+
+## スタイル取得の仕組み
+
+### ヘルパー関数
+
+```typescript
+export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSet {
+  const symbolStyle = theme.symbols?.[symbolName] || {}
+  return {
+    textColor: symbolStyle.textColor ?? theme.defaultConfig.textColor,
+    fontSize: symbolStyle.fontSize ?? theme.defaultConfig.fontSize,
+    strokeWidth: symbolStyle.strokeWidth ?? theme.defaultConfig.strokeWidth,
+    strokeColor: symbolStyle.strokeColor ?? theme.defaultConfig.strokeColor,
+    fillColor: symbolStyle.fillColor ?? theme.defaultConfig.fillColor,
+    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultConfig.backgroundColor
+  }
+}
+```
+
+### 動作原理
+
+1. シンボル固有のスタイル（`theme.symbols[symbolName]`）を取得
+2. 設定されていないプロパティは `theme.defaultConfig` から取得
+3. 完全な `StyleSet` を返す
+
+---
+
+## プリセットテーマ
+
+### 1. Default Theme
+
+```typescript
+{
+  name: 'default',
+  defaultConfig: {
+    textColor: 'black',
+    fontSize: 12,
+    strokeWidth: 2,
+    strokeColor: 'black',
+    fillColor: 'white',
+    backgroundColor: 'white'
+  },
+  symbols: {
+    systemBoundary: {
+      fillColor: '#f8f8f8',
+      strokeColor: '#999',
+      fontSize: 14
+    }
+  }
+}
+```
+
+**特徴**: モノクロのシンプルなスタイル
+
+---
+
+### 2. Blue Theme
+
+```typescript
+{
+  name: 'blue',
+  defaultConfig: {
+    textColor: '#003366',
+    fontSize: 12,
+    strokeWidth: 2,
+    strokeColor: '#0066cc',
+    fillColor: '#e6f3ff',
+    backgroundColor: '#f0f8ff'
+  },
+  symbols: {
+    actor: {
+      strokeColor: '#003366',
+      textColor: '#003366'
+    },
+    usecase: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc'
+    },
+    systemBoundary: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc'
+    }
+  }
+}
+```
+
+**特徴**: ブルー系の爽やかな配色
+
+---
+
+### 3. Dark Theme
+
+```typescript
+{
+  name: 'dark',
+  defaultConfig: {
+    textColor: '#d4d4d4',
+    fontSize: 12,
+    strokeWidth: 2,
+    strokeColor: '#569cd6',
+    fillColor: '#2d2d2d',
+    backgroundColor: '#1e1e1e'
+  },
+  symbols: {
+    actor: {
+      strokeColor: '#4ec9b0',
+      textColor: '#d4d4d4'
+    },
+    usecase: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#569cd6'
+    },
+    systemBoundary: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#808080'
+    }
+  }
+}
+```
+
+**特徴**: ダークモード対応、目に優しい配色
+
+---
+
+## 使用方法
+
+### 基本的な使い方
+
+```typescript
+import { Diagram, CorePlugin, themes } from "./src/index"
+
+// テーマを指定
+Diagram
+  .use(CorePlugin)
+  .theme(themes.blue)  // または themes.dark, themes.default
+  .build("My Diagram", (el, rel, hint) => {
+    // 図の定義...
+  })
+  .render("output.svg")
+```
+
+### カスタムテーマの作成
+
+```typescript
+const myTheme: Theme = {
+  name: 'custom',
+  defaultConfig: {
+    textColor: '#333333',
+    fontSize: 14,
+    strokeWidth: 2.5,
+    strokeColor: '#ff6600',
+    fillColor: '#fff5e6',
+    backgroundColor: '#ffffff'
+  },
+  symbols: {
+    actor: {
+      strokeColor: '#ff3300',
+      strokeWidth: 3
+    }
+  }
+}
+
+Diagram.use(CorePlugin).theme(myTheme).build(...)
+```
+
+---
+
+## シンボルでの実装例
+
+### ActorSymbol
+
+```typescript
+export class ActorSymbol extends SymbolBase {
+  toSVG(): string {
+    // テーマからスタイルを取得
+    const style = this.theme 
+      ? getStyleForSymbol(this.theme, 'actor') 
+      : defaultStyle
+    
+    return `
+      <circle 
+        stroke="${style.strokeColor}" 
+        stroke-width="${style.strokeWidth}"
+      />
+      <text 
+        fill="${style.textColor}" 
+        font-size="${style.fontSize}"
+      >
+        ${this.label}
+      </text>
+    `
+  }
+}
+```
+
+---
+
+## 設計の利点
+
+### 1. 一貫性
+すべてのスタイルプロパティが `StyleSet` に統一されており、どのシンボルでも同じ方法でスタイルを取得できます。
+
+### 2. 拡張性
+新しいシンボルを追加する際も、`SymbolName` に追加するだけで、既存のテーマシステムがそのまま使えます。
+
+```typescript
+// 将来的にクラス図を追加する場合
+export type SymbolName = ... | "class" | "interface"
+
+// テーマにクラス固有のスタイルを追加
+symbols: {
+  class: {
+    fillColor: '#ffffcc',
+    strokeColor: '#000000'
+  }
+}
+```
+
+### 3. 柔軟性
+- `defaultConfig` で全体のスタイルを設定
+- `symbols` で特定のシンボルだけ上書き
+- 上書きは部分的でもOK（未設定部分は自動的にdefaultConfigを使用）
+
+### 4. 保守性
+- スタイル取得ロジックが `getStyleForSymbol()` に集約
+- テーマ変更時、シンボル側のコード修正が不要
+
+---
+
+## 将来の拡張案
+
+### 1. シンボルインスタンス単位のスタイル上書き
+
+```typescript
+const myUsecase = el.usecase("Login")
+myUsecase.setStyle({
+  fillColor: '#ffcccc'  // このインスタンスだけ色を変更
+})
+```
+
+### 2. 条件付きスタイル
+
+```typescript
+symbols: {
+  usecase: (symbolInstance) => {
+    return symbolInstance.label.includes("Error")
+      ? { fillColor: '#ffcccc' }
+      : { fillColor: '#ccffcc' }
+  }
+}
+```
+
+### 3. アニメーション対応
+
+```typescript
+symbols: {
+  actor: {
+    animation: {
+      hover: { strokeWidth: 3 },
+      active: { fillColor: '#ffff00' }
+    }
+  }
+}
+```
+
+---
+
+## まとめ
+
+Kiwumil のテーマシステムは、シンプルでありながら拡張性の高い設計になっています：
+
+✅ **統一インターフェース** - すべてのスタイルが `StyleSet` で管理  
+✅ **階層的設定** - デフォルト + シンボル固有の上書き  
+✅ **型安全** - TypeScript による型チェック  
+✅ **将来対応** - 新しいシンボルや機能の追加が容易  
+
+この設計により、ユーザーは簡単にテーマをカスタマイズでき、開発者は保守しやすいコードを維持できます。
