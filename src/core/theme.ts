@@ -1,15 +1,7 @@
 // src/core/theme.ts
 
-export type SymbolName = 
-  | "actor"
-  | "usecase"
-  | "systemBoundary"
-  | "class"
-  | "interface"
-  | "package"
-  | "note"
-  | "component"
-  | "node"
+// SymbolName は string 型（プラグインで拡張可能）
+export type SymbolName = string
 
 export interface StyleSet {
   textColor: string
@@ -23,7 +15,7 @@ export interface StyleSet {
 export interface Theme {
   name: string
   defaultConfig: StyleSet
-  symbols?: Partial<Record<SymbolName, Partial<StyleSet>>>
+  symbols?: Record<SymbolName, Partial<StyleSet>>
 }
 
 export const defaultTheme: Theme = {

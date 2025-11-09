@@ -23,25 +23,42 @@ export interface StyleSet {
 
 // テーマ定義
 export interface Theme {
-  name: string                                               // テーマ名
-  defaultConfig: StyleSet                                    // デフォルトスタイル
-  symbols?: Partial<Record<SymbolName, Partial<StyleSet>>>  // シンボル毎の上書き
+  name: string                                    // テーマ名
+  defaultConfig: StyleSet                         // デフォルトスタイル
+  symbols?: Record<SymbolName, Partial<StyleSet>> // シンボル毎の上書き
 }
 ```
 
 ### 2. シンボル名の型定義
 
 ```typescript
-export type SymbolName = 
-  | "actor"           // アクター（棒人形）
-  | "usecase"         // ユースケース（楕円）
-  | "systemBoundary"  // システム境界（矩形コンテナ）
-  | "class"           // クラス（将来対応）
-  | "interface"       // インターフェース（将来対応）
-  | "package"         // パッケージ（将来対応）
-  | "note"            // 注釈（将来対応）
-  | "component"       // コンポーネント（将来対応）
-  | "node"            // ノード（将来対応）
+// SymbolName は string 型（プラグインによる拡張が可能）
+export type SymbolName = string
+```
+
+**設計理由:**
+- プラグインで新しいシンボルを追加する際、theme.ts を変更する必要がない
+- サードパーティプラグインが独自のシンボル名を自由に定義できる
+- CorePlugin 以外のシンボル（例: カスタムクラス図要素）にも対応
+
+**既知のシンボル例:**
+- `"actor"` - アクター（棒人形）
+- `"usecase"` - ユースケース（楕円）
+- `"systemBoundary"` - システム境界（矩形コンテナ）
+
+**プラグインによる拡張例:**
+```typescript
+// CustomPlugin が追加するシンボル
+symbols.register("customShape", CustomShapeSymbol)
+
+// テーマでカスタムシンボルのスタイルを定義
+const myTheme: Theme = {
+  symbols: {
+    customShape: {  // 型エラーにならない
+      fillColor: '#ff0000'
+    }
+  }
+}
 ```
 
 ---
@@ -248,17 +265,30 @@ export class ActorSymbol extends SymbolBase {
 すべてのスタイルプロパティが `StyleSet` に統一されており、どのシンボルでも同じ方法でスタイルを取得できます。
 
 ### 2. 拡張性
-新しいシンボルを追加する際も、`SymbolName` に追加するだけで、既存のテーマシステムがそのまま使えます。
+新しいシンボルを追加する際、theme.ts の型定義を変更する必要がありません。プラグインシステムと組み合わせることで、完全に独立したシンボル拡張が可能です。
 
 ```typescript
-// 将来的にクラス図を追加する場合
-export type SymbolName = ... | "class" | "interface"
+// プラグインで新しいシンボルを追加
+class ClassDiagramPlugin implements KiwumilPlugin {
+  registerSymbols(symbols: SymbolRegistry) {
+    symbols.register("class", ClassSymbol)
+    symbols.register("interface", InterfaceSymbol)
+  }
+}
 
-// テーマにクラス固有のスタイルを追加
-symbols: {
-  class: {
-    fillColor: '#ffffcc',
-    strokeColor: '#000000'
+// テーマにクラス図固有のスタイルを追加
+const classTheme: Theme = {
+  name: 'class-diagram',
+  defaultConfig: { /* ... */ },
+  symbols: {
+    class: {
+      fillColor: '#ffffcc',
+      strokeColor: '#000000'
+    },
+    interface: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc'
+    }
   }
 }
 ```
