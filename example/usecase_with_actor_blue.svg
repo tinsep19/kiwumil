@@ -6,13 +6,13 @@
   <rect width="100%" height="100%" fill="#f0f8ff"/>
   
       <line x1="80" y1="90" x2="250" y2="80"
-            stroke="#0066cc" stroke-width="1.5"/>
+            stroke="#0066cc" stroke-width="2"/>
     
 
       <line x1="80" y1="90" x2="250" y2="190"
-            stroke="#0066cc" stroke-width="1.5"/>
+            stroke="#0066cc" stroke-width="2"/>
     
-  
+
       <g id="actor_0">
         <!-- Head -->
         <circle cx="80" cy="65" r="10" 
