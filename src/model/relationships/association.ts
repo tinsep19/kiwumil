@@ -15,6 +15,18 @@ export class Association {
     this.theme = theme
   }
 
+  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {
+    const fromSymbol = symbols.get(this.from)
+    const toSymbol = symbols.get(this.to)
+    
+    // 関連線は、両端の要素が属する最も深いコンテナの内側
+    const fromLevel = fromSymbol?.nestLevel ?? 0
+    const toLevel = toSymbol?.nestLevel ?? 0
+    const maxLevel = Math.max(fromLevel, toLevel)
+    
+    return maxLevel * 100 + 10
+  }
+
   toSVG(symbols: Map<SymbolId, SymbolBase>): string {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)

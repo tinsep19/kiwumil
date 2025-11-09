@@ -41,7 +41,7 @@ export class Diagram {
 
     const element = new ElementFactory(this.symbolRegistry, symbols)
     const relation = new RelationshipFactory(relationships)
-    const hint = new HintFactory(hints)
+    const hint = new HintFactory(hints, symbols)
 
     callback(element, relation, hint)
 

@@ -4,6 +4,11 @@ import type { Association } from "../model/relationships/association"
 import type { SymbolId } from "../model/types"
 import type { Theme } from "../core/theme"
 
+interface RenderElement {
+  zIndex: number
+  svg: string
+}
+
 export class SvgRenderer {
   private symbols: SymbolBase[]
   private relationships: Association[]
@@ -15,17 +20,21 @@ export class SvgRenderer {
     this.theme = theme
   }
 
-  render(): string {
-    // Sort symbols to render boundaries first (in background)
-    const sortedSymbols = [...this.symbols].sort((a, b) => {
-      const aIsBoundary = a.constructor.name === "SystemBoundarySymbol"
-      const bIsBoundary = b.constructor.name === "SystemBoundarySymbol"
-      if (aIsBoundary && !bIsBoundary) return -1
-      if (!aIsBoundary && bIsBoundary) return 1
-      return 0
-    })
+  private calculateSymbolZIndex(symbol: SymbolBase): number {
+    const nestLevel = symbol.nestLevel
     
-    const symbolsSvg = sortedSymbols.map(s => s.toSVG()).join("\n")
+    if (symbol.constructor.name === "SystemBoundarySymbol") {
+      // Boundary は背景（ネストレベルが深いほど上に）
+      return nestLevel * 100 - 100
+    } else {
+      // 通常のシンボルは前景
+      return nestLevel * 100 + 50
+    }
+  }
+
+  render(): string {
+    // すべての描画要素を収集
+    const renderElements: RenderElement[] = []
     
     // Create symbol map for relationship rendering
     const symbolMap = new Map<SymbolId, SymbolBase>()
@@ -33,9 +42,22 @@ export class SvgRenderer {
       symbolMap.set(symbol.id, symbol)
     }
     
-    const relationshipsSvg = this.relationships
-      .map(r => r.toSVG(symbolMap))
-      .join("\n")
+    // Symbols
+    for (const symbol of this.symbols) {
+      const zIndex = this.calculateSymbolZIndex(symbol)
+      renderElements.push({ zIndex, svg: symbol.toSVG() })
+    }
+    
+    // Relationships
+    for (const rel of this.relationships) {
+      const zIndex = rel.calculateZIndex(symbolMap)
+      renderElements.push({ zIndex, svg: rel.toSVG(symbolMap) })
+    }
+    
+    // zIndex でソート
+    renderElements.sort((a, b) => a.zIndex - b.zIndex)
+    
+    const content = renderElements.map(e => e.svg).join("\n")
     
     // Calculate canvas size
     let maxX = 0, maxY = 0
@@ -56,8 +78,7 @@ export class SvgRenderer {
      height="${height}" 
      viewBox="0 0 ${width} ${height}">
   <rect width="100%" height="100%" fill="${bgColor}"/>
-  ${relationshipsSvg}
-  ${symbolsSvg}
+  ${content}
 </svg>`
   }
 

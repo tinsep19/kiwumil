@@ -1,5 +1,6 @@
 // src/dsl/hint_factory.ts
 import type { SymbolId } from "../model/types"
+import type { SymbolBase } from "../model/symbol_base"
 
 export interface LayoutHint {
   type: "horizontal" | "vertical" | "pack"
@@ -10,7 +11,10 @@ export interface LayoutHint {
 }
 
 export class HintFactory {
-  constructor(private hints: LayoutHint[]) {}
+  constructor(
+    private hints: LayoutHint[],
+    private symbols: SymbolBase[]
+  ) {}
 
   horizontal(...symbolIds: SymbolId[]) {
     this.hints.push({
@@ -29,6 +33,19 @@ export class HintFactory {
   }
 
   pack(containerId: SymbolId, childIds: SymbolId[]) {
+    // Set nestLevel for children
+    const container = this.symbols.find(s => s.id === containerId)
+    if (container) {
+      const containerNestLevel = container.nestLevel
+      for (const childId of childIds) {
+        const child = this.symbols.find(s => s.id === childId)
+        if (child) {
+          child.nestLevel = containerNestLevel + 1
+          child.containerId = containerId
+        }
+      }
+    }
+
     this.hints.push({
       type: "pack",
       symbolIds: [],
