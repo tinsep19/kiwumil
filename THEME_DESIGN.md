@@ -24,7 +24,7 @@ export interface StyleSet {
 // テーマ定義
 export interface Theme {
   name: string                                    // テーマ名
-  defaultConfig: StyleSet                         // デフォルトスタイル
+  defaultStyleSet: StyleSet                         // デフォルトスタイル
   symbols?: Record<SymbolName, Partial<StyleSet>> // シンボル毎の上書き
 }
 ```
@@ -71,12 +71,12 @@ const myTheme: Theme = {
 export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSet {
   const symbolStyle = theme.symbols?.[symbolName] || {}
   return {
-    textColor: symbolStyle.textColor ?? theme.defaultConfig.textColor,
-    fontSize: symbolStyle.fontSize ?? theme.defaultConfig.fontSize,
-    strokeWidth: symbolStyle.strokeWidth ?? theme.defaultConfig.strokeWidth,
-    strokeColor: symbolStyle.strokeColor ?? theme.defaultConfig.strokeColor,
-    fillColor: symbolStyle.fillColor ?? theme.defaultConfig.fillColor,
-    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultConfig.backgroundColor
+    textColor: symbolStyle.textColor ?? theme.defaultStyleSet.textColor,
+    fontSize: symbolStyle.fontSize ?? theme.defaultStyleSet.fontSize,
+    strokeWidth: symbolStyle.strokeWidth ?? theme.defaultStyleSet.strokeWidth,
+    strokeColor: symbolStyle.strokeColor ?? theme.defaultStyleSet.strokeColor,
+    fillColor: symbolStyle.fillColor ?? theme.defaultStyleSet.fillColor,
+    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultStyleSet.backgroundColor
   }
 }
 ```
@@ -84,7 +84,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ### 動作原理
 
 1. シンボル固有のスタイル（`theme.symbols[symbolName]`）を取得
-2. 設定されていないプロパティは `theme.defaultConfig` から取得
+2. 設定されていないプロパティは `theme.defaultStyleSet` から取得
 3. 完全な `StyleSet` を返す
 
 ---
@@ -96,7 +96,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ```typescript
 {
   name: 'default',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: 'black',
     fontSize: 12,
     strokeWidth: 2,
@@ -123,7 +123,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ```typescript
 {
   name: 'blue',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: '#003366',
     fontSize: 12,
     strokeWidth: 2,
@@ -157,7 +157,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ```typescript
 {
   name: 'dark',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: '#d4d4d4',
     fontSize: 12,
     strokeWidth: 2,
@@ -208,7 +208,7 @@ Diagram
 ```typescript
 const myTheme: Theme = {
   name: 'custom',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: '#333333',
     fontSize: 14,
     strokeWidth: 2.5,
@@ -279,7 +279,7 @@ class ClassDiagramPlugin implements KiwumilPlugin {
 // テーマにクラス図固有のスタイルを追加
 const classTheme: Theme = {
   name: 'class-diagram',
-  defaultConfig: { /* ... */ },
+  defaultStyleSet: { /* ... */ },
   symbols: {
     class: {
       fillColor: '#ffffcc',
@@ -294,9 +294,9 @@ const classTheme: Theme = {
 ```
 
 ### 3. 柔軟性
-- `defaultConfig` で全体のスタイルを設定
+- `defaultStyleSet` で全体のスタイルを設定
 - `symbols` で特定のシンボルだけ上書き
-- 上書きは部分的でもOK（未設定部分は自動的にdefaultConfigを使用）
+- 上書きは部分的でもOK（未設定部分は自動的にdefaultStyleSetを使用）
 
 ### 4. 保守性
 - スタイル取得ロジックが `getStyleForSymbol()` に集約

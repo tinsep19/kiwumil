@@ -14,13 +14,13 @@ export interface StyleSet {
 
 export interface Theme {
   name: string
-  defaultConfig: StyleSet
+  defaultStyleSet: StyleSet
   symbols?: Record<SymbolName, Partial<StyleSet>>
 }
 
 export const defaultTheme: Theme = {
   name: 'default',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: 'black',
     fontSize: 12,
     strokeWidth: 2,
@@ -54,7 +54,7 @@ export const defaultTheme: Theme = {
 
 export const blueTheme: Theme = {
   name: 'blue',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: '#003366',
     fontSize: 12,
     strokeWidth: 2,
@@ -82,7 +82,7 @@ export const blueTheme: Theme = {
 
 export const darkTheme: Theme = {
   name: 'dark',
-  defaultConfig: {
+  defaultStyleSet: {
     textColor: '#d4d4d4',
     fontSize: 12,
     strokeWidth: 2,
@@ -120,11 +120,11 @@ export type ThemeName = keyof typeof themes
 export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSet {
   const symbolStyle = theme.symbols?.[symbolName] || {}
   return {
-    textColor: symbolStyle.textColor ?? theme.defaultConfig.textColor,
-    fontSize: symbolStyle.fontSize ?? theme.defaultConfig.fontSize,
-    strokeWidth: symbolStyle.strokeWidth ?? theme.defaultConfig.strokeWidth,
-    strokeColor: symbolStyle.strokeColor ?? theme.defaultConfig.strokeColor,
-    fillColor: symbolStyle.fillColor ?? theme.defaultConfig.fillColor,
-    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultConfig.backgroundColor
+    textColor: symbolStyle.textColor ?? theme.defaultStyleSet.textColor,
+    fontSize: symbolStyle.fontSize ?? theme.defaultStyleSet.fontSize,
+    strokeWidth: symbolStyle.strokeWidth ?? theme.defaultStyleSet.strokeWidth,
+    strokeColor: symbolStyle.strokeColor ?? theme.defaultStyleSet.strokeColor,
+    fillColor: symbolStyle.fillColor ?? theme.defaultStyleSet.fillColor,
+    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultStyleSet.backgroundColor
   }
 }
