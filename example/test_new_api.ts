@@ -2,7 +2,7 @@ import { Diagram, CorePlugin } from "../src/index"
 
 Diagram
   .use(CorePlugin)
-  .build("First Milestone", (el, rel, hint) => {
+  .build("Test New API", (el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
     const admin = el.actor("Admin")
@@ -24,6 +24,6 @@ Diagram
     hint.arrangeVertical(user, admin)
     hint.arrangeHorizontal(user, system_boundary)
     hint.pack(system_boundary, [login, logout, manage_users])
-    hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
+    hint.arrangeVertical(login, logout, manage_users)  // ✅ これで重ならない
   })
-  .render("example/first_milestone.svg")
+  .render("example/test_new_api.svg")

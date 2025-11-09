@@ -31,13 +31,26 @@ export class LayoutSolver {
       }
       this.vars.set(symbol.id, v)
 
-      // サイズ制約
-      this.solver.addConstraint(
-        new kiwi.Constraint(new kiwi.Expression(v.width), kiwi.Operator.Eq, size.width)
-      )
-      this.solver.addConstraint(
-        new kiwi.Constraint(new kiwi.Expression(v.height), kiwi.Operator.Eq, size.height)
-      )
+      // Check if this symbol is a container (has children via pack)
+      const isContainer = hints.some(h => h.type === "pack" && h.containerId === symbol.id)
+      
+      if (!isContainer) {
+        // Non-container: fix size
+        this.solver.addConstraint(
+          new kiwi.Constraint(new kiwi.Expression(v.width), kiwi.Operator.Eq, size.width)
+        )
+        this.solver.addConstraint(
+          new kiwi.Constraint(new kiwi.Expression(v.height), kiwi.Operator.Eq, size.height)
+        )
+      } else {
+        // Container: set minimum size (will be expanded by children)
+        this.solver.addConstraint(
+          new kiwi.Constraint(new kiwi.Expression(v.width), kiwi.Operator.Ge, 100, kiwi.Strength.weak)
+        )
+        this.solver.addConstraint(
+          new kiwi.Constraint(new kiwi.Expression(v.height), kiwi.Operator.Ge, 100, kiwi.Strength.weak)
+        )
+      }
     }
 
     // 最初のシンボルを原点に固定
@@ -53,12 +66,24 @@ export class LayoutSolver {
 
     // ヒントに基づく制約を追加
     for (const hint of hints) {
-      if (hint.type === "horizontal") {
+      if (hint.type === "horizontal" || hint.type === "arrangeHorizontal") {
         this.addHorizontalConstraints(hint.symbolIds, hint.gap || 80)
-      } else if (hint.type === "vertical") {
+      } else if (hint.type === "vertical" || hint.type === "arrangeVertical") {
         this.addVerticalConstraints(hint.symbolIds, hint.gap || 50)
       } else if (hint.type === "pack") {
         this.addPackConstraints(hint.containerId!, hint.childIds!)
+      } else if (hint.type === "alignLeft") {
+        this.addAlignLeftConstraints(hint.symbolIds)
+      } else if (hint.type === "alignRight") {
+        this.addAlignRightConstraints(hint.symbolIds)
+      } else if (hint.type === "alignTop") {
+        this.addAlignTopConstraints(hint.symbolIds)
+      } else if (hint.type === "alignBottom") {
+        this.addAlignBottomConstraints(hint.symbolIds)
+      } else if (hint.type === "alignCenterX") {
+        this.addAlignCenterXConstraints(hint.symbolIds)
+      } else if (hint.type === "alignCenterY") {
+        this.addAlignCenterYConstraints(hint.symbolIds)
       }
     }
 
@@ -82,21 +107,23 @@ export class LayoutSolver {
       const a = this.vars.get(symbolIds[i])!
       const b = this.vars.get(symbolIds[i + 1])!
 
-      // b.x = a.x + a.width + gap
+      // b.x = a.x + a.width + gap (MEDIUM strength for pack compatibility)
       this.solver.addConstraint(
         new kiwi.Constraint(
           new kiwi.Expression(b.x),
           kiwi.Operator.Eq,
-          new kiwi.Expression(a.x, a.width, gap)
+          new kiwi.Expression(a.x, a.width, gap),
+          kiwi.Strength.medium
         )
       )
 
-      // 同じyに揃える
+      // 同じyに揃える (MEDIUM strength)
       this.solver.addConstraint(
         new kiwi.Constraint(
           new kiwi.Expression(b.y),
           kiwi.Operator.Eq,
-          new kiwi.Expression(a.y)
+          new kiwi.Expression(a.y),
+          kiwi.Strength.medium
         )
       )
     }
@@ -107,21 +134,23 @@ export class LayoutSolver {
       const a = this.vars.get(symbolIds[i])!
       const b = this.vars.get(symbolIds[i + 1])!
 
-      // b.y = a.y + a.height + gap
+      // b.y = a.y + a.height + gap (STRONG strength)
       this.solver.addConstraint(
         new kiwi.Constraint(
           new kiwi.Expression(b.y),
           kiwi.Operator.Eq,
-          new kiwi.Expression(a.y, a.height, gap)
+          new kiwi.Expression(a.y, a.height, gap),
+          kiwi.Strength.strong
         )
       )
 
-      // 同じxに揃える
+      // 同じxに揃える (STRONG strength)
       this.solver.addConstraint(
         new kiwi.Constraint(
           new kiwi.Expression(b.x),
           kiwi.Operator.Eq,
-          new kiwi.Expression(a.x)
+          new kiwi.Expression(a.x),
+          kiwi.Strength.strong
         )
       )
     }
@@ -134,7 +163,7 @@ export class LayoutSolver {
     for (const childId of childIds) {
       const child = this.vars.get(childId)!
 
-      // Child must be inside container with padding
+      // Child must be inside container with padding (REQUIRED)
       // child.x >= container.x + padding
       this.solver.addConstraint(
         new kiwi.Constraint(
@@ -145,7 +174,7 @@ export class LayoutSolver {
         )
       )
 
-      // child.y >= container.y + padding + 30 (for label space)
+      // child.y >= container.y + 50 (for label space) (REQUIRED)
       this.solver.addConstraint(
         new kiwi.Constraint(
           new kiwi.Expression(child.y),
@@ -155,23 +184,127 @@ export class LayoutSolver {
         )
       )
 
-      // child.x + child.width <= container.x + container.width - padding
+      // Container must be large enough to contain children (REQUIRED)
+      // container.width >= child.x - container.x + child.width + padding
+      // Rewritten as: container.width + container.x >= child.x + child.width + padding
       this.solver.addConstraint(
         new kiwi.Constraint(
-          new kiwi.Expression(child.x, child.width),
-          kiwi.Operator.Le,
-          new kiwi.Expression(container.x, container.width, -padding),
+          new kiwi.Expression(container.width, container.x),
+          kiwi.Operator.Ge,
+          new kiwi.Expression(child.x, child.width, padding),
           kiwi.Strength.required
         )
       )
 
-      // child.y + child.height <= container.y + container.height - padding
+      // container.height + container.y >= child.y + child.height + padding
       this.solver.addConstraint(
         new kiwi.Constraint(
-          new kiwi.Expression(child.y, child.height),
-          kiwi.Operator.Le,
-          new kiwi.Expression(container.y, container.height, -padding),
+          new kiwi.Expression(container.height, container.y),
+          kiwi.Operator.Ge,
+          new kiwi.Expression(child.y, child.height, padding),
           kiwi.Strength.required
+        )
+      )
+    }
+  }
+
+  private addAlignLeftConstraints(symbolIds: string[]) {
+    if (symbolIds.length < 2) return
+    
+    const first = this.vars.get(symbolIds[0])!
+    for (let i = 1; i < symbolIds.length; i++) {
+      const curr = this.vars.get(symbolIds[i])!
+      // curr.x = first.x
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(curr.x),
+          kiwi.Operator.Eq,
+          new kiwi.Expression(first.x)
+        )
+      )
+    }
+  }
+
+  private addAlignRightConstraints(symbolIds: string[]) {
+    if (symbolIds.length < 2) return
+    
+    const first = this.vars.get(symbolIds[0])!
+    for (let i = 1; i < symbolIds.length; i++) {
+      const curr = this.vars.get(symbolIds[i])!
+      // curr.x + curr.width = first.x + first.width
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(curr.x, curr.width),
+          kiwi.Operator.Eq,
+          new kiwi.Expression(first.x, first.width)
+        )
+      )
+    }
+  }
+
+  private addAlignTopConstraints(symbolIds: string[]) {
+    if (symbolIds.length < 2) return
+    
+    const first = this.vars.get(symbolIds[0])!
+    for (let i = 1; i < symbolIds.length; i++) {
+      const curr = this.vars.get(symbolIds[i])!
+      // curr.y = first.y
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(curr.y),
+          kiwi.Operator.Eq,
+          new kiwi.Expression(first.y)
+        )
+      )
+    }
+  }
+
+  private addAlignBottomConstraints(symbolIds: string[]) {
+    if (symbolIds.length < 2) return
+    
+    const first = this.vars.get(symbolIds[0])!
+    for (let i = 1; i < symbolIds.length; i++) {
+      const curr = this.vars.get(symbolIds[i])!
+      // curr.y + curr.height = first.y + first.height
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression(curr.y, curr.height),
+          kiwi.Operator.Eq,
+          new kiwi.Expression(first.y, first.height)
+        )
+      )
+    }
+  }
+
+  private addAlignCenterXConstraints(symbolIds: string[]) {
+    if (symbolIds.length < 2) return
+    
+    const first = this.vars.get(symbolIds[0])!
+    for (let i = 1; i < symbolIds.length; i++) {
+      const curr = this.vars.get(symbolIds[i])!
+      // curr.x + curr.width/2 = first.x + first.width/2
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression([curr.x, 1], [curr.width, 0.5]),
+          kiwi.Operator.Eq,
+          new kiwi.Expression([first.x, 1], [first.width, 0.5])
+        )
+      )
+    }
+  }
+
+  private addAlignCenterYConstraints(symbolIds: string[]) {
+    if (symbolIds.length < 2) return
+    
+    const first = this.vars.get(symbolIds[0])!
+    for (let i = 1; i < symbolIds.length; i++) {
+      const curr = this.vars.get(symbolIds[i])!
+      // curr.y + curr.height/2 = first.y + first.height/2
+      this.solver.addConstraint(
+        new kiwi.Constraint(
+          new kiwi.Expression([curr.y, 1], [curr.height, 0.5]),
+          kiwi.Operator.Eq,
+          new kiwi.Expression([first.y, 1], [first.height, 0.5])
         )
       )
     }
