@@ -1,7 +1,7 @@
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("System Boundary Example", (el, rel, hint) => {
     const user = el.actor("User")
     const login = el.usecase("Login")

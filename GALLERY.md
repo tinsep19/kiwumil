@@ -11,10 +11,10 @@
 **Code:**
 ```typescript
 // example/actor_simple.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Simple Actor", (element, relation, hint) => {
     element.actor("User")
   })
@@ -34,10 +34,10 @@ Diagram
 **Code:**
 ```typescript
 // example/actor_horizontal.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Horizontal Actors", (element, relation, hint) => {
     const user1 = element.actor("User")
     const user2 = element.actor("Admin")
@@ -61,10 +61,10 @@ Diagram
 **Code:**
 ```typescript
 // example/actor_vertical.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Vertical Actors", (element, relation, hint) => {
     const user1 = element.actor("User")
     const user2 = element.actor("Admin")
@@ -90,10 +90,10 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_simple.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Simple Usecase", (element, relation, hint) => {
     element.usecase("Login")
   })
@@ -113,10 +113,10 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_multiple.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Multiple Usecases", (element, relation, hint) => {
     const login = element.usecase("Login")
     const register = element.usecase("Register")
@@ -143,10 +143,10 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_with_actor.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Usecase with Actor", (element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
@@ -178,10 +178,10 @@ Diagram
 **Code:**
 ```typescript
 // example/first_milestone.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("First Milestone", (el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
@@ -222,10 +222,10 @@ Diagram
 **Code:**
 ```typescript
 // example/system_boundary_example.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("System Boundary Example", (el, rel, hint) => {
     const user = el.actor("User")
     const login = el.usecase("Login")
@@ -253,10 +253,10 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_with_actor_blue.ts
-import { Diagram, CorePlugin, themes } from "../src/index"
+import { Diagram, UMLPlugin, themes } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(themes.blue)
   .build("Usecase with Actor (Blue Theme)", (element, relation, hint) => {
     const user = element.actor("User")
@@ -285,10 +285,10 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_with_actor_dark.ts
-import { Diagram, CorePlugin, themes } from "../src/index"
+import { Diagram, UMLPlugin, themes } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(themes.dark)
   .build("Usecase with Actor (Dark Theme)", (element, relation, hint) => {
     const user = element.actor("User")

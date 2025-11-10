@@ -1,7 +1,7 @@
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 const result = Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Debug Pack+Arrange", (el, rel, hint) => {
     const a = el.usecase("A")
     const b = el.usecase("B")

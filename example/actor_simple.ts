@@ -1,8 +1,8 @@
 // example/actor_simple.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Simple Actor", (element, relation, hint) => {
     element.actor("User")
   })

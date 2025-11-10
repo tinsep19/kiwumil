@@ -39,7 +39,7 @@ export type SymbolName = string
 **設計理由:**
 - プラグインで新しいシンボルを追加する際、theme.ts を変更する必要がない
 - サードパーティプラグインが独自のシンボル名を自由に定義できる
-- CorePlugin 以外のシンボル（例: カスタムクラス図要素）にも対応
+- UMLPlugin 以外のシンボル（例: カスタムクラス図要素）にも対応
 
 **既知のシンボル例:**
 - `"actor"` - アクター（棒人形）
@@ -191,11 +191,11 @@ export const DarkTheme: Theme = {
 ### 基本的な使い方
 
 ```typescript
-import { Diagram, CorePlugin, BlueTheme, DarkTheme, DefaultTheme } from "kiwumil"
+import { Diagram, UMLPlugin, BlueTheme, DarkTheme, DefaultTheme } from "kiwumil"
 
 // テーマを指定
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(BlueTheme)  // または DarkTheme, DefaultTheme
   .build("My Diagram", (el, rel, hint) => {
     // 図の定義...
@@ -231,7 +231,7 @@ const myTheme: Theme = {
   }
 }
 
-Diagram.use(CorePlugin).theme(myTheme).build(...)
+Diagram.use(UMLPlugin).theme(myTheme).build(...)
 ```
 
 ---

@@ -29,10 +29,10 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ## 🧩 使用イメージ
 
 ```typescript
-import { Diagram, CorePlugin } from "kiwumil"
+import { Diagram, UMLPlugin } from "kiwumil"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("First Milestone", (el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
@@ -82,11 +82,11 @@ Diagram
 Kiwumil はプリセットテーマをインポートして適用できます：
 
 ```typescript
-import { Diagram, CorePlugin, BlueTheme, DarkTheme } from "kiwumil"
+import { Diagram, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
 
 // Blue テーマを適用
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(BlueTheme)  // ← インポートしたテーマを直接指定
   .build("Login System", (el, rel, hint) => {
     // ...
@@ -95,7 +95,7 @@ Diagram
 
 // Dark テーマを適用
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(DarkTheme)
   .build("Login System", (el, rel, hint) => {
     // ...

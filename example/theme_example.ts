@@ -1,9 +1,9 @@
 // example/theme_example.ts
-import { Diagram, CorePlugin, DefaultTheme, BlueTheme, DarkTheme } from "../src/index"
+import { Diagram, UMLPlugin, DefaultTheme, BlueTheme, DarkTheme } from "../src/index"
 
 // Default theme example
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(DefaultTheme)
   .build("Login System", (element, relation, hint) => {
     const user = element.actor("User")
@@ -19,7 +19,7 @@ Diagram
 
 // Blue theme example
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(BlueTheme)
   .build("Login System (Blue)", (element, relation, hint) => {
     const user = element.actor("User")
@@ -35,7 +35,7 @@ Diagram
 
 // Dark theme example
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .theme(DarkTheme)
   .build("Login System (Dark)", (element, relation, hint) => {
     const user = element.actor("User")
