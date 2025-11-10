@@ -203,7 +203,7 @@ Diagram
     // 3. レイアウトヒントを設定（新しいAPI）
     hint.arrangeVertical(user, admin)
     hint.arrangeHorizontal(user, system_boundary)
-    hint.pack(system_boundary, [login, logout, manage_users])
+    hint.enclose(system_boundary, [login, logout, manage_users])
     hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
   })
   .render("example/first_milestone.svg")
@@ -231,7 +231,7 @@ Diagram
     const login = el.usecase("Login")
     const boundary = el.systemBoundary("Auth System")
 
-    hint.pack(boundary, [login])
+    hint.enclose(boundary, [login])
     hint.arrangeHorizontal(user, boundary)
     rel.associate(user, login)
   })

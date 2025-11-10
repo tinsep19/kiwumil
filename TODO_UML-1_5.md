@@ -52,14 +52,14 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
 |------|------|--------------------|------|------|
 | **シンボル** | Actor | `ActorSymbol` | ✅ | 棒人形＋ラベル（実装済み） |
 |  | UseCase | `UseCaseSymbol` | ✅ | 楕円＋ラベル（実装済み） |
-|  | SystemBoundary | `SystemBoundarySymbol` | ✅ | 範囲定義コンテナ（実装済み、hint.pack 対応） |
+|  | SystemBoundary | `SystemBoundarySymbol` | ✅ | 範囲定義コンテナ（実装済み、hint.enclose 対応） |
 | **関係** | Association | `Association` | ✅ | Actor → UseCase（`rel.associate()`で利用可能） |
 |  | Include | `IncludeRelationship` | ☐ | ユースケース間（«include»ステレオタイプ） |
 |  | Extend | `ExtendRelationship` | ☐ | ユースケース間（«extend»ステレオタイプ） |
 |  | Generalization | `GeneralizationRelationship` | ☐ | 継承関係（アクター間、ユースケース間） |
 | **レイアウトヒント** | horizontal | `hint.horizontal()` | ✅ | 水平配置（実装済み） |
 |  | vertical | `hint.vertical()` | ✅ | 垂直配置（実装済み） |
-|  | pack | `hint.pack()` | ✅ | 含有関係（実装済み） |
+|  | enclose | `hint.enclose()` | ✅ | 含有関係（実装済み） |
 | **テーマ** | Theme System | `themes.*` | ✅ | default, blue, dark テーマ（実装済み） |
 | **将来拡張** | Class | `ClassSymbol` | ☐ | クラス図用 |
 |  | Interface | `InterfaceSymbol` | ☐ | インターフェース |
@@ -85,7 +85,7 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
   
 - **SystemBoundarySymbol** (`src/model/symbols/system_boundary_symbol.ts`)
   - 矩形コンテナの描画
-  - `hint.pack()` による子要素の含有
+  - `hint.enclose()` による子要素の含有
   - デフォルトサイズ: 300x200
 
 #### Relationships（関係）
@@ -97,7 +97,7 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
 #### Layout Hints（レイアウトヒント）
 - **horizontal** - 水平配置
 - **vertical** - 垂直配置
-- **pack** - 含有関係（コンテナ内配置）
+- **enclose** - 含有関係（コンテナ内配置）
 
 #### Theme System（テーマシステム）
 - **defaultTheme** - デフォルトテーマ
@@ -118,13 +118,13 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
 ### 🎯 優先度：最高（First Milestone）
 
 **🚧 Pack内要素の自動配置**
-- 現状: `hint.pack()` で複数要素を指定すると重なって表示される
+- 現状: `hint.enclose()` で複数要素を指定すると重なって表示される
 - 目標: コンテナ内の複数要素を自動的に配置（vertical/horizontal/grid）
 - 実装案:
-  - `hint.pack()` に layout オプションを追加
-  - `hint.pack(container, children, { layout: 'vertical' })`
-  - または `hint.packVertical()`, `hint.packHorizontal()` を追加
-  - pack制約とvertical/horizontal制約の競合を解決
+  - `hint.enclose()` に layout オプションを追加
+  - `hint.enclose(container, children, { layout: 'vertical' })`
+  - または `hint.encloseVertical()`, `hint.encloseHorizontal()` を追加
+  - enclose制約とvertical/horizontal制約の競合を解決
 
 ### 🎯 優先度：高（Use Case Diagram の完成）
 1. **IncludeRelationship** を実装
