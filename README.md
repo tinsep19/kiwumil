@@ -11,9 +11,12 @@ PlantUML / Mermaid.js のような手軽さを保ちながら、
 
 PlantUML や Mermaid.js は強力ですが、次のような不満がありました：
 
-- ノードを「同じ軸に並べたい」だけなのにオプションが多すぎる  
-- 矢印を自然に揃えるのが難しい  
-- システム境界などの矩形をきれいに扱いたい  
+- 矢印の向き/長さでノードの配置を揃えるため、思い通りの配置がしづらい 
+- ノードを整列させるのが難しい 
+- 全体とグループ範囲内で左から右, 上から下を切り替えることができない  
+
+自動レイアウトの機能は嬉しい反面、要素数を絞った範囲でしか、
+納得できるダイアグラムが作成できませんでした。
 
 Kiwumil はこれを **3つのステップ** で簡潔に表現できることを目指します：
 
@@ -51,8 +54,8 @@ Diagram
     // 3. レイアウトヒントを設定
     hint.arrangeVertical(user, admin)
     hint.arrangeHorizontal(user, system_boundary)
-    hint.pack(system_boundary, [login, logout, manage_users])
-    hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
+    hint.enclose(system_boundary, [login, logout, manage_users])
+    hint.arrangeVertical(login, logout, manage_users)
   })
   .render("output.svg")
 ```
@@ -68,7 +71,7 @@ Diagram
 - 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
 - ✨ **Arrange + Align API** - 直感的なレイアウト記述
 
-**🎉 New!** Pack内要素の自動配置をサポート。`hint.arrangeVertical()` と組み合わせることで、要素が重ならずに配置されます。
+**🎉 New!** 範囲内要素の自動配置をサポート。`hint.arrangeVertical()` と組み合わせることで、要素が重ならずに配置されます。
 
 詳細は [LAYOUT_DESIGN.md](LAYOUT_DESIGN.md) を参照してください。
 
@@ -198,7 +201,7 @@ bun add @lume/kiwi
 * [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal()`, `hint.vertical()`)
 * [x] SVG レンダラー
 * [x] テーマシステム (default, blue, dark)
-* [x] `SystemBoundary` によるコンテナ制約 (`hint.pack()`)
+* [x] `SystemBoundary` によるコンテナ制約 (`hint.enclose()`)
 * [x] Z-Index ベースのレンダリング（ネスト構造対応）
 * [ ] Include / Extend 関係（ユースケース図）
 * [ ] Generalization 関係（継承矢印）
