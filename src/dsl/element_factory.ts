@@ -9,7 +9,24 @@ export class ElementFactory {
   constructor(
     private registry: SymbolRegistry,
     private symbols: SymbolBase[]
-  ) {}
+  ) {
+    // Proxyを使って動的にメソッドを生成
+    return new Proxy(this, {
+      get(target, prop: string) {
+        // 既存のメソッド/プロパティがあればそれを返す
+        if (prop in target) {
+          return target[prop as keyof typeof target]
+        }
+        
+        // RegistryにSymbolが登録されていれば動的メソッドを返す
+        if (target.registry.has(prop)) {
+          return (label: string) => target.create(prop, label)
+        }
+        
+        return undefined
+      }
+    })
+  }
 
   create(typeName: string, label: string): SymbolId {
     const id = `${typeName}_${this.counter++}`
@@ -18,6 +35,7 @@ export class ElementFactory {
     return id
   }
 
+  // 後方互換性のため残しておく（UMLPlugin用）
   actor(label: string): SymbolId {
     return this.create("actor", label)
   }

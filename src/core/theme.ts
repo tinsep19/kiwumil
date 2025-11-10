@@ -49,6 +49,35 @@ export const DefaultTheme: Theme = {
       strokeWidth: 2,
       textColor: 'black',
       fontSize: 14
+    },
+    // Basic shapes
+    circle: {
+      fillColor: 'white',
+      strokeColor: 'black',
+      strokeWidth: 2,
+      textColor: 'black',
+      fontSize: 12
+    },
+    ellipse: {
+      fillColor: 'white',
+      strokeColor: 'black',
+      strokeWidth: 2,
+      textColor: 'black',
+      fontSize: 12
+    },
+    rectangle: {
+      fillColor: 'white',
+      strokeColor: 'black',
+      strokeWidth: 2,
+      textColor: 'black',
+      fontSize: 12
+    },
+    roundedRectangle: {
+      fillColor: 'white',
+      strokeColor: 'black',
+      strokeWidth: 2,
+      textColor: 'black',
+      fontSize: 12
     }
   }
 }
@@ -75,6 +104,27 @@ export const BlueTheme: Theme = {
       textColor: '#003366'
     },
     systemBoundary: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc',
+      textColor: '#003366'
+    },
+    // Basic shapes
+    circle: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc',
+      textColor: '#003366'
+    },
+    ellipse: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc',
+      textColor: '#003366'
+    },
+    rectangle: {
+      fillColor: '#e6f3ff',
+      strokeColor: '#0066cc',
+      textColor: '#003366'
+    },
+    roundedRectangle: {
       fillColor: '#e6f3ff',
       strokeColor: '#0066cc',
       textColor: '#003366'
@@ -106,6 +156,27 @@ export const DarkTheme: Theme = {
     systemBoundary: {
       fillColor: '#2d2d2d',
       strokeColor: '#808080',
+      textColor: '#d4d4d4'
+    },
+    // Basic shapes
+    circle: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#569cd6',
+      textColor: '#d4d4d4'
+    },
+    ellipse: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#569cd6',
+      textColor: '#d4d4d4'
+    },
+    rectangle: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#569cd6',
+      textColor: '#d4d4d4'
+    },
+    roundedRectangle: {
+      fillColor: '#2d2d2d',
+      strokeColor: '#569cd6',
       textColor: '#d4d4d4'
     }
   }
