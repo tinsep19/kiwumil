@@ -94,7 +94,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ### 1. Default Theme
 
 ```typescript
-{
+export const DefaultTheme: Theme = {
   name: 'default',
   defaultStyleSet: {
     textColor: 'black',
@@ -121,7 +121,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ### 2. Blue Theme
 
 ```typescript
-{
+export const BlueTheme: Theme = {
   name: 'blue',
   defaultStyleSet: {
     textColor: '#003366',
@@ -155,7 +155,7 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ### 3. Dark Theme
 
 ```typescript
-{
+export const DarkTheme: Theme = {
   name: 'dark',
   defaultStyleSet: {
     textColor: '#d4d4d4',
@@ -191,21 +191,28 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
 ### 基本的な使い方
 
 ```typescript
-import { Diagram, CorePlugin, themes } from "./src/index"
+import { Diagram, CorePlugin, BlueTheme, DarkTheme, DefaultTheme } from "kiwumil"
 
 // テーマを指定
 Diagram
   .use(CorePlugin)
-  .theme(themes.blue)  // または themes.dark, themes.default
+  .theme(BlueTheme)  // または DarkTheme, DefaultTheme
   .build("My Diagram", (el, rel, hint) => {
     // 図の定義...
   })
   .render("output.svg")
 ```
 
+**利用可能なテーマ:**
+- `DefaultTheme` - デフォルトのモノクロスタイル
+- `BlueTheme` - ブルー系の爽やかな配色
+- `DarkTheme` - ダークモード対応
+
 ### カスタムテーマの作成
 
 ```typescript
+import type { Theme } from "kiwumil"
+
 const myTheme: Theme = {
   name: 'custom',
   defaultStyleSet: {
