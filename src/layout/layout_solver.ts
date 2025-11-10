@@ -283,11 +283,12 @@ export class LayoutSolver {
     for (let i = 1; i < symbolIds.length; i++) {
       const curr = this.vars.get(symbolIds[i])!
       // curr.x + curr.width/2 = first.x + first.width/2
+      // Rewritten as: 2*curr.x + curr.width = 2*first.x + first.width
       this.solver.addConstraint(
         new kiwi.Constraint(
-          new kiwi.Expression([curr.x, 1], [curr.width, 0.5]),
+          new kiwi.Expression([-2.0, curr.x], [-1.0, curr.width]),
           kiwi.Operator.Eq,
-          new kiwi.Expression([first.x, 1], [first.width, 0.5])
+          new kiwi.Expression([-2.0, first.x], [-1.0, first.width])
         )
       )
     }
@@ -300,11 +301,12 @@ export class LayoutSolver {
     for (let i = 1; i < symbolIds.length; i++) {
       const curr = this.vars.get(symbolIds[i])!
       // curr.y + curr.height/2 = first.y + first.height/2
+      // Rewritten as: 2*curr.y + curr.height = 2*first.y + first.height
       this.solver.addConstraint(
         new kiwi.Constraint(
-          new kiwi.Expression([curr.y, 1], [curr.height, 0.5]),
+          new kiwi.Expression([-2.0, curr.y], [-1.0, curr.height]),
           kiwi.Operator.Eq,
-          new kiwi.Expression([first.y, 1], [first.height, 0.5])
+          new kiwi.Expression([-2.0, first.y], [-1.0, first.height])
         )
       )
     }
