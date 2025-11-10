@@ -1,8 +1,8 @@
 // example/actor_vertical.ts
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Vertical Actors", (element, relation, hint) => {
     const user1 = element.actor("User")
     const user2 = element.actor("Admin")

@@ -1,7 +1,7 @@
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("System Boundary with Multiple Elements", (element, relation, hint) => {
     const user = element.actor("User")
     const admin = element.actor("Admin")

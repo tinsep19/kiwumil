@@ -1,7 +1,7 @@
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Nested System Boundaries", (el, rel, hint) => {
     // Create boundaries and use cases
     const outerSystem = el.systemBoundary("Outer System")

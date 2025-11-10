@@ -1,7 +1,7 @@
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Test New API", (el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")

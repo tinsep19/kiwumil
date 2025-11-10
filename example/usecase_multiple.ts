@@ -1,7 +1,7 @@
-import { Diagram, CorePlugin } from "../src/index"
+import { Diagram, UMLPlugin } from "../src/index"
 
 Diagram
-  .use(CorePlugin)
+  .use(UMLPlugin)
   .build("Multiple Usecases", (element, relation, hint) => {
     const login = element.usecase("Login")
     const register = element.usecase("Register")
