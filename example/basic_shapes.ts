@@ -1,11 +1,11 @@
 // example/basic_shapes.ts
-import { Diagram, CorePlugin, DefaultTheme } from "../src/index"
+import { Diagram, DefaultTheme } from "../src/index"
 
+// CorePluginはデフォルトで有効
 Diagram
-  .use(CorePlugin)
   .theme(DefaultTheme)
   .build("Basic Shapes", (el, rel, hint) => {
-    // Basic shapes
+    // Basic shapes from CorePlugin
     const circle = el.circle("Circle")
     const ellipse = el.ellipse("Ellipse")
     const rectangle = el.rectangle("Rectangle")
