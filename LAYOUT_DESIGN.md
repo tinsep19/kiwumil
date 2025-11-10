@@ -249,7 +249,7 @@ hint.alignCenterY(a, b, c)
 
 ### Pack（コンテナ）- 暫定的に残す
 
-#### `pack(container: SymbolId, children: SymbolId[])`
+#### `enclose(container: SymbolId, children: SymbolId[])`
 コンテナ内に子要素を配置します。
 
 ```typescript
@@ -444,7 +444,7 @@ c.x = b.x + b.width + gap
 a.centerX = b.centerX
 b.centerX = c.centerX
 
-// pack(container, [a, b]) の制約
+// enclose(container, [a, b]) の制約
 a.x >= container.x + padding
 a.y >= container.y + padding
 a.x + a.width <= container.x + container.width - padding
@@ -606,35 +606,6 @@ hint.flex(container, [a, b, c], {
   justifyContent: 'space-between',
   alignItems: 'center'
 })
-```
-
----
-
-## Enclose の段階的削除計画
-
-### Phase 1: 現在（v0.1.x）
-- `enclose` を維持
-- `arrange` + `enclose` の組み合わせをサポート
-
-### Phase 2: 移行期（v0.2.x）
-- `enclose` を deprecate
-- `SystemBoundary` が自動的に子要素を囲むように改善
-- ドキュメントで代替方法を案内
-
-### Phase 3: 削除（v1.0.x）
-- `enclose` を削除
-- `arrange` + `align` のみで表現
-
-**代替方法の例:**
-```typescript
-// Before (pack使用)
-hint.enclose(boundary, [a, b, c])
-hint.arrangeVertical(a, b, c)
-
-// After (pack削除後)
-hint.arrangeVertical(a, b, c)
-hint.alignCenterX(a, b, c)
-// boundaryは自動的にa, b, cを囲むサイズに調整される
 ```
 
 ---
