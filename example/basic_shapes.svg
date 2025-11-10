@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     width="760" 
+     height="160" 
+     viewBox="0 0 760 160">
+  <rect width="100%" height="100%" fill="white"/>
+  
+      <g id="circle_0">
+        <!-- Circle -->
+        <circle cx="80" cy="80" r="30" 
+                fill="white" 
+                stroke="black" 
+                stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="80" y="85" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Circle
+        </text>
+      </g>
+    
+
+      <g id="ellipse_1">
+        <!-- Ellipse -->
+        <ellipse cx="250" cy="80" rx="60" ry="30" 
+                 fill="white" 
+                 stroke="black" 
+                 stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="250" y="85" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Ellipse
+        </text>
+      </g>
+    
+
+      <g id="rectangle_2">
+        <!-- Rectangle -->
+        <rect x="390" y="50" width="120" height="60" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="450" y="85" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Rectangle
+        </text>
+      </g>
+    
+
+      <g id="roundedRectangle_3">
+        <!-- Rounded Rectangle -->
+        <rect x="590" y="50" width="120" height="60" 
+              rx="10" ry="10"
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="650" y="85" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Rounded
+        </text>
+      </g>
+    
+</svg>
