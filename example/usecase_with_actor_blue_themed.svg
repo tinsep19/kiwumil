@@ -3,39 +3,39 @@
      width="170" 
      height="220" 
      viewBox="0 0 170 220">
-  <rect width="100%" height="100%" fill="white"/>
+  <rect width="100%" height="100%" fill="#f0f8ff"/>
   
       <line x1="80" y1="90" x2="60" y2="30"
-            stroke="black" stroke-width="2"/>
+            stroke="#0066cc" stroke-width="2"/>
     
 
       <line x1="80" y1="90" x2="60" y2="140"
-            stroke="black" stroke-width="2"/>
+            stroke="#0066cc" stroke-width="2"/>
     
 
       <g id="actor_0">
         <!-- Head -->
         <circle cx="80" cy="65" r="10" 
-                fill="none" stroke="black" stroke-width="2"/>
+                fill="none" stroke="#003366" stroke-width="2"/>
         
         <!-- Body -->
         <line x1="80" y1="75" x2="80" y2="98" 
-              stroke="black" stroke-width="2"/>
+              stroke="#003366" stroke-width="2"/>
         
         <!-- Arms -->
         <line x1="55" y1="81.9" x2="105" y2="81.9" 
-              stroke="black" stroke-width="2"/>
+              stroke="#003366" stroke-width="2"/>
         
         <!-- Legs -->
         <line x1="80" y1="98" x2="60" y2="115" 
-              stroke="black" stroke-width="2"/>
+              stroke="#003366" stroke-width="2"/>
         <line x1="80" y1="98" x2="100" y2="115" 
-              stroke="black" stroke-width="2"/>
+              stroke="#003366" stroke-width="2"/>
         
         <!-- Label -->
         <text x="80" y="130" 
               text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
+              fill="#003366">
           User
         </text>
       </g>
@@ -44,12 +44,12 @@
       <g id="usecase_1">
         <!-- Ellipse -->
         <ellipse cx="60" cy="30" rx="60" ry="30" 
-                 fill="white" stroke="black" stroke-width="2"/>
+                 fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
         <text x="60" y="35" 
               text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
+              fill="#003366">
           Login
         </text>
       </g>
@@ -58,12 +58,12 @@
       <g id="usecase_2">
         <!-- Ellipse -->
         <ellipse cx="60" cy="140" rx="60" ry="30" 
-                 fill="white" stroke="black" stroke-width="2"/>
+                 fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
         <text x="60" y="145" 
               text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
+              fill="#003366">
           Logout
         </text>
       </g>

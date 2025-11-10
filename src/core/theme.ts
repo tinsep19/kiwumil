@@ -18,7 +18,8 @@ export interface Theme {
   symbols?: Record<SymbolName, Partial<StyleSet>>
 }
 
-export const defaultTheme: Theme = {
+// Default Theme
+export const DefaultTheme: Theme = {
   name: 'default',
   defaultStyleSet: {
     textColor: 'black',
@@ -52,7 +53,8 @@ export const defaultTheme: Theme = {
   }
 }
 
-export const blueTheme: Theme = {
+// Blue Theme
+export const BlueTheme: Theme = {
   name: 'blue',
   defaultStyleSet: {
     textColor: '#003366',
@@ -80,7 +82,8 @@ export const blueTheme: Theme = {
   }
 }
 
-export const darkTheme: Theme = {
+// Dark Theme
+export const DarkTheme: Theme = {
   name: 'dark',
   defaultStyleSet: {
     textColor: '#d4d4d4',
@@ -107,14 +110,6 @@ export const darkTheme: Theme = {
     }
   }
 }
-
-export const themes = {
-  default: defaultTheme,
-  blue: blueTheme,
-  dark: darkTheme
-}
-
-export type ThemeName = keyof typeof themes
 
 // ヘルパー関数: シンボル用のスタイルを取得
 export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSet {

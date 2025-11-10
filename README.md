@@ -77,6 +77,39 @@ Diagram
 
 ---
 
+## 🎨 テーマシステム
+
+Kiwumil はプリセットテーマをインポートして適用できます：
+
+```typescript
+import { Diagram, CorePlugin, BlueTheme, DarkTheme } from "kiwumil"
+
+// Blue テーマを適用
+Diagram
+  .use(CorePlugin)
+  .theme(BlueTheme)  // ← インポートしたテーマを直接指定
+  .build("Login System", (el, rel, hint) => {
+    // ...
+  })
+  .render("output_blue.svg")
+
+// Dark テーマを適用
+Diagram
+  .use(CorePlugin)
+  .theme(DarkTheme)
+  .build("Login System", (el, rel, hint) => {
+    // ...
+  })
+  .render("output_dark.svg")
+```
+
+**利用可能なテーマ:**
+- `DefaultTheme` - デフォルトの白基調
+- `BlueTheme` - 青基調のテーマ
+- `DarkTheme` - ダークモードテーマ
+
+---
+
 ## 🧠 技術スタック
 
 | 要素       | 内容                                                        |

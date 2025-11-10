@@ -1,8 +1,8 @@
-import { Diagram, CorePlugin, themes } from "../src/index"
+import { Diagram, CorePlugin, DarkTheme } from "../src/index"
 
 Diagram
   .use(CorePlugin)
-  .theme(themes.dark)
+  .theme(DarkTheme)
   .build("Usecase with Actor (Dark Theme)", (element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
