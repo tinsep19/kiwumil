@@ -31,8 +31,8 @@ export class LayoutSolver {
       }
       this.vars.set(symbol.id, v)
 
-      // Check if this symbol is a container (has children via pack)
-      const isContainer = hints.some(h => h.type === "pack" && h.containerId === symbol.id)
+      // Check if this symbol is a container (has children via enclose)
+      const isContainer = hints.some(h => h.type === "enclose" && h.containerId === symbol.id)
       
       if (!isContainer) {
         // Non-container: fix size
@@ -70,8 +70,8 @@ export class LayoutSolver {
         this.addHorizontalConstraints(hint.symbolIds, hint.gap || 80)
       } else if (hint.type === "vertical" || hint.type === "arrangeVertical") {
         this.addVerticalConstraints(hint.symbolIds, hint.gap || 50)
-      } else if (hint.type === "pack") {
-        this.addPackConstraints(hint.containerId!, hint.childIds!)
+      } else if (hint.type === "enclose") {
+        this.addEncloseConstraints(hint.containerId!, hint.childIds!)
       } else if (hint.type === "alignLeft") {
         this.addAlignLeftConstraints(hint.symbolIds)
       } else if (hint.type === "alignRight") {
@@ -156,7 +156,7 @@ export class LayoutSolver {
     }
   }
 
-  private addPackConstraints(containerId: string, childIds: string[]) {
+  private addEncloseConstraints(containerId: string, childIds: string[]) {
     const container = this.vars.get(containerId)!
     const padding = 20
 

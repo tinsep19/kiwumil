@@ -7,6 +7,6 @@ Diagram
     const login = element.usecase("Login")
     const boundary = element.systemBoundary("Auth System")
     
-    hint.pack(boundary, [login])
+    hint.enclose(boundary, [login])
   })
   .render("example/system_boundary_simple.svg")

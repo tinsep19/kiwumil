@@ -23,7 +23,7 @@ Diagram
     // 3. レイアウトヒントを設定（新しいAPI）
     hint.arrangeVertical(user, admin)
     hint.arrangeHorizontal(user, system_boundary)
-    hint.pack(system_boundary, [login, logout, manage_users])
+    hint.enclose(system_boundary, [login, logout, manage_users])
     hint.arrangeVertical(login, logout, manage_users)  // ✅ これで重ならない
   })
   .render("example/test_new_api.svg")
