@@ -7,7 +7,7 @@ Diagram
     const login = el.usecase("Login")
     const boundary = el.systemBoundary("Auth System")
 
-    hint.pack(boundary, [login])
+    hint.enclose(boundary, [login])
     hint.horizontal(user, boundary)
     rel.associate(user, login)
   })

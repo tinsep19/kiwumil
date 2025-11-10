@@ -13,10 +13,10 @@ Diagram
     const user = el.actor("User")
     
     // Pack: Inner system contains innerUsecase
-    hint.pack(innerSystem, [innerUsecase])
+    hint.enclose(innerSystem, [innerUsecase])
     
     // Pack: Outer system contains outerUsecase and innerSystem
-    hint.pack(outerSystem, [outerUsecase, innerSystem])
+    hint.enclose(outerSystem, [outerUsecase, innerSystem])
     
     // Relationships
     rel.associate(user, outerUsecase)

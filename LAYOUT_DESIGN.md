@@ -5,7 +5,7 @@
 Kiwumil のレイアウトシステムは、制約ベースの自動レイアウトエンジンです。
 Cassowary アルゴリズムを使用して、宣言的なレイアウトヒントから最適な配置を計算します。
 
-**🎉 First Milestone 達成済み:** Pack内要素の自動配置が実装されました。
+**🎉 First Milestone 達成済み:** Enclose内要素の自動配置が実装されました。
 
 ---
 
@@ -51,7 +51,7 @@ hint.alignCenterX(a, b, c)       // X軸中央を揃える
 | Align | `alignBottom` | ✅ 実装済み |
 | Align | `alignCenterX` | ✅ 実装済み |
 | Align | `alignCenterY` | ✅ 実装済み |
-| Container | `pack` | ✅ 実装済み（将来削除予定） |
+| Container | `enclose` | ✅ 実装済み（将来削除予定） |
 | Legacy | `horizontal` | ✅ 実装済み（deprecated） |
 | Legacy | `vertical` | ✅ 実装済み（deprecated） |
 
@@ -70,7 +70,7 @@ hint.arrangeHorizontal(a, b, c)
 - 要素間の距離が等しい
 - 左から右の順序で配置
 - デフォルト間隔: 80px
-- 制約強度: STRONG（pack制約より優先）
+- 制約強度: STRONG（enclose制約より優先）
 
 **実装詳細:**
 ```typescript
@@ -121,7 +121,7 @@ c
 - 要素間の距離が等しい
 - 上から下の順序で配置
 - デフォルト間隔: 50px
-- 制約強度: STRONG（pack制約より優先）
+- 制約強度: STRONG（enclose制約より優先）
 
 **実装詳細:**
 ```typescript
@@ -253,7 +253,7 @@ hint.alignCenterY(a, b, c)
 コンテナ内に子要素を配置します。
 
 ```typescript
-hint.pack(boundary, [a, b, c])
+hint.enclose(boundary, [a, b, c])
 ```
 
 **制約:**
@@ -263,12 +263,12 @@ hint.pack(boundary, [a, b, c])
 - 子要素の配置は別途 `arrange` で指定
 
 **⚠️ 注意:**
-`pack` は将来的に削除予定です。代わりに `arrange` + `align` の組み合わせを使用してください。
+`enclose` は将来的に削除予定です。代わりに `arrange` + `align` の組み合わせを使用してください。
 
 **✅ 現在の実装:**
 ```typescript
 // コンテナと子要素を組み合わせて使う
-hint.pack(boundary, [a, b, c])
+hint.enclose(boundary, [a, b, c])
 hint.arrangeVertical(a, b, c)  // ✅ 重ならずに配置される
 
 結果:
@@ -285,7 +285,7 @@ hint.arrangeVertical(a, b, c)  // ✅ 重ならずに配置される
 1. **コンテナのサイズ制約:**
 ```typescript
 // コンテナは最小サイズのみ指定（WEAK）
-const isContainer = hints.some(h => h.type === "pack" && h.containerId === symbol.id)
+const isContainer = hints.some(h => h.type === "enclose" && h.containerId === symbol.id)
 
 if (isContainer) {
   // 最小サイズのみ（子要素に合わせて拡大可能）
@@ -365,7 +365,7 @@ private addPackConstraints(containerId: string, childIds: string[]) {
 **キーポイント:**
 - コンテナのサイズは固定せず、最小サイズのみ指定（WEAK制約）
 - 子要素の位置に応じてコンテナが自動的に拡大（REQUIRED制約）
-- `arrange` 制約（STRONG）と `pack` 制約（REQUIRED）は競合しない
+- `arrange` 制約（STRONG）と `enclose` 制約（REQUIRED）は競合しない
 
 ---
 
@@ -415,7 +415,7 @@ d e f
 ### パターン4: コンテナ内配置
 
 ```typescript
-hint.pack(container, [a, b, c])
+hint.enclose(container, [a, b, c])
 hint.arrangeVertical(a, b, c)
 hint.alignCenterX(a, b, c)
 
@@ -467,7 +467,7 @@ export interface LayoutHint {
     | "alignBottom"          // ✅ 実装済み
     | "alignCenterX"         // ✅ 実装済み
     | "alignCenterY"         // ✅ 実装済み
-    | "pack"                 // ✅ 実装済み（将来削除予定）
+    | "enclose"                 // ✅ 実装済み（将来削除予定）
   symbolIds: SymbolId[]
   gap?: number
   containerId?: SymbolId
@@ -488,7 +488,7 @@ export interface LayoutHint {
 
 ---
 
-## First Milestone: Pack内要素の自動配置 ✅ 達成
+## First Milestone: Enclose内要素の自動配置 ✅ 達成
 
 ### 目標
 コンテナ（SystemBoundary）内の複数要素を自動的に配置し、重ならないようにする。
@@ -496,15 +496,15 @@ export interface LayoutHint {
 ### 実装前の問題
 
 ```typescript
-hint.pack(boundary, [a, b, c])
+hint.enclose(boundary, [a, b, c])
 // ❌ a, b, c が重なる（デフォルトで同じ位置に配置される）
 ```
 
 ### 解決方法 ✅ 実装完了
 
 ```typescript
-hint.pack(boundary, [a, b, c])
-hint.arrangeVertical(a, b, c)  // ✅ pack + arrange で並ぶ
+hint.enclose(boundary, [a, b, c])
+hint.arrangeVertical(a, b, c)  // ✅ enclose + arrange で並ぶ
 ```
 
 **実装結果:**
@@ -518,17 +518,17 @@ systemBoundary (Container): x=30, y=0, w=160, h=350  ← 自動拡大！
 ### 実装の課題と解決策
 
 #### 課題1: 制約の競合
-以前は `pack` と `arrange` の制約が競合してエラーになっていました：
+以前は `enclose` と `arrange` の制約が競合してエラーになっていました：
 
 ```typescript
 hint.arrangeVertical(a, b, c)     // まず垂直制約を追加
-hint.pack(boundary, [a, b, c])    // ❌ pack制約と競合してエラー
+hint.enclose(boundary, [a, b, c])    // ❌ enclose制約と競合してエラー
 ```
 
 **解決策:**
 1. コンテナのサイズを固定せず、変数化（WEAK制約）
 2. `arrange` 制約を STRONG に設定
-3. `pack` の位置制約を REQUIRED に設定
+3. `enclose` の位置制約を REQUIRED に設定
 4. コンテナサイズ拡大制約を REQUIRED に設定
 
 制約の優先順位:
@@ -549,7 +549,7 @@ hint.pack(boundary, [a, b, c])    // ❌ pack制約と競合してエラー
 ```typescript
 // コンテナ検出
 const isContainer = hints.some(h => 
-  h.type === "pack" && h.containerId === symbol.id
+  h.type === "enclose" && h.containerId === symbol.id
 )
 
 if (isContainer) {
@@ -610,25 +610,25 @@ hint.flex(container, [a, b, c], {
 
 ---
 
-## Pack の段階的削除計画
+## Enclose の段階的削除計画
 
 ### Phase 1: 現在（v0.1.x）
-- `pack` を維持
-- `arrange` + `pack` の組み合わせをサポート
+- `enclose` を維持
+- `arrange` + `enclose` の組み合わせをサポート
 
 ### Phase 2: 移行期（v0.2.x）
-- `pack` を deprecate
+- `enclose` を deprecate
 - `SystemBoundary` が自動的に子要素を囲むように改善
 - ドキュメントで代替方法を案内
 
 ### Phase 3: 削除（v1.0.x）
-- `pack` を削除
+- `enclose` を削除
 - `arrange` + `align` のみで表現
 
 **代替方法の例:**
 ```typescript
 // Before (pack使用)
-hint.pack(boundary, [a, b, c])
+hint.enclose(boundary, [a, b, c])
 hint.arrangeVertical(a, b, c)
 
 // After (pack削除後)

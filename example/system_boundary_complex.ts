@@ -14,8 +14,8 @@ Diagram
     const adminSystem = element.systemBoundary("Admin System")
     
     // Pack use cases into boundaries
-    hint.pack(authSystem, [login, logout])
-    hint.pack(adminSystem, [manage])
+    hint.enclose(authSystem, [login, logout])
+    hint.enclose(adminSystem, [manage])
     
     // Layout boundaries
     hint.horizontal(authSystem, adminSystem)

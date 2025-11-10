@@ -14,7 +14,7 @@ export interface LayoutHint {
     | "alignBottom"
     | "alignCenterX"
     | "alignCenterY"
-    | "pack"
+    | "enclose"
   symbolIds: SymbolId[]
   gap?: number
   containerId?: SymbolId
@@ -103,7 +103,7 @@ export class HintFactory {
     })
   }
 
-  pack(containerId: SymbolId, childIds: SymbolId[]) {
+  enclose(containerId: SymbolId, childIds: SymbolId[]) {
     // Set nestLevel for children
     const container = this.symbols.find(s => s.id === containerId)
     if (container) {
@@ -118,7 +118,7 @@ export class HintFactory {
     }
 
     this.hints.push({
-      type: "pack",
+      type: "enclose",
       symbolIds: [],
       containerId,
       childIds

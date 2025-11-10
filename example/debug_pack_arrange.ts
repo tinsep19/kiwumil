@@ -8,7 +8,7 @@ const result = Diagram
     const c = el.usecase("C")
     const boundary = el.systemBoundary("Container")
     
-    hint.pack(boundary, [a, b, c])
+    hint.enclose(boundary, [a, b, c])
     hint.arrangeVertical(a, b, c)
   })
 
