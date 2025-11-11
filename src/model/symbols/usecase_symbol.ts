@@ -4,7 +4,26 @@ import { getStyleForSymbol } from "../../core/theme"
 
 export class UsecaseSymbol extends SymbolBase {
   getDefaultSize() {
-    return { width: 120, height: 60 }
+    const style = this.theme ? getStyleForSymbol(this.theme, 'usecase') : {
+      fontSize: 12
+    }
+    const fontSize = style.fontSize || 12
+    const textWidth = this.estimateTextWidth(this.label, fontSize)
+    const width = Math.max(120, textWidth + 40)
+    const height = 60
+    return { width, height }
+  }
+
+  private estimateTextWidth(text: string, fontSize: number): number {
+    let width = 0
+    for (const char of text) {
+      if (char.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\uff00-\uffef]/)) {
+        width += fontSize
+      } else {
+        width += fontSize * 0.6
+      }
+    }
+    return width
   }
 
   toSVG(): string {
@@ -18,7 +37,6 @@ export class UsecaseSymbol extends SymbolBase {
     const rx = width / 2
     const ry = height / 2
 
-    // テーマからスタイルを取得
     const style = this.theme ? getStyleForSymbol(this.theme, 'usecase') : {
       strokeColor: 'black',
       strokeWidth: 2,
