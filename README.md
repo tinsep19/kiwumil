@@ -1,4 +1,4 @@
-# 🥝 Kiwumil (キウミル)
+# 🥝 Kiwumil (キューミル)
 
 **Kiwumil** は、[@lume/kiwi](https://github.com/lume/kiwi) 制約ソルバーを使って  
 UML風の図を自動レイアウトするための TypeScript ライブラリです。  
@@ -9,14 +9,8 @@ PlantUML / Mermaid.js のような手軽さを保ちながら、
 
 ## 🌱 コンセプト
 
-PlantUML や Mermaid.js は強力ですが、次のような不満がありました：
-
-- 矢印の向き/長さでノードの配置を揃えるため、思い通りの配置がしづらい 
-- ノードを整列させるのが難しい 
-- 全体とグループ範囲内で左から右, 上から下を切り替えることができない  
-
-自動レイアウトの機能は嬉しい反面、要素数を絞った範囲でしか、
-納得できるダイアグラムが作成できませんでした。
+PlantUML や Mermaid.js は強力ですが、自動レイアウトの機能は
+嬉しい反面、納得できるきれいなダイアグラムが作成できませんでした。
 
 Kiwumil はこれを **3つのステップ** で簡潔に表現できることを目指します：
 
@@ -66,8 +60,8 @@ Diagram
 
 **特徴:**
 - 🎨 **テーマシステム** - default, blue, dark の3つのプリセットテーマ
-- 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
 - 🔧 **制約ベースレイアウト** - Cassowary アルゴリズムによる自動整列
+- 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
 - 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
 - ✨ **Arrange + Align API** - 直感的なレイアウト記述
 
@@ -166,56 +160,71 @@ flowchart TD
 ```
 kiwumil/
 ├── src/
-│   ├── dsl/                         # DSL・プラグインシステム層
-│   │   ├── diagram.ts               # Diagramクラス（エントリポイント）
-│   │   ├── plugin_manager.ts        # Plugin管理・登録
-│   │   ├── element_factory.ts       # SymbolRegistryをProxyでラップ
-│   │   ├── relationship_factory.ts  # Relationship生成
-│   │   └── hint_factory.ts          # hint.horizontal/verticalなどのDSL補助
+│   ├── dsl/                          # DSL・プラグインシステム層
+│   │   ├── diagram.ts                # Diagramクラス（エントリポイント）
+│   │   ├── diagram_builder.ts        # Diagram構築ビルダー
+│   │   ├── plugin_manager.ts         # Plugin管理・登録
+│   │   ├── element_factory.ts        # SymbolRegistryをProxyでラップ
+│   │   ├── relationship_factory.ts   # Relationship生成
+│   │   └── hint_factory.ts           # hint.horizontal/verticalなどのDSL補助
 │   │
-│   ├── model/                       # モデル層（UML構造定義）
-│   │   ├── symbol_base.ts           # Symbol基底クラス
-│   │   ├── symbol_registry.ts       # Symbol型の登録・生成
-│   │   ├── relationship_base.ts     # 関係の基底クラス
-│   │   ├── relationship_registry.ts # 関係の基底クラス
-│   │   └── types.ts                 # 共通型定義（座標・サイズ・IDなど）
+│   ├── model/                        # モデル層（UML構造定義）
+│   │   ├── symbol_base.ts            # Symbol基底クラス
+│   │   ├── symbol_registry.ts        # Symbol型の登録・生成
+│   │   ├── relationship_registry.ts  # Relationship型の登録・生成
+│   │   └── types.ts                  # 共通型定義（座標・サイズ・IDなど）
 │   │
-│   ├── layout/                      # レイアウト層（Cassowary等）
-│   │   ├── layout_engine.ts         # レイアウト計算メイン
-│   │   ├── constraint_solver.ts     # Cassowaryラッパ
-│   │   └── layout_types.ts          # 位置・制約型定義
+│   ├── layout/                       # レイアウト層（Cassowary等）
+│   │   └── layout_solver.ts          # Cassowary制約ソルバーラッパ
 │   │
-│   ├── render/                      # レンダリング層（SVGなど）
-│   │   ├── svg_renderer.ts          # SVG出力
-│   │   ├── svg_utils.ts             # SVG組み立て用ヘルパ
-│   │   └── theme.ts                 # 色・線幅などのスタイル定義
+│   ├── render/                       # レンダリング層（SVGなど）
+│   │   └── svg_renderer.ts           # SVG出力メインレンダラー
 │   │
-│   ├── plugin/                      # 組み込み・外部プラグイン郡
-│   │   ├── core_plugin.ts           # actor/usecase/classなどUML基本シンボル
-│   │   └── ...                      # その他の拡張プラグイン
+│   ├── core/                         # 共通インフラ・ユーティリティ
+│   │   ├── layout_engine.ts          # レイアウト計算メインエンジン
+│   │   └── theme.ts                  # テーマ定義（色・線幅などのスタイル）
 │   │
-│   ├── core/                        # 共通インフラ・ユーティリティ
-│   │   ├── id_generator.ts          # シンボルID管理
-│   │   ├── error.ts                 # 共通例外
-│   │   ├── logger.ts                # デバッグ出力
-│   │   └── utils.ts                 # 共通関数
+│   ├── plugin/                       # 組み込み・外部プラグイン郡
+│   │   ├── core/                     # コア図形プラグイン
+│   │   │   ├── index.ts              # CorePlugin定義
+│   │   │   └── symbols/              # 基本図形シンボル群
+│   │   │       ├── circle_symbol.ts
+│   │   │       ├── ellipse_symbol.ts
+│   │   │       ├── rectangle_symbol.ts
+│   │   │       └── rounded_rectangle_symbol.ts
+│   │   │
+│   │   └── uml/                      # UMLプラグイン
+│   │       ├── index.ts              # UMLPlugin定義
+│   │       ├── symbols/              # UMLシンボル群
+│   │       │   ├── actor_symbol.ts
+│   │       │   ├── usecase_symbol.ts
+│   │       │   └── system_boundary_symbol.ts
+│   │       └── relationships/        # UML関係線群
+│   │           └── association.ts
 │   │
-│   ├── index.ts                     # エントリポイント (Diagramエクスポート)
-│   └── types.d.ts                   # 外部型定義補助（Plugin APIなど）
+│   ├── utils/                        # ユーティリティ（現在空）
+│   └── index.ts                      # エントリポイント (各種エクスポート)
 │
-├── examples/
-│   ├── usecase-basic.ts             # 基本のユースケース図
-│   ├── use-with-plugin.ts           # プラグイン例（componentなど）
-│   └── sequence.ts                  # 将来的な拡張例
+├── example/                          # 各種実行例
+│   ├── first_milestone.ts            # 基本のユースケース図
+│   ├── actor_simple.ts               # シンプルなアクター図
+│   ├── usecase_with_actor.ts         # アクター付きユースケース図
+│   ├── system_boundary_*.ts          # SystemBoundary各種例
+│   ├── theme_example.ts              # テーマシステム利用例
+│   ├── basic_shapes.ts               # 基本図形利用例
+│   └── *.svg                         # 各tsファイルの出力SVG
 │
-├── tests/
-│   ├── plugin.test.ts
-│   ├── symbol_registry.test.ts
-│   ├── render_svg.test.ts
-│   └── layout_engine.test.ts
+├── tests/                            # テストファイル群
+│   ├── diagram_builder.test.ts
+│   ├── layout_solver.test.ts
+│   └── theme.test.ts
 │
+├── index.ts                          # プロジェクトルートのエントリポイント
 ├── package.json
 ├── tsconfig.json
+├── GALLERY.md                        # スクリーンショット集
+├── LAYOUT_DESIGN.md                  # レイアウトシステム設計書
+├── THEME_DESIGN.md                   # テーマシステム設計書
 └── README.md
 
 ```
@@ -249,7 +258,7 @@ bun add @lume/kiwi
 
 ## 🗣️ 名前について
 
-> **Kiwumil (キウミル)** は
+> **Kiwumil (キューミル)** は
 > “KiwiでUMLを書く” → “Kiw(um)i(l)”
 > という語呂合わせから生まれた名前です 🍃
 
@@ -268,7 +277,6 @@ MIT License
 
 ---
 
-## ✨ スクリーンショット（予定）
+## ✨ スクリーンショット
 
-（ロゴ / サンプル図などをここに掲載予定）
-
+[GALLERY.md](GALLERY.md)
