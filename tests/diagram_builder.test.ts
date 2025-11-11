@@ -314,14 +314,15 @@ describe("DiagramBuilder", () => {
       expect(result.symbols[0].bounds).toBeDefined()
     })
 
-    test("should handle no theme (undefined)", () => {
-      const result = builder.build("No Theme", (el) => {
+    test("should have default theme applied", () => {
+      const result = builder.build("Default Theme", (el) => {
         el.circle("Circle")
       })
       
       expect(result.symbols).toHaveLength(1)
-      // Theme should be undefined but symbol should still work
-      expect(result.symbols[0].theme).toBeUndefined()
+      // DefaultTheme should be applied automatically
+      expect(result.symbols[0].theme).toBeDefined()
+      expect(result.symbols[0].theme?.name).toBe("default")
     })
   })
 })
