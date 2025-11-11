@@ -55,13 +55,18 @@ export class LayoutSolver {
 
     // 最初のシンボルを原点に固定
     if (symbols.length > 0) {
-      const first = this.vars.get(symbols[0].id)!
-      this.solver.addConstraint(
-        new kiwi.Constraint(new kiwi.Expression(first.x), kiwi.Operator.Eq, 50)
-      )
-      this.solver.addConstraint(
-        new kiwi.Constraint(new kiwi.Expression(first.y), kiwi.Operator.Eq, 50)
-      )
+      const firstSymbol = symbols[0]
+      if (firstSymbol) {
+        const first = this.vars.get(firstSymbol.id)
+        if (first) {
+          this.solver.addConstraint(
+            new kiwi.Constraint(new kiwi.Expression(first.x), kiwi.Operator.Eq, 50)
+          )
+          this.solver.addConstraint(
+            new kiwi.Constraint(new kiwi.Expression(first.y), kiwi.Operator.Eq, 50)
+          )
+        }
+      }
     }
 
     // ヒントに基づく制約を追加
@@ -104,8 +109,13 @@ export class LayoutSolver {
 
   private addHorizontalConstraints(symbolIds: string[], gap: number) {
     for (let i = 0; i < symbolIds.length - 1; i++) {
-      const a = this.vars.get(symbolIds[i])!
-      const b = this.vars.get(symbolIds[i + 1])!
+      const aId = symbolIds[i]
+      const bId = symbolIds[i + 1]
+      if (!aId || !bId) continue
+      
+      const a = this.vars.get(aId)
+      const b = this.vars.get(bId)
+      if (!a || !b) continue
 
       // b.x = a.x + a.width + gap (MEDIUM strength for pack compatibility)
       this.solver.addConstraint(
@@ -131,8 +141,13 @@ export class LayoutSolver {
 
   private addVerticalConstraints(symbolIds: string[], gap: number) {
     for (let i = 0; i < symbolIds.length - 1; i++) {
-      const a = this.vars.get(symbolIds[i])!
-      const b = this.vars.get(symbolIds[i + 1])!
+      const aId = symbolIds[i]
+      const bId = symbolIds[i + 1]
+      if (!aId || !bId) continue
+      
+      const a = this.vars.get(aId)
+      const b = this.vars.get(bId)
+      if (!a || !b) continue
 
       // b.y = a.y + a.height + gap (STRONG strength)
       this.solver.addConstraint(
@@ -211,9 +226,17 @@ export class LayoutSolver {
   private addAlignLeftConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
     
-    const first = this.vars.get(symbolIds[0])!
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.vars.get(firstId)
+    if (!first) return
+    
     for (let i = 1; i < symbolIds.length; i++) {
-      const curr = this.vars.get(symbolIds[i])!
+      const currId = symbolIds[i]
+      if (!currId) continue
+      const curr = this.vars.get(currId)
+      if (!curr) continue
+      
       // curr.x = first.x
       this.solver.addConstraint(
         new kiwi.Constraint(
@@ -228,9 +251,17 @@ export class LayoutSolver {
   private addAlignRightConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
     
-    const first = this.vars.get(symbolIds[0])!
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.vars.get(firstId)
+    if (!first) return
+    
     for (let i = 1; i < symbolIds.length; i++) {
-      const curr = this.vars.get(symbolIds[i])!
+      const currId = symbolIds[i]
+      if (!currId) continue
+      const curr = this.vars.get(currId)
+      if (!curr) continue
+      
       // curr.x + curr.width = first.x + first.width
       this.solver.addConstraint(
         new kiwi.Constraint(
@@ -245,9 +276,17 @@ export class LayoutSolver {
   private addAlignTopConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
     
-    const first = this.vars.get(symbolIds[0])!
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.vars.get(firstId)
+    if (!first) return
+    
     for (let i = 1; i < symbolIds.length; i++) {
-      const curr = this.vars.get(symbolIds[i])!
+      const currId = symbolIds[i]
+      if (!currId) continue
+      const curr = this.vars.get(currId)
+      if (!curr) continue
+      
       // curr.y = first.y
       this.solver.addConstraint(
         new kiwi.Constraint(
@@ -262,9 +301,17 @@ export class LayoutSolver {
   private addAlignBottomConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
     
-    const first = this.vars.get(symbolIds[0])!
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.vars.get(firstId)
+    if (!first) return
+    
     for (let i = 1; i < symbolIds.length; i++) {
-      const curr = this.vars.get(symbolIds[i])!
+      const currId = symbolIds[i]
+      if (!currId) continue
+      const curr = this.vars.get(currId)
+      if (!curr) continue
+      
       // curr.y + curr.height = first.y + first.height
       this.solver.addConstraint(
         new kiwi.Constraint(
@@ -279,9 +326,17 @@ export class LayoutSolver {
   private addAlignCenterXConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
     
-    const first = this.vars.get(symbolIds[0])!
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.vars.get(firstId)
+    if (!first) return
+    
     for (let i = 1; i < symbolIds.length; i++) {
-      const curr = this.vars.get(symbolIds[i])!
+      const currId = symbolIds[i]
+      if (!currId) continue
+      const curr = this.vars.get(currId)
+      if (!curr) continue
+      
       // curr.x + curr.width/2 = first.x + first.width/2
       // Rewritten as: 2*curr.x + curr.width = 2*first.x + first.width
       this.solver.addConstraint(
@@ -297,9 +352,17 @@ export class LayoutSolver {
   private addAlignCenterYConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
     
-    const first = this.vars.get(symbolIds[0])!
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.vars.get(firstId)
+    if (!first) return
+    
     for (let i = 1; i < symbolIds.length; i++) {
-      const curr = this.vars.get(symbolIds[i])!
+      const currId = symbolIds[i]
+      if (!currId) continue
+      const curr = this.vars.get(currId)
+      if (!curr) continue
+      
       // curr.y + curr.height/2 = first.y + first.height/2
       // Rewritten as: 2*curr.y + curr.height = 2*first.y + first.height
       this.solver.addConstraint(
