@@ -1,14 +1,51 @@
 {
   "name": "kiwumil",
   "version": "0.1.0",
+  "description": "TypeScript library for automatic UML diagram layout using @lume/kiwi constraint solver",
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build --outdir dist --target bun src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node --minify && tsc --emitDeclarationOnly --outDir dist",
+    "prepublishOnly": "bun run build",
     "test": "bun test"
   },
+  "keywords": [
+    "uml",
+    "diagram",
+    "layout",
+    "constraint-solver",
+    "cassowary",
+    "kiwi",
+    "typescript",
+    "svg"
+  ],
+  "author": "Kousuke Taniguchi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tinsep19/kiwumil.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tinsep19/kiwumil/issues"
+  },
+  "homepage": "https://github.com/tinsep19/kiwumil#readme",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "typescript": "^5"
   },
   "peerDependencies": {
     "typescript": "^5"
