@@ -59,6 +59,7 @@ export class LayoutEngine {
     for (let i = 0; i < nodes.length - 1; i++) {
       const a = nodes[i]
       const b = nodes[i + 1]
+      if (!a || !b) continue
 
       // b.x = a.x + a.width + gap
       this.solver.addConstraint(
@@ -85,6 +86,7 @@ export class LayoutEngine {
     for (let i = 0; i < nodes.length - 1; i++) {
       const a = nodes[i]
       const b = nodes[i + 1]
+      if (!a || !b) continue
 
       // b.y = a.y + a.height + gap
       this.solver.addConstraint(
