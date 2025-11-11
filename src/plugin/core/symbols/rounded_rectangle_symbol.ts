@@ -1,6 +1,6 @@
-// src/model/symbols/rounded_rectangle_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/core/symbols/rounded_rectangle_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
 export class RoundedRectangleSymbol extends SymbolBase {
   getDefaultSize() {

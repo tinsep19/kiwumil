@@ -1,6 +1,6 @@
 // src/render/svg_renderer.ts
 import type { SymbolBase } from "../model/symbol_base"
-import type { Association } from "../model/relationships/association"
+import type { Association } from "../plugin/uml/relationships/association"
 import type { SymbolId } from "../model/types"
 import type { Theme } from "../core/theme"
 

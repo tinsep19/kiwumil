@@ -1,6 +1,6 @@
-// src/model/symbols/rectangle_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/core/symbols/rectangle_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
 export class RectangleSymbol extends SymbolBase {
   getDefaultSize() {

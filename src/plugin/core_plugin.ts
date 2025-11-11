@@ -1,8 +1,8 @@
 // src/plugin/core_plugin.ts
-import { CircleSymbol } from "../model/symbols/circle_symbol"
-import { EllipseSymbol } from "../model/symbols/ellipse_symbol"
-import { RectangleSymbol } from "../model/symbols/rectangle_symbol"
-import { RoundedRectangleSymbol } from "../model/symbols/rounded_rectangle_symbol"
+import { CircleSymbol } from "./core/symbols/circle_symbol"
+import { EllipseSymbol } from "./core/symbols/ellipse_symbol"
+import { RectangleSymbol } from "./core/symbols/rectangle_symbol"
+import { RoundedRectangleSymbol } from "./core/symbols/rounded_rectangle_symbol"
 import { KiwumilPlugin } from "../dsl/plugin_manager"
 import { SymbolRegistry } from "../model/symbol_registry"
 import { RelationshipRegistry } from "../model/relationship_registry"

@@ -1,6 +1,6 @@
-// src/model/symbols/actor_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/uml/symbols/actor_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
 export class ActorSymbol extends SymbolBase {
   getDefaultSize() {

@@ -1,6 +1,6 @@
-// src/model/symbols/ellipse_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/core/symbols/ellipse_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
 export class EllipseSymbol extends SymbolBase {
   getDefaultSize() {

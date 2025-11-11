@@ -9,7 +9,7 @@ import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
 import { CorePlugin } from "../plugin/core_plugin"
 import type { SymbolBase } from "../model/symbol_base"
-import type { Association } from "../model/relationships/association"
+import type { Association } from "../plugin/uml/relationships/association"
 import type { Theme } from "../core/theme"
 
 type DiagramCallback = (
