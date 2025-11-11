@@ -2,7 +2,7 @@
 import { describe, test, expect, beforeEach } from "bun:test"
 import { DiagramBuilder } from "../src/dsl/diagram_builder"
 import { DefaultTheme, BlueTheme } from "../src/core/theme"
-import { UMLPlugin } from "../src/plugin/uml_plugin"
+import { UMLPlugin } from "../src/plugin/uml"
 
 describe("DiagramBuilder", () => {
   let builder: DiagramBuilder

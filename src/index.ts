@@ -1,7 +1,7 @@
 // src/index.ts
 export { Diagram } from "./dsl/diagram"
-export { CorePlugin } from "./plugin/core_plugin"
-export { UMLPlugin } from "./plugin/uml_plugin"
+export { CorePlugin } from "./plugin/core"
+export { UMLPlugin } from "./plugin/uml"
 export type { SymbolBase } from "./model/symbol_base"
 export type { KiwumilPlugin } from "./dsl/plugin_manager"
 
