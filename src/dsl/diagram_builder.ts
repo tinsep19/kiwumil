@@ -11,6 +11,7 @@ import { CorePlugin } from "../plugin/core"
 import type { SymbolBase } from "../model/symbol_base"
 import type { Association } from "../plugin/uml/relationships/association"
 import type { Theme } from "../core/theme"
+import { DefaultTheme } from "../core/theme"
 
 type DiagramCallback = (
   element: ElementFactory,
@@ -22,11 +23,13 @@ export class DiagramBuilder {
   private symbolRegistry = new SymbolRegistry()
   private relationshipRegistry = new RelationshipRegistry()
   private pluginManager = new PluginManager(this.symbolRegistry, this.relationshipRegistry)
-  private currentTheme?: Theme
+  private currentTheme: Theme
 
   constructor() {
     // CorePluginをデフォルトで有効化
     this.pluginManager.use(CorePlugin)
+    // デフォルトテーマを設定
+    this.currentTheme = DefaultTheme
   }
 
   use(...plugins: KiwumilPlugin[]): DiagramBuilder {
@@ -51,13 +54,11 @@ export class DiagramBuilder {
     callback(element, relation, hint)
 
     // テーマを適用
-    if (this.currentTheme) {
-      for (const symbol of symbols) {
-        symbol.setTheme(this.currentTheme)
-      }
-      for (const relationship of relationships) {
-        relationship.setTheme(this.currentTheme)
-      }
+    for (const symbol of symbols) {
+      symbol.setTheme(this.currentTheme)
+    }
+    for (const relationship of relationships) {
+      relationship.setTheme(this.currentTheme)
     }
 
     // レイアウト計算
