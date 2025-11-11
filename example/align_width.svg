@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     width="160" 
+     height="440" 
+     viewBox="0 0 160 440">
+  <rect width="100%" height="100%" fill="white"/>
+  
+      <g id="actor_0">
+        <!-- Head -->
+        <circle cx="80" cy="65" r="10" 
+                fill="none" stroke="black" stroke-width="2"/>
+        
+        <!-- Body -->
+        <line x1="80" y1="75" x2="80" y2="98" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Arms -->
+        <line x1="55" y1="81.9" x2="105" y2="81.9" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Legs -->
+        <line x1="80" y1="98" x2="60" y2="115" 
+              stroke="black" stroke-width="2"/>
+        <line x1="80" y1="98" x2="100" y2="115" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="80" y="130" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          User
+        </text>
+      </g>
+    
+
+      <g id="actor_1">
+        <!-- Head -->
+        <circle cx="80" cy="195" r="10" 
+                fill="none" stroke="black" stroke-width="2"/>
+        
+        <!-- Body -->
+        <line x1="80" y1="205" x2="80" y2="228" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Arms -->
+        <line x1="55" y1="211.9" x2="105" y2="211.9" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Legs -->
+        <line x1="80" y1="228" x2="60" y2="245" 
+              stroke="black" stroke-width="2"/>
+        <line x1="80" y1="228" x2="100" y2="245" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="80" y="260" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          Admin
+        </text>
+      </g>
+    
+
+      <g id="actor_2">
+        <!-- Head -->
+        <circle cx="80" cy="325" r="10" 
+                fill="none" stroke="black" stroke-width="2"/>
+        
+        <!-- Body -->
+        <line x1="80" y1="335" x2="80" y2="358" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Arms -->
+        <line x1="55" y1="341.9" x2="105" y2="341.9" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Legs -->
+        <line x1="80" y1="358" x2="60" y2="375" 
+              stroke="black" stroke-width="2"/>
+        <line x1="80" y1="358" x2="100" y2="375" 
+              stroke="black" stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="80" y="390" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          Guest
+        </text>
+      </g>
+    
+</svg>

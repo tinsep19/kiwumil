@@ -14,6 +14,9 @@ export interface LayoutHint {
     | "alignBottom"
     | "alignCenterX"
     | "alignCenterY"
+    | "alignWidth"
+    | "alignHeight"
+    | "alignSize"
     | "enclose"
   symbolIds: SymbolId[]
   gap?: number
@@ -99,6 +102,27 @@ export class HintFactory {
   alignCenterY(...symbolIds: SymbolId[]) {
     this.hints.push({
       type: "alignCenterY",
+      symbolIds
+    })
+  }
+
+  alignWidth(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignWidth",
+      symbolIds
+    })
+  }
+
+  alignHeight(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignHeight",
+      symbolIds
+    })
+  }
+
+  alignSize(...symbolIds: SymbolId[]) {
+    this.hints.push({
+      type: "alignSize",
       symbolIds
     })
   }
