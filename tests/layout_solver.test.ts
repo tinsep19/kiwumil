@@ -5,12 +5,13 @@ import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
 import type { LayoutHint } from "../src/dsl/hint_factory"
+import { DefaultTheme } from "../src/core/theme"
 
 describe("LayoutSolver", () => {
   let solver: LayoutSolver
 
   beforeEach(() => {
-    solver = new LayoutSolver()
+    solver = new LayoutSolver(DefaultTheme)
   })
 
   describe("arrangeHorizontal", () => {

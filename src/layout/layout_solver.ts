@@ -2,6 +2,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutHint } from "../dsl/hint_factory"
+import type { Theme } from "../core/theme"
 
 interface NodeVar {
   x: kiwi.Variable
@@ -13,10 +14,12 @@ interface NodeVar {
 export class LayoutSolver {
   private solver: kiwi.Solver
   private vars: Map<string, NodeVar>
+  private theme: Theme
 
-  constructor() {
+  constructor(theme: Theme) {
     this.solver = new kiwi.Solver()
     this.vars = new Map()
+    this.theme = theme
   }
 
   solve(symbols: SymbolBase[], hints: LayoutHint[]) {
@@ -72,9 +75,9 @@ export class LayoutSolver {
     // ヒントに基づく制約を追加
     for (const hint of hints) {
       if (hint.type === "horizontal" || hint.type === "arrangeHorizontal") {
-        this.addHorizontalConstraints(hint.symbolIds, hint.gap || 80)
+        this.addHorizontalConstraints(hint.symbolIds, hint.gap || this.theme.defaultStyleSet.horizontalGap)
       } else if (hint.type === "vertical" || hint.type === "arrangeVertical") {
-        this.addVerticalConstraints(hint.symbolIds, hint.gap || 50)
+        this.addVerticalConstraints(hint.symbolIds, hint.gap || this.theme.defaultStyleSet.verticalGap)
       } else if (hint.type === "enclose") {
         this.addEncloseConstraints(hint.containerId!, hint.childIds!)
       } else if (hint.type === "alignLeft") {

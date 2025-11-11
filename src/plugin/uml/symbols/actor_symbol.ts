@@ -26,8 +26,11 @@ export class ActorSymbol extends SymbolBase {
       strokeWidth: 2,
       textColor: 'black',
       fontSize: 12,
+      fontFamily: 'Arial',
       fillColor: 'white',
-      backgroundColor: 'white'
+      backgroundColor: 'white',
+      horizontalGap: 80,
+      verticalGap: 50
     }
 
     return `
@@ -52,7 +55,7 @@ export class ActorSymbol extends SymbolBase {
         
         <!-- Label -->
         <text x="${cx}" y="${y + height}" 
-              text-anchor="middle" font-size="${style.fontSize}" font-family="Arial"
+              text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
           ${this.label}
         </text>

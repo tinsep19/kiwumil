@@ -24,7 +24,10 @@ export class RoundedRectangleSymbol extends SymbolBase {
       fillColor: 'white',
       textColor: 'black',
       fontSize: 12,
-      backgroundColor: 'white'
+      fontFamily: 'Arial',
+      backgroundColor: 'white',
+      horizontalGap: 80,
+      verticalGap: 50
     }
 
     return `
@@ -40,7 +43,7 @@ export class RoundedRectangleSymbol extends SymbolBase {
         <text x="${cx}" y="${cy + 5}" 
               text-anchor="middle" 
               font-size="${style.fontSize}" 
-              font-family="Arial"
+              font-family="${style.fontFamily}"
               fill="${style.textColor}">
           ${this.label}
         </text>

@@ -13,10 +13,13 @@ describe("Theme System", () => {
       expect(DefaultTheme.defaultStyleSet).toEqual({
         textColor: "black",
         fontSize: 12,
+        fontFamily: "Arial",
         strokeWidth: 2,
         strokeColor: "black",
         fillColor: "white",
-        backgroundColor: "white"
+        backgroundColor: "white",
+        horizontalGap: 80,
+        verticalGap: 50
       })
     })
 

@@ -24,7 +24,10 @@ export class SystemBoundarySymbol extends SymbolBase {
       fillColor: '#f8f8f8',
       textColor: 'black',
       fontSize: 14,
-      backgroundColor: '#f8f8f8'
+      fontFamily: 'Arial',
+      backgroundColor: '#f8f8f8',
+      horizontalGap: 80,
+      verticalGap: 50
     }
 
     return `
@@ -35,7 +38,7 @@ export class SystemBoundarySymbol extends SymbolBase {
         
         <!-- Label at top -->
         <text x="${x + 10}" y="${y + style.fontSize + 5}" 
-              font-size="${style.fontSize}" font-family="Arial" font-weight="bold"
+              font-size="${style.fontSize}" font-family="${style.fontFamily}" font-weight="bold"
               fill="${style.textColor}">
           ${this.label}
         </text>
