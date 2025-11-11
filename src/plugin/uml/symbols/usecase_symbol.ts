@@ -25,7 +25,10 @@ export class UsecaseSymbol extends SymbolBase {
       fillColor: 'white',
       textColor: 'black',
       fontSize: 12,
-      backgroundColor: 'white'
+      fontFamily: 'Arial',
+      backgroundColor: 'white',
+      horizontalGap: 80,
+      verticalGap: 50
     }
 
     return `
@@ -36,7 +39,7 @@ export class UsecaseSymbol extends SymbolBase {
         
         <!-- Label -->
         <text x="${cx}" y="${cy + 5}" 
-              text-anchor="middle" font-size="${style.fontSize}" font-family="Arial"
+              text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
           ${this.label}
         </text>

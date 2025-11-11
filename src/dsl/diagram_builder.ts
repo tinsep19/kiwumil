@@ -49,7 +49,7 @@ export class DiagramBuilder {
 
     const element = new ElementFactory(this.symbolRegistry, symbols)
     const relation = new RelationshipFactory(relationships)
-    const hint = new HintFactory(hints, symbols)
+    const hint = new HintFactory(hints, symbols, this.currentTheme)
 
     callback(element, relation, hint)
 
@@ -62,7 +62,7 @@ export class DiagramBuilder {
     }
 
     // レイアウト計算
-    const solver = new LayoutSolver()
+    const solver = new LayoutSolver(this.currentTheme)
     solver.solve(symbols, hints)
 
     return {

@@ -6,10 +6,13 @@ export type SymbolName = string
 export interface StyleSet {
   textColor: string
   fontSize: number
+  fontFamily: string
   strokeWidth: number
   strokeColor: string
   fillColor: string
   backgroundColor?: string
+  horizontalGap: number
+  verticalGap: number
 }
 
 export interface Theme {
@@ -24,10 +27,13 @@ export const DefaultTheme: Theme = {
   defaultStyleSet: {
     textColor: 'black',
     fontSize: 12,
+    fontFamily: 'Arial',
     strokeWidth: 2,
     strokeColor: 'black',
     fillColor: 'white',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    horizontalGap: 80,
+    verticalGap: 50
   },
   symbols: {
     actor: {
@@ -88,10 +94,13 @@ export const BlueTheme: Theme = {
   defaultStyleSet: {
     textColor: '#003366',
     fontSize: 12,
+    fontFamily: 'Arial',
     strokeWidth: 2,
     strokeColor: '#0066cc',
     fillColor: '#e6f3ff',
-    backgroundColor: '#f0f8ff'
+    backgroundColor: '#f0f8ff',
+    horizontalGap: 80,
+    verticalGap: 50
   },
   symbols: {
     actor: {
@@ -138,10 +147,13 @@ export const DarkTheme: Theme = {
   defaultStyleSet: {
     textColor: '#d4d4d4',
     fontSize: 12,
+    fontFamily: 'Arial',
     strokeWidth: 2,
     strokeColor: '#569cd6',
     fillColor: '#2d2d2d',
-    backgroundColor: '#1e1e1e'
+    backgroundColor: '#1e1e1e',
+    horizontalGap: 80,
+    verticalGap: 50
   },
   symbols: {
     actor: {
@@ -188,9 +200,12 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
   return {
     textColor: symbolStyle.textColor ?? theme.defaultStyleSet.textColor,
     fontSize: symbolStyle.fontSize ?? theme.defaultStyleSet.fontSize,
+    fontFamily: symbolStyle.fontFamily ?? theme.defaultStyleSet.fontFamily,
     strokeWidth: symbolStyle.strokeWidth ?? theme.defaultStyleSet.strokeWidth,
     strokeColor: symbolStyle.strokeColor ?? theme.defaultStyleSet.strokeColor,
     fillColor: symbolStyle.fillColor ?? theme.defaultStyleSet.fillColor,
-    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultStyleSet.backgroundColor
+    backgroundColor: symbolStyle.backgroundColor ?? theme.defaultStyleSet.backgroundColor,
+    horizontalGap: symbolStyle.horizontalGap ?? theme.defaultStyleSet.horizontalGap,
+    verticalGap: symbolStyle.verticalGap ?? theme.defaultStyleSet.verticalGap
   }
 }
