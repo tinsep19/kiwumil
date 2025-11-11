@@ -1,7 +1,7 @@
-// src/model/relationships/association.ts
-import type { SymbolBase } from "../symbol_base"
-import type { SymbolId } from "../types"
-import type { Theme } from "../../core/theme"
+// src/plugin/uml/relationships/association.ts
+import type { SymbolBase } from "../../../model/symbol_base"
+import type { SymbolId } from "../../../model/types"
+import type { Theme } from "../../../core/theme"
 
 export class Association {
   private theme?: Theme

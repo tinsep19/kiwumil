@@ -1,5 +1,5 @@
 // src/dsl/relationship_factory.ts
-import { Association } from "../model/relationships/association"
+import { Association } from "../plugin/uml/relationships/association"
 import type { SymbolId } from "../model/types"
 
 export class RelationshipFactory {

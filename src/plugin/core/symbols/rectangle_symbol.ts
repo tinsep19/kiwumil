@@ -1,24 +1,22 @@
-// src/model/symbols/ellipse_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/core/symbols/rectangle_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
-export class EllipseSymbol extends SymbolBase {
+export class RectangleSymbol extends SymbolBase {
   getDefaultSize() {
     return { width: 120, height: 60 }
   }
 
   toSVG(): string {
     if (!this.bounds) {
-      throw new Error(`Ellipse ${this.id} has no bounds`)
+      throw new Error(`Rectangle ${this.id} has no bounds`)
     }
 
     const { x, y, width, height } = this.bounds
     const cx = x + width / 2
     const cy = y + height / 2
-    const rx = width / 2
-    const ry = height / 2
 
-    const style = this.theme ? getStyleForSymbol(this.theme, 'ellipse') : {
+    const style = this.theme ? getStyleForSymbol(this.theme, 'rectangle') : {
       strokeColor: 'black',
       strokeWidth: 2,
       fillColor: 'white',
@@ -29,11 +27,11 @@ export class EllipseSymbol extends SymbolBase {
 
     return `
       <g id="${this.id}">
-        <!-- Ellipse -->
-        <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" 
-                 fill="${style.fillColor}" 
-                 stroke="${style.strokeColor}" 
-                 stroke-width="${style.strokeWidth}"/>
+        <!-- Rectangle -->
+        <rect x="${x}" y="${y}" width="${width}" height="${height}" 
+              fill="${style.fillColor}" 
+              stroke="${style.strokeColor}" 
+              stroke-width="${style.strokeWidth}"/>
         
         <!-- Label -->
         <text x="${cx}" y="${cy + 5}" 

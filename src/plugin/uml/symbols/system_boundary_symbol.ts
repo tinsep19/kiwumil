@@ -1,6 +1,6 @@
-// src/model/symbols/system_boundary_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/uml/symbols/system_boundary_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
 export class SystemBoundarySymbol extends SymbolBase {
   defaultWidth = 300

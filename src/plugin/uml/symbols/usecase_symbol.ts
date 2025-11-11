@@ -1,6 +1,6 @@
-// src/model/symbols/usecase_symbol.ts
-import { SymbolBase } from "../symbol_base"
-import { getStyleForSymbol } from "../../core/theme"
+// src/plugin/uml/symbols/usecase_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import { getStyleForSymbol } from "../../../core/theme"
 
 export class UsecaseSymbol extends SymbolBase {
   getDefaultSize() {

@@ -1,9 +1,9 @@
 // tests/layout_solver.test.ts
 import { describe, test, expect, beforeEach } from "bun:test"
 import { LayoutSolver } from "../src/layout/layout_solver"
-import { ActorSymbol } from "../src/model/symbols/actor_symbol"
-import { UsecaseSymbol } from "../src/model/symbols/usecase_symbol"
-import { SystemBoundarySymbol } from "../src/model/symbols/system_boundary_symbol"
+import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
+import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
+import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
 import type { LayoutHint } from "../src/dsl/hint_factory"
 
 describe("LayoutSolver", () => {
