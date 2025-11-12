@@ -54,9 +54,9 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
 |  | UseCase | `UseCaseSymbol` | ✅ | 楕円＋ラベル（実装済み） |
 |  | SystemBoundary | `SystemBoundarySymbol` | ✅ | 範囲定義コンテナ（実装済み、hint.enclose 対応） |
 | **関係** | Association | `Association` | ✅ | Actor → UseCase（`rel.associate()`で利用可能） |
-|  | Include | `IncludeRelationship` | ☐ | ユースケース間（«include»ステレオタイプ） |
-|  | Extend | `ExtendRelationship` | ☐ | ユースケース間（«extend»ステレオタイプ） |
-|  | Generalization | `GeneralizationRelationship` | ☐ | 継承関係（アクター間、ユースケース間） |
+|  | Include | `Include` | ✅ | ユースケース間（«include»ステレオタイプ、`rel.include()`で利用可能） |
+|  | Extend | `Extend` | ✅ | ユースケース間（«extend»ステレオタイプ、`rel.extend()`で利用可能） |
+|  | Generalization | `Generalize` | ✅ | 継承関係（`rel.generalize()`で利用可能） |
 | **レイアウトヒント** | horizontal | `hint.horizontal()` | ✅ | 水平配置（実装済み） |
 |  | vertical | `hint.vertical()` | ✅ | 垂直配置（実装済み） |
 |  | enclose | `hint.enclose()` | ✅ | 含有関係（実装済み） |
@@ -72,26 +72,41 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
 
 ## 📊 E. Current Implementation Status
 
-### ✅ 実装済み（2025-11-09時点）
+### ✅ 実装済み（2025-11-12時点）
 
 #### Symbols（シンボル）
-- **ActorSymbol** (`src/model/symbols/actor_symbol.ts`)
+- **ActorSymbol** (`src/plugin/uml/symbols/actor_symbol.ts`)
   - 棒人形の描画
   - テーマ対応（色、線幅、フォントサイズ）
   
-- **UseCaseSymbol** (`src/model/symbols/usecase_symbol.ts`)
+- **UseCaseSymbol** (`src/plugin/uml/symbols/usecase_symbol.ts`)
   - 楕円の描画
   - テーマ対応
   
-- **SystemBoundarySymbol** (`src/model/symbols/system_boundary_symbol.ts`)
+- **SystemBoundarySymbol** (`src/plugin/uml/symbols/system_boundary_symbol.ts`)
   - 矩形コンテナの描画
   - `hint.enclose()` による子要素の含有
   - デフォルトサイズ: 300x200
 
 #### Relationships（関係）
-- **Association** (`src/model/relationships/association.ts`)
+- **Association** (`src/plugin/uml/relationships/association.ts`)
   - シンボル間の直線
   - DSL: `rel.associate(from, to)`
+  - テーマ対応
+
+- **Include** (`src/plugin/uml/relationships/include.ts`)
+  - 破線の矢印と«include»ステレオタイプ
+  - DSL: `rel.include(from, to)`
+  - テーマ対応
+
+- **Extend** (`src/plugin/uml/relationships/extend.ts`)
+  - 破線の矢印と«extend»ステレオタイプ
+  - DSL: `rel.extend(from, to)`
+  - テーマ対応
+
+- **Generalize** (`src/plugin/uml/relationships/generalize.ts`)
+  - 実線の矢印と白抜き三角形
+  - DSL: `rel.generalize(from, to)`
   - テーマ対応
 
 #### Layout Hints（レイアウトヒント）
@@ -127,15 +142,15 @@ Based on the UML 1.5 Specification (Formal/03-03-01).
   - enclose制約とvertical/horizontal制約の競合を解決
 
 ### 🎯 優先度：高（Use Case Diagram の完成）
-1. **IncludeRelationship** を実装
+~~1. **IncludeRelationship** を実装~~ ✅ 完了 (2025-11-12)
    - `«include»` ステレオタイプ付き破線矢印
    - DSL: `rel.include(from, to)`
    
-2. **ExtendRelationship** を実装
+~~2. **ExtendRelationship** を実装~~ ✅ 完了 (2025-11-12)
    - `«extend»` ステレオタイプ付き破線矢印
    - DSL: `rel.extend(from, to)`
    
-3. **GeneralizationRelationship** を実装（Actor, UseCase 間）
+~~3. **GeneralizationRelationship** を実装（Actor, UseCase 間）~~ ✅ 完了 (2025-11-12)
    - 白抜き三角形の継承矢印
    - DSL: `rel.generalize(child, parent)`
 

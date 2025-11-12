@@ -10,8 +10,13 @@ import { SvgRenderer } from "../render/svg_renderer"
 import { CorePlugin } from "../plugin/core"
 import type { SymbolBase } from "../model/symbol_base"
 import type { Association } from "../plugin/uml/relationships/association"
+import type { Include } from "../plugin/uml/relationships/include"
+import type { Extend } from "../plugin/uml/relationships/extend"
+import type { Generalize } from "../plugin/uml/relationships/generalize"
 import type { Theme } from "../core/theme"
 import { DefaultTheme } from "../core/theme"
+
+type Relationship = Association | Include | Extend | Generalize
 
 type DiagramCallback = (
   element: ElementFactory,
@@ -44,7 +49,7 @@ export class DiagramBuilder {
 
   build(name: string, callback: DiagramCallback) {
     const symbols: SymbolBase[] = []
-    const relationships: Association[] = []
+    const relationships: Relationship[] = []
     const hints: LayoutHint[] = []
 
     const element = new ElementFactory(this.symbolRegistry, symbols)
