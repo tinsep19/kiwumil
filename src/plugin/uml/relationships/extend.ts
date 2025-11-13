@@ -26,19 +26,6 @@ export class Extend {
     return maxLevel * 100 + 10
   }
 
-  private getEllipseIntersection(
-    cx: number, cy: number, rx: number, ry: number,
-    px: number, py: number
-  ): { x: number; y: number } {
-    const dx = px - cx
-    const dy = py - cy
-    const angle = Math.atan2(dy, dx)
-    return {
-      x: cx + rx * Math.cos(angle),
-      y: cy + ry * Math.sin(angle)
-    }
-  }
-
   toSVG(symbols: Map<SymbolId, SymbolBase>): string {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
@@ -47,18 +34,17 @@ export class Extend {
       throw new Error(`Extend endpoints not found or not positioned`)
     }
 
-    const fromCX = fromSymbol.bounds.x + fromSymbol.bounds.width / 2
-    const fromCY = fromSymbol.bounds.y + fromSymbol.bounds.height / 2
-    const fromRX = fromSymbol.bounds.width / 2
-    const fromRY = fromSymbol.bounds.height / 2
+    const fromCenter = {
+      x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
+      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+    }
+    const toCenter = {
+      x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
+      y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+    }
 
-    const toCX = toSymbol.bounds.x + toSymbol.bounds.width / 2
-    const toCY = toSymbol.bounds.y + toSymbol.bounds.height / 2
-    const toRX = toSymbol.bounds.width / 2
-    const toRY = toSymbol.bounds.height / 2
-
-    const fromEdge = this.getEllipseIntersection(fromCX, fromCY, fromRX, fromRY, toCX, toCY)
-    const toEdge = this.getEllipseIntersection(toCX, toCY, toRX, toRY, fromCX, fromCY)
+    const fromEdge = fromSymbol.getConnectionPoint(toCenter)
+    const toEdge = toSymbol.getConnectionPoint(fromCenter)
 
     const strokeColor = this.theme?.defaultStyleSet.strokeColor || "black"
     const strokeWidth = this.theme?.defaultStyleSet.strokeWidth || 1.5

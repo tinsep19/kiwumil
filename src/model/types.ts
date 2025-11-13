@@ -13,3 +13,8 @@ export interface Size {
 export interface Bounds extends Position, Size {}
 
 export type SymbolId = string
+
+export interface Point {
+  x: number
+  y: number
+}

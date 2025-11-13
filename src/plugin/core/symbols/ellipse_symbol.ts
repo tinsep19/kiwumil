@@ -1,10 +1,32 @@
 // src/plugin/core/symbols/ellipse_symbol.ts
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../core/theme"
+import type { Point } from "../../../model/types"
 
 export class EllipseSymbol extends SymbolBase {
   getDefaultSize() {
     return { width: 120, height: 60 }
+  }
+
+  getConnectionPoint(from: Point): Point {
+    if (!this.bounds) {
+      throw new Error(`Ellipse ${this.id} has no bounds`)
+    }
+
+    const cx = this.bounds.x + this.bounds.width / 2
+    const cy = this.bounds.y + this.bounds.height / 2
+    const rx = this.bounds.width / 2
+    const ry = this.bounds.height / 2
+
+    const dx = from.x - cx
+    const dy = from.y - cy
+
+    const angle = Math.atan2(dy, dx)
+    
+    return {
+      x: cx + rx * Math.cos(angle),
+      y: cy + ry * Math.sin(angle)
+    }
   }
 
   toSVG(): string {

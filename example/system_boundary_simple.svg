@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="350" 
-     height="250" 
-     viewBox="0 0 350 250">
+     width="210" 
+     height="180" 
+     viewBox="0 0 210 180">
   <rect width="100%" height="100%" fill="white"/>
   
       <g id="systemBoundary_2">
         <!-- System Boundary Rectangle -->
-        <rect x="0" y="0" width="300" height="200" 
+        <rect x="0" y="0" width="160" height="130" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->

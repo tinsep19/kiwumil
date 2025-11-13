@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="540" 
-     height="310" 
-     viewBox="0 0 540 310">
+     width="400" 
+     height="450" 
+     viewBox="0 0 400 450">
   <rect width="100%" height="100%" fill="white"/>
   
       <g id="systemBoundary_5">
         <!-- System Boundary Rectangle -->
-        <rect x="190" y="50" width="300" height="200" 
+        <rect x="190" y="50" width="160" height="350" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
@@ -75,24 +75,24 @@
       </g>
     
 
-      <line x1="80" y1="90" x2="270" y2="130"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="96.3157894736842" x2="211.28701290079505" y2="123.81968556850474"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="90" x2="270" y2="200"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="113.68421052631578" x2="222.90703406799443" y2="221.41067134262937"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="220" x2="270" y2="130"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="205.78947368421052" x2="215.7757296663877" y2="142.84259034217135"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="220" x2="270" y2="200"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="223.1578947368421" x2="210.32967282471563" y2="236.8594564644587"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="220" x2="270" y2="200"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="240.52631578947367" x2="220.48156432501008" y2="333.0594825322403"
+            stroke="black" stroke-width="2"/>
     
 
       <g id="usecase_2">
@@ -111,11 +111,11 @@
 
       <g id="usecase_3">
         <!-- Ellipse -->
-        <ellipse cx="270" cy="200" rx="60" ry="30" 
+        <ellipse cx="270" cy="240" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="270" y="205" 
+        <text x="270" y="245" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Logout
@@ -125,11 +125,11 @@
 
       <g id="usecase_4">
         <!-- Ellipse -->
-        <ellipse cx="270" cy="200" rx="60" ry="30" 
+        <ellipse cx="270" cy="350" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="270" y="205" 
+        <text x="270" y="355" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Manage Users

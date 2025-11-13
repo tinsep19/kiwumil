@@ -19,6 +19,7 @@
               text-anchor="middle">«include»</text>
       </g>
     
+
       <g>
         <line x1="170" y1="190" x2="250" y2="190"
               stroke="black" stroke-width="2"
@@ -33,6 +34,7 @@
               text-anchor="middle">«extend»</text>
       </g>
     
+
       <g>
         <line x1="257.42704547940116" y1="175.5424375068353" x2="162.5729545205988" y2="94.45756249316467"
               stroke="black" stroke-width="2"/>
@@ -40,6 +42,7 @@
                  fill="white" stroke="black" stroke-width="2"/>
       </g>
     
+
       <g id="usecase_0">
         <!-- Ellipse -->
         <ellipse cx="110" cy="80" rx="60" ry="30" 
@@ -53,6 +56,7 @@
         </text>
       </g>
     
+
       <g id="usecase_1">
         <!-- Ellipse -->
         <ellipse cx="110" cy="190" rx="60" ry="30" 
@@ -66,6 +70,7 @@
         </text>
       </g>
     
+
       <g id="usecase_2">
         <!-- Ellipse -->
         <ellipse cx="310" cy="190" rx="60" ry="30" 
