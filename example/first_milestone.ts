@@ -1,6 +1,6 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram
+Diagram("TODO")
   .use(UMLPlugin)
   .build("First Milestone", (el, rel, hint) => {
     // 1. シンボルを定義

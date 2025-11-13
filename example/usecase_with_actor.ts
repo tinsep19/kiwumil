@@ -1,8 +1,8 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram
+Diagram("Usecase with Actor")
   .use(UMLPlugin)
-  .build("Usecase with Actor", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
     const logout = element.usecase("Logout")

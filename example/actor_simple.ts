@@ -1,7 +1,7 @@
 // example/actor_simple.ts
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram
+Diagram("TODO")
   .use(UMLPlugin)
   .build("Simple Actor", (element, relation, hint) => {
     element.actor("User")

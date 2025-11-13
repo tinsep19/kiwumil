@@ -1,6 +1,6 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram
+Diagram("TODO")
   .use(UMLPlugin)
   .build("Multiple Usecases", (element, relation, hint) => {
     const login = element.usecase("Login")
