@@ -241,7 +241,7 @@ hint.alignCenterX(a, b, c)       // X軸中央を揃える
 | Align | `alignBottom` | ✅ 実装済み |
 | Align | `alignCenterX` | ✅ 実装済み |
 | Align | `alignCenterY` | ✅ 実装済み |
-| Container | `enclose` | ✅ 実装済み（将来削除予定） |
+| Container | `enclose` | ✅ 実装済み |
 | Legacy | `horizontal` | ✅ 実装済み（deprecated） |
 | Legacy | `vertical` | ✅ 実装済み（deprecated） |
 
@@ -437,7 +437,7 @@ hint.alignCenterY(a, b, c)
 
 ---
 
-### Pack（コンテナ）- 暫定的に残す
+### Container（enclose）
 
 #### `enclose(container: SymbolId, children: SymbolId[])`
 コンテナ内に子要素を配置します。
@@ -498,9 +498,9 @@ if (isContainer) {
 }
 ```
 
-2. **Pack制約（子要素の配置とコンテナの拡大）:**
+2. **enclose制約（子要素の配置とコンテナの拡大）:**
 ```typescript
-private addPackConstraints(containerId: string, childIds: string[]) {
+private addEncloseConstraints(containerId: string, childIds: string[]) {
   const container = this.vars.get(containerId)!
   const padding = 20
 
@@ -722,7 +722,7 @@ hint.enclose(boundary, [a, b, c])    // ❌ enclose制約と競合してエラ�
 4. コンテナサイズ拡大制約を REQUIRED に設定
 
 制約の優先順位:
-- **REQUIRED**: Pack制約（子要素の最小位置、コンテナの拡大）
+- **REQUIRED**: enclose制約（子要素の最小位置、コンテナの拡大）
 - **STRONG**: Arrange制約（要素間の間隔）
 - **WEAK**: コンテナの最小サイズ
 
@@ -757,7 +757,7 @@ if (isContainer) {
 
 ### 結果
 
-✅ **Pack + Arrange の組み合わせが正常に動作**  
+✅ **enclose + Arrange の組み合わせが正常に動作**  
 ✅ **要素が重ならずに配置される**  
 ✅ **コンテナサイズが自動的に拡大**  
 ✅ **制約の競合が解決**
@@ -924,8 +924,3 @@ Pack 内要素の自動配置をサポートし、ユーザーが直感的にレ
 - Grid Layout (`arrangeGrid`)
 - Distribute（等間隔配置）
 - Flexbox風レイアウト
-
-**Phase 3: enclose の段階的削除**
-- DiagramSymbol以外でのenclose使用を非推奨に
-- SystemBoundary が自動的に子要素を囲むように改善（将来）
-- enclose を完全に内部実装化（v1.0.x）
