@@ -1,32 +1,9 @@
 // src/plugin/uml/relationships/association.ts
+import { RelationshipBase } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
 import type { SymbolId } from "../../../model/types"
-import type { Theme } from "../../../core/theme"
 
-export class Association {
-  private theme?: Theme
-
-  constructor(
-    public from: SymbolId,
-    public to: SymbolId
-  ) {}
-
-  setTheme(theme: Theme) {
-    this.theme = theme
-  }
-
-  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {
-    const fromSymbol = symbols.get(this.from)
-    const toSymbol = symbols.get(this.to)
-    
-    // 関連線は、両端の要素が属する最も深いコンテナの内側
-    const fromLevel = fromSymbol?.nestLevel ?? 0
-    const toLevel = toSymbol?.nestLevel ?? 0
-    const maxLevel = Math.max(fromLevel, toLevel)
-    
-    return maxLevel * 100 + 10
-  }
-
+export class Association extends RelationshipBase {
   toSVG(symbols: Map<SymbolId, SymbolBase>): string {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)

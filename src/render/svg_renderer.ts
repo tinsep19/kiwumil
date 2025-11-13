@@ -1,13 +1,8 @@
 // src/render/svg_renderer.ts
 import type { SymbolBase } from "../model/symbol_base"
-import type { Association } from "../plugin/uml/relationships/association"
-import type { Include } from "../plugin/uml/relationships/include"
-import type { Extend } from "../plugin/uml/relationships/extend"
-import type { Generalize } from "../plugin/uml/relationships/generalize"
+import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId } from "../model/types"
 import type { Theme } from "../core/theme"
-
-type Relationship = Association | Include | Extend | Generalize
 
 interface RenderElement {
   zIndex: number
@@ -16,10 +11,10 @@ interface RenderElement {
 
 export class SvgRenderer {
   private symbols: SymbolBase[]
-  private relationships: Relationship[]
+  private relationships: RelationshipBase[]
   private theme?: Theme
 
-  constructor(symbols: SymbolBase[], relationships: Relationship[] = [], theme?: Theme) {
+  constructor(symbols: SymbolBase[], relationships: RelationshipBase[] = [], theme?: Theme) {
     this.symbols = symbols
     this.relationships = relationships
     this.theme = theme
