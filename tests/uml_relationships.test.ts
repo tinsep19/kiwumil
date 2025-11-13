@@ -9,7 +9,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Include Test", (element, relation) => {
+      const result = builder.build((element, relation) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         relation.include(usecaseA, usecaseB)
@@ -23,7 +23,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Include SVG Test", (element, relation, hint) => {
+      const result = builder.build((element, relation, hint) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         relation.include(usecaseA, usecaseB)
@@ -44,7 +44,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Extend Test", (element, relation) => {
+      const result = builder.build((element, relation) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         relation.extend(usecaseA, usecaseB)
@@ -58,7 +58,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Extend SVG Test", (element, relation, hint) => {
+      const result = builder.build((element, relation, hint) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         relation.extend(usecaseA, usecaseB)
@@ -79,7 +79,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Generalize Test", (element, relation) => {
+      const result = builder.build((element, relation) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         relation.generalize(usecaseA, usecaseB)
@@ -93,7 +93,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Generalize SVG Test", (element, relation, hint) => {
+      const result = builder.build((element, relation, hint) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         relation.generalize(usecaseA, usecaseB)
@@ -114,7 +114,7 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder()
       builder.use(UMLPlugin)
 
-      const result = builder.build("Combined Test", (element, relation, hint) => {
+      const result = builder.build((element, relation, hint) => {
         const usecaseA = element.usecase("UseCase A")
         const usecaseB = element.usecase("UseCase B")
         const usecaseC = element.usecase("UseCase C")
