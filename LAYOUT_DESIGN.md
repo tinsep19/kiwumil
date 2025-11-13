@@ -610,6 +610,97 @@ hint.flex(container, [a, b, c], {
 
 ---
 
+## 関係線の接続点計算
+
+### 概要
+
+リレーションシップの矢印がシンボル内部と重ならないように、各シンボルの輪郭上の適切な接続点を計算します。
+
+### 実装方法
+
+各シンボルクラスは `getConnectionPoint(from: Point): Point` メソッドを実装し、始点から見た最適な接続点を返します。
+
+#### 楕円形シンボル（Usecase）
+
+楕円の中心から始点への角度を計算し、楕円の輪郭上の点を返します。
+
+```typescript
+getConnectionPoint(from: Point): Point {
+  const cx = this.bounds.x + this.bounds.width / 2
+  const cy = this.bounds.y + this.bounds.height / 2
+  const rx = this.bounds.width / 2
+  const ry = this.bounds.height / 2
+
+  const dx = from.x - cx
+  const dy = from.y - cy
+  const angle = Math.atan2(dy, dx)
+  
+  return {
+    x: cx + rx * Math.cos(angle),
+    y: cy + ry * Math.sin(angle)
+  }
+}
+```
+
+#### 矩形シンボル（SystemBoundary, Rectangle, RoundedRectangle）
+
+矩形の中心から始点への方向ベクトルを計算し、矩形の辺との交点を返します。
+
+```typescript
+getConnectionPoint(from: Point): Point {
+  const cx = this.bounds.x + this.bounds.width / 2
+  const cy = this.bounds.y + this.bounds.height / 2
+  const dx = from.x - cx
+  const dy = from.y - cy
+  const halfWidth = this.bounds.width / 2
+  const halfHeight = this.bounds.height / 2
+
+  // 各軸方向の交点までのスケール係数を計算
+  const tx = dx !== 0 ? halfWidth / Math.abs(dx) : Infinity
+  const ty = dy !== 0 ? halfHeight / Math.abs(dy) : Infinity
+  const t = Math.min(tx, ty)
+
+  return {
+    x: cx + dx * t,
+    y: cy + dy * t
+  }
+}
+```
+
+#### アクターシンボル
+
+アクターの頭部（円）または胴体（矩形）の境界との交点を返します。頭部と胴体のどちらが始点に近いかを判定し、近い方との交点を計算します。
+
+### 関係線での使用
+
+各リレーションシップクラス（Association, Include, Extend, Generalize）は、始点と終点のシンボルの `getConnectionPoint()` を呼び出して接続点を計算します。
+
+```typescript
+// Association.ts
+const fromCenter = {
+  x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
+  y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+}
+const toCenter = {
+  x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
+  y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+}
+
+const fromPoint = fromSymbol.getConnectionPoint(toCenter)
+const toPoint = toSymbol.getConnectionPoint(fromCenter)
+
+// 計算した接続点を使って線を描画
+return `<line x1="${fromPoint.x}" y1="${fromPoint.y}" 
+             x2="${toPoint.x}" y2="${toPoint.y}" ... />`
+```
+
+**実装結果:**
+- ✅ 矢印がシンボル内部に入り込まない
+- ✅ 楕円、矩形、アクターなど各シンボル形状に対応
+- ✅ 始点からの方向に基づいた最適な接続点を計算
+
+---
+
 ## まとめ
 
 Kiwumil のレイアウトシステムは、宣言的で直感的な API を提供します：
@@ -618,6 +709,7 @@ Kiwumil のレイアウトシステムは、宣言的で直感的な API を提�
 ✅ **Align** で位置を揃える  
 ✅ **自動サイズ調整コンテナ** でレイアウトを簡素化  
 ✅ 制約の組み合わせで複雑なレイアウトを実現  
+✅ **関係線の接続点計算** でシンボルと矢印が重ならない  
 ✅ 将来的に Grid, Distribute, Flexbox 風レイアウトにも対応予定
 
 **First Milestone 達成！** 🎉  
@@ -631,6 +723,7 @@ Pack 内要素の自動配置をサポートし、ユーザーが直感的にレ
 - ✅ Pack + Arrange の組み合わせ
 - ✅ 自動サイズ調整コンテナ
 - ✅ 制約の優先度調整による競合解決
+- ✅ シンボル形状に応じた関係線の接続点計算（getConnectionPoint）
 
 ### 次のステップ
 
