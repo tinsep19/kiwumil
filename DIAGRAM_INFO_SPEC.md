@@ -138,7 +138,35 @@ SVGの`<metadata>`タグにも情報を含める。
 
 ### 4. 実装の詳細
 
-#### 4.1 変更が必要なファイル
+#### 4.1 Diagram自体をSymbolとして扱う設計
+
+Diagram自体を特殊なSymbol（`DiagramSymbol`）として実装し、以下のようにする:
+
+1. **DiagramSymbolの特徴**
+   - `SymbolBase` を継承
+   - DiagramInfoを保持
+   - `build()` コールバック完了後、すべての子Symbolをenclosする
+   - 常に `symbols` 配列の最初の要素として登録される
+   - レイアウトソルバーで(0, 0)に固定される（既存の動作）
+
+2. **メリット**
+   - viewportを常に(0, 0)に保てる
+   - 既存のenclose機構を再利用できる
+   - DiagramSymbol自体がタイトルとメタ情報を描画
+   - 統一的なSymbol階層構造
+
+3. **動作フロー**
+   ```
+   1. Diagram("title") → DiagramSymbolを作成
+   2. .build(callback) → 
+      a. callbackを実行してsymbolsを収集
+      b. DiagramSymbolを配列の先頭に挿入
+      c. hint.enclose(diagramSymbol, ...allSymbols) を自動追加
+      d. レイアウト計算を実行
+   3. .render() → SVG出力
+   ```
+
+#### 4.2 変更が必要なファイル
 
 1. **`src/dsl/diagram.ts`**
    - シングルトンから関数エクスポートに変更
@@ -148,25 +176,54 @@ SVGの`<metadata>`タグにも情報を含める。
 2. **`src/dsl/diagram_builder.ts`**
    - コンストラクタで `title | DiagramInfo` を受け取る
    - `build()` メソッドから `name` パラメータを削除
-   - DiagramInfoを保持し、renderメソッドに渡す
+   - `build()` 内で:
+     - DiagramSymbolを作成
+     - callbackを実行してsymbolsを収集
+     - DiagramSymbolを配列の先頭に挿入
+     - すべてのsymbolをenclosするhintを追加
+     - レイアウト計算を実行
 
-3. **`src/render/svg_renderer.ts`**
-   - コンストラクタで `DiagramInfo` を受け取る
-   - タイトルとメタ情報を描画するメソッドを追加
-   - Canvas サイズをメタ情報を含めた全体サイズに調整
+3. **`src/layout/layout_solver.ts`**
+   - 既存の動作を維持（最初のsymbolを(0,0)に固定）
+   - DiagramSymbolは必ず最初の要素なので、自動的に(0,0)に配置される
 
-4. **`src/index.ts`**
+4. **`src/render/svg_renderer.ts`**
+   - DiagramSymbolを通常のSymbolとして描画
+   - viewBoxは(0, 0)を起点とする
+
+5. **`src/index.ts`**
    - `DiagramInfo` 型をエクスポート
+   - `DiagramSymbol` は内部実装のためエクスポート不要
 
-#### 4.2 新規作成が必要なファイル
+#### 4.3 新規作成が必要なファイル
 
 1. **`src/model/diagram_info.ts`**
    - `DiagramInfo` インターフェースの定義
-   - 内部用の `DiagramMetadata` クラス（DiagramInfoを正規化して保持）
 
-#### 4.3 API シグネチャ
+2. **`src/model/diagram_symbol.ts`**
+   - `DiagramSymbol` クラスの実装
+   - `SymbolBase` を継承
+   - `toSVG()` でタイトルとメタ情報を描画
+   - `getDefaultSize()` で最小サイズを返す（子要素に応じて拡張）
+
+#### 4.4 API シグネチャ
 
 ```typescript
+// diagram_info.ts
+export interface DiagramInfo {
+  title: string
+  createdAt?: string
+  author?: string
+}
+
+// diagram_symbol.ts
+export class DiagramSymbol extends SymbolBase {
+  constructor(id: SymbolId, diagramInfo: DiagramInfo)
+  getDefaultSize(): { width: number; height: number }
+  toSVG(): string
+  getConnectionPoint(from: Point): Point
+}
+
 // diagram.ts
 export function Diagram(titleOrInfo: string | DiagramInfo): DiagramBuilder
 
@@ -179,7 +236,7 @@ export class DiagramBuilder {
 }
 
 interface DiagramResult {
-  symbols: SymbolBase[]
+  symbols: SymbolBase[]  // DiagramSymbol + user symbols
   relationships: Relationship[]
   render(filepath: string): void
 }
@@ -187,15 +244,14 @@ interface DiagramResult {
 // svg_renderer.ts
 export class SvgRenderer {
   constructor(
-    symbols: SymbolBase[],
+    symbols: SymbolBase[],  // includes DiagramSymbol
     relationships: Relationship[],
-    theme: Theme,
-    diagramInfo: DiagramInfo
+    theme: Theme
   )
 }
 ```
 
-#### 4.4 テストケース
+#### 4.5 テストケース
 
 1. 文字列でタイトルのみ指定した場合の動作確認
 2. DiagramInfoで全情報を指定した場合の動作確認
@@ -204,39 +260,68 @@ export class SvgRenderer {
 5. SVG出力に正しくメタ情報が含まれることの確認
 6. メソッドチェーンの各順序での動作確認
 7. SVGメタデータタグの検証
+8. DiagramSymbolが配列の先頭に配置されることの確認
+9. DiagramSymbolのboundsがすべての子要素を含むことの確認
+10. viewBoxが(0, 0)起点であることの確認
 
 ### 5. 実装の優先順位
 
-1. DiagramInfo型とDiagramMetadataクラスの定義
-2. DiagramBuilderの変更（コンストラクタとbuildメソッド）
-3. Diagram関数の実装
-4. SVGレンダラーの拡張（メタ情報の描画）
-5. 既存のコード例の更新
-6. テストの作成
-7. READMEの更新
+1. DiagramInfo型の定義
+2. DiagramSymbolクラスの実装
+3. DiagramBuilderの変更（DiagramSymbolの自動追加とenclose）
+4. Diagram関数の実装
+5. SVGメタデータタグの追加（オプション）
+6. 既存のコード例の更新
+7. テストの作成
+8. READMEの更新
 
 ### 6. Canvas サイズの調整
 
-SVGのviewBoxは以下のように計算する:
+DiagramSymbolが最初のSymbolとして(0, 0)に配置され、すべての子Symbolをenclosするため:
 
+- SVGのviewBoxは `(0, 0, diagramSymbol.bounds.width, diagramSymbol.bounds.height)`
+- DiagramSymbolのboundsは、enclosedされた子要素 + padding + タイトル領域 + メタ情報領域を含む
+- レイアウトソルバーが自動的に適切なサイズを計算
+
+### 7. DiagramSymbolの描画仕様
+
+#### 7.1 構造
+
+DiagramSymbolのSVG出力は以下の構造を持つ:
+
+```xml
+<g id="diagram-symbol">
+  <!-- 背景 -->
+  <rect x="0" y="0" width="..." height="..." fill="..." />
+  
+  <!-- タイトル（上部中央） -->
+  <text x="centerX" y="30" text-anchor="middle" font-size="..." font-weight="bold">
+    {title}
+  </text>
+  
+  <!-- メタ情報（右下） -->
+  <text x="width-10" y="height-10" text-anchor="end" font-size="..." opacity="0.5">
+    {createdAt and/or author}
+  </text>
+  
+  <!-- 子要素はDiagramSymbolの内側に配置される（enclosedされる） -->
+</g>
 ```
-viewBox = {
-  x: 0,
-  y: -titleHeight,  // タイトル分上に拡張
-  width: originalWidth,
-  height: originalHeight + titleHeight + metaInfoHeight
-}
-```
 
-- `titleHeight`: タイトルが存在する場合は約50px、なければ0
-- `metaInfoHeight`: メタ情報が存在する場合は約30px、なければ0
+#### 7.2 パディング計算
 
-### 7. 注意事項
+- 上部パディング: 50px（タイトル用スペース）
+- 左右パディング: 20px
+- 下部パディング: 30px（メタ情報用スペース）
+
+### 8. 注意事項
 
 - DiagramBuilderは各呼び出しで新しいインスタンスを作成（イミュータブル）
+- DiagramSymbolは通常のSymbolとして扱われるため、特別な描画ロジックは不要
 - テーマによって文字色やフォントサイズが変わるため、それに対応した実装が必要
 - 日付形式は文字列として柔軟に受け入れる（検証はしない）
 - 作成日や著者が省略された場合は表示しない
+- DiagramSymbolのidは固定値（例: "__diagram__"）として予約
 
 ## 例
 
