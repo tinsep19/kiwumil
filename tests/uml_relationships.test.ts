@@ -6,7 +6,7 @@ import { UMLPlugin } from "../src/plugin/uml"
 describe("UML Relationships", () => {
   describe("Include Relationship", () => {
     test("should create include relationship between use cases", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation) => {
@@ -20,7 +20,7 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with dashed line and stereotype", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation, hint) => {
@@ -41,7 +41,7 @@ describe("UML Relationships", () => {
 
   describe("Extend Relationship", () => {
     test("should create extend relationship between use cases", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation) => {
@@ -55,7 +55,7 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with dashed line and stereotype", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation, hint) => {
@@ -76,7 +76,7 @@ describe("UML Relationships", () => {
 
   describe("Generalize Relationship", () => {
     test("should create generalization relationship between use cases", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation) => {
@@ -90,7 +90,7 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with solid line and triangle", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation, hint) => {
@@ -111,7 +111,7 @@ describe("UML Relationships", () => {
 
   describe("Combined Relationships", () => {
     test("should support multiple relationship types in same diagram", () => {
-      const builder = new DiagramBuilder()
+      const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
       const result = builder.build((element, relation, hint) => {
@@ -128,7 +128,8 @@ describe("UML Relationships", () => {
       })
 
       expect(result.relationships).toHaveLength(3)
-      expect(result.symbols).toHaveLength(3)
+      // DiagramSymbol + 3 use cases = 4
+      expect(result.symbols).toHaveLength(4)
       
       const relationTypes = result.relationships.map(r => r.constructor.name)
       expect(relationTypes).toContain("Include")

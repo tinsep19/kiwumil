@@ -79,8 +79,10 @@ describe("DiagramBuilder", () => {
           el.circle("Circle")
         })
       
-      expect(result.symbols).toHaveLength(1)
-      expect(result.symbols[0].theme).toBe(BlueTheme)
+      // DiagramSymbol + 1 user symbol = 2
+      expect(result.symbols).toHaveLength(2)
+      expect(result.symbols[0].theme).toBe(BlueTheme)  // DiagramSymbol
+      expect(result.symbols[1].theme).toBe(BlueTheme)  // Circle
     })
 
     test("should return builder for chaining", () => {
@@ -97,7 +99,8 @@ describe("DiagramBuilder", () => {
           el.ellipse("Ellipse")
         })
       
-      expect(result.symbols).toHaveLength(3)
+      // DiagramSymbol + 3 user symbols = 4
+      expect(result.symbols).toHaveLength(4)
       for (const symbol of result.symbols) {
         expect(symbol.theme).toBe(BlueTheme)
       }
@@ -137,10 +140,12 @@ describe("DiagramBuilder", () => {
         hint.arrangeHorizontal(c1, c2)
       })
       
-      expect(result.symbols).toHaveLength(2)
+      // DiagramSymbol + 2 user symbols = 3
+      expect(result.symbols).toHaveLength(3)
       // Check that symbols have bounds (layout was calculated)
       expect(result.symbols[0].bounds).toBeDefined()
       expect(result.symbols[1].bounds).toBeDefined()
+      expect(result.symbols[2].bounds).toBeDefined()
     })
 
     test("should return result with render function", () => {
@@ -159,7 +164,9 @@ describe("DiagramBuilder", () => {
         hint.arrangeHorizontal(c1, c2)
       })
       
-      const [sym1, sym2] = result.symbols
+      // [0] = DiagramSymbol, [1] = C1, [2] = C2
+      const sym1 = result.symbols[1]
+      const sym2 = result.symbols[2]
       
       // Second symbol should be to the right of first
       expect(sym2.bounds.x).toBeGreaterThan(sym1.bounds.x)
@@ -178,9 +185,11 @@ describe("DiagramBuilder", () => {
           el.circle("Circle")
         })
       
-      expect(result.symbols).toHaveLength(2)
-      expect(result.symbols[0].theme).toBe(BlueTheme)
-      expect(result.symbols[1].theme).toBe(BlueTheme)
+      // DiagramSymbol + 2 user symbols = 3
+      expect(result.symbols).toHaveLength(3)
+      expect(result.symbols[0].theme).toBe(BlueTheme)  // DiagramSymbol
+      expect(result.symbols[1].theme).toBe(BlueTheme)  // User
+      expect(result.symbols[2].theme).toBe(BlueTheme)  // Circle
     })
 
     test("should support theme -> use -> build", () => {
@@ -191,8 +200,10 @@ describe("DiagramBuilder", () => {
           el.usecase("Login")
         })
       
-      expect(result.symbols).toHaveLength(1)
-      expect(result.symbols[0].theme).toBe(DefaultTheme)
+      // DiagramSymbol + 1 user symbol = 2
+      expect(result.symbols).toHaveLength(2)
+      expect(result.symbols[0].theme).toBe(DefaultTheme)  // DiagramSymbol
+      expect(result.symbols[1].theme).toBe(DefaultTheme)  // Login
     })
   })
 
@@ -203,7 +214,8 @@ describe("DiagramBuilder", () => {
         expect(id).toContain("circle")
       })
       
-      expect(result.symbols[0].label).toBe("My Circle")
+      // result.symbols[0] = DiagramSymbol, [1] = Circle
+      expect(result.symbols[1].label).toBe("My Circle")
     })
 
     test("should have ellipse available", () => {
@@ -212,7 +224,8 @@ describe("DiagramBuilder", () => {
         expect(id).toContain("ellipse")
       })
       
-      expect(result.symbols[0].label).toBe("My Ellipse")
+      // result.symbols[0] = DiagramSymbol, [1] = Ellipse
+      expect(result.symbols[1].label).toBe("My Ellipse")
     })
 
     test("should have rectangle available", () => {
@@ -221,7 +234,8 @@ describe("DiagramBuilder", () => {
         expect(id).toContain("rectangle")
       })
       
-      expect(result.symbols[0].label).toBe("My Rectangle")
+      // result.symbols[0] = DiagramSymbol, [1] = Rectangle
+      expect(result.symbols[1].label).toBe("My Rectangle")
     })
 
     test("should have roundedRectangle available", () => {
@@ -230,7 +244,8 @@ describe("DiagramBuilder", () => {
         expect(id).toContain("roundedRectangle")
       })
       
-      expect(result.symbols[0].label).toBe("My RoundedRect")
+      // result.symbols[0] = DiagramSymbol, [1] = RoundedRectangle
+      expect(result.symbols[1].label).toBe("My RoundedRect")
     })
   })
 
@@ -247,16 +262,17 @@ describe("DiagramBuilder", () => {
           hint.alignCenterY(circle, rect, ellipse)
         })
       
-      expect(result.symbols).toHaveLength(3)
+      // DiagramSymbol + 3 user symbols = 4
+      expect(result.symbols).toHaveLength(4)
       
-      // Check horizontal arrangement
-      expect(result.symbols[1].bounds.x).toBeGreaterThan(result.symbols[0].bounds.x)
+      // Check horizontal arrangement (skip DiagramSymbol at [0])
       expect(result.symbols[2].bounds.x).toBeGreaterThan(result.symbols[1].bounds.x)
+      expect(result.symbols[3].bounds.x).toBeGreaterThan(result.symbols[2].bounds.x)
       
-      // Check Y alignment
-      const y0 = result.symbols[0].bounds.y
-      expect(result.symbols[1].bounds.y).toBe(y0)
-      expect(result.symbols[2].bounds.y).toBe(y0)
+      // Check Y alignment (user symbols at [1], [2], [3])
+      const y1 = result.symbols[1].bounds.y
+      expect(result.symbols[2].bounds.y).toBe(y1)
+      expect(result.symbols[3].bounds.y).toBe(y1)
     })
 
     test("should work with UMLPlugin and CorePlugin together", () => {
@@ -271,7 +287,8 @@ describe("DiagramBuilder", () => {
           hint.arrangeHorizontal(actor, circle, usecase)
         })
       
-      expect(result.symbols).toHaveLength(3)
+      // DiagramSymbol + 3 user symbols = 4
+      expect(result.symbols).toHaveLength(4)
       expect(result.relationships).toHaveLength(1)
     })
 
@@ -303,7 +320,9 @@ describe("DiagramBuilder", () => {
         // No symbols
       })
       
-      expect(result.symbols).toHaveLength(0)
+      // Only DiagramSymbol when no user symbols
+      expect(result.symbols).toHaveLength(1)
+      expect(result.symbols[0].label).toBe("Test")  // DiagramSymbol
       expect(result.relationships).toHaveLength(0)
     })
 
@@ -312,8 +331,10 @@ describe("DiagramBuilder", () => {
         el.circle("Lonely")
       })
       
-      expect(result.symbols).toHaveLength(1)
+      // DiagramSymbol + 1 user symbol = 2
+      expect(result.symbols).toHaveLength(2)
       expect(result.symbols[0].bounds).toBeDefined()
+      expect(result.symbols[1].bounds).toBeDefined()
     })
 
     test("should have default theme applied", () => {
@@ -321,10 +342,13 @@ describe("DiagramBuilder", () => {
         el.circle("Circle")
       })
       
-      expect(result.symbols).toHaveLength(1)
+      // DiagramSymbol + 1 user symbol = 2
+      expect(result.symbols).toHaveLength(2)
       // DefaultTheme should be applied automatically
       expect(result.symbols[0].theme).toBeDefined()
       expect(result.symbols[0].theme?.name).toBe("default")
+      expect(result.symbols[1].theme).toBeDefined()
+      expect(result.symbols[1].theme?.name).toBe("default")
     })
   })
 })
