@@ -14,12 +14,6 @@
     
 
       <g id="__diagram__">
-        <!-- Background -->
-        <rect x="50" y="50" width="160" height="240" 
-              fill="#2d2d2d" 
-              stroke="#569cd6" 
-              stroke-width="2"/>
-        
         <!-- Title -->
         <text x="130" y="80" 
               text-anchor="middle" 
