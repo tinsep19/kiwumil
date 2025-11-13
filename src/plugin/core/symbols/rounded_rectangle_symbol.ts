@@ -1,10 +1,40 @@
 // src/plugin/core/symbols/rounded_rectangle_symbol.ts
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../core/theme"
+import type { Point } from "../../../model/types"
 
 export class RoundedRectangleSymbol extends SymbolBase {
   getDefaultSize() {
     return { width: 120, height: 60 }
+  }
+
+  getConnectionPoint(from: Point): Point {
+    if (!this.bounds) {
+      throw new Error(`RoundedRectangle ${this.id} has no bounds`)
+    }
+
+    const cx = this.bounds.x + this.bounds.width / 2
+    const cy = this.bounds.y + this.bounds.height / 2
+
+    const dx = from.x - cx
+    const dy = from.y - cy
+
+    const halfWidth = this.bounds.width / 2
+    const halfHeight = this.bounds.height / 2
+
+    if (dx === 0 && dy === 0) {
+      return { x: cx + halfWidth, y: cy }
+    }
+
+    const tx = dx !== 0 ? halfWidth / Math.abs(dx) : Infinity
+    const ty = dy !== 0 ? halfHeight / Math.abs(dy) : Infinity
+
+    const t = Math.min(tx, ty)
+
+    return {
+      x: cx + dx * t,
+      y: cy + dy * t
+    }
   }
 
   toSVG(): string {

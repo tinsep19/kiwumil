@@ -1,67 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="450" 
-     height="180" 
-     viewBox="0 0 450 180">
+     width="300" 
+     height="300" 
+     viewBox="0 0 300 300">
   <rect width="100%" height="100%" fill="white"/>
   
-      <g id="systemBoundary_5">
+      <g id="systemBoundary_0">
         <!-- System Boundary Rectangle -->
-        <rect x="0" y="0" width="160" height="130" 
+        <rect x="50" y="50" width="200" height="200" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
-        <text x="10" y="19" 
+        <text x="60" y="69" 
               font-size="14" font-family="Arial" font-weight="bold"
               fill="black">
-          Auth System
+          Outer System
         </text>
       </g>
     
 
-      <g id="systemBoundary_6">
+      <g id="systemBoundary_1">
         <!-- System Boundary Rectangle -->
-        <rect x="240" y="0" width="160" height="130" 
+        <rect x="70" y="100" width="160" height="130" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
-        <text x="250" y="19" 
+        <text x="80" y="119" 
               font-size="14" font-family="Arial" font-weight="bold"
               fill="black">
-          Admin System
+          Inner System
         </text>
       </g>
     
 
-      <g id="actor_0">
-        <!-- Head -->
-        <circle cx="80" cy="65" r="10" 
-                fill="none" stroke="black" stroke-width="2"/>
-        
-        <!-- Body -->
-        <line x1="80" y1="75" x2="80" y2="98" 
-              stroke="black" stroke-width="2"/>
-        
-        <!-- Arms -->
-        <line x1="55" y1="81.9" x2="105" y2="81.9" 
-              stroke="black" stroke-width="2"/>
-        
-        <!-- Legs -->
-        <line x1="80" y1="98" x2="60" y2="115" 
-              stroke="black" stroke-width="2"/>
-        <line x1="80" y1="98" x2="100" y2="115" 
-              stroke="black" stroke-width="2"/>
-        
-        <!-- Label -->
-        <text x="80" y="130" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          User
-        </text>
-      </g>
-    
-
-      <g id="actor_1">
+      <g id="actor_4">
         <!-- Head -->
         <circle cx="30" cy="15" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
@@ -84,49 +56,43 @@
         <text x="30" y="80" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
-          Admin
+          User
         </text>
       </g>
     
 
+      <line x1="60" y1="67" x2="85.40235122517001" y2="109.93105805132652"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="60" y1="75" x2="110.95251759264188" y2="157.2223019290411"
+            stroke="black" stroke-width="2"/>
+    
+
       <g id="usecase_2">
         <!-- Ellipse -->
-        <ellipse cx="80" cy="80" rx="60" ry="30" 
+        <ellipse cx="130" cy="130" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="80" y="85" 
+        <text x="130" y="135" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
-          Login
+          Outer Task
         </text>
       </g>
     
 
       <g id="usecase_3">
         <!-- Ellipse -->
-        <ellipse cx="80" cy="80" rx="60" ry="30" 
+        <ellipse cx="150" cy="180" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="80" y="85" 
+        <text x="150" y="185" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
-          Logout
-        </text>
-      </g>
-    
-
-      <g id="usecase_4">
-        <!-- Ellipse -->
-        <ellipse cx="320" cy="80" rx="60" ry="30" 
-                 fill="white" stroke="black" stroke-width="2"/>
-        
-        <!-- Label -->
-        <text x="320" y="85" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Manage Users
+          Inner Task
         </text>
       </g>
     

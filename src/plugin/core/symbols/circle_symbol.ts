@@ -1,10 +1,34 @@
 // src/plugin/core/symbols/circle_symbol.ts
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../core/theme"
+import type { Point } from "../../../model/types"
 
 export class CircleSymbol extends SymbolBase {
   getDefaultSize() {
     return { width: 60, height: 60 }
+  }
+
+  getConnectionPoint(from: Point): Point {
+    if (!this.bounds) {
+      throw new Error(`Circle ${this.id} has no bounds`)
+    }
+
+    const cx = this.bounds.x + this.bounds.width / 2
+    const cy = this.bounds.y + this.bounds.height / 2
+    const r = Math.min(this.bounds.width, this.bounds.height) / 2
+
+    const dx = from.x - cx
+    const dy = from.y - cy
+    const distance = Math.sqrt(dx * dx + dy * dy)
+
+    if (distance === 0) {
+      return { x: cx + r, y: cy }
+    }
+
+    return {
+      x: cx + (dx / distance) * r,
+      y: cy + (dy / distance) * r
+    }
   }
 
   toSVG(): string {

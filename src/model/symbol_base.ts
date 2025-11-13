@@ -1,5 +1,5 @@
 // src/model/symbol_base.ts
-import type { SymbolId, Bounds } from "./types"
+import type { SymbolId, Bounds, Point } from "./types"
 import type { Theme } from "../core/theme"
 
 export abstract class SymbolBase {
@@ -22,4 +22,6 @@ export abstract class SymbolBase {
   abstract getDefaultSize(): { width: number; height: number }
 
   abstract toSVG(): string
+
+  abstract getConnectionPoint(from: Point): Point
 }

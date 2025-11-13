@@ -34,32 +34,37 @@ export class Generalize {
       throw new Error(`Generalization endpoints not found or not positioned`)
     }
 
-    const fromX = fromSymbol.bounds.x + fromSymbol.bounds.width / 2
-    const fromY = fromSymbol.bounds.y + fromSymbol.bounds.height / 2
-    const toX = toSymbol.bounds.x + toSymbol.bounds.width / 2
-    const toY = toSymbol.bounds.y + toSymbol.bounds.height / 2
+    const fromCenter = {
+      x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
+      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+    }
+    const toCenter = {
+      x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
+      y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+    }
+
+    const fromEdge = fromSymbol.getConnectionPoint(toCenter)
+    const toEdge = toSymbol.getConnectionPoint(fromCenter)
 
     const strokeColor = this.theme?.defaultStyleSet.strokeColor || "black"
     const strokeWidth = this.theme?.defaultStyleSet.strokeWidth || 1.5
     const fillColor = this.theme?.defaultStyleSet.backgroundColor || "white"
 
-    // Calculate angle for arrow
-    const dx = toX - fromX
-    const dy = toY - fromY
+    const dx = toEdge.x - fromEdge.x
+    const dy = toEdge.y - fromEdge.y
     const angle = Math.atan2(dy, dx)
     
-    // Arrow (triangle) size
     const arrowSize = 12
-    const arrowX1 = toX - arrowSize * Math.cos(angle - Math.PI / 6)
-    const arrowY1 = toY - arrowSize * Math.sin(angle - Math.PI / 6)
-    const arrowX2 = toX - arrowSize * Math.cos(angle + Math.PI / 6)
-    const arrowY2 = toY - arrowSize * Math.sin(angle + Math.PI / 6)
+    const arrowX1 = toEdge.x - arrowSize * Math.cos(angle - Math.PI / 6)
+    const arrowY1 = toEdge.y - arrowSize * Math.sin(angle - Math.PI / 6)
+    const arrowX2 = toEdge.x - arrowSize * Math.cos(angle + Math.PI / 6)
+    const arrowY2 = toEdge.y - arrowSize * Math.sin(angle + Math.PI / 6)
 
     return `
       <g>
-        <line x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"
+        <line x1="${fromEdge.x}" y1="${fromEdge.y}" x2="${toEdge.x}" y2="${toEdge.y}"
               stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <polygon points="${toX},${toY} ${arrowX1},${arrowY1} ${arrowX2},${arrowY2}"
+        <polygon points="${toEdge.x},${toEdge.y} ${arrowX1},${arrowY1} ${arrowX2},${arrowY2}"
                  fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
       </g>
     `

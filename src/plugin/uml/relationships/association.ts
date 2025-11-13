@@ -35,17 +35,24 @@ export class Association {
       throw new Error(`Association endpoints not found or not positioned`)
     }
 
-    const fromX = fromSymbol.bounds.x + fromSymbol.bounds.width / 2
-    const fromY = fromSymbol.bounds.y + fromSymbol.bounds.height / 2
-    const toX = toSymbol.bounds.x + toSymbol.bounds.width / 2
-    const toY = toSymbol.bounds.y + toSymbol.bounds.height / 2
+    const fromCenter = {
+      x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
+      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+    }
+    const toCenter = {
+      x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
+      y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+    }
+
+    const fromPoint = fromSymbol.getConnectionPoint(toCenter)
+    const toPoint = toSymbol.getConnectionPoint(fromCenter)
 
     // テーマから色を取得（relationshipはdefaultStyleSetを使用）
     const strokeColor = this.theme?.defaultStyleSet.strokeColor || "black"
     const strokeWidth = this.theme?.defaultStyleSet.strokeWidth || 1.5
 
     return `
-      <line x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"
+      <line x1="${fromPoint.x}" y1="${fromPoint.y}" x2="${toPoint.x}" y2="${toPoint.y}"
             stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
     `
   }

@@ -34,39 +34,43 @@ export class Extend {
       throw new Error(`Extend endpoints not found or not positioned`)
     }
 
-    const fromX = fromSymbol.bounds.x + fromSymbol.bounds.width / 2
-    const fromY = fromSymbol.bounds.y + fromSymbol.bounds.height / 2
-    const toX = toSymbol.bounds.x + toSymbol.bounds.width / 2
-    const toY = toSymbol.bounds.y + toSymbol.bounds.height / 2
+    const fromCenter = {
+      x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
+      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+    }
+    const toCenter = {
+      x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
+      y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+    }
+
+    const fromEdge = fromSymbol.getConnectionPoint(toCenter)
+    const toEdge = toSymbol.getConnectionPoint(fromCenter)
 
     const strokeColor = this.theme?.defaultStyleSet.strokeColor || "black"
     const strokeWidth = this.theme?.defaultStyleSet.strokeWidth || 1.5
     const fontSize = this.theme?.defaultStyleSet.fontSize || 12
 
-    // Calculate midpoint for stereotype label
-    const midX = (fromX + toX) / 2
-    const midY = (fromY + toY) / 2
+    const midX = (fromEdge.x + toEdge.x) / 2
+    const midY = (fromEdge.y + toEdge.y) / 2
 
-    // Calculate angle for arrow
-    const dx = toX - fromX
-    const dy = toY - fromY
+    const dx = toEdge.x - fromEdge.x
+    const dy = toEdge.y - fromEdge.y
     const angle = Math.atan2(dy, dx)
     
-    // Arrow size
     const arrowSize = 10
-    const arrowX1 = toX - arrowSize * Math.cos(angle - Math.PI / 6)
-    const arrowY1 = toY - arrowSize * Math.sin(angle - Math.PI / 6)
-    const arrowX2 = toX - arrowSize * Math.cos(angle + Math.PI / 6)
-    const arrowY2 = toY - arrowSize * Math.sin(angle + Math.PI / 6)
+    const arrowX1 = toEdge.x - arrowSize * Math.cos(angle - Math.PI / 6)
+    const arrowY1 = toEdge.y - arrowSize * Math.sin(angle - Math.PI / 6)
+    const arrowX2 = toEdge.x - arrowSize * Math.cos(angle + Math.PI / 6)
+    const arrowY2 = toEdge.y - arrowSize * Math.sin(angle + Math.PI / 6)
 
     return `
       <g>
-        <line x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"
+        <line x1="${fromEdge.x}" y1="${fromEdge.y}" x2="${toEdge.x}" y2="${toEdge.y}"
               stroke="${strokeColor}" stroke-width="${strokeWidth}"
               stroke-dasharray="5,5"/>
-        <line x1="${toX}" y1="${toY}" x2="${arrowX1}" y2="${arrowY1}"
+        <line x1="${toEdge.x}" y1="${toEdge.y}" x2="${arrowX1}" y2="${arrowY1}"
               stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <line x1="${toX}" y1="${toY}" x2="${arrowX2}" y2="${arrowY2}"
+        <line x1="${toEdge.x}" y1="${toEdge.y}" x2="${arrowX2}" y2="${arrowY2}"
               stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
         <text x="${midX}" y="${midY - 5}" 
               font-size="${fontSize}" 

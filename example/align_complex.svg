@@ -5,24 +5,24 @@
      viewBox="0 0 360 380">
   <rect width="100%" height="100%" fill="white"/>
   
-      <line x1="80" y1="90" x2="250" y2="80"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="88.23529411764706" x2="190.10353760950025" y2="81.76166065854412"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="90" x2="250" y2="190"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="107.64705882352942" x2="198.28394709053384" y2="174.7893962030982"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="220" x2="250" y2="80"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="195.2941176470588" x2="203.68418586297702" y2="99.071217585833"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="220" x2="250" y2="190"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="214.7058823529412" x2="190.91298647092378" y2="195.21356001727142"
+            stroke="black" stroke-width="2"/>
     
 
-      <line x1="80" y1="220" x2="250" y2="300"
-            stroke="black" stroke-width="1.5"/>
+      <line x1="110" y1="234.11764705882354" x2="195.71087786794035" y2="287.2260889101036"
+            stroke="black" stroke-width="2"/>
     
 
       <g id="actor_0">
