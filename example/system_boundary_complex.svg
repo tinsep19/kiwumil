@@ -34,12 +34,6 @@
     
 
       <g id="__diagram__">
-        <!-- Background -->
-        <rect x="50" y="50" width="440" height="200" 
-              fill="white" 
-              stroke="black" 
-              stroke-width="2"/>
-        
         <!-- Title -->
         <text x="270" y="80" 
               text-anchor="middle" 
