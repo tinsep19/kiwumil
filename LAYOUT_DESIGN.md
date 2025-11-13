@@ -7,6 +7,196 @@ Cassowary アルゴリズムを使用して、宣言的なレイアウトヒン�
 
 **🎉 First Milestone 達成済み:** Enclose内要素の自動配置が実装されました。
 
+**🎉 DiagramSymbol 実装済み:** 図全体を1つのシンボルとして扱い、すべての要素を自動的に囲む機能を実装しました。
+
+---
+
+## DiagramSymbol - 図全体のレイアウト
+
+### 概要
+
+DiagramSymbolは、図全体を表す特殊なシンボルです。すべてのユーザー定義シンボルを自動的にenclosureし、タイトルやメタデータを表示します。
+
+### 設計思想
+
+従来は最初のシンボルを(50, 50)に配置していましたが、DiagramSymbolの導入により：
+
+1. **DiagramSymbol**が常に配列の最初の要素として追加される
+2. DiagramSymbolが(0, 0)に固定される
+3. すべてのユーザーシンボルがDiagramSymbol内にenclosureされる
+4. **viewport が常に (0, 0) から始まる**
+
+これにより、図全体の境界計算が不要になり、より予測可能なレイアウトを実現します。
+
+### 動作フロー
+
+```typescript
+Diagram("My Diagram")  // または Diagram({ title: "...", createdAt: "...", author: "..." })
+  .build((el, rel, hint) => {
+    const a = el.circle("A")
+    const b = el.circle("B")
+    hint.arrangeHorizontal(a, b)
+  })
+  .render("output.svg")
+```
+
+内部処理：
+1. `DiagramBuilder` がユーザーコールバックを実行してシンボルを収集
+2. `DiagramSymbol("__diagram__", titleOrInfo)` を作成
+3. `symbols = [diagramSymbol, ...userSymbols]` の配列を構築
+4. 自動的に `hint.enclose(diagramSymbol, userSymbols)` を追加
+5. レイアウト計算を実行
+   - DiagramSymbolは最初の要素なので(0, 0)に固定
+   - ユーザーシンボルはDiagramSymbol内に配置
+   - DiagramSymbolのサイズは内容に応じて自動拡大
+
+### レイアウト制約
+
+#### DiagramSymbol の位置固定
+
+```typescript
+// LayoutSolver.solve() - 最初のシンボルを(0,0)に固定
+if (symbols.length > 0) {
+  const firstSymbol = symbols[0]  // = DiagramSymbol
+  const first = this.vars.get(firstSymbol.id)
+  
+  this.solver.addConstraint(
+    new kiwi.Constraint(
+      new kiwi.Expression(first.x), 
+      kiwi.Operator.Eq, 
+      0  // 以前は50, 現在は0
+    )
+  )
+  this.solver.addConstraint(
+    new kiwi.Constraint(
+      new kiwi.Expression(first.y), 
+      kiwi.Operator.Eq, 
+      0
+    )
+  )
+}
+```
+
+#### DiagramSymbol のサイズ制約
+
+DiagramSymbolはコンテナとして扱われるため：
+
+```typescript
+// 最小サイズのみ指定（WEAK制約）
+this.solver.addConstraint(
+  new kiwi.Constraint(
+    new kiwi.Expression(v.width), 
+    kiwi.Operator.Ge, 
+    200,  // 最小幅
+    kiwi.Strength.weak
+  )
+)
+this.solver.addConstraint(
+  new kiwi.Constraint(
+    new kiwi.Expression(v.height), 
+    kiwi.Operator.Ge, 
+    150,  // 最小高さ
+    kiwi.Strength.weak
+  )
+)
+```
+
+#### ユーザーシンボルの配置制約
+
+自動的に追加されるencloseヒント：
+
+```typescript
+// DiagramBuilder.build()
+if (userSymbols.length > 0) {
+  hints.push({
+    type: "enclose",
+    symbolIds: [],
+    containerId: diagramSymbol.id,
+    childIds: userSymbols.map(s => s.id)
+  })
+}
+```
+
+これにより、すべてのユーザーシンボルがDiagramSymbol内に配置され、DiagramSymbolが自動的に拡大します。
+
+### パディングとスペース
+
+DiagramSymbolは以下のスペースを確保します：
+
+```typescript
+// DiagramSymbol.toSVG()
+const titleSpace = 50      // タイトル用（上部）
+const metadataSpace = 30   // メタデータ用（下部）
+const sidePadding = 20     // 左右のパディング
+```
+
+実際のenclose制約でのパディング：
+
+```typescript
+// LayoutSolver.addEncloseConstraints()
+const padding = 20
+
+// 上部はタイトルスペースを考慮
+child.y >= container.y + 50  // タイトル分のスペース
+
+// 左右と下部は通常のパディング
+child.x >= container.x + padding
+container.width + container.x >= child.x + child.width + padding
+container.height + container.y >= child.y + child.height + padding
+```
+
+### SVG出力
+
+DiagramSymbolは以下を描画します：
+
+```xml
+<g id="__diagram__">
+  <!-- 背景 -->
+  <rect x="0" y="0" width="..." height="..." fill="white" stroke="..." />
+  
+  <!-- タイトル（上部中央） -->
+  <text x="centerX" y="30" 
+        text-anchor="middle" 
+        font-size="18" 
+        font-weight="bold">
+    My Diagram
+  </text>
+  
+  <!-- メタデータ（右下、オプション） -->
+  <text x="width-10" y="height-10" 
+        text-anchor="end" 
+        font-size="9" 
+        opacity="0.5">
+    Created: 2025-11-13 | Author: Team
+  </text>
+</g>
+```
+
+### viewport の計算
+
+DiagramSymbolを使用することで、viewportの計算が単純化されます：
+
+```typescript
+// SvgRenderer.ts
+const diagramSymbol = symbols[0]  // 必ず最初の要素
+const viewBox = `0 0 ${diagramSymbol.bounds.width} ${diagramSymbol.bounds.height}`
+
+// SVG
+<svg viewBox="0 0 300 200">
+  <!-- DiagramSymbol + ユーザーシンボル -->
+</svg>
+```
+
+以前は全シンボルの境界を計算する必要がありましたが、現在はDiagramSymbolの境界がそのままviewportになります。
+
+### メリット
+
+1. **viewport が常に (0, 0) 起点** - 予測可能で一貫した出力
+2. **境界計算が不要** - DiagramSymbolのboundsがそのまま図全体のサイズ
+3. **タイトルとメタデータの統合** - 特別な処理が不要
+4. **既存のenclose機構を活用** - 新しいレイアウトロジックが不要
+5. **統一的なシンボル階層** - すべてがSymbolBaseとして扱われる
+
 ---
 
 ## 設計哲学
@@ -720,10 +910,13 @@ Pack 内要素の自動配置をサポートし、ユーザーが直感的にレ
 - ✅ arrangeHorizontal / arrangeVertical
 - ✅ alignLeft / alignRight / alignTop / alignBottom
 - ✅ alignCenterX / alignCenterY
-- ✅ Pack + Arrange の組み合わせ
+- ✅ enclose + Arrange の組み合わせ
 - ✅ 自動サイズ調整コンテナ
 - ✅ 制約の優先度調整による競合解決
 - ✅ シンボル形状に応じた関係線の接続点計算（getConnectionPoint）
+- ✅ **DiagramSymbol による図全体のレイアウト管理**
+- ✅ **viewport の (0, 0) 固定**
+- ✅ **タイトルとメタデータの自動表示**
 
 ### 次のステップ
 
@@ -732,7 +925,7 @@ Pack 内要素の自動配置をサポートし、ユーザーが直感的にレ
 - Distribute（等間隔配置）
 - Flexbox風レイアウト
 
-**Phase 3: Pack の段階的削除**
-- SystemBoundary が自動的に子要素を囲むように改善
-- Pack を deprecate
-- 最終的に削除（v1.0.x）
+**Phase 3: enclose の段階的削除**
+- DiagramSymbol以外でのenclose使用を非推奨に
+- SystemBoundary が自動的に子要素を囲むように改善（将来）
+- enclose を完全に内部実装化（v1.0.x）
