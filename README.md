@@ -25,9 +25,9 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ```typescript
 import { Diagram, UMLPlugin } from "kiwumil"
 
-Diagram
+Diagram("First Milestone")
   .use(UMLPlugin)
-  .build("First Milestone", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
     const admin = el.actor("Admin")
@@ -52,6 +52,18 @@ Diagram
     hint.arrangeVertical(login, logout, manage_users)
   })
   .render("output.svg")
+
+// メタデータ付きの図も作成可能
+Diagram({
+  title: "E-Commerce System",
+  createdAt: "2025-11-13",
+  author: "Architecture Team"
+})
+  .use(UMLPlugin)
+  .build((el, rel, hint) => {
+    // ...
+  })
+  .render("output.svg")
 ```
 
 **出力イメージ:**
@@ -64,6 +76,7 @@ Diagram
 - 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
 - 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
 - ✨ **Arrange + Align API** - 直感的なレイアウト記述
+- 📝 **メタデータサポート** - タイトル、作成日、著者を図に含められる
 
 **🎉 New!** 範囲内要素の自動配置をサポート。`hint.arrangeVertical()` と組み合わせることで、要素が重ならずに配置されます。
 
@@ -79,19 +92,19 @@ Kiwumil はプリセットテーマをインポートして適用できます：
 import { Diagram, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
 
 // Blue テーマを適用
-Diagram
+Diagram("Login System")
   .use(UMLPlugin)
-  .theme(BlueTheme)  // ← インポートしたテーマを直接指定
-  .build("Login System", (el, rel, hint) => {
+  .theme(BlueTheme)
+  .build((el, rel, hint) => {
     // ...
   })
   .render("output_blue.svg")
 
 // Dark テーマを適用
-Diagram
+Diagram("Login System")
   .use(UMLPlugin)
   .theme(DarkTheme)
-  .build("Login System", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     // ...
   })
   .render("output_dark.svg")
