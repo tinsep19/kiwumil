@@ -3,9 +3,10 @@ import { UMLPlugin } from "../src/plugin/uml"
 import { CorePlugin } from "../src/plugin/core"
 
 // Test alignWidth
-Diagram.use(UMLPlugin)
+Diagram("Align Width Test")
+  .use(UMLPlugin)
   .use(CorePlugin)
-  .build("Align Width Test", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     const actor1 = el.actor("User")
     const actor2 = el.actor("Admin")
     const actor3 = el.actor("Guest")
@@ -16,9 +17,10 @@ Diagram.use(UMLPlugin)
   .render("example/align_width.svg")
 
 // Test alignHeight
-Diagram.use(UMLPlugin)
+Diagram("Align Height Test")
+  .use(UMLPlugin)
   .use(CorePlugin)
-  .build("Align Height Test", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     const rect1 = el.rectangle("Box 1")
     const rect2 = el.rectangle("Box 2")
     const rect3 = el.rectangle("Box 3")
@@ -29,9 +31,10 @@ Diagram.use(UMLPlugin)
   .render("example/align_height.svg")
 
 // Test alignSize
-Diagram.use(UMLPlugin)
+Diagram("Align Size Test")
+  .use(UMLPlugin)
   .use(CorePlugin)
-  .build("Align Size Test", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     const uc1 = el.usecase("Login")
     const uc2 = el.usecase("Logout")
     const uc3 = el.usecase("Register")
@@ -42,9 +45,10 @@ Diagram.use(UMLPlugin)
   .render("example/align_size.svg")
 
 // Complex example: Align width + vertical layout
-Diagram.use(UMLPlugin)
+Diagram("Complex Align Test")
+  .use(UMLPlugin)
   .use(CorePlugin)
-  .build("Complex Align Test", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     const user = el.actor("User")
     const admin = el.actor("Admin")
     

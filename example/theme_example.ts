@@ -2,10 +2,10 @@
 import { Diagram, UMLPlugin, DefaultTheme, BlueTheme, DarkTheme } from "../src/index"
 
 // Default theme example
-Diagram("TODO")
+Diagram("Login System")
   .use(UMLPlugin)
   .theme(DefaultTheme)
-  .build("Login System", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
     const logout = element.usecase("Logout")
@@ -18,10 +18,10 @@ Diagram("TODO")
   .render("example/usecase_with_actor.svg")
 
 // Blue theme example
-Diagram("TODO")
+Diagram("Login System (Blue)")
   .use(UMLPlugin)
   .theme(BlueTheme)
-  .build("Login System (Blue)", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
     const logout = element.usecase("Logout")
@@ -34,10 +34,10 @@ Diagram("TODO")
   .render("example/usecase_with_actor_blue_themed.svg")
 
 // Dark theme example
-Diagram("TODO")
+Diagram("Login System")
   .use(UMLPlugin)
   .theme(DarkTheme)
-  .build("Login System (Dark)", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
     const logout = element.usecase("Logout")

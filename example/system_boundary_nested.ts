@@ -1,8 +1,8 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram("TODO")
+Diagram("Nested System Boundaries")
   .use(UMLPlugin)
-  .build("Nested System Boundaries", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     // Create boundaries and use cases
     const outerSystem = el.systemBoundary("Outer System")
     const innerSystem = el.systemBoundary("Inner System")
