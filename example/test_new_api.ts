@@ -1,8 +1,8 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram("TODO")
+Diagram("Test New API")
   .use(UMLPlugin)
-  .build("Test New API", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
     const admin = el.actor("Admin")

@@ -1,9 +1,9 @@
 // example/actor_horizontal.ts
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram("TODO")
+Diagram("Horizontal Actors")
   .use(UMLPlugin)
-  .build("Horizontal Actors", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     const user1 = element.actor("User")
     const user2 = element.actor("Admin")
     const user3 = element.actor("Guest")

@@ -1,8 +1,8 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-const result = Diagram
+const result = Diagram("Debug Arrange")
   .use(UMLPlugin)
-  .build("Debug Arrange", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     const a = el.usecase("A")
     const b = el.usecase("B")
     const c = el.usecase("C")

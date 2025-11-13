@@ -1,8 +1,8 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram("TODO")
+Diagram("UML Relations Example")
   .use(UMLPlugin)
-  .build("UML Relations Example", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     // Create three use cases
     const usecaseA = element.usecase("UseCase A")
     const usecaseB = element.usecase("UseCase B")

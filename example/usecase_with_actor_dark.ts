@@ -1,9 +1,9 @@
 import { Diagram, UMLPlugin, DarkTheme } from "../src/index"
 
-Diagram("TODO")
+Diagram("Usecase with Actor (Dark Theme)")
   .use(UMLPlugin)
   .theme(DarkTheme)
-  .build("Usecase with Actor (Dark Theme)", (element, relation, hint) => {
+  .build((element, relation, hint) => {
     const user = element.actor("User")
     const login = element.usecase("Login")
     const logout = element.usecase("Logout")

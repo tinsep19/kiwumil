@@ -1,8 +1,8 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram("TODO")
+Diagram("First Milestone")
   .use(UMLPlugin)
-  .build("First Milestone", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     // 1. シンボルを定義
     const user = el.actor("User")
     const admin = el.actor("Admin")

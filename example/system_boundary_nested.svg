@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="300" 
-     height="300" 
-     viewBox="0 0 300 300">
+     width="340" 
+     height="370" 
+     viewBox="0 0 340 370">
   <rect width="100%" height="100%" fill="white"/>
   
       <g id="systemBoundary_0">
         <!-- System Boundary Rectangle -->
-        <rect x="50" y="50" width="200" height="200" 
+        <rect x="70" y="100" width="200" height="200" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
-        <text x="60" y="69" 
+        <text x="80" y="119" 
               font-size="14" font-family="Arial" font-weight="bold"
               fill="black">
           Outer System
@@ -21,11 +21,11 @@
 
       <g id="systemBoundary_1">
         <!-- System Boundary Rectangle -->
-        <rect x="70" y="100" width="160" height="130" 
+        <rect x="90" y="150" width="160" height="130" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
-        <text x="80" y="119" 
+        <text x="100" y="169" 
               font-size="14" font-family="Arial" font-weight="bold"
               fill="black">
           Inner System
@@ -33,27 +33,47 @@
       </g>
     
 
+      <g id="__diagram__">
+        <!-- Background -->
+        <rect x="50" y="50" width="240" height="270" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Title -->
+        <text x="170" y="80" 
+              text-anchor="middle" 
+              font-size="18" 
+              font-weight="bold"
+              font-family="Arial"
+              fill="black">
+          Nested System Boundaries
+        </text>
+        
+      </g>
+    
+
       <g id="actor_4">
         <!-- Head -->
-        <circle cx="30" cy="15" r="10" 
+        <circle cx="100" cy="115" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="30" y1="25" x2="30" y2="48" 
+        <line x1="100" y1="125" x2="100" y2="148" 
               stroke="black" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="5" y1="31.9" x2="55" y2="31.9" 
+        <line x1="75" y1="131.9" x2="125" y2="131.9" 
               stroke="black" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="30" y1="48" x2="10" y2="65" 
+        <line x1="100" y1="148" x2="80" y2="165" 
               stroke="black" stroke-width="2"/>
-        <line x1="30" y1="48" x2="50" y2="65" 
+        <line x1="100" y1="148" x2="120" y2="165" 
               stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="30" y="80" 
+        <text x="100" y="180" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           User
@@ -61,21 +81,21 @@
       </g>
     
 
-      <line x1="60" y1="67" x2="85.40235122517001" y2="109.93105805132652"
+      <line x1="130" y1="164" x2="103.14787143341817" y2="161.25914857336727"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="60" y1="75" x2="110.95251759264188" y2="157.2223019290411"
+      <line x1="130" y1="178.57142857142856" x2="133.16356318910476" y2="206.3194334787102"
             stroke="black" stroke-width="2"/>
     
 
       <g id="usecase_2">
         <!-- Ellipse -->
-        <ellipse cx="130" cy="130" rx="60" ry="30" 
+        <ellipse cx="150" cy="180" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="135" 
+        <text x="150" y="185" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Outer Task
@@ -85,11 +105,11 @@
 
       <g id="usecase_3">
         <!-- Ellipse -->
-        <ellipse cx="150" cy="180" rx="60" ry="30" 
+        <ellipse cx="170" cy="230" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="150" y="185" 
+        <text x="170" y="235" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Inner Task

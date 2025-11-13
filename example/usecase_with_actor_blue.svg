@@ -1,39 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="360" 
-     height="270" 
-     viewBox="0 0 360 270">
+     width="400" 
+     height="340" 
+     viewBox="0 0 400 340">
   <rect width="100%" height="100%" fill="#f0f8ff"/>
   
-      <line x1="110" y1="88.23529411764706" x2="190.10353760950025" y2="81.76166065854412"
+      <line x1="130" y1="138.23529411764707" x2="210.10353760950025" y2="131.76166065854412"
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="110" y1="107.64705882352942" x2="198.28394709053384" y2="174.7893962030982"
+      <line x1="130" y1="157.64705882352942" x2="218.28394709053384" y2="224.7893962030982"
             stroke="#0066cc" stroke-width="2"/>
+    
+
+      <g id="__diagram__">
+        <!-- Background -->
+        <rect x="50" y="50" width="300" height="240" 
+              fill="#e6f3ff" 
+              stroke="#0066cc" 
+              stroke-width="2"/>
+        
+        <!-- Title -->
+        <text x="200" y="80" 
+              text-anchor="middle" 
+              font-size="18" 
+              font-weight="bold"
+              font-family="Arial"
+              fill="#003366">
+          Usecase with Actor (Blue Theme)
+        </text>
+        
+      </g>
     
 
       <g id="actor_0">
         <!-- Head -->
-        <circle cx="80" cy="65" r="10" 
+        <circle cx="100" cy="115" r="10" 
                 fill="none" stroke="#003366" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="80" y1="75" x2="80" y2="98" 
+        <line x1="100" y1="125" x2="100" y2="148" 
               stroke="#003366" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="55" y1="81.9" x2="105" y2="81.9" 
+        <line x1="75" y1="131.9" x2="125" y2="131.9" 
               stroke="#003366" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="80" y1="98" x2="60" y2="115" 
+        <line x1="100" y1="148" x2="80" y2="165" 
               stroke="#003366" stroke-width="2"/>
-        <line x1="80" y1="98" x2="100" y2="115" 
+        <line x1="100" y1="148" x2="120" y2="165" 
               stroke="#003366" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="80" y="130" 
+        <text x="100" y="180" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           User
@@ -43,11 +63,11 @@
 
       <g id="usecase_1">
         <!-- Ellipse -->
-        <ellipse cx="250" cy="80" rx="60" ry="30" 
+        <ellipse cx="270" cy="130" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="250" y="85" 
+        <text x="270" y="135" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Login
@@ -57,11 +77,11 @@
 
       <g id="usecase_2">
         <!-- Ellipse -->
-        <ellipse cx="250" cy="190" rx="60" ry="30" 
+        <ellipse cx="270" cy="240" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="250" y="195" 
+        <text x="270" y="245" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Logout
