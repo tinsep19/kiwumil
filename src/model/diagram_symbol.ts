@@ -84,12 +84,6 @@ export class DiagramSymbol extends SymbolBase {
 
     return `
       <g id="${this.id}">
-        <!-- Background -->
-        <rect x="${x}" y="${y}" width="${width}" height="${height}" 
-              fill="${style.fillColor}" 
-              stroke="${style.strokeColor}" 
-              stroke-width="${style.strokeWidth}"/>
-        
         <!-- Title -->
         <text x="${cx}" y="${y + 30}" 
               text-anchor="middle" 
