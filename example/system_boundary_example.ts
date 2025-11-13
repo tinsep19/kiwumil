@@ -1,6 +1,6 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram
+Diagram("TODO")
   .use(UMLPlugin)
   .build("System Boundary Example", (el, rel, hint) => {
     const user = el.actor("User")

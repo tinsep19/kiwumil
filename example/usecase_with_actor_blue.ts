@@ -1,6 +1,6 @@
 import { Diagram, UMLPlugin, BlueTheme } from "../src/index"
 
-Diagram
+Diagram("TODO")
   .use(UMLPlugin)
   .theme(BlueTheme)
   .build("Usecase with Actor (Blue Theme)", (element, relation, hint) => {

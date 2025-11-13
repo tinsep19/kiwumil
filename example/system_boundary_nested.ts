@@ -1,6 +1,6 @@
 import { Diagram, UMLPlugin } from "../src/index"
 
-Diagram
+Diagram("TODO")
   .use(UMLPlugin)
   .build("Nested System Boundaries", (el, rel, hint) => {
     // Create boundaries and use cases

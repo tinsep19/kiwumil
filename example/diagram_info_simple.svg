@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="800" 
+     width="400" 
      height="230" 
-     viewBox="0 0 800 230">
+     viewBox="0 0 400 230">
   <rect width="100%" height="100%" fill="white"/>
   
       <g id="__diagram__">
         <!-- Background -->
-        <rect x="50" y="50" width="700" height="130" 
+        <rect x="50" y="50" width="300" height="130" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Title -->
-        <text x="400" y="80" 
+        <text x="200" y="80" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
               font-family="Arial"
               fill="black">
-          Basic Shapes
+          Simple Diagram with Title
         </text>
         
       </g>
@@ -43,12 +43,12 @@
       </g>
     
 
-      <g id="ellipse_1">
-        <!-- Ellipse -->
-        <ellipse cx="270" cy="130" rx="60" ry="30" 
-                 fill="white" 
-                 stroke="black" 
-                 stroke-width="2"/>
+      <g id="rectangle_1">
+        <!-- Rectangle -->
+        <rect x="210" y="100" width="120" height="60" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
         
         <!-- Label -->
         <text x="270" y="135" 
@@ -56,44 +56,7 @@
               font-size="12" 
               font-family="Arial"
               fill="black">
-          Ellipse
-        </text>
-      </g>
-    
-
-      <g id="rectangle_2">
-        <!-- Rectangle -->
-        <rect x="410" y="100" width="120" height="60" 
-              fill="white" 
-              stroke="black" 
-              stroke-width="2"/>
-        
-        <!-- Label -->
-        <text x="470" y="135" 
-              text-anchor="middle" 
-              font-size="12" 
-              font-family="Arial"
-              fill="black">
           Rectangle
-        </text>
-      </g>
-    
-
-      <g id="roundedRectangle_3">
-        <!-- Rounded Rectangle -->
-        <rect x="610" y="100" width="120" height="60" 
-              rx="10" ry="10"
-              fill="white" 
-              stroke="black" 
-              stroke-width="2"/>
-        
-        <!-- Label -->
-        <text x="670" y="135" 
-              text-anchor="middle" 
-              font-size="12" 
-              font-family="Arial"
-              fill="black">
-          Rounded
         </text>
       </g>
     

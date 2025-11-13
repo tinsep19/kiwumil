@@ -2,9 +2,9 @@
 import { Diagram, DefaultTheme } from "../src/index"
 
 // CorePluginはデフォルトで有効
-Diagram
+Diagram("Basic Shapes")
   .theme(DefaultTheme)
-  .build("Basic Shapes", (el, rel, hint) => {
+  .build((el, rel, hint) => {
     // Basic shapes from CorePlugin
     const circle = el.circle("Circle")
     const ellipse = el.ellipse("Ellipse")
