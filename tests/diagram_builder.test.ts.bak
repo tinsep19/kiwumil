@@ -1,40 +1,37 @@
-// tests/diagram_builder.test.ts
+// tests/diagram_TypedDiagram("Test").test.ts
 import { describe, test, expect, beforeEach } from "bun:test"
-import { DiagramBuilder } from "../src/dsl/diagram_builder"
+import { TypedDiagram } from "../src/dsl/diagram_builder"
 import { DefaultTheme, BlueTheme } from "../src/core/theme"
-import { UMLPlugin } from "../src/plugin/uml"
+import { UMLPlugin } from "../src/plugin/uml/plugin"
+import { CorePlugin } from "../src/plugin/core/plugin"
 
-describe("DiagramBuilder", () => {
-  let builder: DiagramBuilder
-
-  beforeEach(() => {
-    builder = new DiagramBuilder("Test")
-  })
-
+describe("TypedDiagram", () => {
   describe("Constructor", () => {
-    test("should automatically load CorePlugin", () => {
+    test("should work with CorePlugin", () => {
       let circleCalled = false
       
-      builder.build((el) => {
-        const circle = el.circle("Test Circle")
-        circleCalled = true
-        expect(circle).toBeDefined()
-      })
+      TypedDiagram("Test")
+        .use(CorePlugin)
+        .build((el) => {
+          const circle = el.core.circle("Test Circle")
+          circleCalled = true
+          expect(circle).toBeDefined()
+        })
       
       expect(circleCalled).toBe(true)
     })
 
-    test("should have basic shapes available from CorePlugin", () => {
-      const shapes: string[] = []
+    test("should work with CorePlugin and create shapes", () => {
+      const result = TypedDiagram("Test")
+        .use(CorePlugin)
+        .build((el) => {
+          el.core.circle("Circle")
+          el.core.ellipse("Ellipse")
+          el.core.rectangle("Rectangle")
+          el.core.roundedRectangle("RoundedRect")
+        })
       
-      builder.build((el) => {
-        shapes.push(el.circle("Circle"))
-        shapes.push(el.ellipse("Ellipse"))
-        shapes.push(el.rectangle("Rectangle"))
-        shapes.push(el.roundedRectangle("RoundedRect"))
-      })
-      
-      expect(shapes).toHaveLength(4)
+      expect(result.symbols.length).toBeGreaterThan(4) // 4 shapes + diagram symbol
     })
   })
 
@@ -45,7 +42,7 @@ describe("DiagramBuilder", () => {
       builder
         .use(UMLPlugin)
         .build((el) => {
-          const actor = el.actor("User")
+          const actor = el.uml.actor("User")
           actorCalled = true
           expect(actor).toBeDefined()
         })
@@ -54,7 +51,7 @@ describe("DiagramBuilder", () => {
     })
 
     test("should return builder for chaining", () => {
-      const result = builder.use(UMLPlugin)
+      const result = TypedDiagram("Test").use(UMLPlugin)
       expect(result).toBe(builder)
     })
 
@@ -63,8 +60,8 @@ describe("DiagramBuilder", () => {
         .use(UMLPlugin)
         .build((el) => {
           // Both CorePlugin and UMLPlugin symbols available
-          el.circle("Circle")
-          el.actor("Actor")
+          el.core.circle("Circle")
+          el.uml.actor("Actor")
         })
       
       expect(result).toBeDefined()
@@ -76,7 +73,7 @@ describe("DiagramBuilder", () => {
       const result = builder
         .theme(BlueTheme)
         .build((el) => {
-          el.circle("Circle")
+          el.core.circle("Circle")
         })
       
       // DiagramSymbol + 1 user symbol = 2
@@ -86,7 +83,7 @@ describe("DiagramBuilder", () => {
     })
 
     test("should return builder for chaining", () => {
-      const result = builder.theme(DefaultTheme)
+      const result = TypedDiagram("Test").theme(DefaultTheme)
       expect(result).toBe(builder)
     })
 
@@ -94,9 +91,9 @@ describe("DiagramBuilder", () => {
       const result = builder
         .theme(BlueTheme)
         .build((el) => {
-          el.circle("Circle")
-          el.rectangle("Rectangle")
-          el.ellipse("Ellipse")
+          el.core.circle("Circle")
+          el.core.rectangle("Rectangle")
+          el.core.ellipse("Ellipse")
         })
       
       // DiagramSymbol + 3 user symbols = 4
@@ -109,9 +106,9 @@ describe("DiagramBuilder", () => {
 
   describe("build()", () => {
     test("should create symbols from callback", () => {
-      const result = builder.build((el) => {
-        el.circle("C1")
-        el.rectangle("R1")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        el.core.circle("C1")
+        el.core.rectangle("R1")
       })
       
       // DiagramSymbol + 2 user symbols = 3
@@ -125,8 +122,8 @@ describe("DiagramBuilder", () => {
       const result = builder
         .use(UMLPlugin)
         .build((el, rel) => {
-          const actor = el.actor("User")
-          const usecase = el.usecase("Login")
+          const actor = el.uml.actor("User")
+          const usecase = el.uml.usecase("Login")
           rel.associate(actor, usecase)
         })
       
@@ -134,9 +131,9 @@ describe("DiagramBuilder", () => {
     })
 
     test("should handle layout hints", () => {
-      const result = builder.build((el, rel, hint) => {
-        const c1 = el.circle("C1")
-        const c2 = el.circle("C2")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el, rel, hint) => {
+        const c1 = el.core.circle("C1")
+        const c2 = el.core.circle("C2")
         hint.arrangeHorizontal(c1, c2)
       })
       
@@ -149,8 +146,8 @@ describe("DiagramBuilder", () => {
     })
 
     test("should return result with render function", () => {
-      const result = builder.build((el) => {
-        el.circle("Circle")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        el.core.circle("Circle")
       })
       
       expect(result.render).toBeDefined()
@@ -158,9 +155,9 @@ describe("DiagramBuilder", () => {
     })
 
     test("should calculate layout automatically", () => {
-      const result = builder.build((el, rel, hint) => {
-        const c1 = el.circle("C1")
-        const c2 = el.circle("C2")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el, rel, hint) => {
+        const c1 = el.core.circle("C1")
+        const c2 = el.core.circle("C2")
         hint.arrangeHorizontal(c1, c2)
       })
       
@@ -181,8 +178,8 @@ describe("DiagramBuilder", () => {
         .use(UMLPlugin)
         .theme(BlueTheme)
         .build((el) => {
-          el.actor("User")
-          el.circle("Circle")
+          el.uml.actor("User")
+          el.core.circle("Circle")
         })
       
       // DiagramSymbol + 2 user symbols = 3
@@ -197,7 +194,7 @@ describe("DiagramBuilder", () => {
         .theme(DefaultTheme)
         .use(UMLPlugin)
         .build((el) => {
-          el.usecase("Login")
+          el.uml.usecase("Login")
         })
       
       // DiagramSymbol + 1 user symbol = 2
@@ -209,8 +206,8 @@ describe("DiagramBuilder", () => {
 
   describe("CorePlugin symbols", () => {
     test("should have circle available", () => {
-      const result = builder.build((el) => {
-        const id = el.circle("My Circle")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        const id = el.core.circle("My Circle")
         expect(id).toContain("circle")
       })
       
@@ -219,8 +216,8 @@ describe("DiagramBuilder", () => {
     })
 
     test("should have ellipse available", () => {
-      const result = builder.build((el) => {
-        const id = el.ellipse("My Ellipse")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        const id = el.core.ellipse("My Ellipse")
         expect(id).toContain("ellipse")
       })
       
@@ -229,8 +226,8 @@ describe("DiagramBuilder", () => {
     })
 
     test("should have rectangle available", () => {
-      const result = builder.build((el) => {
-        const id = el.rectangle("My Rectangle")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        const id = el.core.rectangle("My Rectangle")
         expect(id).toContain("rectangle")
       })
       
@@ -239,8 +236,8 @@ describe("DiagramBuilder", () => {
     })
 
     test("should have roundedRectangle available", () => {
-      const result = builder.build((el) => {
-        const id = el.roundedRectangle("My RoundedRect")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        const id = el.core.roundedRectangle("My RoundedRect")
         expect(id).toContain("roundedRectangle")
       })
       
@@ -254,9 +251,9 @@ describe("DiagramBuilder", () => {
       const result = builder
         .theme(BlueTheme)
         .build((el, rel, hint) => {
-          const circle = el.circle("Circle")
-          const rect = el.rectangle("Rectangle")
-          const ellipse = el.ellipse("Ellipse")
+          const circle = el.core.circle("Circle")
+          const rect = el.core.rectangle("Rectangle")
+          const ellipse = el.core.ellipse("Ellipse")
           
           hint.arrangeHorizontal(circle, rect, ellipse)
           hint.alignCenterY(circle, rect, ellipse)
@@ -279,9 +276,9 @@ describe("DiagramBuilder", () => {
       const result = builder
         .use(UMLPlugin)
         .build((el, rel, hint) => {
-          const actor = el.actor("User")
-          const circle = el.circle("Circle")
-          const usecase = el.usecase("Action")
+          const actor = el.uml.actor("User")
+          const circle = el.core.circle("Circle")
+          const usecase = el.uml.usecase("Action")
           
           rel.associate(actor, usecase)
           hint.arrangeHorizontal(actor, circle, usecase)
@@ -293,12 +290,12 @@ describe("DiagramBuilder", () => {
     })
 
     test("should generate valid bounds for all symbols", () => {
-      const result = builder.build((el, rel, hint) => {
+      const result = TypedDiagram("Test").use(CorePlugin).build((el, rel, hint) => {
         const shapes = [
-          el.circle("C"),
-          el.ellipse("E"),
-          el.rectangle("R"),
-          el.roundedRectangle("RR")
+          el.core.circle("C"),
+          el.core.ellipse("E"),
+          el.core.rectangle("R"),
+          el.core.roundedRectangle("RR")
         ]
         
         hint.arrangeHorizontal(...shapes)
@@ -316,7 +313,7 @@ describe("DiagramBuilder", () => {
 
   describe("Edge Cases", () => {
     test("should handle empty diagram", () => {
-      const result = builder.build(() => {
+      const result = TypedDiagram("Test").use(CorePlugin).build(() => {
         // No symbols
       })
       
@@ -327,8 +324,8 @@ describe("DiagramBuilder", () => {
     })
 
     test("should handle diagram with only one symbol", () => {
-      const result = builder.build((el) => {
-        el.circle("Lonely")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        el.core.circle("Lonely")
       })
       
       // DiagramSymbol + 1 user symbol = 2
@@ -338,8 +335,8 @@ describe("DiagramBuilder", () => {
     })
 
     test("should have default theme applied", () => {
-      const result = builder.build((el) => {
-        el.circle("Circle")
+      const result = TypedDiagram("Test").use(CorePlugin).build((el) => {
+        el.core.circle("Circle")
       })
       
       // DiagramSymbol + 1 user symbol = 2

@@ -1,72 +1,91 @@
 // src/dsl/diagram_builder.ts
-import { SymbolRegistry } from "../model/symbol_registry"
-import { RelationshipRegistry } from "../model/relationship_registry"
-import { PluginManager, KiwumilPlugin } from "./plugin_manager"
-import { ElementFactory } from "./element_factory"
-import { RelationshipFactory } from "./relationship_factory"
+import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory, LayoutHint } from "./hint_factory"
 import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
-import { CorePlugin } from "../plugin/core"
 import { DiagramSymbol } from "../model/diagram_symbol"
+import { CorePlugin } from "../plugin/core/plugin"
+import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
+import type { RelationshipBase } from "../model/relationship_base"
 import type { DiagramInfo } from "../model/diagram_info"
-import type { Association } from "../plugin/uml/relationships/association"
-import type { Include } from "../plugin/uml/relationships/include"
-import type { Extend } from "../plugin/uml/relationships/extend"
-import type { Generalize } from "../plugin/uml/relationships/generalize"
 import type { Theme } from "../core/theme"
+import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../core/theme"
 
-type Relationship = Association | Include | Extend | Generalize
-
-type DiagramCallback = (
-  element: ElementFactory,
-  relation: RelationshipFactory,
+/**
+ * IntelliSense が有効な DSL ブロックのコールバック型
+ * 
+ * el (element), rel (relationship), hint の3つのパラメータを受け取り、
+ * 型安全に図の要素を定義できる。
+ */
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
+  el: BuildElementNamespace<TPlugins>,
+  rel: BuildRelationshipNamespace<TPlugins>,
   hint: HintFactory
 ) => void
 
-export class DiagramBuilder {
-  private symbolRegistry = new SymbolRegistry()
-  private relationshipRegistry = new RelationshipRegistry()
-  private pluginManager = new PluginManager(this.symbolRegistry, this.relationshipRegistry)
+/**
+ * DiagramBuilder - TypedDiagram の内部実装クラス
+ * 
+ * ユーザーには公開されないが、TypedDiagram 関数から返される。
+ * メソッドチェーンで流暢な API を提供する。
+ */
+class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
+  private plugins: TPlugins = [] as any
   private currentTheme: Theme
   private titleOrInfo: string | DiagramInfo
 
   constructor(titleOrInfo: string | DiagramInfo) {
     this.titleOrInfo = titleOrInfo
-    // CorePluginをデフォルトで有効化
-    this.pluginManager.use(CorePlugin)
-    // デフォルトテーマを設定
     this.currentTheme = DefaultTheme
   }
 
-  use(...plugins: KiwumilPlugin[]): DiagramBuilder {
-    this.pluginManager.use(...plugins)
-    return this
+  /**
+   * プラグインを登録
+   */
+  use<TNewPlugins extends readonly DiagramPlugin[]>(
+    ...plugins: TNewPlugins
+  ): DiagramBuilder<[...TPlugins, ...TNewPlugins]> {
+    this.plugins = [...this.plugins, ...plugins] as any
+    return this as any
   }
 
-  theme(theme: Theme): DiagramBuilder {
+  /**
+   * テーマを設定
+   */
+  theme(theme: Theme): this {
     this.currentTheme = theme
     return this
   }
 
-  build(callback: DiagramCallback) {
+  /**
+   * ダイアグラムを構築
+   * 
+   * @param callback - IntelliSense が有効な DSL ブロック
+   * @returns レンダリング可能な図オブジェクト
+   */
+  build(callback: IntelliSenseBlock<TPlugins>) {
+    // Symbol と Relationship を格納する配列
     const userSymbols: SymbolBase[] = []
-    const relationships: Relationship[] = []
+    const relationships: RelationshipBase[] = []
     const hints: LayoutHint[] = []
 
-    const element = new ElementFactory(this.symbolRegistry, userSymbols)
-    const relation = new RelationshipFactory(relationships)
+    // Namespace Builder を使って el と rel を構築
+    const namespaceBuilder = new NamespaceBuilder(this.plugins)
+    const el = namespaceBuilder.buildElementNamespace(userSymbols)
+    const rel = namespaceBuilder.buildRelationshipNamespace(relationships)
     const hint = new HintFactory(hints, userSymbols, this.currentTheme)
 
-    callback(element, relation, hint)
+    // ユーザーのコールバックを実行
+    // この中で el.uml.actor() などが呼ばれ、userSymbols / relationships に追加される
+    callback(el, rel, hint)
 
-    // DiagramSymbolを作成
+    // DiagramSymbol を作成
     const diagramSymbol = new DiagramSymbol("__diagram__", this.titleOrInfo)
     diagramSymbol.setTheme(this.currentTheme)
 
-    // すべてのシンボルを含む配列を作成（DiagramSymbolを先頭に）
+    // すべての Symbol を含む配列
     const allSymbols: SymbolBase[] = [diagramSymbol, ...userSymbols]
 
     // テーマを適用
@@ -77,11 +96,11 @@ export class DiagramBuilder {
       relationship.setTheme(this.currentTheme)
     }
 
-    // DiagramSymbolがすべてのユーザーシンボルをenclosureするhintを追加
+    // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (userSymbols.length > 0) {
       hints.push({
         type: "enclose",
-        symbolIds: [],  // encloseの場合はsymbolIdsは未使用
+        symbolIds: [],
         containerId: diagramSymbol.id,
         childIds: userSymbols.map(s => s.id)
       })
@@ -100,4 +119,65 @@ export class DiagramBuilder {
       }
     }
   }
+}
+
+/**
+ * TypedDiagram - Kiwumil の型安全な図作成エントリポイント
+ * 
+ * IntelliSense による強力な型推論をサポートし、
+ * 宣言的で読みやすい図の定義を可能にします。
+ * 
+ * **Note**: CorePlugin がデフォルトで適用されるため、
+ * 基本図形（circle, rectangle, ellipse 等）がすぐに利用可能です。
+ * 
+ * @param titleOrInfo - 図のタイトル、または DiagramInfo オブジェクト
+ * @returns チェーン可能なビルダーオブジェクト
+ * 
+ * @example 基本的な使い方
+ * ```typescript
+ * import { TypedDiagram, UMLPlugin } from "kiwumil"
+ * 
+ * TypedDiagram("My Diagram")
+ *   .use(UMLPlugin)
+ *   .build((el, rel, hint) => {
+ *     // CorePlugin の図形（デフォルトで利用可能）
+ *     const circle = el.core.circle("Circle")
+ *     
+ *     // UMLPlugin の図形
+ *     const user = el.uml.actor("User")
+ *     const login = el.uml.usecase("Login")
+ *     rel.uml.associate(user, login)
+ *     hint.arrangeHorizontal(user, login)
+ *   })
+ *   .render("output.svg")
+ * ```
+ * 
+ * @example DiagramInfo を使用
+ * ```typescript
+ * TypedDiagram({
+ *   title: "E-Commerce System",
+ *   createdAt: "2025-11-14",
+ *   author: "Architecture Team"
+ * })
+ *   .use(UMLPlugin)
+ *   .build((el, rel, hint) => {
+ *     // ...
+ *   })
+ *   .render("output.svg")
+ * ```
+ * 
+ * @example 複数プラグインとテーマ
+ * ```typescript
+ * TypedDiagram("Mixed Diagram")
+ *   .use(UMLPlugin)
+ *   .theme(DarkTheme)
+ *   .build((el, rel, hint) => {
+ *     el.uml.actor("User")
+ *     el.core.circle("Circle")  // CorePlugin はデフォルトで利用可能
+ *   })
+ *   .render("output.svg")
+ * ```
+ */
+export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
+  return new DiagramBuilder(titleOrInfo).use(CorePlugin)
 }

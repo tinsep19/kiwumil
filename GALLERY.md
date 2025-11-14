@@ -2,6 +2,8 @@
 
 このページでは、Kiwumilで生成できる図の例を紹介します。
 
+> **Note**: このギャラリーは新しい名前空間ベースの API に基づいています。
+
 ## Actor Examples
 
 ### Simple Actor
@@ -11,12 +13,12 @@
 **Code:**
 ```typescript
 // example/actor_simple.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder("Simple Actor")
   .use(UMLPlugin)
-  .build("Simple Actor", (element, relation, hint) => {
-    element.actor("User")
+  .build((el, rel, hint) => {
+    el.uml.actor("User")
   })
   .render("example/actor_simple.svg")
 ```
@@ -34,14 +36,14 @@ Diagram
 **Code:**
 ```typescript
 // example/actor_horizontal.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder("Horizontal Actors")
   .use(UMLPlugin)
-  .build("Horizontal Actors", (element, relation, hint) => {
-    const user1 = element.actor("User")
-    const user2 = element.actor("Admin")
-    const user3 = element.actor("Guest")
+  .build((el, rel, hint) => {
+    const user1 = el.uml.actor("User")
+    const user2 = el.uml.actor("Admin")
+    const user3 = el.uml.actor("Guest")
 
     hint.arrangeHorizontal(user1, user2, user3)
   })
@@ -61,14 +63,14 @@ Diagram
 **Code:**
 ```typescript
 // example/actor_vertical.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
-  .build("Vertical Actors", (element, relation, hint) => {
-    const user1 = element.actor("User")
-    const user2 = element.actor("Admin")
-    const user3 = element.actor("Guest")
+  .build("Vertical Actors", (el, rel, hint) => {
+    const user1 = el.uml.actor("User")
+    const user2 = el.uml.actor("Admin")
+    const user3 = el.uml.actor("Guest")
 
     hint.arrangeVertical(user1, user2, user3)
   })
@@ -90,12 +92,12 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_simple.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
-  .build("Simple Usecase", (element, relation, hint) => {
-    element.usecase("Login")
+  .build("Simple Usecase", (el, rel, hint) => {
+    el.uml.usecase("Login")
   })
   .render("example/usecase_simple.svg")
 ```
@@ -113,14 +115,14 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_multiple.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
-  .build("Multiple Usecases", (element, relation, hint) => {
-    const login = element.usecase("Login")
-    const register = element.usecase("Register")
-    const profile = element.usecase("View Profile")
+  .build("Multiple Usecases", (el, rel, hint) => {
+    const login = el.uml.usecase("Login")
+    const register = el.uml.usecase("Register")
+    const profile = el.uml.usecase("View Profile")
     
     hint.arrangeHorizontal(login, register)
     hint.arrangeHorizontal(register, profile)
@@ -143,17 +145,17 @@ Diagram
 **Code:**
 ```typescript
 // example/usecase_with_actor.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
-  .build("Usecase with Actor", (element, relation, hint) => {
-    const user = element.actor("User")
-    const login = element.usecase("Login")
-    const logout = element.usecase("Logout")
+  .build("Usecase with Actor", (el, rel, hint) => {
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
     
-    relation.associate(user, login)
-    relation.associate(user, logout)
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
     
     hint.arrangeHorizontal(user, login)
     hint.arrangeVertical(login, logout)
@@ -178,9 +180,9 @@ Diagram
 **Code:**
 ```typescript
 // example/first_milestone.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
   .build("First Milestone", (el, rel, hint) => {
     // 1. シンボルを定義
@@ -222,9 +224,9 @@ Diagram
 **Code:**
 ```typescript
 // example/system_boundary_example.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { DiagramBuilder, UMLPlugin } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
   .build("System Boundary Example", (el, rel, hint) => {
     const user = el.actor("User")
@@ -255,16 +257,16 @@ Diagram
 // example/usecase_with_actor_blue.ts
 import { Diagram, UMLPlugin, themes } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
   .theme(themes.blue)
-  .build("Usecase with Actor (Blue Theme)", (element, relation, hint) => {
-    const user = element.actor("User")
-    const login = element.usecase("Login")
-    const logout = element.usecase("Logout")
+  .build("Usecase with Actor (Blue Theme)", (el, rel, hint) => {
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
     
-    relation.associate(user, login)
-    relation.associate(user, logout)
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
     
     hint.arrangeHorizontal(user, login)
     hint.arrangeVertical(login, logout)
@@ -287,16 +289,16 @@ Diagram
 // example/usecase_with_actor_dark.ts
 import { Diagram, UMLPlugin, themes } from "../src/index"
 
-Diagram
+new DiagramBuilder
   .use(UMLPlugin)
   .theme(themes.dark)
-  .build("Usecase with Actor (Dark Theme)", (element, relation, hint) => {
-    const user = element.actor("User")
-    const login = element.usecase("Login")
-    const logout = element.usecase("Logout")
+  .build("Usecase with Actor (Dark Theme)", (el, rel, hint) => {
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
     
-    relation.associate(user, login)
-    relation.associate(user, logout)
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
     
     hint.arrangeHorizontal(user, login)
     hint.arrangeVertical(login, logout)

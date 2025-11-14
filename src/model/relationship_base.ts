@@ -1,15 +1,19 @@
 // src/model/relationship_base.ts
 import type { SymbolBase } from "./symbol_base"
-import type { SymbolId } from "./types"
+import type { SymbolId, RelationshipId } from "./types"
 import type { Theme } from "../core/theme"
 
 export abstract class RelationshipBase {
+  readonly id: RelationshipId
   protected theme?: Theme
 
   constructor(
+    id: RelationshipId,
     public from: SymbolId,
     public to: SymbolId
-  ) {}
+  ) {
+    this.id = id
+  }
 
   setTheme(theme: Theme) {
     this.theme = theme

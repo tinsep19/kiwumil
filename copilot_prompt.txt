@@ -1,0 +1,96 @@
+Copilot プロジェクトプロンプト（日本語）
+
+目的
+
+既存の Diagram DSL を再設計し、ElementFactory と RelationshipFactory
+を廃止して、 プラグインごとの名前空間を導入した新しい DSL を構築する。
+
+最終的に達成したい記述は以下の通り：
+
+build((el, rel, hint) => { const user = el.uml.actor(“User”) const login
+= el.uml.usecase(“login”) const user_will_login =
+rel.uml.associate(user, login) })
+
+このスタイルを維持しつつ、IntelliSense が最大限発揮されるように、
+強力な型推論を備えた名前空間ベースのアーキテクチャに移行する。
+
+全体方針
+
+1. Factory API の廃止
+
+ElementFactory / RelationshipFactory は削除し、 プラグインが以下の 2
+種類のファクトリを提供する形へ変更する：
+
+-   Symbol 用 DSL を提供する createSymbolFactory()
+-   Relationship 用 DSL を提供する createRelationshipFactory()
+
+これらは単一のオブジェクトとして返す： -
+{ actor(), usecase(), class(), … } など
+
+2. 名前空間の導入と統合
+
+各プラグインは自分専用の名前空間を持つ。
+
+例: - el.uml.actor() - el.sequence.lifeline() - rel.uml.associate() -
+rel.sequence.message()
+
+el と rel はすべてのプラグインを統合した 「複合 namespace
+オブジェクト」であり、 プラグイン登録時に型が拡張される。
+
+3. 型推論・IntelliSense の厳密化
+
+-   プラグイン登録時に型を合成（mapped types / generics）
+-   as const・ジェネリクスによる型拡張の自動反映
+-   IDE 補完で：
+    -   プラグイン名（例：uml, sequence）の候補が表示される
+    -   その内部の DSL 関数が全て補完される
+
+4. DiagramBuilder の API 仕様維持
+
+現行を維持する：
+
+build((el, rel, hint) => {…})
+
+ただし内部実装は完全に新しい Namespace-Based DSL へ置き換える。
+
+5. Plugin の仕様
+
+すべてのプラグインは次の構造を持つ：
+
+interface DiagramPlugin { name: string; // 名前空間（例： “uml”）
+createSymbolFactory(): Record<string, (…args: any[]) => SymbolNode>;
+createRelationshipFactory(): Record<string, (…args: any[]) =>
+RelationshipNode>; }
+
+登録後は自動的に el.<name> と rel.<name> に現れる。
+
+6. Namespace Builder の要件
+
+-   プラグイン一覧から EL と REL の型を生成する型ユーティリティを定義
+-   実際のランタイムオブジェクトを構築する関数も提供
+-   プラグイン追加時に型がホットに拡張されること
+
+7. ドキュメント生成
+
+Copilot に以下を継続的に行わせる：
+
+(A) デザインドキュメント作成
+
+-   docs/design/namespace-dsl.md を作り、 設計方針・API
+    スケッチ・型設計の意図をまとめる
+
+(B) 作業ログの自動生成
+
+-   docs/devlog/ 以下に作業ログを追加
+
+(C) 設計→実装→ログのループ
+
+-   設計に変更が入るたびに design doc を更新
+-   重要な実装ステップごとに devlog を更新
+
+8. 生成するコードの方針
+
+-   TypeScript 5 を前提
+-   Mapped Types / Generics を積極利用
+-   any を極力排除
+-   例・使用例はコードブロックで出力してよい

@@ -23,27 +23,28 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ## 🧩 使用イメージ
 
 ```typescript
-import { Diagram, UMLPlugin } from "kiwumil"
+import { TypedDiagram, UMLPlugin } from "kiwumil"
 
-Diagram("First Milestone")
+// シンプルな使い方
+TypedDiagram("First Milestone")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
-    // 1. シンボルを定義
-    const user = el.actor("User")
-    const admin = el.actor("Admin")
+    // 1. シンボルを定義（名前空間ベースの DSL）
+    const user = el.uml.actor("User")
+    const admin = el.uml.actor("Admin")
     
-    const login = el.usecase("Login")
-    const logout = el.usecase("Logout")
-    const manage_users = el.usecase("Manage Users")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
+    const manage_users = el.uml.usecase("Manage Users")
     
-    const system_boundary = el.systemBoundary("システム化範囲")
+    const system_boundary = el.uml.systemBoundary("システム化範囲")
     
     // 2. 関係を定義
-    rel.associate(user, login)
-    rel.associate(user, logout)
-    rel.associate(admin, login)
-    rel.associate(admin, logout)
-    rel.associate(admin, manage_users)
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
+    rel.uml.associate(admin, login)
+    rel.uml.associate(admin, logout)
+    rel.uml.associate(admin, manage_users)
     
     // 3. レイアウトヒントを設定
     hint.arrangeVertical(user, admin)
@@ -54,9 +55,9 @@ Diagram("First Milestone")
   .render("output.svg")
 
 // メタデータ付きの図も作成可能
-Diagram({
+TypedDiagram({
   title: "E-Commerce System",
-  createdAt: "2025-11-13",
+  createdAt: "2025-11-14",
   author: "Architecture Team"
 })
   .use(UMLPlugin)
@@ -74,11 +75,15 @@ Diagram({
 - 🎨 **テーマシステム** - default, blue, dark の3つのプリセットテーマ
 - 🔧 **制約ベースレイアウト** - Cassowary アルゴリズムによる自動整列
 - 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
-- 🔌 **プラグインシステム** - カスタムシンボルを自由に追加可能
+- 🔌 **プラグインシステム** - 名前空間ベースでカスタムシンボルを自由に追加可能
 - ✨ **Arrange + Align API** - 直感的なレイアウト記述
 - 📝 **メタデータサポート** - タイトル、作成日、著者を図に含められる
+- 🎯 **型安全な DSL** - TypeScript の型推論による IntelliSense サポート
 
-**🎉 New!** 範囲内要素の自動配置をサポート。`hint.arrangeVertical()` と組み合わせることで、要素が重ならずに配置されます。
+**🎉 New!** 
+- **名前空間ベースの DSL** - `el.uml.actor()`, `el.core.circle()` のように、プラグインごとの名前空間でシンボルを作成
+- **ID 管理の改善** - すべてのシンボルと関係に一意な ID が付与される（例: `uml:actor-0`, `uml:association-0`）
+- **強力な型安全性** - プラグインの型が自動的に推論され、存在しないメソッドを呼ぶとコンパイルエラー
 
 詳細は [LAYOUT_DESIGN.md](LAYOUT_DESIGN.md) を参照してください。
 
@@ -89,23 +94,29 @@ Diagram({
 Kiwumil はプリセットテーマをインポートして適用できます：
 
 ```typescript
-import { Diagram, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
+import { TypedDiagram, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
 
 // Blue テーマを適用
-Diagram("Login System")
+TypedDiagram("Login System")
   .use(UMLPlugin)
   .theme(BlueTheme)
   .build((el, rel, hint) => {
-    // ...
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    rel.uml.associate(user, login)
+    hint.arrangeHorizontal(user, login)
   })
   .render("output_blue.svg")
 
 // Dark テーマを適用
-Diagram("Login System")
+TypedDiagram("Login System")
   .use(UMLPlugin)
   .theme(DarkTheme)
   .build((el, rel, hint) => {
-    // ...
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    rel.uml.associate(user, login)
+    hint.arrangeHorizontal(user, login)
   })
   .render("output_dark.svg")
 ```
