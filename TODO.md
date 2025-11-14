@@ -12,29 +12,23 @@
 
 **備考**: ユーザーが構成変更を希望しているため、変更内容を確認してから実施
 
-#### 2. テストの完全移行
-- [ ] `tests/diagram_builder.test.ts` を TypedDiagram に移行
-- [ ] `tests/uml_relationships.test.ts` を TypedDiagram に移行
-- [ ] すべてのテストを通過させる (現在: 56 pass, 21 fail)
-
 ### 🟡 中優先度
 
-#### 3. ドキュメントの追加更新
+#### 2. ドキュメントの追加更新
 - [x] README.md を TypedDiagram に更新
 - [ ] マイグレーションガイドの追加（もし既存ユーザーがいた場合の参考）
 - [ ] API リファレンスの作成
 
-#### 4. 型定義ファイルの確認
+#### 3. 型定義ファイルの確認
 - [ ] `dist/` の型定義ファイルを確認
 - [ ] 外部から使用したときの IntelliSense 動作確認
 
 ### 🟢 低優先度
 
-#### 5. CI/CD の設定
-- [ ] すべてのテストを通す
+#### 4. CI/CD の設定
 - [ ] GitHub Actions の設定（もしあれば）
 
-#### 6. パフォーマンス最適化
+#### 5. パフォーマンス最適化
 - [ ] レイアウトソルバーの最適化
 - [ ] 大規模図の処理速度改善
 
@@ -53,12 +47,22 @@
 - ✅ IntelliSenseBlock 型の導入
 - ✅ DiagramBuilder の内部クラス化
 - ✅ src/index.ts の更新
-- ✅ tests/namespace_dsl.test.ts の更新
+- ✅ CorePlugin のデフォルト適用
 - ✅ README.md の更新
+
+### テストの移行
+- ✅ tests/namespace_dsl.test.ts (TypedDiagram ベース)
+- ✅ tests/uml_relationships.test.ts の移行
+- ✅ すべてのテストが通過 (52/52)
 
 ### ドキュメント
 - ✅ 設計仕様書の作成 (namespace-dsl.md, typed-diagram-api.md)
 - ✅ README.md の TypedDiagram 対応
+
+### PR とマージ
+- ✅ PR #40 作成とマージ
+- ✅ factory-proxy ブランチ削除
+- ✅ feature/namespace-based-dsl ブランチ削除
 
 ---
 
@@ -67,4 +71,5 @@
 - TypedDiagram は Option A (diagram_builder.ts を編集) で実装
 - 内部クラス名は `DiagramBuilder` を維持
 - コールバック型名は `IntelliSenseBlock`
-- すべての変更は `feature/namespace-based-dsl` ブランチで実施中
+- CorePlugin がデフォルトで適用される
+- すべての変更が main ブランチにマージ済み
