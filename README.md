@@ -23,10 +23,10 @@ Kiwumil はこれを **3つのステップ** で簡潔に表現できること�
 ## 🧩 使用イメージ
 
 ```typescript
-import { Diagram, DiagramBuilder, UMLPlugin } from "kiwumil"
+import { TypedDiagram, UMLPlugin } from "kiwumil"
 
 // シンプルな使い方
-const diagram = new DiagramBuilder("First Milestone")
+TypedDiagram("First Milestone")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // 1. シンボルを定義（名前空間ベースの DSL）
@@ -52,11 +52,10 @@ const diagram = new DiagramBuilder("First Milestone")
     hint.enclose(system_boundary, [login, logout, manage_users])
     hint.arrangeVertical(login, logout, manage_users)
   })
-
-diagram.render("output.svg")
+  .render("output.svg")
 
 // メタデータ付きの図も作成可能
-new DiagramBuilder({
+TypedDiagram({
   title: "E-Commerce System",
   createdAt: "2025-11-14",
   author: "Architecture Team"
@@ -64,14 +63,6 @@ new DiagramBuilder({
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // ...
-  })
-  .render("output.svg")
-
-// レガシーAPI（互換性のため）
-Diagram("First Milestone")
-  .use(UMLPlugin)
-  .build((el, rel, hint) => {
-    // 同じ API
   })
   .render("output.svg")
 ```
@@ -103,10 +94,10 @@ Diagram("First Milestone")
 Kiwumil はプリセットテーマをインポートして適用できます：
 
 ```typescript
-import { DiagramBuilder, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
+import { TypedDiagram, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
 
 // Blue テーマを適用
-new DiagramBuilder("Login System")
+TypedDiagram("Login System")
   .use(UMLPlugin)
   .theme(BlueTheme)
   .build((el, rel, hint) => {
@@ -118,7 +109,7 @@ new DiagramBuilder("Login System")
   .render("output_blue.svg")
 
 // Dark テーマを適用
-new DiagramBuilder("Login System")
+TypedDiagram("Login System")
   .use(UMLPlugin)
   .theme(DarkTheme)
   .build((el, rel, hint) => {
