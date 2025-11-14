@@ -1,7 +1,7 @@
 // tests/uml_relationships.test.ts
 import { describe, test, expect } from "bun:test"
 import { DiagramBuilder } from "../src/dsl/diagram_builder"
-import { UMLPlugin } from "../src/plugin/uml"
+import { UMLPlugin } from "../src/plugin/uml/plugin"
 
 describe("UML Relationships", () => {
   describe("Include Relationship", () => {
@@ -9,10 +9,10 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        relation.include(usecaseA, usecaseB)
+      const result = builder.build((el, rel) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        rel.uml.include(usecaseA, usecaseB)
       })
 
       expect(result.relationships).toHaveLength(1)
@@ -23,10 +23,10 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation, hint) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        relation.include(usecaseA, usecaseB)
+      const result = builder.build((el, rel, hint) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        rel.uml.include(usecaseA, usecaseB)
         hint.horizontal(usecaseA, usecaseB)
       })
 
@@ -44,10 +44,10 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        relation.extend(usecaseA, usecaseB)
+      const result = builder.build((el, rel) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        rel.uml.extend(usecaseA, usecaseB)
       })
 
       expect(result.relationships).toHaveLength(1)
@@ -58,10 +58,10 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation, hint) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        relation.extend(usecaseA, usecaseB)
+      const result = builder.build((el, rel, hint) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        rel.uml.extend(usecaseA, usecaseB)
         hint.horizontal(usecaseA, usecaseB)
       })
 
@@ -79,10 +79,10 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        relation.generalize(usecaseA, usecaseB)
+      const result = builder.build((el, rel) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        rel.uml.generalize(usecaseA, usecaseB)
       })
 
       expect(result.relationships).toHaveLength(1)
@@ -93,10 +93,10 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation, hint) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        relation.generalize(usecaseA, usecaseB)
+      const result = builder.build((el, rel, hint) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        rel.uml.generalize(usecaseA, usecaseB)
         hint.horizontal(usecaseA, usecaseB)
       })
 
@@ -114,14 +114,14 @@ describe("UML Relationships", () => {
       const builder = new DiagramBuilder("Test Diagram")
       builder.use(UMLPlugin)
 
-      const result = builder.build((element, relation, hint) => {
-        const usecaseA = element.usecase("UseCase A")
-        const usecaseB = element.usecase("UseCase B")
-        const usecaseC = element.usecase("UseCase C")
+      const result = builder.build((el, rel, hint) => {
+        const usecaseA = el.uml.usecase("UseCase A")
+        const usecaseB = el.uml.usecase("UseCase B")
+        const usecaseC = el.uml.usecase("UseCase C")
         
-        relation.include(usecaseA, usecaseB)
-        relation.extend(usecaseB, usecaseC)
-        relation.generalize(usecaseC, usecaseA)
+        rel.uml.include(usecaseA, usecaseB)
+        rel.uml.extend(usecaseB, usecaseC)
+        rel.uml.generalize(usecaseC, usecaseA)
         
         hint.vertical(usecaseA, usecaseB)
         hint.horizontal(usecaseB, usecaseC)

@@ -2,21 +2,22 @@
 import { describe, test, expect, beforeEach } from "bun:test"
 import { DiagramBuilder } from "../src/dsl/diagram_builder"
 import { DefaultTheme, BlueTheme } from "../src/core/theme"
-import { UMLPlugin } from "../src/plugin/uml"
+import { UMLPlugin } from "../src/plugin/uml/plugin"
+import { CorePlugin } from "../src/plugin/core/plugin"
 
 describe("DiagramBuilder", () => {
-  let builder: DiagramBuilder
+  let builder: DiagramBuilder<any>
 
   beforeEach(() => {
     builder = new DiagramBuilder("Test")
   })
 
   describe("Constructor", () => {
-    test("should automatically load CorePlugin", () => {
+    test("should work with CorePlugin", () => {
       let circleCalled = false
       
-      builder.build((el) => {
-        const circle = el.circle("Test Circle")
+      builder.use(CorePlugin).build((el) => {
+        const circle = el.core.circle("Test Circle")
         circleCalled = true
         expect(circle).toBeDefined()
       })
