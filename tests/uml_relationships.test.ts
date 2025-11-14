@@ -1,15 +1,15 @@
 // tests/uml_relationships.test.ts
 import { describe, test, expect } from "bun:test"
-import { DiagramBuilder } from "../src/dsl/diagram_builder"
+import { TypedDiagram } from "../src/dsl/diagram_builder"
 import { UMLPlugin } from "../src/plugin/uml/plugin"
 
 describe("UML Relationships", () => {
   describe("Include Relationship", () => {
     test("should create include relationship between use cases", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel) => {
+      const result =   .build((el, rel) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         rel.uml.include(usecaseA, usecaseB)
@@ -20,10 +20,10 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with dashed line and stereotype", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel, hint) => {
+      const result =   .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         rel.uml.include(usecaseA, usecaseB)
@@ -41,10 +41,10 @@ describe("UML Relationships", () => {
 
   describe("Extend Relationship", () => {
     test("should create extend relationship between use cases", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel) => {
+      const result =   .build((el, rel) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         rel.uml.extend(usecaseA, usecaseB)
@@ -55,10 +55,10 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with dashed line and stereotype", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel, hint) => {
+      const result =   .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         rel.uml.extend(usecaseA, usecaseB)
@@ -76,10 +76,10 @@ describe("UML Relationships", () => {
 
   describe("Generalize Relationship", () => {
     test("should create generalization relationship between use cases", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel) => {
+      const result =   .build((el, rel) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         rel.uml.generalize(usecaseA, usecaseB)
@@ -90,10 +90,10 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with solid line and triangle", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel, hint) => {
+      const result =   .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         rel.uml.generalize(usecaseA, usecaseB)
@@ -111,10 +111,10 @@ describe("UML Relationships", () => {
 
   describe("Combined Relationships", () => {
     test("should support multiple relationship types in same diagram", () => {
-      const builder = new DiagramBuilder("Test Diagram")
-      builder.use(UMLPlugin)
+      TypedDiagram("Test Diagram")
+        .use(UMLPlugin)
 
-      const result = builder.build((el, rel, hint) => {
+      const result =   .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
         const usecaseB = el.uml.usecase("UseCase B")
         const usecaseC = el.uml.usecase("UseCase C")
