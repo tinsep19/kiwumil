@@ -1,9 +1,13 @@
 // src/plugin/uml/relationships/include.ts
 import { RelationshipBase } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
-import type { SymbolId } from "../../../model/types"
+import type { SymbolId, RelationshipId } from "../../../model/types"
 
 export class Include extends RelationshipBase {
+  constructor(id: RelationshipId, from: SymbolId, to: SymbolId) {
+    super(id, from, to)
+  }
+
   toSVG(symbols: Map<SymbolId, SymbolBase>): string {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
