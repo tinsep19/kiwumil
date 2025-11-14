@@ -12,18 +12,25 @@ import type { Theme } from "../core/theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../core/theme"
 
-type DiagramCallback<TPlugins extends readonly DiagramPlugin[]> = (
+/**
+ * IntelliSense が有効な DSL ブロックのコールバック型
+ * 
+ * el (element), rel (relationship), hint の3つのパラメータを受け取り、
+ * 型安全に図の要素を定義できる。
+ */
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
   el: BuildElementNamespace<TPlugins>,
   rel: BuildRelationshipNamespace<TPlugins>,
   hint: HintFactory
 ) => void
 
 /**
- * DiagramBuilder - Namespace-based DSL version
+ * DiagramBuilder - TypedDiagram の内部実装クラス
  * 
- * 新しいプラグインシステムを使った DiagramBuilder
+ * ユーザーには公開されないが、TypedDiagram 関数から返される。
+ * メソッドチェーンで流暢な API を提供する。
  */
-export class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
+class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   private plugins: TPlugins = [] as any
   private currentTheme: Theme
   private titleOrInfo: string | DiagramInfo
@@ -53,8 +60,11 @@ export class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
   /**
    * ダイアグラムを構築
+   * 
+   * @param callback - IntelliSense が有効な DSL ブロック
+   * @returns レンダリング可能な図オブジェクト
    */
-  build(callback: DiagramCallback<TPlugins>) {
+  build(callback: IntelliSenseBlock<TPlugins>) {
     // Symbol と Relationship を格納する配列
     const userSymbols: SymbolBase[] = []
     const relationships: RelationshipBase[] = []
@@ -108,4 +118,58 @@ export class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       }
     }
   }
+}
+
+/**
+ * TypedDiagram - Kiwumil の型安全な図作成エントリポイント
+ * 
+ * IntelliSense による強力な型推論をサポートし、
+ * 宣言的で読みやすい図の定義を可能にします。
+ * 
+ * @param titleOrInfo - 図のタイトル、または DiagramInfo オブジェクト
+ * @returns チェーン可能なビルダーオブジェクト
+ * 
+ * @example 基本的な使い方
+ * ```typescript
+ * import { TypedDiagram, UMLPlugin } from "kiwumil"
+ * 
+ * TypedDiagram("My Diagram")
+ *   .use(UMLPlugin)
+ *   .build((el, rel, hint) => {
+ *     const user = el.uml.actor("User")
+ *     const login = el.uml.usecase("Login")
+ *     rel.uml.associate(user, login)
+ *     hint.arrangeHorizontal(user, login)
+ *   })
+ *   .render("output.svg")
+ * ```
+ * 
+ * @example DiagramInfo を使用
+ * ```typescript
+ * TypedDiagram({
+ *   title: "E-Commerce System",
+ *   createdAt: "2025-11-14",
+ *   author: "Architecture Team"
+ * })
+ *   .use(UMLPlugin)
+ *   .build((el, rel, hint) => {
+ *     // ...
+ *   })
+ *   .render("output.svg")
+ * ```
+ * 
+ * @example 複数プラグインとテーマ
+ * ```typescript
+ * TypedDiagram("Mixed Diagram")
+ *   .use(UMLPlugin, CorePlugin)
+ *   .theme(DarkTheme)
+ *   .build((el, rel, hint) => {
+ *     el.uml.actor("User")
+ *     el.core.circle("Circle")
+ *   })
+ *   .render("output.svg")
+ * ```
+ */
+export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
+  return new DiagramBuilder(titleOrInfo)
 }

@@ -44,7 +44,7 @@ export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
 - メンテナンスコストが高い
 - 設計として不適切
 
-### ✅ Option 4: 完全な置き換え（推奨）
+### ✅ Option 4: 完全な置き換え（推奨・確定）
 
 **DiagramBuilder を内部クラスとして扱い、TypedDiagram のみを公開する**
 
@@ -64,17 +64,25 @@ import type { Theme } from "../core/theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../core/theme"
 
-type DiagramCallback<TPlugins extends readonly DiagramPlugin[]> = (
+/**
+ * IntelliSense が有効な DSL ブロックのコールバック型
+ * 
+ * el (element), rel (relationship), hint の3つのパラメータを受け取り、
+ * 型安全に図の要素を定義できる。
+ */
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
   el: BuildElementNamespace<TPlugins>,
   rel: BuildRelationshipNamespace<TPlugins>,
   hint: HintFactory
 ) => void
 
 /**
- * 内部実装クラス（非公開）
- * TypedDiagram 関数から返される
+ * DiagramBuilder - TypedDiagram の内部実装クラス
+ * 
+ * ユーザーには公開されないが、TypedDiagram 関数から返される。
+ * メソッドチェーンで流暢な API を提供する。
  */
-class InternalDiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
+class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   private plugins: TPlugins = [] as any
   private currentTheme: Theme
   private titleOrInfo: string | DiagramInfo
@@ -84,19 +92,37 @@ class InternalDiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     this.currentTheme = DefaultTheme
   }
 
+  /**
+   * プラグインを登録
+   * 
+   * @param plugins - 登録するプラグイン（複数可）
+   * @returns 型が拡張された DiagramBuilder
+   */
   use<TNewPlugins extends readonly DiagramPlugin[]>(
     ...plugins: TNewPlugins
-  ): InternalDiagramBuilder<[...TPlugins, ...TNewPlugins]> {
+  ): DiagramBuilder<[...TPlugins, ...TNewPlugins]> {
     this.plugins = [...this.plugins, ...plugins] as any
     return this as any
   }
 
+  /**
+   * テーマを設定
+   * 
+   * @param theme - 適用するテーマ
+   * @returns this
+   */
   theme(theme: Theme): this {
     this.currentTheme = theme
     return this
   }
 
-  build(callback: DiagramCallback<TPlugins>) {
+  /**
+   * 図を構築
+   * 
+   * @param callback - IntelliSense が有効な DSL ブロック
+   * @returns レンダリング可能な図オブジェクト
+   */
+  build(callback: IntelliSenseBlock<TPlugins>) {
     const userSymbols: SymbolBase[] = []
     const relationships: RelationshipBase[] = []
     const hints: LayoutHint[] = []
@@ -152,7 +178,7 @@ class InternalDiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * @param titleOrInfo - 図のタイトル、または DiagramInfo オブジェクト
  * @returns チェーン可能なビルダーオブジェクト
  * 
- * @example
+ * @example 基本的な使い方
  * ```typescript
  * import { TypedDiagram, UMLPlugin } from "kiwumil"
  * 
@@ -180,22 +206,34 @@ class InternalDiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   })
  *   .render("output.svg")
  * ```
+ * 
+ * @example 複数プラグインとテーマ
+ * ```typescript
+ * TypedDiagram("Mixed Diagram")
+ *   .use(UMLPlugin, CorePlugin)
+ *   .theme(DarkTheme)
+ *   .build((el, rel, hint) => {
+ *     el.uml.actor("User")
+ *     el.core.circle("Circle")
+ *   })
+ *   .render("output.svg")
+ * ```
  */
 export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
-  return new InternalDiagramBuilder(titleOrInfo)
+  return new DiagramBuilder(titleOrInfo)
 }
 ```
 
 **メリット**:
 - ✅ TypedDiagram のみが公開 API
-- ✅ 内部実装が完全に隠蔽される
+- ✅ 内部クラスは `DiagramBuilder` として命名の一貫性を保つ
+- ✅ `IntelliSenseBlock` で型安全な DSL ブロックを明確に表現
 - ✅ ユーザーが意識する概念が1つだけ
-- ✅ 戻り値の型名にも "Builder" が出ない
 - ✅ 最もクリーンな設計
 - ✅ ドキュメントがシンプルになる
 
 **デメリット**:
-- DiagramBuilder を使っている既存コード... → **存在しない！**
+- なし（初版リリース前のため）
 
 ## エクスポート戦略（改訂版）
 
@@ -332,21 +370,60 @@ TypedDiagram("Dark Diagram")
 
 ---
 
-## レビュー依頼（改訂版）
+## レビュー結果（確定版）
 
-初版リリース前という状況を踏まえ、以下について再度レビューをお願いします：
+✅ **すべての提案が承認されました**
 
-1. **Option 4 の採用**: DiagramBuilder を削除し、TypedDiagram のみを公開する方針で OK ですか？
+### 確定事項
 
-2. **名前**: `TypedDiagram` で確定して良いですか？
-   - 他の案: `diagram()`, `createDiagram()`
+1. **Option 4 の採用**: ✅ 承認
+   - DiagramBuilder を完全削除
+   - TypedDiagram のみを公開
 
-3. **InternalDiagramBuilder**: 内部クラス名は `InternalDiagramBuilder` で良いですか？
-   - 他の案: `Builder`, `DiagramBuilderImpl`, `TypedDiagramBuilder`
+2. **名前**: ✅ `TypedDiagram` で確定
 
-4. **移行計画**: DiagramBuilder の完全削除に問題はありませんか？
+3. **内部クラス名**: ✅ `DiagramBuilder` を採用
+   - 理由: シンプルで分かりやすい
+   - `InternalDiagramBuilder` は冗長
 
-5. **その他**: 懸念点があればお願いします。
+4. **コールバック型名**: ✅ `IntelliSenseBlock` を採用
+   - 理由: IntelliSense が有効な場所を明確に表現
+   - `DiagramCallback` は汎用的すぎる
+
+5. **移行計画**: ✅ 全削除で承認
+   - `src/dsl/diagram_builder.ts` を削除
+   - `src/dsl/diagram.ts` を削除
+   - すべて `TypedDiagram` に統一
+
+### 最終実装仕様
+
+```typescript
+// src/dsl/typed_diagram.ts
+
+type IntelliSenseBlock<TPlugins> = (el, rel, hint) => void
+
+class DiagramBuilder<TPlugins> {
+  // 内部実装（非公開）
+}
+
+export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
+  return new DiagramBuilder(titleOrInfo)
+}
+```
+
+### 公開 API
+
+```typescript
+// src/index.ts
+export { TypedDiagram } from "./dsl/typed_diagram"
+// DiagramBuilder は export しない
+```
+
+---
+
+## 実装開始
+
+設計が確定したため、実装フェーズに移行します。
 
 
 ## API 設計
