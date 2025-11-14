@@ -4,6 +4,7 @@ import { HintFactory, LayoutHint } from "./hint_factory"
 import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
 import { DiagramSymbol } from "../model/diagram_symbol"
+import { CorePlugin } from "../plugin/core/plugin"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
@@ -126,6 +127,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * IntelliSense による強力な型推論をサポートし、
  * 宣言的で読みやすい図の定義を可能にします。
  * 
+ * **Note**: CorePlugin がデフォルトで適用されるため、
+ * 基本図形（circle, rectangle, ellipse 等）がすぐに利用可能です。
+ * 
  * @param titleOrInfo - 図のタイトル、または DiagramInfo オブジェクト
  * @returns チェーン可能なビルダーオブジェクト
  * 
@@ -136,6 +140,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * TypedDiagram("My Diagram")
  *   .use(UMLPlugin)
  *   .build((el, rel, hint) => {
+ *     // CorePlugin の図形（デフォルトで利用可能）
+ *     const circle = el.core.circle("Circle")
+ *     
+ *     // UMLPlugin の図形
  *     const user = el.uml.actor("User")
  *     const login = el.uml.usecase("Login")
  *     rel.uml.associate(user, login)
@@ -161,15 +169,15 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * @example 複数プラグインとテーマ
  * ```typescript
  * TypedDiagram("Mixed Diagram")
- *   .use(UMLPlugin, CorePlugin)
+ *   .use(UMLPlugin)
  *   .theme(DarkTheme)
  *   .build((el, rel, hint) => {
  *     el.uml.actor("User")
- *     el.core.circle("Circle")
+ *     el.core.circle("Circle")  // CorePlugin はデフォルトで利用可能
  *   })
  *   .render("output.svg")
  * ```
  */
 export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
-  return new DiagramBuilder(titleOrInfo)
+  return new DiagramBuilder(titleOrInfo).use(CorePlugin)
 }
