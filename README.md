@@ -85,7 +85,18 @@ TypedDiagram({
 - **ID 管理の改善** - すべてのシンボルと関係に一意な ID が付与される（例: `uml:actor-0`, `uml:association-0`）
 - **強力な型安全性** - プラグインの型が自動的に推論され、存在しないメソッドを呼ぶとコンパイルエラー
 
-詳細は [LAYOUT_DESIGN.md](LAYOUT_DESIGN.md) を参照してください。
+詳細は [docs/design/layout-system.md](docs/design/layout-system.md) を参照してください。
+
+---
+
+## 📚 ドキュメント
+
+- **[TypedDiagram API](docs/design/typed-diagram.md)** - メインAPIの使い方
+- **[Plugin System](docs/design/plugin-system.md)** - プラグイン作成ガイド
+- **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの設計
+- **[Theme System](docs/design/theme-system.md)** - テーマシステムの仕様
+- **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計の詳細
+- **[Git Workflow](docs/design/git-workflow.md)** - 開発ワークフロー
 
 ---
 
@@ -246,9 +257,15 @@ kiwumil/
 ├── index.ts                          # プロジェクトルートのエントリポイント
 ├── package.json
 ├── tsconfig.json
-├── GALLERY.md                        # スクリーンショット集
-├── LAYOUT_DESIGN.md                  # レイアウトシステム設計書
-├── THEME_DESIGN.md                   # テーマシステム設計書
+├── docs/                          # ドキュメント
+│   └── design/                    # 設計ドキュメント
+│       ├── typed-diagram.md       # TypedDiagram API仕様
+│       ├── plugin-system.md       # プラグイン作成ガイド
+│       ├── namespace-dsl.md       # 名前空間ベースDSL設計
+│       ├── layout-system.md       # レイアウトシステム設計
+│       ├── theme-system.md        # テーマシステム設計
+│       └── git-workflow.md        # Git ワークフロー
+├── GALLERY.md                     # スクリーンショット集
 └── README.md
 
 ```
