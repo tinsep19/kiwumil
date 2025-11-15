@@ -1,24 +1,25 @@
 // example/diagram_info_full.ts
-import { Diagram, UMLPlugin, DarkTheme } from "../src/index"
+import { TypedDiagram, UMLPlugin, BlueTheme } from "../src/index"
 
 // Full example with all metadata
-Diagram({
+TypedDiagram({
   title: "E-Commerce System",
   createdAt: "2025-11-13",
   author: "Architecture Team"
 })
   .use(UMLPlugin)
-  .theme(DarkTheme)
+  .theme(BlueTheme)
   .build((el, rel, hint) => {
-    const user = el.actor("User")
-    const shop = el.usecase("Browse Products")
-    const cart = el.usecase("Add to Cart")
-    const checkout = el.usecase("Checkout")
+    const user = el.uml.actor("User")
+    const shop = el.uml.usecase("Browse Products")
+    const cart = el.uml.usecase("Add to Cart")
+    const checkout = el.uml.usecase("Checkout")
     
-    rel.associate(user, shop)
-    rel.associate(user, cart)
-    rel.associate(user, checkout)
+    rel.uml.associate(user, shop)
+    rel.uml.associate(user, cart)
+    rel.uml.associate(user, checkout)
     
     hint.arrangeVertical(shop, cart, checkout)
+    hint.arrangeHorizontal(user, shop)
   })
-  .render("example/diagram_info_full.svg")
+  .render(import.meta)

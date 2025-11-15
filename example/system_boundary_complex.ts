@@ -1,23 +1,30 @@
-import { Diagram, UMLPlugin } from "../src/index"
+import { TypedDiagram, UMLPlugin } from "../src/index"
 
-Diagram("System Boundary with Multiple Elements")
+TypedDiagram("System Boundary with Multiple Elements")
   .use(UMLPlugin)
-  .build((element, relation, hint) => {
-    const user = element.actor("User")
-    const admin = element.actor("Admin")
-    const login = element.usecase("Login")
-    const logout = element.usecase("Logout")
-    const manage = element.usecase("Manage Users")
+  .build((el, rel, hint) => {
+    const user = el.uml.actor("User")
+    const admin = el.uml.actor("Admin")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
+    const manage = el.uml.usecase("Manage Users")
     
     // Create system boundaries
-    const authSystem = element.systemBoundary("Auth System")
-    const adminSystem = element.systemBoundary("Admin System")
+    const authSystem = el.uml.systemBoundary("Auth System")
+    const adminSystem = el.uml.systemBoundary("Admin System")
+
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
+    rel.uml.associate(admin, login)
+    rel.uml.associate(admin, logout)
+    rel.uml.associate(admin, manage)
     
-    // Pack use cases into boundaries
+    // Pack usecases into boundaries
     hint.enclose(authSystem, [login, logout])
     hint.enclose(adminSystem, [manage])
-    
+
     // Layout boundaries
-    hint.horizontal(authSystem, adminSystem)
+    hint.arrangeVertical(login, logout)
+    hint.arrangeHorizontal(user, authSystem, admin, adminSystem)
   })
-  .render("example/system_boundary_complex.svg")
+  .render(import.meta)

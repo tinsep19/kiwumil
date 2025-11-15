@@ -17,6 +17,7 @@ _.log
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # dotenv environment variable files
+.npmrc
 .env
 .env.development.local
 .env.test.local
