@@ -257,9 +257,15 @@ kiwumil/
 ├── index.ts                          # プロジェクトルートのエントリポイント
 ├── package.json
 ├── tsconfig.json
-├── GALLERY.md                        # スクリーンショット集
-├── LAYOUT_DESIGN.md                  # レイアウトシステム設計書
-├── THEME_DESIGN.md                   # テーマシステム設計書
+├── docs/                          # ドキュメント
+│   └── design/                    # 設計ドキュメント
+│       ├── typed-diagram.md       # TypedDiagram API仕様
+│       ├── plugin-system.md       # プラグイン作成ガイド
+│       ├── namespace-dsl.md       # 名前空間ベースDSL設計
+│       ├── layout-system.md       # レイアウトシステム設計
+│       ├── theme-system.md        # テーマシステム設計
+│       └── git-workflow.md        # Git ワークフロー
+├── GALLERY.md                     # スクリーンショット集
 └── README.md
 
 ```
