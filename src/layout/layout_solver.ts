@@ -126,23 +126,13 @@ export class LayoutSolver {
       const b = this.vars.get(bId)
       if (!a || !b) continue
 
-      // b.x = a.x + a.width + gap (MEDIUM strength for pack compatibility)
+      // b.x = a.x + a.width + gap (STRONG strength)
       this.solver.addConstraint(
         new kiwi.Constraint(
           new kiwi.Expression(b.x),
           kiwi.Operator.Eq,
           new kiwi.Expression(a.x, a.width, gap),
-          kiwi.Strength.medium
-        )
-      )
-
-      // 同じyに揃える (MEDIUM strength)
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(b.y),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(a.y),
-          kiwi.Strength.medium
+          kiwi.Strength.strong
         )
       )
     }
@@ -164,16 +154,6 @@ export class LayoutSolver {
           new kiwi.Expression(b.y),
           kiwi.Operator.Eq,
           new kiwi.Expression(a.y, a.height, gap),
-          kiwi.Strength.strong
-        )
-      )
-
-      // 同じxに揃える (STRONG strength)
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(b.x),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(a.x),
           kiwi.Strength.strong
         )
       )
