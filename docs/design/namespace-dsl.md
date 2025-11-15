@@ -7,8 +7,7 @@ kiwumil は、プラグインごとの名前空間を持つ型安全な DSL に�
 ### 基本的な記述例
 
 ```typescript
-import { TypedDiagram } from 'kiwumil'
-import { UMLPlugin } from 'kiwumil/plugin/uml'
+import { TypedDiagram, UMLPlugin } from 'kiwumil'
 
 const diagram = TypedDiagram("Use Case Diagram", (el, rel, hint) => {
   const user = el.uml.actor("User")
@@ -18,8 +17,11 @@ const diagram = TypedDiagram("Use Case Diagram", (el, rel, hint) => {
   rel.uml.associate(user, login)
   rel.uml.associate(user, register)
   
-  hint.arrangeHorizontal([login, register])
+  hint.arrangeHorizontal(login, register)
 })
+  .use(UMLPlugin)
+
+diagram.render("output.svg")
 ```
 
 ## アーキテクチャの特徴
@@ -345,34 +347,53 @@ type RelationshipNamespace = {
 ```typescript
 function TypedDiagram<TPlugins extends readonly DiagramPlugin[]>(
   titleOrInfo: string | DiagramInfo,
-  plugins: TPlugins,
   callback: (
     el: BuildElementNamespace<TPlugins>,
     rel: BuildRelationshipNamespace<TPlugins>,
-    hint: HintFactory
+    hint: LayoutHint
   ) => void
-): Diagram
+): DiagramBuilder<TPlugins>
+
+// DiagramBuilder のメソッド
+class DiagramBuilder<TPlugins> {
+  use<TNewPlugins>(...plugins: TNewPlugins): this
+  theme(theme: Theme): this
+  render(outputPath: string): void
+}
 ```
+
+**特徴**:
+- 第1引数に図のタイトル、第2引数にコールバック関数を渡す
+- コールバック関数内で `el`, `rel`, `hint` による図の定義を行う
+- CorePlugin がデフォルトで適用されるため、基本図形（circle, rectangle, ellipse 等）がすぐに利用可能
+- `.use()` メソッドでプラグインを追加（複数回呼び出し可能、チェーン可能）
+- `.theme()` メソッドでテーマを設定（チェーン可能）
+- `.render()` メソッドで SVG ファイルを出力
 
 **使用例**:
 ```typescript
-import { TypedDiagram } from 'kiwumil'
-import { UMLPlugin, CorePlugin } from 'kiwumil/plugins'
+import { TypedDiagram, UMLPlugin } from 'kiwumil'
 
-const diagram = TypedDiagram("My Diagram", [UMLPlugin, CorePlugin], (el, rel, hint) => {
-  const actor = el.uml.actor("User")
+const diagram = TypedDiagram("My Diagram", (el, rel, hint) => {
+  // CorePlugin（デフォルト）
   const box = el.core.rectangle("Box")
+  
+  // UMLPlugin
+  const actor = el.uml.actor("User")
   rel.core.arrow(actor, box)
 })
+  .use(UMLPlugin)
 
 diagram.render("output.svg")
 ```
 
 ### 内部処理フロー
 
-`TypedDiagram` 関数内部では以下の処理が行われます：
+`TypedDiagram` および `DiagramBuilder` 内部では以下の処理が行われます：
 
 1. **初期化**
+   - `TypedDiagram()` 呼び出しで DiagramBuilder インスタンスを作成
+   - CorePlugin がデフォルトで登録される
    - Symbol、Relationship、Hint を格納する配列を作成
    - DiagramSymbol（図全体を表す特別な Symbol）を作成
 
@@ -384,14 +405,18 @@ diagram.render("output.svg")
    - ユーザーが提供したコールバック関数を実行
    - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が配列に追加される
 
-4. **テーマの適用**
-   - すべての Symbol と Relationship にテーマを適用
+4. **プラグイン追加（オプション）**
+   - `.use()` メソッドで追加のプラグインを登録
+   - プラグインは配列として蓄積される
 
-5. **レイアウト計算**
-   - LayoutSolver が制約を解決して各 Symbol の位置とサイズを決定
+5. **テーマ設定（オプション）**
+   - `.theme()` メソッドでカスタムテーマを設定
 
-6. **Diagram オブジェクトの返却**
-   - レンダリング可能な Diagram オブジェクトを返す
+6. **レンダリング (.render())**
+   - テーマの適用: すべての Symbol と Relationship にテーマを適用
+   - レイアウト計算: LayoutSolver が制約を解決して各 Symbol の位置とサイズを決定
+   - SVG 生成: すべての Symbol と Relationship を SVG として出力
+   - ファイル書き込み: 指定されたパスに SVG ファイルを保存
 
 ## 拡張性
 
@@ -404,16 +429,20 @@ diagram.render("output.svg")
 1. `DiagramPlugin` インターフェースを実装
 2. Symbol と Relationship のクラスを定義
 3. `createSymbolFactory` と `createRelationshipFactory` を実装
-4. `TypedDiagram` に渡す
+4. `TypedDiagram().use()` で登録
 
 ```typescript
 // 新しいプラグインの例
+import { TypedDiagram, UMLPlugin } from 'kiwumil'
 import { MyCustomPlugin } from './my-plugin'
 
-const diagram = TypedDiagram("Diagram", [UMLPlugin, MyCustomPlugin], (el, rel, hint) => {
+const diagram = TypedDiagram("Diagram", (el, rel, hint) => {
   el.uml.actor("User")
   el.mycustom.customSymbol("My Symbol")  // カスタムプラグインの Symbol
 })
+  .use(UMLPlugin, MyCustomPlugin)
+
+diagram.render("output.svg")
 ```
 
 ### プラグイン間の独立性
