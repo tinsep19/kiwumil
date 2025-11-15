@@ -532,63 +532,11 @@ ${namespace}:${symbolName|relationshipName}-${serial}
 
 ## 7. 拡張性
 
-### 7.1 新しいプラグインの追加
+新しいプラグインの作成方法、ベストプラクティス、テスト戦略については、[Plugin System ドキュメント](./plugin-system.md) を参照してください。
 
-```typescript
-// Sequence Diagram Plugin の例
-import { LifelineSymbol } from "./symbols/lifeline_symbol"
-import { ActivationSymbol } from "./symbols/activation_symbol"
-import { Message } from "./relationships/message"
+### 7.1 プラグイン間の依存関係
 
-export const SequencePlugin: DiagramPlugin = {
-  name: 'sequence',
-  
-  createSymbolFactory(userSymbols: SymbolBase[]) {
-    const namespace = this.name  // 'sequence'
-    let counter = 0
-    
-    return {
-      lifeline(name: string): SymbolId {
-        const id = `${namespace}:lifeline-${counter++}` as SymbolId
-        const symbol = new LifelineSymbol(id, name)
-        userSymbols.push(symbol)
-        return id  // 例: "sequence:lifeline-0"
-      },
-      
-      activation(lifelineId: SymbolId): SymbolId {
-        const id = `${namespace}:activation-${counter++}` as SymbolId
-        const symbol = new ActivationSymbol(id, lifelineId)
-        userSymbols.push(symbol)
-        return id  // 例: "sequence:activation-0"
-      }
-    }
-  },
-  
-  createRelationshipFactory(relationships: RelationshipBase[]) {
-    const namespace = this.name  // 'sequence'
-    let counter = 0
-    
-    return {
-      message(from: SymbolId, to: SymbolId, label: string): RelationshipId {
-        const id = `${namespace}:message-${counter++}` as RelationshipId
-        relationships.push(new Message(id, from, to, label))
-        return id  // 例: "sequence:message-0"
-      }
-    }
-  }
-}
-
-// 使用例
-const diagram = new DiagramBuilder("Sequence")
-  .use(SequencePlugin)
-  .build((el, rel, hint) => {
-    const user = el.sequence.lifeline("User")
-    const system = el.sequence.lifeline("System")
-    rel.sequence.message(user, system, "login")
-  })
-```
-
-### 7.2 プラグイン間の依存関係
+将来的に、プラグイン間の依存関係をサポートする可能性がある：
 
 ```typescript
 interface DiagramPlugin {
