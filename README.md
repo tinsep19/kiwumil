@@ -137,7 +137,7 @@ GitHub → Settings → Developer settings → Personal access tokens → Tokens
 ### インストール
 
 ```bash
-npm install @tinsep19/kiwumil
+bun install @tinsep19/kiwumil
 ```
 
 ---
