@@ -111,6 +111,37 @@ TypedDiagram("My Diagram")
 
 ---
 
+## 📦 インストール
+
+**`@tinsep19/kiwumil`** は GitHub Packages で公開されています。  
+インストールには GitHub の Personal Access Token（read-only）が必要です。
+
+### トークンを発行する
+
+GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)  
+→ **Generate new token (classic)**
+
+スコープは **`read:packages`** のみでOK 🔑
+
+### `.npmrc` を設定する
+
+ホームディレクトリに `.npmrc` を作成：
+
+```bash
+@tinsep19:registry=https://npm.pkg.github.com/
+//npm.pkg.github.com/:_authToken=YOUR_READONLY_PAT
+```
+
+⚠ `YOUR_READONLY_PAT` は発行したトークンに置き換えてください
+
+### インストール
+
+```bash
+npm install @tinsep19/kiwumil
+```
+
+---
+
 ## 🎨 テーマシステム
 
 Kiwumil はプリセットテーマをインポートして適用できます：
