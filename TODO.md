@@ -1,16 +1,10 @@
 # 残タスク
 
-## 最終更新: 2025-11-14
+## 最終更新: 2025-11-16
 
 ### 🔴 高優先度
 
-#### 1. GALLERY の構成変更と更新
-- [ ] GALLERY.md の構成を見直し
-- [ ] 新しい構成に基づいて Example ファイルを整理
-- [ ] すべての Example を TypedDiagram に更新
-- [ ] SVG を再生成
-
-**備考**: ユーザーが構成変更を希望しているため、変更内容を確認してから実施
+**現在、高優先度タスクはありません。**
 
 ### 🟡 中優先度
 
@@ -18,10 +12,6 @@
 - [x] README.md を TypedDiagram に更新
 - [ ] マイグレーションガイドの追加（もし既存ユーザーがいた場合の参考）
 - [ ] API リファレンスの作成
-
-#### 3. 型定義ファイルの確認
-- [ ] `dist/` の型定義ファイルを確認
-- [ ] 外部から使用したときの IntelliSense 動作確認
 
 ### 🟢 低優先度
 
@@ -35,6 +25,21 @@
 ---
 
 ## 完了したタスク ✅
+
+### GALLERY と Example の整理
+- ✅ GALLERY.md の構成見直しと更新
+- ✅ Example ファイルの整理（不要なファイル削除）
+- ✅ すべての Example を TypedDiagram に更新
+- ✅ SVG の再生成
+
+### レイアウト制約の修正
+- ✅ arrangeHorizontal/arrangeVertical の制約競合を修正（PR #52）
+- ✅ X軸・Y軸を独立して制御できるように改善
+- ✅ テストの更新（新しい仕様に対応）
+
+### 型定義ファイルの確認
+- ✅ `dist/` の型定義ファイルを確認
+- ✅ 外部から使用したときの IntelliSense 動作確認（helix-editor + typescript-language-server で動作確認済み）
 
 ### Phase 1-4: Namespace-based DSL の実装
 - ✅ Phase 1a: プラグインシステムの基盤
@@ -53,14 +58,17 @@
 ### テストの移行
 - ✅ tests/namespace_dsl.test.ts (TypedDiagram ベース)
 - ✅ tests/uml_relationships.test.ts の移行
-- ✅ すべてのテストが通過 (52/52)
+- ✅ すべてのテストが通過 (54/54)
 
 ### ドキュメント
 - ✅ 設計仕様書の作成 (namespace-dsl.md, typed-diagram-api.md)
 - ✅ README.md の TypedDiagram 対応
+- ✅ GALLERY.md の更新
 
 ### PR とマージ
 - ✅ PR #40 作成とマージ
+- ✅ PR #52 作成とマージ（arrangeHorizontal/arrangeVertical制約の修正）
+- ✅ PR #53 作成とマージ（GALLERY.mdとexampleファイルの整理）
 - ✅ factory-proxy ブランチ削除
 - ✅ feature/namespace-based-dsl ブランチ削除
 
@@ -73,3 +81,4 @@
 - コールバック型名は `IntelliSenseBlock`
 - CorePlugin がデフォルトで適用される
 - すべての変更が main ブランチにマージ済み
+- arrangeHorizontal は X軸のみ、arrangeVertical は Y軸のみを制御（2025-11-16改善）
