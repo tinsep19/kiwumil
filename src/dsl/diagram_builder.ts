@@ -5,6 +5,7 @@ import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
 import { DiagramSymbol } from "../model/diagram_symbol"
 import { CorePlugin } from "../plugin/core/plugin"
+import { convertMetaUrlToSvgPath } from "../utils/path_helper"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
@@ -113,9 +114,20 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     return {
       symbols: allSymbols,
       relationships,
-      render: (filepath: string) => {
+      render: (target: string | ImportMeta | Element) => {
         const renderer = new SvgRenderer(allSymbols, relationships, this.currentTheme)
-        renderer.saveToFile(filepath)
+        
+        if (typeof target === "string") {
+          // ケース1: 文字列パス → ファイル保存
+          renderer.saveToFile(target)
+        } else if ("url" in target) {
+          // ケース2: import.meta → 自動ファイル名生成
+          const filepath = convertMetaUrlToSvgPath(target.url)
+          renderer.saveToFile(filepath)
+        } else {
+          // ケース3: HTMLElement → DOM レンダリング
+          renderer.renderToElement(target)
+        }
       }
     }
   }

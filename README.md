@@ -65,6 +65,16 @@ TypedDiagram({
     // ...
   })
   .render("output.svg")
+
+// 🆕 import.meta を使った自動パス生成
+// example/my_diagram.ts というファイルで実行すると
+// 自動的に example/my_diagram.svg に保存されます
+TypedDiagram("My Diagram")
+  .use(UMLPlugin)
+  .build((el, rel, hint) => {
+    // ...
+  })
+  .render(import.meta)  // .ts → .svg に自動変換
 ```
 
 **出力イメージ:**
@@ -79,11 +89,13 @@ TypedDiagram({
 - ✨ **Arrange + Align API** - 直感的なレイアウト記述
 - 📝 **メタデータサポート** - タイトル、作成日、著者を図に含められる
 - 🎯 **型安全な DSL** - TypeScript の型推論による IntelliSense サポート
+- 🌐 **Web 対応** - ファイル保存とDOM要素への直接レンダリングの両方をサポート
 
 **🎉 New!** 
 - **名前空間ベースの DSL** - `el.uml.actor()`, `el.core.circle()` のように、プラグインごとの名前空間でシンボルを作成
 - **ID 管理の改善** - すべてのシンボルと関係に一意な ID が付与される（例: `uml:actor-0`, `uml:association-0`）
 - **強力な型安全性** - プラグインの型が自動的に推論され、存在しないメソッドを呼ぶとコンパイルエラー
+- **Web レンダリング** - `render(import.meta)` で自動パス生成、DOM要素への直接レンダリングもサポート
 
 詳細は [docs/design/layout-system.md](docs/design/layout-system.md) を参照してください。
 
