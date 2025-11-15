@@ -1,9 +1,10 @@
 // example/actor_simple.ts
-import { Diagram, UMLPlugin } from "../src/index"
+import { TypedDiagram, UMLPlugin } from "../src/index"
 
-Diagram("Simple Actor")
+TypedDiagram("Simple Actor")
   .use(UMLPlugin)
   .build((element, relation, hint) => {
-    element.actor("User")
+    element.uml.actor("User")
   })
   .render("example/actor_simple.svg")
+

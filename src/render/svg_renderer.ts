@@ -84,7 +84,17 @@ export class SvgRenderer {
 
   saveToFile(filepath: string) {
     const svg = this.render()
-    Bun.write(filepath, svg)
-    console.log(`Saved to ${filepath}`)
+    
+    if (typeof Bun !== "undefined" && Bun.write) {
+      Bun.write(filepath, svg)
+      console.log(`Saved to ${filepath}`)
+    } else {
+      throw new Error("File system operations are only supported in Bun environment")
+    }
+  }
+
+  renderToElement(element: Element) {
+    const svg = this.render()
+    element.innerHTML = svg
   }
 }
