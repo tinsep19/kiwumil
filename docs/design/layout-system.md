@@ -274,54 +274,15 @@ class Association extends RelationshipBase {
 
 ### 接続点計算のアルゴリズム
 
-#### 楕円形シンボル（Usecase）
+各 Symbol は、関係線が接続される際に最適な接続点を計算します。
 
-楕円の中心から始点への角度を計算し、楕円の輪郭上の点を返します。
+接続点を Symbol の役割とすることで、シンプルなアルゴリズムで以下の効果が得られます：
 
-```typescript
-getConnectionPoint(from: Point): Point {
-  const cx = this.bounds.x + this.bounds.width / 2
-  const cy = this.bounds.y + this.bounds.height / 2
-  const rx = this.bounds.width / 2
-  const ry = this.bounds.height / 2
+- ✅ 矢印がシンボル内部に入り込まない
+- ✅ 楕円、矩形、アクターなど各シンボル形状に対応
+- ✅ 始点からの方向に基づいた最適な接続点を計算
 
-  const dx = from.x - cx
-  const dy = from.y - cy
-  const angle = Math.atan2(dy, dx)
-  
-  return {
-    x: cx + rx * Math.cos(angle),
-    y: cy + ry * Math.sin(angle)
-  }
-}
-```
-
-#### 矩形シンボル（SystemBoundary, Rectangle, RoundedRectangle）
-
-矩形の中心から始点への方向ベクトルを計算し、矩形の辺との交点を返します。
-
-```typescript
-getConnectionPoint(from: Point): Point {
-  const cx = this.bounds.x + this.bounds.width / 2
-  const cy = this.bounds.y + this.bounds.height / 2
-  const dx = from.x - cx
-  const dy = from.y - cy
-  const halfWidth = this.bounds.width / 2
-  const halfHeight = this.bounds.height / 2
-
-  // 各軸方向の交点までのスケール係数を計算
-  const tx = dx !== 0 ? halfWidth / Math.abs(dx) : Infinity
-  const ty = dy !== 0 ? halfHeight / Math.abs(dy) : Infinity
-  const t = Math.min(tx, ty)
-
-  return {
-    x: cx + dx * t,
-    y: cy + dy * t
-  }
-}
-```
-
-#### アクターシンボル
+#### アクターシンボルの例
 
 アクターの頭部（円）または胴体（矩形）の境界との交点を返します。
 
@@ -348,12 +309,6 @@ getConnectionPoint(from: Point): Point {
   }
 }
 ```
-
-### 実装結果
-
-- ✅ 矢印がシンボル内部に入り込まない
-- ✅ 楕円、矩形、アクターなど各シンボル形状に対応
-- ✅ 始点からの方向に基づいた最適な接続点を計算
 
 ---
 
