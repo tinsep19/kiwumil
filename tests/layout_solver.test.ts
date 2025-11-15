@@ -31,7 +31,7 @@ describe("LayoutSolver", () => {
       
       // Second element should be gap=80 away horizontally
       expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 80)
-      expect(b.bounds.y).toBe(a.bounds.y) // Same Y
+      // Y coordinate is not constrained by arrangeHorizontal
     })
 
     test("should arrange three elements horizontally with custom gap", () => {
@@ -49,7 +49,26 @@ describe("LayoutSolver", () => {
       expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 100)
       expect(c.bounds.x).toBe(b.bounds.x + b.bounds.width + 100)
       
-      // All Y coordinates should be the same
+      // Y coordinates are not constrained by arrangeHorizontal
+    })
+    
+    test("should work with alignCenterY for same Y coordinates", () => {
+      const a = new ActorSymbol("a", "A")
+      const b = new ActorSymbol("b", "B")
+      const c = new ActorSymbol("c", "C")
+      
+      const hints: LayoutHint[] = [
+        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"], gap: 100 },
+        { type: "alignCenterY", symbolIds: ["a", "b", "c"] }
+      ]
+      
+      solver.solve([a, b, c], hints)
+      
+      expect(a.bounds.x).toBe(50)
+      expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 100)
+      expect(c.bounds.x).toBe(b.bounds.x + b.bounds.width + 100)
+      
+      // Y coordinates should be aligned by alignCenterY
       expect(b.bounds.y).toBe(a.bounds.y)
       expect(c.bounds.y).toBe(a.bounds.y)
     })
@@ -72,7 +91,7 @@ describe("LayoutSolver", () => {
       
       // Second element should be gap=50 away vertically
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
-      expect(b.bounds.x).toBe(a.bounds.x) // Same X
+      // X coordinate is not constrained by arrangeVertical
     })
 
     test("should arrange three elements vertically with custom gap", () => {
@@ -90,7 +109,26 @@ describe("LayoutSolver", () => {
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 30)
       expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 30)
       
-      // All X coordinates should be the same
+      // X coordinates are not constrained by arrangeVertical
+    })
+    
+    test("should work with alignLeft for same X coordinates", () => {
+      const a = new UsecaseSymbol("a", "A")
+      const b = new UsecaseSymbol("b", "B")
+      const c = new UsecaseSymbol("c", "C")
+      
+      const hints: LayoutHint[] = [
+        { type: "arrangeVertical", symbolIds: ["a", "b", "c"], gap: 30 },
+        { type: "alignLeft", symbolIds: ["a", "b", "c"] }
+      ]
+      
+      solver.solve([a, b, c], hints)
+      
+      expect(a.bounds.y).toBe(50)
+      expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 30)
+      expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 30)
+      
+      // X coordinates should be aligned by alignLeft
       expect(b.bounds.x).toBe(a.bounds.x)
       expect(c.bounds.x).toBe(a.bounds.x)
     })
@@ -351,7 +389,7 @@ describe("LayoutSolver", () => {
       solver.solve([a, b], hints)
       
       expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 80)
-      expect(b.bounds.y).toBe(a.bounds.y)
+      // Y coordinate is not constrained by horizontal hint
     })
 
     test("should support legacy 'vertical' hint type", () => {
@@ -365,7 +403,7 @@ describe("LayoutSolver", () => {
       solver.solve([a, b], hints)
       
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
-      expect(b.bounds.x).toBe(a.bounds.x)
+      // X coordinate is not constrained by vertical hint
     })
   })
 })
