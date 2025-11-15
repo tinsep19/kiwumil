@@ -1,0 +1,607 @@
+# Kiwumil プラグインシステム
+
+## 目次
+
+1. [概要](#概要)
+2. [プラグインとは](#プラグインとは)
+3. [DiagramPlugin インターフェース](#diagramplugin-インターフェース)
+4. [プラグインの実装](#プラグインの実装)
+5. [ID の命名規則](#id-の命名規則)
+6. [新しいプラグインの作成](#新しいプラグインの作成)
+7. [ベストプラクティス](#ベストプラクティス)
+8. [テスト](#テスト)
+
+---
+
+## 概要
+
+Kiwumil のプラグインシステムは、図の要素（Symbol）と関連（Relationship）を拡張可能な形で提供するための仕組みです。プラグインを使うことで、UML、シーケンス図、ER図など、様々な種類の図を型安全に作成できます。
+
+### なぜプラグインが必要か
+
+1. **拡張性**: 新しい図の種類を簡単に追加できる
+2. **型安全性**: TypeScript の型推論により IntelliSense が効く
+3. **名前空間**: プラグインごとに独立した名前空間を持つ（`el.uml.actor()`, `el.sequence.lifeline()` など）
+4. **モジュール性**: 必要なプラグインだけを読み込める
+
+---
+
+## プラグインとは
+
+プラグインは、以下の2つの機能を提供します：
+
+1. **Symbol Factory**: 図の要素（Actor、Usecase、Lifeline など）を作成する関数群
+2. **Relationship Factory**: 要素間の関連（Association、Include、Message など）を作成する関数群
+
+### プラグインの使用例
+
+```typescript
+import { TypedDiagram, UMLPlugin } from "kiwumil"
+
+TypedDiagram("My UML Diagram")
+  .use(UMLPlugin)
+  .build((el, rel, hint) => {
+    // el.uml が UMLPlugin によって提供される
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    
+    // rel.uml が UMLPlugin によって提供される
+    rel.uml.associate(user, login)
+  })
+  .render("output.svg")
+```
+
+---
+
+## DiagramPlugin インターフェース
+
+すべてのプラグインは `DiagramPlugin` インターフェースを実装します。
+
+### 型定義
+
+```typescript
+interface DiagramPlugin {
+  /**
+   * プラグインの名前空間名（例: "uml", "sequence", "erd"）
+   */
+  name: string
+
+  /**
+   * Symbol 用の DSL ファクトリを生成
+   * @param userSymbols - 生成した Symbol を登録する配列
+   * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
+   */
+  createSymbolFactory(
+    userSymbols: SymbolBase[]
+  ): Record<string, (...args: any[]) => SymbolId>
+
+  /**
+   * Relationship 用の DSL ファクトリを生成
+   * @param relationships - 生成した Relationship を登録する配列
+   * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
+   */
+  createRelationshipFactory(
+    relationships: RelationshipBase[]
+  ): Record<string, (...args: any[]) => RelationshipId>
+}
+```
+
+### 重要な点
+
+- **`name`**: プラグインの名前空間（`el.{name}.xxx()` でアクセス）
+- **SymbolId / RelationshipId を返す**: 内部で配列に登録し、ID だけを返す
+- **配列への登録はプラグインが担当**: `userSymbols.push(symbol)` を忘れずに
+
+---
+
+## プラグインの実装
+
+### 基本構造
+
+```typescript
+import type { DiagramPlugin } from "kiwumil"
+import type { SymbolBase, RelationshipBase, SymbolId, RelationshipId } from "kiwumil"
+
+export const MyPlugin: DiagramPlugin = {
+  name: 'myplugin',
+  
+  createSymbolFactory(userSymbols: SymbolBase[]) {
+    const namespace = this.name
+    let counter = 0
+    
+    return {
+      // Symbol 作成関数を定義
+      mySymbol(label: string): SymbolId {
+        const id = `${namespace}:mySymbol-${counter++}` as SymbolId
+        const symbol = new MySymbol(id, label)
+        userSymbols.push(symbol)  // 重要: 配列に登録
+        return id
+      }
+    }
+  },
+  
+  createRelationshipFactory(relationships: RelationshipBase[]) {
+    const namespace = this.name
+    let counter = 0
+    
+    return {
+      // Relationship 作成関数を定義
+      myRelation(from: SymbolId, to: SymbolId): RelationshipId {
+        const id = `${namespace}:myRelation-${counter++}` as RelationshipId
+        const rel = new MyRelation(id, from, to)
+        relationships.push(rel)  // 重要: 配列に登録
+        return id
+      }
+    }
+  }
+}
+```
+
+### 実例: UMLPlugin
+
+```typescript
+import { ActorSymbol } from "./symbols/actor_symbol"
+import { UsecaseSymbol } from "./symbols/usecase_symbol"
+import { Association } from "./relationships/association"
+import { Include } from "./relationships/include"
+import { createIdGenerator } from "../../dsl/id_generator"
+import type { DiagramPlugin } from "../../dsl/diagram_plugin"
+import type { SymbolBase } from "../../model/symbol_base"
+import type { RelationshipBase } from "../../model/relationship_base"
+import type { SymbolId, RelationshipId } from "../../model/types"
+
+export const UMLPlugin: DiagramPlugin = {
+  name: 'uml',
+  
+  createSymbolFactory(userSymbols: SymbolBase[]) {
+    const idGen = createIdGenerator(this.name)
+    
+    return {
+      actor(label: string): SymbolId {
+        const id = idGen.generateSymbolId('actor')
+        const symbol = new ActorSymbol(id, label)
+        userSymbols.push(symbol)
+        return id
+      },
+      
+      usecase(label: string): SymbolId {
+        const id = idGen.generateSymbolId('usecase')
+        const symbol = new UsecaseSymbol(id, label)
+        userSymbols.push(symbol)
+        return id
+      },
+      
+      systemBoundary(label: string): SymbolId {
+        const id = idGen.generateSymbolId('systemBoundary')
+        const symbol = new SystemBoundarySymbol(id, label)
+        userSymbols.push(symbol)
+        return id
+      }
+    }
+  },
+  
+  createRelationshipFactory(relationships: RelationshipBase[]) {
+    const idGen = createIdGenerator(this.name)
+    
+    return {
+      associate(from: SymbolId, to: SymbolId): RelationshipId {
+        const id = idGen.generateRelationshipId('association')
+        relationships.push(new Association(id, from, to))
+        return id
+      },
+      
+      include(from: SymbolId, to: SymbolId): RelationshipId {
+        const id = idGen.generateRelationshipId('include')
+        relationships.push(new Include(id, from, to))
+        return id
+      },
+      
+      extend(from: SymbolId, to: SymbolId): RelationshipId {
+        const id = idGen.generateRelationshipId('extend')
+        relationships.push(new Extend(id, from, to))
+        return id
+      },
+      
+      generalize(from: SymbolId, to: SymbolId): RelationshipId {
+        const id = idGen.generateRelationshipId('generalize')
+        relationships.push(new Generalize(id, from, to))
+        return id
+      }
+    }
+  }
+}
+```
+
+---
+
+## ID の命名規則
+
+プラグインで生成する ID は以下の形式に従います：
+
+```
+${namespace}:${symbolName|relationshipName}-${serial}
+```
+
+### 例
+
+**Symbol ID:**
+- `uml:actor-0`
+- `uml:usecase-1`
+- `sequence:lifeline-0`
+- `erd:entity-2`
+
+**Relationship ID:**
+- `uml:association-0`
+- `uml:include-1`
+- `sequence:message-0`
+- `erd:relation-3`
+
+### メリット
+
+1. **デバッグしやすい**: ログやエラーメッセージでどのプラグインの要素か一目でわかる
+2. **衝突しない**: 名前空間により、プラグイン間で ID が衝突しない
+3. **可読性**: 要素の種類が ID から推測できる
+
+### ID 生成ヘルパー
+
+手動で ID を生成する代わりに、`createIdGenerator` ヘルパーを使うことを推奨します：
+
+```typescript
+import { createIdGenerator } from "../../dsl/id_generator"
+
+export const MyPlugin: DiagramPlugin = {
+  name: 'myplugin',
+  
+  createSymbolFactory(userSymbols: SymbolBase[]) {
+    const idGen = createIdGenerator(this.name)
+    
+    return {
+      mySymbol(label: string): SymbolId {
+        const id = idGen.generateSymbolId('mySymbol')
+        // ... 
+        return id
+      }
+    }
+  }
+}
+```
+
+**`createIdGenerator` の実装:**
+
+```typescript
+export function createIdGenerator(namespace: string) {
+  let symbolCounter = 0
+  let relationshipCounter = 0
+  
+  return {
+    generateSymbolId(symbolName: string): SymbolId {
+      return `${namespace}:${symbolName}-${symbolCounter++}` as SymbolId
+    },
+    
+    generateRelationshipId(relationshipName: string): RelationshipId {
+      return `${namespace}:${relationshipName}-${relationshipCounter++}` as RelationshipId
+    }
+  }
+}
+```
+
+---
+
+## 新しいプラグインの作成
+
+### ステップバイステップガイド
+
+#### Step 1: プラグインディレクトリの作成
+
+```bash
+src/plugin/
+├── mydiagram/
+│   ├── plugin.ts
+│   ├── symbols/
+│   │   ├── my_symbol.ts
+│   │   └── another_symbol.ts
+│   └── relationships/
+│       └── my_relation.ts
+```
+
+#### Step 2: Symbol クラスの作成
+
+```typescript
+// src/plugin/mydiagram/symbols/my_symbol.ts
+import { SymbolBase } from "../../../model/symbol_base"
+import type { SymbolId } from "../../../model/types"
+import type { Theme } from "../../../theme/theme"
+
+export class MySymbol extends SymbolBase {
+  constructor(id: SymbolId, label: string) {
+    super(id, label)
+  }
+
+  getDefaultSize() {
+    return { width: 100, height: 60 }
+  }
+
+  toSVG(): string {
+    // SVG 描画ロジック
+    return `<rect x="${this.bounds.x}" y="${this.bounds.y}" 
+                  width="${this.bounds.width}" height="${this.bounds.height}" />`
+  }
+
+  getConnectionPoint(from: Point): Point {
+    // 接続点の計算ロジック
+    return { x: this.bounds.x + this.bounds.width / 2, 
+             y: this.bounds.y + this.bounds.height / 2 }
+  }
+}
+```
+
+#### Step 3: Relationship クラスの作成
+
+```typescript
+// src/plugin/mydiagram/relationships/my_relation.ts
+import { RelationshipBase } from "../../../model/relationship_base"
+import type { SymbolId, RelationshipId } from "../../../model/types"
+import type { SymbolBase } from "../../../model/symbol_base"
+
+export class MyRelation extends RelationshipBase {
+  constructor(id: RelationshipId, from: SymbolId, to: SymbolId) {
+    super(id, from, to)
+  }
+
+  toSVG(symbols: Map<SymbolId, SymbolBase>): string {
+    const fromSymbol = symbols.get(this.from)
+    const toSymbol = symbols.get(this.to)
+    
+    if (!fromSymbol || !toSymbol) return ""
+    
+    // SVG 描画ロジック（線を描く）
+    return `<line x1="${fromSymbol.bounds.x}" y1="${fromSymbol.bounds.y}"
+                  x2="${toSymbol.bounds.x}" y2="${toSymbol.bounds.y}" />`
+  }
+
+  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {
+    // Z-index 計算ロジック
+    return 0
+  }
+}
+```
+
+#### Step 4: プラグインの実装
+
+```typescript
+// src/plugin/mydiagram/plugin.ts
+import { MySymbol } from "./symbols/my_symbol"
+import { MyRelation } from "./relationships/my_relation"
+import { createIdGenerator } from "../../dsl/id_generator"
+import type { DiagramPlugin } from "../../dsl/diagram_plugin"
+import type { SymbolBase } from "../../model/symbol_base"
+import type { RelationshipBase } from "../../model/relationship_base"
+import type { SymbolId, RelationshipId } from "../../model/types"
+
+export const MyDiagramPlugin: DiagramPlugin = {
+  name: 'mydiagram',
+  
+  createSymbolFactory(userSymbols: SymbolBase[]) {
+    const idGen = createIdGenerator(this.name)
+    
+    return {
+      mySymbol(label: string): SymbolId {
+        const id = idGen.generateSymbolId('mySymbol')
+        const symbol = new MySymbol(id, label)
+        userSymbols.push(symbol)
+        return id
+      }
+    }
+  },
+  
+  createRelationshipFactory(relationships: RelationshipBase[]) {
+    const idGen = createIdGenerator(this.name)
+    
+    return {
+      myRelation(from: SymbolId, to: SymbolId): RelationshipId {
+        const id = idGen.generateRelationshipId('myRelation')
+        relationships.push(new MyRelation(id, from, to))
+        return id
+      }
+    }
+  }
+}
+```
+
+#### Step 5: エクスポート
+
+```typescript
+// src/index.ts
+export { MyDiagramPlugin } from "./plugin/mydiagram/plugin"
+```
+
+#### Step 6: 使用
+
+```typescript
+import { TypedDiagram, MyDiagramPlugin } from "kiwumil"
+
+TypedDiagram("My Diagram")
+  .use(MyDiagramPlugin)
+  .build((el, rel, hint) => {
+    const a = el.mydiagram.mySymbol("A")
+    const b = el.mydiagram.mySymbol("B")
+    rel.mydiagram.myRelation(a, b)
+  })
+  .render("output.svg")
+```
+
+---
+
+## ベストプラクティス
+
+### 1. 型安全性を確保する
+
+**❌ 避けるべき:**
+```typescript
+createSymbolFactory(userSymbols: any[]) {
+  return {
+    mySymbol: (label: any) => {
+      // any の使用は避ける
+    }
+  }
+}
+```
+
+**✅ 推奨:**
+```typescript
+createSymbolFactory(userSymbols: SymbolBase[]) {
+  return {
+    mySymbol(label: string): SymbolId {
+      // 明示的な型定義
+    }
+  }
+}
+```
+
+### 2. ID 生成に createIdGenerator を使う
+
+**❌ 避けるべき:**
+```typescript
+let counter = 0
+const id = `myplugin:mySymbol-${counter++}` as SymbolId
+```
+
+**✅ 推奨:**
+```typescript
+const idGen = createIdGenerator(this.name)
+const id = idGen.generateSymbolId('mySymbol')
+```
+
+### 3. 配列への登録を忘れない
+
+**❌ 間違い:**
+```typescript
+mySymbol(label: string): SymbolId {
+  const id = idGen.generateSymbolId('mySymbol')
+  const symbol = new MySymbol(id, label)
+  // userSymbols.push(symbol) を忘れている！
+  return id
+}
+```
+
+**✅ 正しい:**
+```typescript
+mySymbol(label: string): SymbolId {
+  const id = idGen.generateSymbolId('mySymbol')
+  const symbol = new MySymbol(id, label)
+  userSymbols.push(symbol)  // 必ず登録
+  return id
+}
+```
+
+### 4. ファイル構成を整理する
+
+```
+src/plugin/myplugin/
+├── plugin.ts              # プラグインのエントリポイント
+├── symbols/               # Symbol クラス群
+│   ├── symbol_a.ts
+│   └── symbol_b.ts
+├── relationships/         # Relationship クラス群
+│   └── relation_a.ts
+└── README.md             # プラグインのドキュメント（オプション）
+```
+
+### 5. TypeScript の satisfies を活用
+
+```typescript
+export const MyPlugin = {
+  name: 'myplugin',
+  createSymbolFactory(userSymbols: SymbolBase[]) {
+    // ...
+  },
+  createRelationshipFactory(relationships: RelationshipBase[]) {
+    // ...
+  }
+} satisfies DiagramPlugin
+```
+
+---
+
+## テスト
+
+### プラグインのテスト例
+
+```typescript
+import { describe, test, expect } from "bun:test"
+import { TypedDiagram } from "../src/dsl/diagram_builder"
+import { MyDiagramPlugin } from "../src/plugin/mydiagram/plugin"
+
+describe("MyDiagramPlugin", () => {
+  test("should create symbols with correct IDs", () => {
+    const result = TypedDiagram("Test")
+      .use(MyDiagramPlugin)
+      .build((el, rel, hint) => {
+        const a = el.mydiagram.mySymbol("A")
+        const b = el.mydiagram.mySymbol("B")
+        
+        expect(a).toBe("mydiagram:mySymbol-0")
+        expect(b).toBe("mydiagram:mySymbol-1")
+      })
+    
+    expect(result.symbols).toHaveLength(3) // DiagramSymbol + 2つの Symbol
+  })
+  
+  test("should create relationships with correct IDs", () => {
+    TypedDiagram("Test")
+      .use(MyDiagramPlugin)
+      .build((el, rel, hint) => {
+        const a = el.mydiagram.mySymbol("A")
+        const b = el.mydiagram.mySymbol("B")
+        const relId = rel.mydiagram.myRelation(a, b)
+        
+        expect(relId).toBe("mydiagram:myRelation-0")
+      })
+  })
+  
+  test("should work with multiple plugins", () => {
+    TypedDiagram("Test")
+      .use(MyDiagramPlugin, UMLPlugin)
+      .build((el, rel, hint) => {
+        const mySymbol = el.mydiagram.mySymbol("A")
+        const actor = el.uml.actor("User")
+        
+        // 両方のプラグインが正しく動作
+        expect(mySymbol).toMatch(/^mydiagram:/)
+        expect(actor).toMatch(/^uml:/)
+      })
+  })
+})
+```
+
+### テストのポイント
+
+1. **ID の形式を検証**: `namespace:symbolName-serial` の形式になっているか
+2. **配列への登録を検証**: `result.symbols` に正しく追加されているか
+3. **複数プラグインの共存**: 他のプラグインと競合しないか
+4. **型推論**: IntelliSense が正しく動作するか（手動確認）
+
+---
+
+## まとめ
+
+Kiwumil のプラグインシステムを使うことで、型安全で拡張可能な図の作成が可能になります。
+
+### プラグイン作成の基本
+
+1. `DiagramPlugin` インターフェースを実装
+2. `createSymbolFactory` と `createRelationshipFactory` を定義
+3. ID は `namespace:name-serial` 形式で生成
+4. 生成した要素は配列に登録
+5. SymbolId / RelationshipId を返す
+
+### 参考資料
+
+- [TypedDiagram API](./typed-diagram.md)
+- [Namespace-based DSL 設計](./namespace-dsl.md)
+- [Layout System](./layout-system.md)
+- [Theme System](./theme-system.md)
+
+---
+
+**Happy Plugin Development! 🎉**
