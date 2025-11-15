@@ -1,0 +1,30 @@
+name: Publish to GitHub Packages
+
+on:
+  push:
+    branches:
+      - main # Or your release branch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "latest" # Or a specific version like "1.1.2"
+          registries: |
+            https://registry.npmjs.org
+            @tinsep19:https://npm.pkg.github.com/|$GITHUB_TOKEN
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Publish to GitHub Packages
+        run: bun publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        

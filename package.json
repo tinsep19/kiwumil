@@ -1,5 +1,5 @@
 {
-  "name": "kiwumil",
+  "name": "@tinsep19/kiwumil",
   "version": "0.1.0",
   "description": "TypeScript library for automatic UML diagram layout using @lume/kiwi constraint solver",
   "type": "module",
@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node --minify && tsc --emitDeclarationOnly --outDir dist",
+    "build": "bun build src/index.ts --outdir dist --target bun --minify && tsc --emitDeclarationOnly --outDir dist",
     "prepublishOnly": "bun run build",
     "test": "bun test"
   },
@@ -38,6 +38,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/tinsep19/kiwumil.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public",
+    "tag": "latest"
   },
   "bugs": {
     "url": "https://github.com/tinsep19/kiwumil/issues"
