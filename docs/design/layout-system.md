@@ -174,7 +174,7 @@ interface Bounds {
 
 ### Symbol の種類
 
-Kiwumil は以下の Symbol を提供します：
+以下のような Symbol が存在します。これらは**プラグインから提供**されます：
 
 - **Usecase** - 楕円形（ユースケース図）
 - **Actor** - 棒人間（ユースケース図）
@@ -184,11 +184,14 @@ Kiwumil は以下の Symbol を提供します：
 - **Circle** - 円形
 - **DiagramSymbol** - 図全体を表す特殊なシンボル（後述）
 
+プラグインは `createSymbolFactory()` を実装して、これらの Symbol を生成する DSL 関数を提供します。
+詳細は [Plugin System](./plugin-system.md) を参照してください。
+
 ### Symbol の責務
 
-#### 1. 形状の定義
+#### 1. 形状の定義と描画
 
-各 Symbol は自身の形状を定義します。
+各 Symbol は自身の形状の定義を持ち、SVG での描画の責務を持ちます。
 
 ```typescript
 class Circle extends SymbolBase {
@@ -211,22 +214,6 @@ interface SymbolBase {
 }
 ```
 
-#### 3. レイアウトへの参加
-
-各 Symbol はレイアウトソルバーに変数を登録し、制約を受け入れます。
-
-```typescript
-// レイアウトソルバーが各シンボルに対して変数を作成
-for (const symbol of symbols) {
-  this.vars.set(symbol.id, {
-    x: new kiwi.Variable(`${symbol.id}.x`),
-    y: new kiwi.Variable(`${symbol.id}.y`),
-    width: new kiwi.Variable(`${symbol.id}.width`),
-    height: new kiwi.Variable(`${symbol.id}.height`)
-  })
-}
-```
-
 ---
 
 ## 関係線（Relationship）の役割
@@ -245,10 +232,15 @@ interface RelationshipBase {
 
 ### Relationship の種類
 
+以下のような Relationship が存在します。これらは**プラグインから提供**されます：
+
 - **Association** - 関連（実線）
 - **Include** - インクルード（破線 + <<include>>）
 - **Extend** - 拡張（破線 + <<extend>>）
 - **Generalize** - 汎化（実線 + 三角形）
+
+プラグインは `createRelationshipFactory()` を実装して、これらの Relationship を生成する DSL 関数を提供します。
+詳細は [Plugin System](./plugin-system.md) を参照してください。
 
 ### 接続点の計算
 
