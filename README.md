@@ -91,11 +91,10 @@ TypedDiagram({
 
 ## 📚 ドキュメント
 
-- **[TypedDiagram API](docs/design/typed-diagram.md)** - メインAPIの使い方
+- **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計とAPI使い方
 - **[Plugin System](docs/design/plugin-system.md)** - プラグイン作成ガイド
 - **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの設計
 - **[Theme System](docs/design/theme-system.md)** - テーマシステムの仕様
-- **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計の詳細
 - **[Git Workflow](docs/design/git-workflow.md)** - 開発ワークフロー
 
 ---
@@ -259,9 +258,8 @@ kiwumil/
 ├── tsconfig.json
 ├── docs/                          # ドキュメント
 │   └── design/                    # 設計ドキュメント
-│       ├── typed-diagram.md       # TypedDiagram API仕様
+│       ├── namespace-dsl.md       # 名前空間ベースDSL設計とAPI
 │       ├── plugin-system.md       # プラグイン作成ガイド
-│       ├── namespace-dsl.md       # 名前空間ベースDSL設計
 │       ├── layout-system.md       # レイアウトシステム設計
 │       ├── theme-system.md        # テーマシステム設計
 │       └── git-workflow.md        # Git ワークフロー
