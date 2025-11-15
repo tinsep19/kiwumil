@@ -1,317 +1,72 @@
 # Gallery
 
-このページでは、Kiwumilで生成できる図の例を紹介します。
+Kiwumil で作成できる図の例です。
 
-> **Note**: このギャラリーは新しい名前空間ベースの API に基づいています。
+## E-Commerce System (Diagram Info Full)
 
-## Actor Examples
+完全なメタデータ（タイトル、作成日、作成者）を含むダイアグラムの例。Blue Theme を使用。
 
-### Simple Actor
+[コード](./example/diagram_info_full.ts)
 
-基本的なアクター要素の描画例。
-
-**Code:**
-```typescript
-// example/actor_simple.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
-
-new DiagramBuilder("Simple Actor")
-  .use(UMLPlugin)
-  .build((el, rel, hint) => {
-    el.uml.actor("User")
-  })
-  .render("example/actor_simple.svg")
-```
-
-**Output:**
-
-![Simple Actor](example/actor_simple.svg)
+![E-Commerce System](./example/diagram_info_full.svg)
 
 ---
 
-### Horizontal Layout
+## First Milestone
 
-複数のアクターを水平に配置した例。
+プロジェクトの最初のマイルストーンだったユースケース図。
 
-**Code:**
-```typescript
-// example/actor_horizontal.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
+[コード](./example/first_milestone.ts)
 
-new DiagramBuilder("Horizontal Actors")
-  .use(UMLPlugin)
-  .build((el, rel, hint) => {
-    const user1 = el.uml.actor("User")
-    const user2 = el.uml.actor("Admin")
-    const user3 = el.uml.actor("Guest")
-
-    hint.arrangeHorizontal(user1, user2, user3)
-  })
-  .render("example/actor_horizontal.svg")
-```
-
-**Output:**
-
-![Horizontal Actors](example/actor_horizontal.svg)
+![First Milestone](./example/first_milestone.svg)
 
 ---
 
-### Vertical Layout
+## Grid of Arrange
 
-複数のアクターを垂直に配置した例。
+arrangeHorizontal と arrangeVertical を組み合わせたレイアウト例。"kiwumil" の文字を2段組で配置。
 
-**Code:**
-```typescript
-// example/actor_vertical.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
+[コード](./example/kiwumil.ts)
 
-new DiagramBuilder
-  .use(UMLPlugin)
-  .build("Vertical Actors", (el, rel, hint) => {
-    const user1 = el.uml.actor("User")
-    const user2 = el.uml.actor("Admin")
-    const user3 = el.uml.actor("Guest")
-
-    hint.arrangeVertical(user1, user2, user3)
-  })
-  .render("example/actor_vertical.svg")
-```
-
-**Output:**
-
-![Vertical Actors](example/actor_vertical.svg)
+![Grid of Arrange](./example/kiwumil.svg)
 
 ---
 
-## Usecase Examples
+## System Boundary with Multiple Elements
 
-### Simple Usecase
+システム境界内に複数のユースケースを配置した例。
 
-基本的なユースケース要素の描画例。
+[コード](./example/system_boundary_complex.ts)
 
-**Code:**
-```typescript
-// example/usecase_simple.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
-
-new DiagramBuilder
-  .use(UMLPlugin)
-  .build("Simple Usecase", (el, rel, hint) => {
-    el.uml.usecase("Login")
-  })
-  .render("example/usecase_simple.svg")
-```
-
-**Output:**
-
-![Simple Usecase](example/usecase_simple.svg)
+![System Boundary with Multiple Elements](./example/system_boundary_complex.svg)
 
 ---
 
-### Multiple Usecases
+## Nested System Boundaries
 
-複数のユースケースを配置した例。
+システム境界をネストして、階層的な構造を表現した例。
 
-**Code:**
-```typescript
-// example/usecase_multiple.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
+[コード](./example/system_boundary_nested.ts)
 
-new DiagramBuilder
-  .use(UMLPlugin)
-  .build("Multiple Usecases", (el, rel, hint) => {
-    const login = el.uml.usecase("Login")
-    const register = el.uml.usecase("Register")
-    const profile = el.uml.usecase("View Profile")
-    
-    hint.arrangeHorizontal(login, register)
-    hint.arrangeHorizontal(register, profile)
-  })
-  .render("example/usecase_multiple.svg")
-```
-
-**Output:**
-
-![Multiple Usecases](example/usecase_multiple.svg)
+![Nested System Boundaries](./example/system_boundary_nested.svg)
 
 ---
 
-## Association Examples
+## UML Relations Example
 
-### Usecase with Actor
+UMLの様々なリレーションシップ（関連、包含、拡張、汎化）を示す例。
 
-アクターとユースケースを関連線で接続した例。
+[コード](./example/uml-relations.ts)
 
-**Code:**
-```typescript
-// example/usecase_with_actor.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
-
-new DiagramBuilder
-  .use(UMLPlugin)
-  .build("Usecase with Actor", (el, rel, hint) => {
-    const user = el.uml.actor("User")
-    const login = el.uml.usecase("Login")
-    const logout = el.uml.usecase("Logout")
-    
-    rel.uml.associate(user, login)
-    rel.uml.associate(user, logout)
-    
-    hint.arrangeHorizontal(user, login)
-    hint.arrangeVertical(login, logout)
-  })
-  .render("example/usecase_with_actor.svg")
-```
-
-**Output:**
-
-![Usecase with Actor](example/usecase_with_actor.svg)
+![UML Relations Example](./example/uml-relations.svg)
 
 ---
 
-## System Boundary Examples
+## Usecase with Actor (Dark Theme)
 
-### First Milestone - Complete Use Case Example ✅
+Dark Theme を使用したアクターとユースケースの図。
 
-複数のアクターとユースケース、システム境界を組み合わせた実用的な例。
+[コード](./example/usecase_with_actor_dark.ts)
 
-**🎉 First Milestone 達成！** 新しい `arrangeVertical` API により、システム境界内の複数ユースケースが重ならずに配置されます。
+![Usecase with Actor (Dark Theme)](./example/usecase_with_actor_dark.svg)
 
-**Code:**
-```typescript
-// example/first_milestone.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
-
-new DiagramBuilder
-  .use(UMLPlugin)
-  .build("First Milestone", (el, rel, hint) => {
-    // 1. シンボルを定義
-    const user = el.actor("User")
-    const admin = el.actor("Admin")
-    
-    const login = el.usecase("Login")
-    const logout = el.usecase("Logout")
-    const manage_users = el.usecase("Manage Users")
-    
-    const system_boundary = el.systemBoundary("システム化範囲")
-    
-    // 2. 関係を定義
-    rel.associate(user, login)
-    rel.associate(user, logout)
-    rel.associate(admin, login)
-    rel.associate(admin, logout)
-    rel.associate(admin, manage_users)
-    
-    // 3. レイアウトヒントを設定（新しいAPI）
-    hint.arrangeVertical(user, admin)
-    hint.arrangeHorizontal(user, system_boundary)
-    hint.enclose(system_boundary, [login, logout, manage_users])
-    hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
-  })
-  .render("example/first_milestone.svg")
-```
-
-**Output:**
-
-![First Milestone](example/first_milestone.svg)
-
----
-
-### System Boundary with Usecase
-
-システム境界内にユースケースを配置した例。
-
-**Code:**
-```typescript
-// example/system_boundary_example.ts
-import { DiagramBuilder, UMLPlugin } from "../src/index"
-
-new DiagramBuilder
-  .use(UMLPlugin)
-  .build("System Boundary Example", (el, rel, hint) => {
-    const user = el.actor("User")
-    const login = el.usecase("Login")
-    const boundary = el.systemBoundary("Auth System")
-
-    hint.enclose(boundary, [login])
-    hint.arrangeHorizontal(user, boundary)
-    rel.associate(user, login)
-  })
-  .render("example/system_boundary_example.svg")
-```
-
-**Output:**
-
-![System Boundary Example](example/system_boundary_example.svg)
-
----
-
-## Theme Examples
-
-### Blue Theme
-
-ブルーテーマを適用した例。
-
-**Code:**
-```typescript
-// example/usecase_with_actor_blue.ts
-import { Diagram, UMLPlugin, themes } from "../src/index"
-
-new DiagramBuilder
-  .use(UMLPlugin)
-  .theme(themes.blue)
-  .build("Usecase with Actor (Blue Theme)", (el, rel, hint) => {
-    const user = el.uml.actor("User")
-    const login = el.uml.usecase("Login")
-    const logout = el.uml.usecase("Logout")
-    
-    rel.uml.associate(user, login)
-    rel.uml.associate(user, logout)
-    
-    hint.arrangeHorizontal(user, login)
-    hint.arrangeVertical(login, logout)
-  })
-  .render("example/usecase_with_actor_blue.svg")
-```
-
-**Output:**
-
-![Usecase with Actor (Blue Theme)](example/usecase_with_actor_blue.svg)
-
----
-
-### Dark Theme
-
-ダークテーマを適用した例。
-
-**Code:**
-```typescript
-// example/usecase_with_actor_dark.ts
-import { Diagram, UMLPlugin, themes } from "../src/index"
-
-new DiagramBuilder
-  .use(UMLPlugin)
-  .theme(themes.dark)
-  .build("Usecase with Actor (Dark Theme)", (el, rel, hint) => {
-    const user = el.uml.actor("User")
-    const login = el.uml.usecase("Login")
-    const logout = el.uml.usecase("Logout")
-    
-    rel.uml.associate(user, login)
-    rel.uml.associate(user, logout)
-    
-    hint.arrangeHorizontal(user, login)
-    hint.arrangeVertical(login, logout)
-  })
-  .render("example/usecase_with_actor_dark.svg")
-```
-
-**Output:**
-
-![Usecase with Actor (Dark Theme)](example/usecase_with_actor_dark.svg)
-
----
-
-## Contributing
-
-新しい例を追加したい場合は、`example/`ディレクトリに新しいTypeScriptファイルを作成し、同名のSVGファイルを生成してください。

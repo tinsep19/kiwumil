@@ -1,25 +1,29 @@
-import { Diagram, UMLPlugin } from "../src/index"
+import { TypedDiagram, UMLPlugin } from "../src/index"
 
-Diagram("Nested System Boundaries")
+TypedDiagram("Nested System Boundaries")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // Create boundaries and use cases
-    const outerSystem = el.systemBoundary("Outer System")
-    const innerSystem = el.systemBoundary("Inner System")
+    const outerSystem = el.uml.systemBoundary("Outer System")
+    const innerSystem = el.uml.systemBoundary("Inner System")
     
-    const outerUsecase = el.usecase("Outer Task")
-    const innerUsecase = el.usecase("Inner Task")
+    const outerUsecase = el.uml.usecase("Outer Task")
+    const innerUsecase = el.uml.usecase("Inner Task")
     
-    const user = el.actor("User")
+    const user = el.uml.actor("User")
+
+    // Relationships
+    rel.uml.associate(user, outerUsecase)
+    rel.uml.associate(user, innerUsecase)
     
     // Pack: Inner system contains innerUsecase
     hint.enclose(innerSystem, [innerUsecase])
     
     // Pack: Outer system contains outerUsecase and innerSystem
     hint.enclose(outerSystem, [outerUsecase, innerSystem])
+
+    hint.arrangeVertical(innerSystem, outerUsecase)
+    hint.arrangeHorizontal(outerSystem, user)
     
-    // Relationships
-    rel.associate(user, outerUsecase)
-    rel.associate(user, innerUsecase)
   })
-  .render("example/system_boundary_nested.svg")
+  .render(import.meta)
