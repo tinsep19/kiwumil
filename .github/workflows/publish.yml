@@ -15,10 +15,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "latest" # Or a specific version like "1.1.2"
-          registries: |
-            https://registry.npmjs.org
-            @tinsep19:https://npm.pkg.github.com/|$GITHUB_TOKEN
+          bun-version: "latest"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@tinsep19"
 
       - name: Install dependencies
         run: bun install
@@ -26,5 +25,5 @@ jobs:
       - name: Publish to GitHub Packages
         run: bun publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
