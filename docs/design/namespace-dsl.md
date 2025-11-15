@@ -162,118 +162,23 @@ const diagram = new DiagramBuilder("My Diagram")
 
 ### 3.2 DiagramPlugin インターフェース
 
+プラグインは以下のインターフェースを実装する：
+
 ```typescript
 interface DiagramPlugin {
-  /**
-   * プラグインの名前空間名（例: "uml", "sequence", "erd"）
-   */
   name: string
-
-  /**
-   * Symbol 用の DSL ファクトリを生成
-   * @param userSymbols - 生成した Symbol を登録する配列
-   * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
-   */
-  createSymbolFactory(
-    userSymbols: SymbolBase[]
-  ): Record<string, (...args: any[]) => SymbolId>
-
-  /**
-   * Relationship 用の DSL ファクトリを生成
-   * @param relationships - 生成した Relationship を登録する配列
-   * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
-   */
-  createRelationshipFactory(
-    relationships: RelationshipBase[]
-  ): Record<string, (...args: any[]) => RelationshipId>
+  createSymbolFactory(userSymbols: SymbolBase[]): Record<string, (...args: any[]) => SymbolId>
+  createRelationshipFactory(relationships: RelationshipBase[]): Record<string, (...args: any[]) => RelationshipId>
 }
 ```
 
-#### 実装例: UML Plugin
-```typescript
-import { ActorSymbol } from "./symbols/actor_symbol"
-import { UsecaseSymbol } from "./symbols/usecase_symbol"
-import { SystemBoundarySymbol } from "./symbols/system_boundary_symbol"
-import { Association } from "./relationships/association"
-import { Include } from "./relationships/include"
-import { Extend } from "./relationships/extend"
-import { Generalize } from "./relationships/generalize"
-import type { SymbolBase } from "../../model/symbol_base"
-import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId, RelationshipId } from "../../model/types"
-
-export const UMLPlugin: DiagramPlugin = {
-  name: 'uml',
-  
-  createSymbolFactory(userSymbols: SymbolBase[]) {
-    const namespace = this.name  // 'uml'
-    let counter = 0
-    
-    return {
-      actor(label: string): SymbolId {
-        const id = `${namespace}:actor-${counter++}` as SymbolId
-        const symbol = new ActorSymbol(id, label)
-        userSymbols.push(symbol)
-        return id  // 例: "uml:actor-0"
-      },
-      
-      usecase(label: string): SymbolId {
-        const id = `${namespace}:usecase-${counter++}` as SymbolId
-        const symbol = new UsecaseSymbol(id, label)
-        userSymbols.push(symbol)
-        return id  // 例: "uml:usecase-0"
-      },
-      
-      systemBoundary(label: string): SymbolId {
-        const id = `${namespace}:systemBoundary-${counter++}` as SymbolId
-        const symbol = new SystemBoundarySymbol(id, label)
-        userSymbols.push(symbol)
-        return id  // 例: "uml:systemBoundary-0"
-      }
-    }
-  },
-  
-  createRelationshipFactory(relationships: RelationshipBase[]) {
-    const namespace = this.name  // 'uml'
-    let counter = 0
-    
-    return {
-      associate(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = `${namespace}:association-${counter++}` as RelationshipId
-        relationships.push(new Association(id, from, to))
-        return id  // 例: "uml:association-0"
-      },
-      
-      include(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = `${namespace}:include-${counter++}` as RelationshipId
-        relationships.push(new Include(id, from, to))
-        return id  // 例: "uml:include-0"
-      },
-      
-      extend(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = `${namespace}:extend-${counter++}` as RelationshipId
-        relationships.push(new Extend(id, from, to))
-        return id  // 例: "uml:extend-0"
-      },
-      
-      generalize(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = `${namespace}:generalize-${counter++}` as RelationshipId
-        relationships.push(new Generalize(id, from, to))
-        return id  // 例: "uml:generalize-0"
-      }
-    }
-  }
-}
-```
+**プラグインの実装方法の詳細については、[Plugin System ドキュメント](./plugin-system.md) を参照してください。**
 
 ### 3.3 ID ヘルパーユーティリティ
 
 プラグイン実装を簡潔にするため、ID 生成ヘルパー関数を提供：
 
 ```typescript
-/**
- * ID 生成ヘルパー関数
- */
 export function createIdGenerator(namespace: string) {
   let symbolCounter = 0
   let relationshipCounter = 0
