@@ -7,7 +7,7 @@ import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId, RelationshipId } from "../../model/types"
+import type { SymbolId } from "../../model/types"
 
 /**
  * Core Plugin (Namespace-based)
@@ -26,7 +26,8 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Circle のラベル
        * @returns 生成された SymbolId
        */
-      circle(label: string): SymbolId {
+      circle(...args: unknown[]): SymbolId {
+        const label = args[0] as string
         const id = idGen.generateSymbolId('circle')
         const symbol = new CircleSymbol(id, label)
         userSymbols.push(symbol)
@@ -38,7 +39,8 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Ellipse のラベル
        * @returns 生成された SymbolId
        */
-      ellipse(label: string): SymbolId {
+      ellipse(...args: unknown[]): SymbolId {
+        const label = args[0] as string
         const id = idGen.generateSymbolId('ellipse')
         const symbol = new EllipseSymbol(id, label)
         userSymbols.push(symbol)
@@ -50,7 +52,8 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Rectangle のラベル
        * @returns 生成された SymbolId
        */
-      rectangle(label: string): SymbolId {
+      rectangle(...args: unknown[]): SymbolId {
+        const label = args[0] as string
         const id = idGen.generateSymbolId('rectangle')
         const symbol = new RectangleSymbol(id, label)
         userSymbols.push(symbol)
@@ -62,7 +65,8 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Rounded Rectangle のラベル
        * @returns 生成された SymbolId
        */
-      roundedRectangle(label: string): SymbolId {
+      roundedRectangle(...args: unknown[]): SymbolId {
+        const label = args[0] as string
         const id = idGen.generateSymbolId('roundedRectangle')
         const symbol = new RoundedRectangleSymbol(id, label)
         userSymbols.push(symbol)
@@ -71,7 +75,7 @@ export const CorePlugin: DiagramPlugin = {
     } as Record<string, (...args: unknown[]) => SymbolId>
   },
   
-  createRelationshipFactory(_relationships: RelationshipBase[]): Record<string, (...args: unknown[]) => RelationshipId> {
+  createRelationshipFactory(_relationships: RelationshipBase[]) {
     // Core Plugin は Relationship を提供しない
     return {}
   }

@@ -1,5 +1,6 @@
 # dependencies (bun install)
 node_modules
+package-lock.json
 
 # output
 output
@@ -35,8 +36,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Finder (MacOS) folder config
 .DS_Store
 
-# Temporary marker files
-.push-marker
-.force-push
-.final
-.push-trigger
+# npm lock file (we use bun)
+package-lock.json
