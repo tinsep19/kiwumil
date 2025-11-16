@@ -33,7 +33,7 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
  * メソッドチェーンで流暢な API を提供する。
  */
 class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
-  private plugins: TPlugins = [] as any
+  private plugins = [] as unknown as TPlugins
   private currentTheme: Theme
   private titleOrInfo: string | DiagramInfo
 
@@ -48,8 +48,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   use<TNewPlugins extends readonly DiagramPlugin[]>(
     ...plugins: TNewPlugins
   ): DiagramBuilder<[...TPlugins, ...TNewPlugins]> {
-    this.plugins = [...this.plugins, ...plugins] as any
-    return this as any
+    this.plugins = [...this.plugins, ...plugins] as unknown as TPlugins
+    return this as unknown as DiagramBuilder<[...TPlugins, ...TNewPlugins]>
   }
 
   /**
