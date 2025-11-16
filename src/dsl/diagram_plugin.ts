@@ -22,7 +22,7 @@ export interface DiagramPlugin {
    */
   createSymbolFactory(
     userSymbols: SymbolBase[]
-  ): Record<string, (...args: any[]) => SymbolId>
+  ): Record<string, (...args: unknown[]) => SymbolId>
 
   /**
    * Relationship 用の DSL ファクトリを生成
@@ -32,5 +32,5 @@ export interface DiagramPlugin {
    */
   createRelationshipFactory(
     relationships: RelationshipBase[]
-  ): Record<string, (...args: any[]) => RelationshipId>
+  ): Record<string, (...args: unknown[]) => RelationshipId>
 }
