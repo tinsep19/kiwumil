@@ -7,7 +7,7 @@ import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId } from "../../model/types"
+import type { SymbolId, RelationshipId } from "../../model/types"
 
 /**
  * Core Plugin (Namespace-based)
@@ -71,7 +71,7 @@ export const CorePlugin: DiagramPlugin = {
     }
   },
   
-  createRelationshipFactory(_relationships: RelationshipBase[]) {
+  createRelationshipFactory(relationships: RelationshipBase[]) {
     // Core Plugin は Relationship を提供しない
     return {}
   }
