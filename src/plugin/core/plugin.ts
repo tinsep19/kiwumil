@@ -26,8 +26,7 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Circle のラベル
        * @returns 生成された SymbolId
        */
-      circle(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      circle(label: string): SymbolId {
         const id = idGen.generateSymbolId('circle')
         const symbol = new CircleSymbol(id, label)
         userSymbols.push(symbol)
@@ -39,8 +38,7 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Ellipse のラベル
        * @returns 生成された SymbolId
        */
-      ellipse(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      ellipse(label: string): SymbolId {
         const id = idGen.generateSymbolId('ellipse')
         const symbol = new EllipseSymbol(id, label)
         userSymbols.push(symbol)
@@ -52,8 +50,7 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Rectangle のラベル
        * @returns 生成された SymbolId
        */
-      rectangle(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      rectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('rectangle')
         const symbol = new RectangleSymbol(id, label)
         userSymbols.push(symbol)
@@ -65,8 +62,7 @@ export const CorePlugin: DiagramPlugin = {
        * @param label - Rounded Rectangle のラベル
        * @returns 生成された SymbolId
        */
-      roundedRectangle(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      roundedRectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('roundedRectangle')
         const symbol = new RoundedRectangleSymbol(id, label)
         userSymbols.push(symbol)
