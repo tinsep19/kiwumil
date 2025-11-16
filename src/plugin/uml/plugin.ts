@@ -20,7 +20,7 @@ import type { SymbolId, RelationshipId } from "../../model/types"
 export const UMLPlugin: DiagramPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[]): Record<string, (...args: unknown[]) => SymbolId> {
+  createSymbolFactory(userSymbols: SymbolBase[]) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -62,10 +62,10 @@ export const UMLPlugin: DiagramPlugin = {
         userSymbols.push(symbol)
         return id
       }
-    } as Record<string, (...args: unknown[]) => SymbolId>
+    }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[]): Record<string, (...args: unknown[]) => RelationshipId> {
+  createRelationshipFactory(relationships: RelationshipBase[]) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -124,6 +124,6 @@ export const UMLPlugin: DiagramPlugin = {
         relationships.push(new Generalize(id, from, to))
         return id
       }
-    } as Record<string, (...args: unknown[]) => RelationshipId>
+    }
   }
 }

@@ -17,7 +17,7 @@ import type { SymbolId } from "../../model/types"
 export const CorePlugin: DiagramPlugin = {
   name: 'core',
   
-  createSymbolFactory(userSymbols: SymbolBase[]): Record<string, (...args: unknown[]) => SymbolId> {
+  createSymbolFactory(userSymbols: SymbolBase[]) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -72,7 +72,7 @@ export const CorePlugin: DiagramPlugin = {
         userSymbols.push(symbol)
         return id
       }
-    } as Record<string, (...args: unknown[]) => SymbolId>
+    }
   },
   
   createRelationshipFactory(_relationships: RelationshipBase[]) {
