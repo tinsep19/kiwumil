@@ -48,8 +48,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   use<TNewPlugins extends readonly DiagramPlugin[]>(
     ...plugins: TNewPlugins
   ): DiagramBuilder<[...TPlugins, ...TNewPlugins]> {
-    this.plugins = ([...this.plugins, ...plugins] as unknown) as TPlugins
-    return this as unknown as DiagramBuilder<[...TPlugins, ...TNewPlugins]>
+    const nextBuilder = this as unknown as DiagramBuilder<[...TPlugins, ...TNewPlugins]>
+    nextBuilder.plugins = [...this.plugins, ...plugins] as unknown as [...TPlugins, ...TNewPlugins]
+    return nextBuilder
   }
 
   /**
