@@ -11,38 +11,53 @@ import { TypedDiagram, CorePlugin, UMLPlugin } from "../src/index"
  * render(import.meta).
  */
 
-TypedDiagram("Kiwumil — 技術スタック図")
-  .use(CorePlugin)
+TypedDiagram("Kiwumil — module stack")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // Nodes
     const ts = el.core.rectangle("TypeScript")
-    const dsl = el.core.rectangle("Namespace-based DSL\n(el.uml / el.core)")
-    const plugin = el.core.rectangle("Plugin System\n(SymbolRegistry / RelationshipFactory)")
-    const layout = el.core.rectangle("Layout Engine\n@lume/kiwi — Cassowary")
-    const svg = el.core.rectangle("SVG Renderer\n(W3C SVG)")
-    const lsp = el.core.rectangle("Dev Tools\nTypeScript Language Service / VSCode (LSP)")
+    const lsp = el.core.rectangle("LSP")
 
-    // Strongly-worded annotation to emphasize DSL -> LSP
-    const note = el.core.roundedRectangle(
-      "注:\nNamespace-based DSL は TypeScript の型定義を公開し、\nVSCode の Language Service (LSP) による IntelliSense / 補完 / 定義ジャンプを有効にします"
-    )
+    const dsl = el.core.rectangle("TypeDiagram DSL")
+    const plugin = el.core.rectangle("Plugin System")
+    const layout = el.core.rectangle("Layout Engine/Kiwi")
+    const theme = el.core.rectangle("Theme System")
 
-    // Relationships (arrows)
-    rel.uml.associate(ts, dsl)
+    const bun = el.core.rectangle("Bun")
+    const render = el.core.rectangle("SVG Renderer")
+
+    const dx = el.uml.systemBoundary("DX")
+    const core = el.uml.systemBoundary("Core")
+    const ux = el.uml.systemBoundary("UX")
+
+    rel.uml.associate(lsp, dsl)
+    rel.uml.associate(ts,  dsl)
+
+    rel.uml.associate(dsl, layout)
     rel.uml.associate(dsl, plugin)
-    rel.uml.associate(plugin, layout)
-    rel.uml.associate(layout, svg)
-    rel.uml.associate(dsl, lsp)
-
-    // Link annotation to both DSL and LSP
-    rel.uml.associate(dsl, note)
-    rel.uml.associate(lsp, note)
+    rel.uml.associate(dsl, theme)
+    rel.uml.associate(layout, theme)
+    rel.uml.associate(render, plugin)
+    
+    hint.arrangeVertical(dx, core, ux)
+    hint.alignLeft(dx, core, ux)
+    
+    hint.enclose(dx,   [lsp, ts])
+    hint.enclose(core, [dsl, layout, plugin, theme])
+    hint.enclose(ux,   [render, bun])
 
     // Layout hints: left-to-right flow for core stack, and place LSP/note near DSL
-    hint.arrangeHorizontal(ts, dsl, plugin)
-    hint.arrangeHorizontal(layout, svg)
-    hint.arrangeVertical(dsl, lsp)
-    hint.arrangeHorizontal(lsp, note)
+    hint.arrangeHorizontal(lsp, ts)
+    hint.alignCenterY(lsp, ts)
+
+    hint.arrangeHorizontal(dsl, layout)
+    hint.arrangeHorizontal(plugin, theme)
+    
+    hint.alignCenterY(dsl, layout)
+    hint.alignCenterY(plugin, theme)
+    hint.arrangeVertical(dsl, plugin)
+
+    hint.arrangeHorizontal(render, bun)
+
   })
   .render(import.meta)

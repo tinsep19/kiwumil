@@ -1,61 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="660" 
-     height="340" 
-     viewBox="0 0 660 340">
+     width="500" 
+     height="770" 
+     viewBox="0 0 500 770">
   <rect width="100%" height="100%" fill="white"/>
   
-      <line x1="190" y1="130" x2="270" y2="130"
-            stroke="black" stroke-width="2"/>
+      <g id="uml:systemBoundary-0">
+        <!-- System Boundary Rectangle -->
+        <rect x="70" y="100" width="360" height="130" 
+              fill="#f8f8f8" stroke="#999" stroke-width="2"/>
+        
+        <!-- Label at top -->
+        <text x="80" y="119" 
+              font-size="14" font-family="Arial" font-weight="bold"
+              fill="black">
+          DX
+        </text>
+      </g>
     
 
-      <line x1="390" y1="130" x2="470" y2="130"
-            stroke="black" stroke-width="2"/>
+      <g id="uml:systemBoundary-1">
+        <!-- System Boundary Rectangle -->
+        <rect x="70" y="280" width="360" height="240" 
+              fill="#f8f8f8" stroke="#999" stroke-width="2"/>
+        
+        <!-- Label at top -->
+        <text x="80" y="299" 
+              font-size="14" font-family="Arial" font-weight="bold"
+              fill="black">
+          Core
+        </text>
+      </g>
     
 
-      <line x1="470" y1="130" x2="190" y2="130"
-            stroke="black" stroke-width="2"/>
-    
-
-      <line x1="190" y1="130" x2="270" y2="130"
-            stroke="black" stroke-width="2"/>
-    
-
-      <line x1="275.45454545454544" y1="160" x2="184.54545454545453" y2="210"
-            stroke="black" stroke-width="2"/>
-    
-
-      <line x1="390" y1="130" x2="390" y2="130"
-            stroke="black" stroke-width="2"/>
-    
-
-      <line x1="184.54545454545453" y1="210" x2="275.45454545454544" y2="160"
-            stroke="black" stroke-width="2"/>
+      <g id="uml:systemBoundary-2">
+        <!-- System Boundary Rectangle -->
+        <rect x="70" y="570" width="360" height="130" 
+              fill="#f8f8f8" stroke="#999" stroke-width="2"/>
+        
+        <!-- Label at top -->
+        <text x="80" y="589" 
+              font-size="14" font-family="Arial" font-weight="bold"
+              fill="black">
+          UX
+        </text>
+      </g>
     
 
       <g id="__diagram__">
         <!-- Title -->
-        <text x="330" y="80" 
+        <text x="250" y="80" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
               font-family="Arial"
               fill="black">
-          Kiwumil — 技術スタック図
+          Kiwumil — module stack
         </text>
         
       </g>
     
 
+      <line x1="150" y1="210" x2="150" y2="330"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="316.6666666666667" y1="210" x2="183.33333333333331" y2="330"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="210" y1="360" x2="290" y2="360"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="150" y1="390" x2="150" y2="440"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="204.54545454545453" y1="390" x2="295.45454545454544" y2="440"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="350" y1="390" x2="350" y2="440"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="150" y1="620" x2="150" y2="500"
+            stroke="black" stroke-width="2"/>
+    
+
       <g id="core:rectangle-0">
         <!-- Rectangle -->
-        <rect x="70" y="100" width="120" height="60" 
+        <rect x="290" y="150" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="135" 
+        <text x="350" y="185" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -67,116 +109,126 @@
 
       <g id="core:rectangle-1">
         <!-- Rectangle -->
-        <rect x="270" y="100" width="120" height="60" 
+        <rect x="90" y="150" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="330" y="135" 
+        <text x="150" y="185" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
               fill="black">
-          Namespace-based DSL
-(el.uml / el.core)
+          LSP
         </text>
       </g>
     
 
       <g id="core:rectangle-2">
         <!-- Rectangle -->
-        <rect x="470" y="100" width="120" height="60" 
+        <rect x="90" y="330" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="530" y="135" 
+        <text x="150" y="365" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
               fill="black">
-          Plugin System
-(SymbolRegistry / RelationshipFactory)
+          TypeDiagram DSL
         </text>
       </g>
     
 
       <g id="core:rectangle-3">
         <!-- Rectangle -->
-        <rect x="70" y="100" width="120" height="60" 
+        <rect x="90" y="440" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="135" 
+        <text x="150" y="475" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
               fill="black">
-          Layout Engine
-@lume/kiwi — Cassowary
+          Plugin System
         </text>
       </g>
     
 
       <g id="core:rectangle-4">
         <!-- Rectangle -->
-        <rect x="270" y="100" width="120" height="60" 
+        <rect x="290" y="330" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="330" y="135" 
+        <text x="350" y="365" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
               fill="black">
-          SVG Renderer
-(W3C SVG)
+          Layout Engine/Kiwi
         </text>
       </g>
     
 
       <g id="core:rectangle-5">
         <!-- Rectangle -->
-        <rect x="70" y="210" width="120" height="60" 
+        <rect x="290" y="440" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="245" 
+        <text x="350" y="475" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
               fill="black">
-          Dev Tools
-TypeScript Language Service / VSCode (LSP)
+          Theme System
         </text>
       </g>
     
 
-      <g id="core:roundedRectangle-6">
-        <!-- Rounded Rectangle -->
-        <rect x="270" y="100" width="120" height="60" 
-              rx="10" ry="10"
+      <g id="core:rectangle-6">
+        <!-- Rectangle -->
+        <rect x="290" y="620" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="330" y="135" 
+        <text x="350" y="655" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
               fill="black">
-          注:
-Namespace-based DSL は TypeScript の型定義を公開し、
-VSCode の Language Service (LSP) による IntelliSense / 補完 / 定義ジャンプを有効にします
+          Bun
+        </text>
+      </g>
+    
+
+      <g id="core:rectangle-7">
+        <!-- Rectangle -->
+        <rect x="90" y="620" width="120" height="60" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="150" y="655" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          SVG Renderer
         </text>
       </g>
     
