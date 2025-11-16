@@ -19,18 +19,24 @@ export interface DiagramPlugin {
    * 
    * @param userSymbols - 生成した Symbol を登録する配列
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
+   * 
+   * Note: 返り値の関数は任意の型安全な引数を取ることができます。
+   * unknown[] ではなく never[] を使用することで、実装時に具体的な型を指定できます。
    */
   createSymbolFactory(
     userSymbols: SymbolBase[]
-  ): Record<string, (...args: unknown[]) => SymbolId>
+  ): Record<string, (...args: never[]) => SymbolId>
 
   /**
    * Relationship 用の DSL ファクトリを生成
    * 
    * @param relationships - 生成した Relationship を登録する配列
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
+   * 
+   * Note: 返り値の関数は任意の型安全な引数を取ることができます。
+   * unknown[] ではなく never[] を使用することで、実装時に具体的な型を指定できます。
    */
   createRelationshipFactory(
     relationships: RelationshipBase[]
-  ): Record<string, (...args: unknown[]) => RelationshipId>
+  ): Record<string, (...args: never[]) => RelationshipId>
 }
