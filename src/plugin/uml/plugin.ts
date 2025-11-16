@@ -20,7 +20,7 @@ import type { SymbolId, RelationshipId } from "../../model/types"
 export const UMLPlugin: DiagramPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[]): Record<string, (...args: unknown[]) => SymbolId> {
+  createSymbolFactory(userSymbols: SymbolBase[]) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -29,8 +29,7 @@ export const UMLPlugin: DiagramPlugin = {
        * @param label - Actor のラベル
        * @returns 生成された SymbolId
        */
-      actor(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      actor(label: string): SymbolId {
         const id = idGen.generateSymbolId('actor')
         const symbol = new ActorSymbol(id, label)
         userSymbols.push(symbol)
@@ -42,8 +41,7 @@ export const UMLPlugin: DiagramPlugin = {
        * @param label - Usecase のラベル
        * @returns 生成された SymbolId
        */
-      usecase(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      usecase(label: string): SymbolId {
         const id = idGen.generateSymbolId('usecase')
         const symbol = new UsecaseSymbol(id, label)
         userSymbols.push(symbol)
@@ -55,17 +53,16 @@ export const UMLPlugin: DiagramPlugin = {
        * @param label - System Boundary のラベル
        * @returns 生成された SymbolId
        */
-      systemBoundary(...args: unknown[]): SymbolId {
-        const label = args[0] as string
+      systemBoundary(label: string): SymbolId {
         const id = idGen.generateSymbolId('systemBoundary')
         const symbol = new SystemBoundarySymbol(id, label)
         userSymbols.push(symbol)
         return id
       }
-    } as Record<string, (...args: unknown[]) => SymbolId>
+    }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[]): Record<string, (...args: unknown[]) => RelationshipId> {
+  createRelationshipFactory(relationships: RelationshipBase[]) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -75,9 +72,7 @@ export const UMLPlugin: DiagramPlugin = {
        * @param to - 終了 Symbol の ID
        * @returns 生成された RelationshipId
        */
-      associate(...args: unknown[]): RelationshipId {
-        const from = args[0] as SymbolId
-        const to = args[1] as SymbolId
+      associate(from: SymbolId, to: SymbolId): RelationshipId {
         const id = idGen.generateRelationshipId('association')
         relationships.push(new Association(id, from, to))
         return id
@@ -89,9 +84,7 @@ export const UMLPlugin: DiagramPlugin = {
        * @param to - 終了 Symbol の ID
        * @returns 生成された RelationshipId
        */
-      include(...args: unknown[]): RelationshipId {
-        const from = args[0] as SymbolId
-        const to = args[1] as SymbolId
+      include(from: SymbolId, to: SymbolId): RelationshipId {
         const id = idGen.generateRelationshipId('include')
         relationships.push(new Include(id, from, to))
         return id
@@ -103,9 +96,7 @@ export const UMLPlugin: DiagramPlugin = {
        * @param to - 終了 Symbol の ID
        * @returns 生成された RelationshipId
        */
-      extend(...args: unknown[]): RelationshipId {
-        const from = args[0] as SymbolId
-        const to = args[1] as SymbolId
+      extend(from: SymbolId, to: SymbolId): RelationshipId {
         const id = idGen.generateRelationshipId('extend')
         relationships.push(new Extend(id, from, to))
         return id
@@ -117,13 +108,11 @@ export const UMLPlugin: DiagramPlugin = {
        * @param to - 終了 Symbol の ID (親)
        * @returns 生成された RelationshipId
        */
-      generalize(...args: unknown[]): RelationshipId {
-        const from = args[0] as SymbolId
-        const to = args[1] as SymbolId
+      generalize(from: SymbolId, to: SymbolId): RelationshipId {
         const id = idGen.generateRelationshipId('generalize')
         relationships.push(new Generalize(id, from, to))
         return id
       }
-    } as Record<string, (...args: unknown[]) => RelationshipId>
+    }
   }
 }

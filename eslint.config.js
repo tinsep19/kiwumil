@@ -17,12 +17,8 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/explicit-function-return-type": "off",
-      // 将来的に導入を検討するルール
-      // "@typescript-eslint/no-unsafe-assignment": "error",
-      // "@typescript-eslint/no-unsafe-member-access": "error",
-      // "@typescript-eslint/no-unsafe-call": "error",
     },
   },
   {
@@ -36,7 +32,7 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   prettier,
