@@ -40,9 +40,9 @@ export type LayoutConstraintOperator =
   (typeof LayoutConstraintOperator)[keyof typeof LayoutConstraintOperator]
 
 export const LayoutConstraintStrength = Object.freeze({
-  required: kiwi.Strength.required,
-  strong: kiwi.Strength.strong,
-  weak: kiwi.Strength.weak
+  Required: kiwi.Strength.required,
+  Strong: kiwi.Strength.strong,
+  Weak: kiwi.Strength.weak
 } as const)
 export type LayoutConstraintStrength =
   (typeof LayoutConstraintStrength)[keyof typeof LayoutConstraintStrength]
