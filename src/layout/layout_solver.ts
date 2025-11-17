@@ -98,8 +98,11 @@ export class LayoutSolver {
 
   private addHorizontalConstraints(symbolIds: string[], gap: number) {
     for (let i = 0; i < symbolIds.length - 1; i++) {
-      const a = this.boundsMap.get(symbolIds[i])
-      const b = this.boundsMap.get(symbolIds[i + 1])
+      const aId = symbolIds[i]
+      const bId = symbolIds[i + 1]
+      if (!aId || !bId) continue
+      const a = this.boundsMap.get(aId)
+      const b = this.boundsMap.get(bId)
       if (!a || !b) continue
 
       this.layoutContext.addConstraint(
@@ -119,8 +122,11 @@ export class LayoutSolver {
 
   private addVerticalConstraints(symbolIds: string[], gap: number) {
     for (let i = 0; i < symbolIds.length - 1; i++) {
-      const a = this.boundsMap.get(symbolIds[i])
-      const b = this.boundsMap.get(symbolIds[i + 1])
+      const aId = symbolIds[i]
+      const bId = symbolIds[i + 1]
+      if (!aId || !bId) continue
+      const a = this.boundsMap.get(aId)
+      const b = this.boundsMap.get(bId)
       if (!a || !b) continue
 
       this.layoutContext.addConstraint(
@@ -138,7 +144,7 @@ export class LayoutSolver {
     }
   }
 
-  private addEncloseConstraints(containerId: string, childIds: string[]) {
+  private addEncloseConstraints(containerId: string, childIds: string[] = []) {
     const container = this.boundsMap.get(containerId)
     if (!container) return
     const padding = 20
@@ -197,11 +203,15 @@ export class LayoutSolver {
 
   private addAlignLeftConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(symbol.x, kiwi.Operator.Eq, first.x, kiwi.Strength.strong)
     }
@@ -209,11 +219,15 @@ export class LayoutSolver {
 
   private addAlignRightConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(
         this.layoutContext.expression([
@@ -232,11 +246,15 @@ export class LayoutSolver {
 
   private addAlignTopConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(symbol.y, kiwi.Operator.Eq, first.y, kiwi.Strength.strong)
     }
@@ -244,11 +262,15 @@ export class LayoutSolver {
 
   private addAlignBottomConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(
         this.layoutContext.expression([
@@ -267,11 +289,15 @@ export class LayoutSolver {
 
   private addAlignCenterXConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(
         this.layoutContext.expression([
@@ -290,11 +316,15 @@ export class LayoutSolver {
 
   private addAlignCenterYConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(
         this.layoutContext.expression([
@@ -313,11 +343,15 @@ export class LayoutSolver {
 
   private addAlignWidthConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(symbol.width, kiwi.Operator.Eq, first.width, kiwi.Strength.strong)
     }
@@ -325,11 +359,15 @@ export class LayoutSolver {
 
   private addAlignHeightConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(symbol.height, kiwi.Operator.Eq, first.height, kiwi.Strength.strong)
     }
@@ -337,11 +375,15 @@ export class LayoutSolver {
 
   private addAlignSizeConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    const first = this.boundsMap.get(symbolIds[0])
+    const firstId = symbolIds[0]
+    if (!firstId) return
+    const first = this.boundsMap.get(firstId)
     if (!first) return
 
     for (let i = 1; i < symbolIds.length; i++) {
-      const symbol = this.boundsMap.get(symbolIds[i])
+      const symbolId = symbolIds[i]
+      if (!symbolId) continue
+      const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
       this.layoutContext.addConstraint(symbol.width, kiwi.Operator.Eq, first.width, kiwi.Strength.strong)
       this.layoutContext.addConstraint(symbol.height, kiwi.Operator.Eq, first.height, kiwi.Strength.strong)

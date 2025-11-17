@@ -55,13 +55,13 @@ export abstract class SymbolBase {
     if (!this.layoutBounds) {
       throw new Error(`Layout bounds not initialized for symbol ${this.id}`)
     }
-    return this.layoutBounds
+    return this.layoutBounds!
   }
 
   ensureLayoutBounds(ctx: LayoutVariableContext): LayoutBounds {
     if (!this.layoutBounds) {
       this.attachLayoutContext(ctx)
     }
-    return this.layoutBounds
+    return this.layoutBounds!
   }
 }
