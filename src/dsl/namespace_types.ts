@@ -3,15 +3,16 @@ import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../model/types"
+import type { LayoutVariableContext } from "../layout/layout_variable_context"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createSymbolFactory: (userSymbols: SymbolBase[]) => Record<string, (...args: any[]) => SymbolId> }
+  { createSymbolFactory: (userSymbols: SymbolBase[], layout: LayoutVariableContext) => Record<string, (...args: any[]) => SymbolId> }
 >
 
 type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createRelationshipFactory: (relationships: RelationshipBase[]) => Record<string, (...args: any[]) => RelationshipId> }
+  { createRelationshipFactory: (relationships: RelationshipBase[], layout: LayoutVariableContext) => Record<string, (...args: any[]) => RelationshipId> }
 >
 
 /**

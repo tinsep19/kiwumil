@@ -9,8 +9,9 @@ import {
 
 const CustomPlugin = {
   name: "custom",
-  createSymbolFactory(userSymbols) {
+  createSymbolFactory(userSymbols, layout) {
     void userSymbols
+    void layout
     return {
       node(label: string): SymbolId {
         void label
@@ -18,8 +19,9 @@ const CustomPlugin = {
       }
     }
   },
-  createRelationshipFactory(relationships) {
+  createRelationshipFactory(relationships, layout) {
     void relationships
+    void layout
     return {
       link(from: SymbolId, to: SymbolId): RelationshipId {
         void from

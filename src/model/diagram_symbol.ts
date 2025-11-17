@@ -3,16 +3,17 @@ import { SymbolBase } from "./symbol_base"
 import { getStyleForSymbol } from "../core/theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
+import type { LayoutVariableContext } from "../layout/layout_variable_context"
 
 export class DiagramSymbol extends SymbolBase {
   private diagramInfo: DiagramInfo
 
-  constructor(id: string, titleOrInfo: string | DiagramInfo) {
+  constructor(id: string, titleOrInfo: string | DiagramInfo, layoutContext?: LayoutVariableContext) {
     const info = typeof titleOrInfo === "string" 
       ? { title: titleOrInfo }
       : titleOrInfo
     
-    super(id, info.title)
+    super(id, info.title, layoutContext)
     this.diagramInfo = info
   }
 

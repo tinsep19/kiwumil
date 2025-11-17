@@ -72,7 +72,8 @@ interface DiagramPlugin {
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
   createSymbolFactory(
-    userSymbols: SymbolBase[]
+    userSymbols: SymbolBase[],
+    layout: LayoutVariableContext
   ): Record<string, (...args: any[]) => SymbolId>
 
   /**
@@ -81,7 +82,8 @@ interface DiagramPlugin {
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
   createRelationshipFactory(
-    relationships: RelationshipBase[]
+    relationships: RelationshipBase[],
+    layout: LayoutVariableContext
   ): Record<string, (...args: any[]) => RelationshipId>
 }
 ```
@@ -90,6 +92,7 @@ interface DiagramPlugin {
 
 - **`name`**: プラグインの名前空間（`el.{name}.xxx()` でアクセス）
 - **SymbolId / RelationshipId を返す**: 内部で配列に登録し、ID だけを返す
+- **`LayoutVariableContext` の利用**: `createSymbolFactory` は第2引数 `layout` を受け取り、`new MySymbol(id, label, layout)` のように渡すことでシンボルが `LayoutVar` を初期化できる
 - **配列への登録はプラグインが担当**: `userSymbols.push(symbol)` を忘れずに
 
 ---
@@ -101,11 +104,12 @@ interface DiagramPlugin {
 ```typescript
 import type { DiagramPlugin } from "kiwumil"
 import type { SymbolBase, RelationshipBase, SymbolId, RelationshipId } from "kiwumil"
+import type { LayoutVariableContext } from "kiwumil"
 
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
   
-  createSymbolFactory(userSymbols: SymbolBase[]) {
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
     const namespace = this.name
     let counter = 0
     
@@ -113,7 +117,7 @@ export const MyPlugin: DiagramPlugin = {
       // Symbol 作成関数を定義
       mySymbol(label: string): SymbolId {
         const id = `${namespace}:mySymbol-${counter++}` as SymbolId
-        const symbol = new MySymbol(id, label)
+        const symbol = new MySymbol(id, label, layout)
         userSymbols.push(symbol)  // 重要: 配列に登録
         return id
       }

@@ -6,6 +6,7 @@ import { SvgRenderer } from "../render/svg_renderer"
 import { DiagramSymbol } from "../model/diagram_symbol"
 import { CorePlugin } from "../plugin/core/plugin"
 import { convertMetaUrlToSvgPath } from "../utils/path_helper"
+import { LayoutVariableContext } from "../layout/layout_variable_context"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
@@ -71,19 +72,20 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const userSymbols: SymbolBase[] = []
     const relationships: RelationshipBase[] = []
     const hints: LayoutHint[] = []
+    const layoutContext = new LayoutVariableContext()
 
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
-    const el = namespaceBuilder.buildElementNamespace(userSymbols)
-    const rel = namespaceBuilder.buildRelationshipNamespace(relationships)
-    const hint = new HintFactory(hints, userSymbols, this.currentTheme)
+    const el = namespaceBuilder.buildElementNamespace(userSymbols, layoutContext)
+    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, layoutContext)
+    const hint = new HintFactory(hints, userSymbols, this.currentTheme, layoutContext)
 
     // ユーザーのコールバックを実行
     // この中で el.uml.actor() などが呼ばれ、userSymbols / relationships に追加される
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
-    const diagramSymbol = new DiagramSymbol("__diagram__", this.titleOrInfo)
+    const diagramSymbol = new DiagramSymbol("__diagram__", this.titleOrInfo, layoutContext)
     diagramSymbol.setTheme(this.currentTheme)
 
     // すべての Symbol を含む配列
@@ -108,7 +110,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     // レイアウト計算
-    const solver = new LayoutSolver(this.currentTheme)
+    const solver = new LayoutSolver(this.currentTheme, layoutContext)
     solver.solve(allSymbols, hints)
 
     return {

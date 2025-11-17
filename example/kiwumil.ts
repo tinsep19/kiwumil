@@ -1,4 +1,4 @@
-import { TypeDiagram } from "../src/index.ts"
+import { TypeDiagram } from "../src/index"
 
 TypeDiagram("Grid of arrange")
 .build((el, rel, hint) => {

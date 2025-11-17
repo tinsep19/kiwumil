@@ -1,24 +1,24 @@
-import { Diagram, UMLPlugin } from "../src/index"
+import { TypeDiagram, UMLPlugin } from "../src/index"
 
-Diagram("UML Relations Example")
+TypeDiagram("UML Relations Example")
   .use(UMLPlugin)
-  .build((element, relation, hint) => {
+  .build((el, rel, hint) => {
     // Create three use cases
-    const usecaseA = element.usecase("UseCase A")
-    const usecaseB = element.usecase("UseCase B")
-    const usecaseC = element.usecase("UseCase C")
+    const usecaseA = el.uml.usecase("UseCase A")
+    const usecaseB = el.uml.usecase("UseCase B")
+    const usecaseC = el.uml.usecase("UseCase C")
     
     // Create relationships
     // A include B
-    relation.include(usecaseA, usecaseB)
+    rel.uml.include(usecaseA, usecaseB)
     // B extend C
-    relation.extend(usecaseB, usecaseC)
+    rel.uml.extend(usecaseB, usecaseC)
     // C generalize A
-    relation.generalize(usecaseC, usecaseA)
+    rel.uml.generalize(usecaseC, usecaseA)
     
     // Layout: A and B on the left side, vertically arranged
     // C on the right side, at the same Y coordinate as B
-    hint.vertical(usecaseA, usecaseB)
-    hint.horizontal(usecaseB, usecaseC)
+    hint.arrangeVertical(usecaseA, usecaseB)
+    hint.arrangeHorizontal(usecaseB, usecaseC)
   })
   .render("example/uml-relations.svg")

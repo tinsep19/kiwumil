@@ -447,8 +447,9 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
 
 4. **ビルド (`.build(callback)`)**
    - Symbol、Relationship、Hint を格納する配列を作成
+   - レイアウト専用の `LayoutVariableContext` を生成
    - DiagramSymbol（図全体を表す特別な Symbol）を作成
-   - `NamespaceBuilder` を使って `el` と `rel` を構築
+   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `layoutContext` を渡す
    - プラグインごとのファクトリが配列への参照を保持
    - ユーザーが提供したコールバック関数を実行
    - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が配列に追加される

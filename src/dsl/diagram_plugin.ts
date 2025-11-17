@@ -2,6 +2,7 @@
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../model/types"
+import type { LayoutVariableContext } from "../layout/layout_variable_context"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolId>
@@ -26,7 +27,8 @@ export interface DiagramPlugin {
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
   createSymbolFactory?(
-    userSymbols: SymbolBase[]
+    userSymbols: SymbolBase[],
+    layout: LayoutVariableContext
   ): SymbolFactoryMap
 
   /**
@@ -36,6 +38,7 @@ export interface DiagramPlugin {
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
   createRelationshipFactory?(
-    relationships: RelationshipBase[]
+    relationships: RelationshipBase[],
+    layout: LayoutVariableContext
   ): RelationshipFactoryMap
 }

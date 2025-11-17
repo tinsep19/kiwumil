@@ -5,13 +5,17 @@ import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
 import type { LayoutHint } from "../src/dsl/hint_factory"
+import { HintFactory } from "../src/dsl/hint_factory"
 import { DefaultTheme } from "../src/core/theme"
+import { LayoutVariableContext } from "../src/layout/layout_variable_context"
 
 describe("LayoutSolver", () => {
   let solver: LayoutSolver
+  let ctx: LayoutVariableContext
 
   beforeEach(() => {
-    solver = new LayoutSolver(DefaultTheme)
+    ctx = new LayoutVariableContext()
+    solver = new LayoutSolver(DefaultTheme, ctx)
   })
 
   describe("arrangeHorizontal", () => {
@@ -405,5 +409,42 @@ describe("LayoutSolver", () => {
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
       // X coordinate is not constrained by vertical hint
     })
+  })
+})
+
+describe("Layout guides", () => {
+  test("alignTop/alignBottom with shared guide", () => {
+    const ctx = new LayoutVariableContext()
+    const solver = new LayoutSolver(DefaultTheme, ctx)
+    const actorTop = new ActorSymbol("guide-a", "Guide A")
+    const actorBottom = new ActorSymbol("guide-b", "Guide B")
+    const symbols = [actorTop, actorBottom]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    const guide = hintFactory.createGuideY()
+    guide.alignTop("guide-a").alignBottom("guide-b")
+
+    solver.solve(symbols, hints)
+
+    expect(actorTop.bounds.y).toBe(50)
+    expect(actorBottom.bounds.y + actorBottom.bounds.height).toBeCloseTo(actorTop.bounds.y)
+  })
+
+  test("guide can follow symbol bottom and align other symbol top", () => {
+    const ctx = new LayoutVariableContext()
+    const solver = new LayoutSolver(DefaultTheme, ctx)
+    const a = new ActorSymbol("aligned-a", "Aligned A")
+    const b = new ActorSymbol("aligned-b", "Aligned B")
+    const symbols = [a, b]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    const guide = hintFactory.createGuideY()
+    guide.followBottom("aligned-a").alignTop("aligned-b")
+
+    solver.solve(symbols, hints)
+
+    expect(b.bounds.y).toBeCloseTo(a.bounds.y + a.bounds.height)
   })
 })

@@ -9,11 +9,11 @@
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="130" y1="157.64705882352942" x2="218.28394709053384" y2="224.7893962030982"
+      <line x1="112" y1="180" x2="112.75912686601927" y2="211.26521144336544"
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="130" y1="177.05882352941177" x2="232.24810627992213" y2="326.68265387877545"
+      <line x1="105.71428571428571" y1="180" x2="121.51471862576143" y2="320.301515190165"
             stroke="#0066cc" stroke-width="2"/>
     
 
@@ -84,11 +84,11 @@
 
       <g id="uml:usecase-2">
         <!-- Ellipse -->
-        <ellipse cx="270" cy="240" rx="60" ry="30" 
+        <ellipse cx="130" cy="240" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="270" y="245" 
+        <text x="130" y="245" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Add to Cart
@@ -98,11 +98,11 @@
 
       <g id="uml:usecase-3">
         <!-- Ellipse -->
-        <ellipse cx="270" cy="350" rx="60" ry="30" 
+        <ellipse cx="130" cy="350" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="270" y="355" 
+        <text x="130" y="355" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Checkout
