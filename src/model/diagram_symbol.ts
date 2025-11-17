@@ -1,9 +1,12 @@
 // src/model/diagram_symbol.ts
-import * as kiwi from "@lume/kiwi"
 import { SymbolBase } from "./symbol_base"
 import { getStyleForSymbol } from "../core/theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
+import {
+  LayoutConstraintOperator,
+  LayoutConstraintStrength
+} from "../layout/layout_variable_context"
 import type { LayoutVariableContext } from "../layout/layout_variable_context"
 import type { LayoutBounds } from "./symbol_base"
 
@@ -35,19 +38,19 @@ export class DiagramSymbol extends SymbolBase {
     if (this.constraintsApplied || !this.layoutContext || !this.layoutBounds) {
       return
     }
-    this.layoutContext.addConstraint(this.layoutBounds.x, kiwi.Operator.Eq, 0)
-    this.layoutContext.addConstraint(this.layoutBounds.y, kiwi.Operator.Eq, 0)
+    this.layoutContext.addConstraint(this.layoutBounds.x, LayoutConstraintOperator.Eq, 0)
+    this.layoutContext.addConstraint(this.layoutBounds.y, LayoutConstraintOperator.Eq, 0)
     this.layoutContext.addConstraint(
       this.layoutBounds.width,
-      kiwi.Operator.Ge,
+      LayoutConstraintOperator.Ge,
       200,
-      kiwi.Strength.weak
+      LayoutConstraintStrength.Weak
     )
     this.layoutContext.addConstraint(
       this.layoutBounds.height,
-      kiwi.Operator.Ge,
+      LayoutConstraintOperator.Ge,
       150,
-      kiwi.Strength.weak
+      LayoutConstraintStrength.Weak
     )
     this.constraintsApplied = true
   }

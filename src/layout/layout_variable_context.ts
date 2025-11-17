@@ -31,6 +31,22 @@ function isLayoutExpression(input: LayoutExpressionInput): input is LayoutExpres
   return "terms" in input || "constant" in input
 }
 
+export const LayoutConstraintOperator = Object.freeze({
+  Eq: kiwi.Operator.Eq,
+  Ge: kiwi.Operator.Ge,
+  Le: kiwi.Operator.Le
+} as const)
+export type LayoutConstraintOperator =
+  (typeof LayoutConstraintOperator)[keyof typeof LayoutConstraintOperator]
+
+export const LayoutConstraintStrength = Object.freeze({
+  Required: kiwi.Strength.required,
+  Strong: kiwi.Strength.strong,
+  Weak: kiwi.Strength.weak
+} as const)
+export type LayoutConstraintStrength =
+  (typeof LayoutConstraintStrength)[keyof typeof LayoutConstraintStrength]
+
 export class LayoutVariableContext {
   private readonly solver: kiwi.Solver
 
@@ -54,13 +70,18 @@ export class LayoutVariableContext {
 
   addConstraint(
     left: LayoutExpressionInput,
-    operator: kiwi.Operator,
+    operator: LayoutConstraintOperator,
     right: LayoutExpressionInput,
-    strength?: number
+    strength?: LayoutConstraintStrength
   ) {
     const leftExpr = this.toKiwiExpression(left)
     const rightExpr = this.toKiwiExpression(right)
-    const constraint = new kiwi.Constraint(leftExpr, operator, rightExpr, strength)
+    const constraint = new kiwi.Constraint(
+      leftExpr,
+      operator,
+      rightExpr,
+      strength
+    )
     this.solver.addConstraint(constraint)
   }
 
@@ -90,4 +111,5 @@ export class LayoutVariableContext {
     }
     throw new Error("Unsupported expression input")
   }
+
 }

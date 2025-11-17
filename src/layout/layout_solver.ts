@@ -1,8 +1,11 @@
 // src/layout/layout_solver.ts
-import * as kiwi from "@lume/kiwi"
 import type { SymbolBase, LayoutBounds } from "../model/symbol_base"
 import type { LayoutHint } from "../dsl/hint_factory"
 import type { Theme } from "../core/theme"
+import {
+  LayoutConstraintOperator,
+  LayoutConstraintStrength
+} from "./layout_variable_context"
 import type { LayoutVariableContext } from "./layout_variable_context"
 
 export class LayoutSolver {
@@ -27,20 +30,28 @@ export class LayoutSolver {
       const isContainer = hints.some(h => h.type === "enclose" && h.containerId === symbol.id)
 
       if (!isContainer) {
-        this.layoutContext.addConstraint(layoutBounds.width, kiwi.Operator.Eq, size.width)
-        this.layoutContext.addConstraint(layoutBounds.height, kiwi.Operator.Eq, size.height)
-      } else {
         this.layoutContext.addConstraint(
           layoutBounds.width,
-          kiwi.Operator.Ge,
-          100,
-          kiwi.Strength.weak
+          LayoutConstraintOperator.Eq,
+          size.width
         )
         this.layoutContext.addConstraint(
           layoutBounds.height,
-          kiwi.Operator.Ge,
+          LayoutConstraintOperator.Eq,
+          size.height
+        )
+      } else {
+        this.layoutContext.addConstraint(
+          layoutBounds.width,
+          LayoutConstraintOperator.Ge,
           100,
-          kiwi.Strength.weak
+          LayoutConstraintStrength.Weak
+        )
+        this.layoutContext.addConstraint(
+          layoutBounds.height,
+          LayoutConstraintOperator.Ge,
+          100,
+          LayoutConstraintStrength.Weak
         )
       }
     }
@@ -98,7 +109,7 @@ export class LayoutSolver {
 
       this.layoutContext.addConstraint(
         b.x,
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.layoutContext.expression(
           [
             { variable: a.x },
@@ -106,7 +117,7 @@ export class LayoutSolver {
           ],
           gap
         ),
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
   }
@@ -122,7 +133,7 @@ export class LayoutSolver {
 
       this.layoutContext.addConstraint(
         b.y,
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.layoutContext.expression(
           [
             { variable: a.y },
@@ -130,7 +141,7 @@ export class LayoutSolver {
           ],
           gap
         ),
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
   }
@@ -146,16 +157,16 @@ export class LayoutSolver {
 
       this.layoutContext.addConstraint(
         child.x,
-        kiwi.Operator.Ge,
+        LayoutConstraintOperator.Ge,
         this.layoutContext.expression([{ variable: container.x }], padding),
-        kiwi.Strength.required
+        LayoutConstraintStrength.Required
       )
 
       this.layoutContext.addConstraint(
         child.y,
-        kiwi.Operator.Ge,
+        LayoutConstraintOperator.Ge,
         this.layoutContext.expression([{ variable: container.y }], 50),
-        kiwi.Strength.required
+        LayoutConstraintStrength.Required
       )
 
       this.layoutContext.addConstraint(
@@ -163,7 +174,7 @@ export class LayoutSolver {
           { variable: container.width },
           { variable: container.x }
         ]),
-        kiwi.Operator.Ge,
+        LayoutConstraintOperator.Ge,
         this.layoutContext.expression(
           [
             { variable: child.x },
@@ -171,7 +182,7 @@ export class LayoutSolver {
           ],
           padding
         ),
-        kiwi.Strength.required
+        LayoutConstraintStrength.Required
       )
 
       this.layoutContext.addConstraint(
@@ -179,7 +190,7 @@ export class LayoutSolver {
           { variable: container.height },
           { variable: container.y }
         ]),
-        kiwi.Operator.Ge,
+        LayoutConstraintOperator.Ge,
         this.layoutContext.expression(
           [
             { variable: child.y },
@@ -187,7 +198,7 @@ export class LayoutSolver {
           ],
           padding
         ),
-        kiwi.Strength.required
+        LayoutConstraintStrength.Required
       )
     }
   }
@@ -204,7 +215,12 @@ export class LayoutSolver {
       if (!symbolId) continue
       const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
-      this.layoutContext.addConstraint(symbol.x, kiwi.Operator.Eq, first.x, kiwi.Strength.strong)
+      this.layoutContext.addConstraint(
+        symbol.x,
+        LayoutConstraintOperator.Eq,
+        first.x,
+        LayoutConstraintStrength.Strong
+      )
     }
   }
 
@@ -225,12 +241,12 @@ export class LayoutSolver {
           { variable: symbol.x },
           { variable: symbol.width }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.layoutContext.expression([
           { variable: first.x },
           { variable: first.width }
         ]),
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
   }
@@ -247,7 +263,12 @@ export class LayoutSolver {
       if (!symbolId) continue
       const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
-      this.layoutContext.addConstraint(symbol.y, kiwi.Operator.Eq, first.y, kiwi.Strength.strong)
+      this.layoutContext.addConstraint(
+        symbol.y,
+        LayoutConstraintOperator.Eq,
+        first.y,
+        LayoutConstraintStrength.Strong
+      )
     }
   }
 
@@ -268,12 +289,12 @@ export class LayoutSolver {
           { variable: symbol.y },
           { variable: symbol.height }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.layoutContext.expression([
           { variable: first.y },
           { variable: first.height }
         ]),
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
   }
@@ -295,12 +316,12 @@ export class LayoutSolver {
           { variable: symbol.x },
           { variable: symbol.width, coefficient: 0.5 }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.layoutContext.expression([
           { variable: first.x },
           { variable: first.width, coefficient: 0.5 }
         ]),
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
   }
@@ -322,12 +343,12 @@ export class LayoutSolver {
           { variable: symbol.y },
           { variable: symbol.height, coefficient: 0.5 }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.layoutContext.expression([
           { variable: first.y },
           { variable: first.height, coefficient: 0.5 }
         ]),
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
   }
@@ -344,7 +365,12 @@ export class LayoutSolver {
       if (!symbolId) continue
       const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
-      this.layoutContext.addConstraint(symbol.width, kiwi.Operator.Eq, first.width, kiwi.Strength.strong)
+      this.layoutContext.addConstraint(
+        symbol.width,
+        LayoutConstraintOperator.Eq,
+        first.width,
+        LayoutConstraintStrength.Strong
+      )
     }
   }
 
@@ -360,7 +386,12 @@ export class LayoutSolver {
       if (!symbolId) continue
       const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
-      this.layoutContext.addConstraint(symbol.height, kiwi.Operator.Eq, first.height, kiwi.Strength.strong)
+      this.layoutContext.addConstraint(
+        symbol.height,
+        LayoutConstraintOperator.Eq,
+        first.height,
+        LayoutConstraintStrength.Strong
+      )
     }
   }
 
@@ -376,8 +407,18 @@ export class LayoutSolver {
       if (!symbolId) continue
       const symbol = this.boundsMap.get(symbolId)
       if (!symbol) continue
-      this.layoutContext.addConstraint(symbol.width, kiwi.Operator.Eq, first.width, kiwi.Strength.strong)
-      this.layoutContext.addConstraint(symbol.height, kiwi.Operator.Eq, first.height, kiwi.Strength.strong)
+      this.layoutContext.addConstraint(
+        symbol.width,
+        LayoutConstraintOperator.Eq,
+        first.width,
+        LayoutConstraintStrength.Strong
+      )
+      this.layoutContext.addConstraint(
+        symbol.height,
+        LayoutConstraintOperator.Eq,
+        first.height,
+        LayoutConstraintStrength.Strong
+      )
     }
   }
 }

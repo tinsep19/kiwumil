@@ -1,9 +1,9 @@
 // src/dsl/hint_factory.ts
-import * as kiwi from "@lume/kiwi"
 import type { SymbolId } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
 import type { Theme } from "../core/theme"
 import type { LayoutVariableContext, LayoutVar } from "../layout/layout_variable_context"
+import { LayoutConstraintOperator, LayoutConstraintStrength } from "../layout/layout_variable_context"
 
 export interface LayoutHint {
   type: 
@@ -158,7 +158,7 @@ export class HintFactory {
   createGuideX(value?: number) {
     const variable = this.layoutContext.createVar(`guideX-${this.guideCounter++}`)
     if (typeof value === "number") {
-      this.layoutContext.addConstraint(variable, kiwi.Operator.Eq, value)
+      this.layoutContext.addConstraint(variable, LayoutConstraintOperator.Eq, value)
     }
     return new VerticalGuide(
       this.layoutContext,
@@ -170,7 +170,7 @@ export class HintFactory {
   createGuideY(value?: number) {
     const variable = this.layoutContext.createVar(`guideY-${this.guideCounter++}`)
     if (typeof value === "number") {
-      this.layoutContext.addConstraint(variable, kiwi.Operator.Eq, value)
+      this.layoutContext.addConstraint(variable, LayoutConstraintOperator.Eq, value)
     }
     return new HorizontalGuide(
       this.layoutContext,
@@ -196,7 +196,12 @@ export class VerticalGuide {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(bounds.x, kiwi.Operator.Eq, this.variable, kiwi.Strength.strong)
+      this.ctx.addConstraint(
+        bounds.x,
+        LayoutConstraintOperator.Eq,
+        this.variable,
+        LayoutConstraintStrength.Strong
+      )
     }
     return this
   }
@@ -211,9 +216,9 @@ export class VerticalGuide {
           { variable: bounds.x },
           { variable: bounds.width }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.variable,
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
     return this
@@ -229,9 +234,9 @@ export class VerticalGuide {
           { variable: bounds.x },
           { variable: bounds.width, coefficient: 0.5 }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.variable,
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
     return this
@@ -241,7 +246,12 @@ export class VerticalGuide {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(this.variable, kiwi.Operator.Eq, bounds.x, kiwi.Strength.strong)
+    this.ctx.addConstraint(
+      this.variable,
+      LayoutConstraintOperator.Eq,
+      bounds.x,
+      LayoutConstraintStrength.Strong
+    )
     return this
   }
 
@@ -251,12 +261,12 @@ export class VerticalGuide {
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
       this.variable,
-      kiwi.Operator.Eq,
+      LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.x },
         { variable: bounds.width }
       ]),
-      kiwi.Strength.strong
+      LayoutConstraintStrength.Strong
     )
     return this
   }
@@ -267,12 +277,12 @@ export class VerticalGuide {
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
       this.variable,
-      kiwi.Operator.Eq,
+      LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.x },
         { variable: bounds.width, coefficient: 0.5 }
       ]),
-      kiwi.Strength.strong
+      LayoutConstraintStrength.Strong
     )
     return this
   }
@@ -291,7 +301,12 @@ export class HorizontalGuide {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(bounds.y, kiwi.Operator.Eq, this.variable, kiwi.Strength.strong)
+      this.ctx.addConstraint(
+        bounds.y,
+        LayoutConstraintOperator.Eq,
+        this.variable,
+        LayoutConstraintStrength.Strong
+      )
     }
     return this
   }
@@ -306,9 +321,9 @@ export class HorizontalGuide {
           { variable: bounds.y },
           { variable: bounds.height }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.variable,
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
     return this
@@ -324,9 +339,9 @@ export class HorizontalGuide {
           { variable: bounds.y },
           { variable: bounds.height, coefficient: 0.5 }
         ]),
-        kiwi.Operator.Eq,
+        LayoutConstraintOperator.Eq,
         this.variable,
-        kiwi.Strength.strong
+        LayoutConstraintStrength.Strong
       )
     }
     return this
@@ -336,7 +351,12 @@ export class HorizontalGuide {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(this.variable, kiwi.Operator.Eq, bounds.y, kiwi.Strength.strong)
+    this.ctx.addConstraint(
+      this.variable,
+      LayoutConstraintOperator.Eq,
+      bounds.y,
+      LayoutConstraintStrength.Strong
+    )
     return this
   }
 
@@ -346,12 +366,12 @@ export class HorizontalGuide {
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
       this.variable,
-      kiwi.Operator.Eq,
+      LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.y },
         { variable: bounds.height }
       ]),
-      kiwi.Strength.strong
+      LayoutConstraintStrength.Strong
     )
     return this
   }
@@ -362,12 +382,12 @@ export class HorizontalGuide {
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
       this.variable,
-      kiwi.Operator.Eq,
+      LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.y },
         { variable: bounds.height, coefficient: 0.5 }
       ]),
-      kiwi.Strength.strong
+      LayoutConstraintStrength.Strong
     )
     return this
   }
