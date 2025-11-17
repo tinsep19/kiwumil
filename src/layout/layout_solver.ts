@@ -1,78 +1,59 @@
 // src/layout/layout_solver.ts
 import * as kiwi from "@lume/kiwi"
-import type { SymbolBase } from "../model/symbol_base"
+import type { SymbolBase, LayoutBounds } from "../model/symbol_base"
 import type { LayoutHint } from "../dsl/hint_factory"
 import type { Theme } from "../core/theme"
-
-interface NodeVar {
-  x: kiwi.Variable
-  y: kiwi.Variable
-  width: kiwi.Variable
-  height: kiwi.Variable
-}
+import type { LayoutVariableContext } from "./layout_variable_context"
 
 export class LayoutSolver {
-  private solver: kiwi.Solver
-  private vars: Map<string, NodeVar>
-  private theme: Theme
+  private readonly theme: Theme
+  private readonly layoutContext: LayoutVariableContext
+  private readonly boundsMap: Map<string, LayoutBounds>
 
-  constructor(theme: Theme) {
-    this.solver = new kiwi.Solver()
-    this.vars = new Map()
+  constructor(theme: Theme, layoutContext: LayoutVariableContext) {
     this.theme = theme
+    this.layoutContext = layoutContext
+    this.boundsMap = new Map()
   }
 
   solve(symbols: SymbolBase[], hints: LayoutHint[]) {
-    // 各シンボルの変数を作成
+    this.boundsMap.clear()
+
     for (const symbol of symbols) {
       const size = symbol.getDefaultSize()
-      const v: NodeVar = {
-        x: new kiwi.Variable(`${symbol.id}.x`),
-        y: new kiwi.Variable(`${symbol.id}.y`),
-        width: new kiwi.Variable(`${symbol.id}.w`),
-        height: new kiwi.Variable(`${symbol.id}.h`),
-      }
-      this.vars.set(symbol.id, v)
+      const layoutBounds = symbol.ensureLayoutBounds(this.layoutContext)
+      this.boundsMap.set(symbol.id, layoutBounds)
 
-      // Check if this symbol is a container (has children via enclose)
       const isContainer = hints.some(h => h.type === "enclose" && h.containerId === symbol.id)
-      
+
       if (!isContainer) {
-        // Non-container: fix size
-        this.solver.addConstraint(
-          new kiwi.Constraint(new kiwi.Expression(v.width), kiwi.Operator.Eq, size.width)
-        )
-        this.solver.addConstraint(
-          new kiwi.Constraint(new kiwi.Expression(v.height), kiwi.Operator.Eq, size.height)
-        )
+        this.layoutContext.addConstraint(layoutBounds.width, kiwi.Operator.Eq, size.width)
+        this.layoutContext.addConstraint(layoutBounds.height, kiwi.Operator.Eq, size.height)
       } else {
-        // Container: set minimum size (will be expanded by children)
-        this.solver.addConstraint(
-          new kiwi.Constraint(new kiwi.Expression(v.width), kiwi.Operator.Ge, 100, kiwi.Strength.weak)
+        this.layoutContext.addConstraint(
+          layoutBounds.width,
+          kiwi.Operator.Ge,
+          100,
+          kiwi.Strength.weak
         )
-        this.solver.addConstraint(
-          new kiwi.Constraint(new kiwi.Expression(v.height), kiwi.Operator.Ge, 100, kiwi.Strength.weak)
+        this.layoutContext.addConstraint(
+          layoutBounds.height,
+          kiwi.Operator.Ge,
+          100,
+          kiwi.Strength.weak
         )
       }
     }
 
-    // 最初のシンボルを原点に固定
     if (symbols.length > 0) {
       const firstSymbol = symbols[0]
-      if (firstSymbol) {
-        const first = this.vars.get(firstSymbol.id)
-        if (first) {
-          this.solver.addConstraint(
-            new kiwi.Constraint(new kiwi.Expression(first.x), kiwi.Operator.Eq, 50)
-          )
-          this.solver.addConstraint(
-            new kiwi.Constraint(new kiwi.Expression(first.y), kiwi.Operator.Eq, 50)
-          )
-        }
+      const first = firstSymbol ? this.boundsMap.get(firstSymbol.id) : undefined
+      if (first) {
+        this.layoutContext.addConstraint(first.x, kiwi.Operator.Eq, 50)
+        this.layoutContext.addConstraint(first.y, kiwi.Operator.Eq, 50)
       }
     }
 
-    // ヒントに基づく制約を追加
     for (const hint of hints) {
       if (hint.type === "horizontal" || hint.type === "arrangeHorizontal") {
         this.addHorizontalConstraints(hint.symbolIds, hint.gap || this.theme.defaultStyleSet.horizontalGap)
@@ -101,350 +82,269 @@ export class LayoutSolver {
       }
     }
 
-    // 解を計算
-    this.solver.updateVariables()
+    this.layoutContext.solve()
 
-    // 結果を各シンボルに適用
     for (const symbol of symbols) {
-      const v = this.vars.get(symbol.id)!
+      const bounds = this.boundsMap.get(symbol.id)
+      if (!bounds) continue
       symbol.bounds = {
-        x: v.x.value(),
-        y: v.y.value(),
-        width: v.width.value(),
-        height: v.height.value(),
+        x: this.layoutContext.valueOf(bounds.x),
+        y: this.layoutContext.valueOf(bounds.y),
+        width: this.layoutContext.valueOf(bounds.width),
+        height: this.layoutContext.valueOf(bounds.height)
       }
     }
   }
 
   private addHorizontalConstraints(symbolIds: string[], gap: number) {
     for (let i = 0; i < symbolIds.length - 1; i++) {
-      const aId = symbolIds[i]
-      const bId = symbolIds[i + 1]
-      if (!aId || !bId) continue
-      
-      const a = this.vars.get(aId)
-      const b = this.vars.get(bId)
+      const a = this.boundsMap.get(symbolIds[i])
+      const b = this.boundsMap.get(symbolIds[i + 1])
       if (!a || !b) continue
 
-      // b.x = a.x + a.width + gap (STRONG strength)
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(b.x),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(a.x, a.width, gap),
-          kiwi.Strength.strong
-        )
+      this.layoutContext.addConstraint(
+        b.x,
+        kiwi.Operator.Eq,
+        this.layoutContext.expression(
+          [
+            { variable: a.x },
+            { variable: a.width }
+          ],
+          gap
+        ),
+        kiwi.Strength.strong
       )
     }
   }
 
   private addVerticalConstraints(symbolIds: string[], gap: number) {
     for (let i = 0; i < symbolIds.length - 1; i++) {
-      const aId = symbolIds[i]
-      const bId = symbolIds[i + 1]
-      if (!aId || !bId) continue
-      
-      const a = this.vars.get(aId)
-      const b = this.vars.get(bId)
+      const a = this.boundsMap.get(symbolIds[i])
+      const b = this.boundsMap.get(symbolIds[i + 1])
       if (!a || !b) continue
 
-      // b.y = a.y + a.height + gap (STRONG strength)
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(b.y),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(a.y, a.height, gap),
-          kiwi.Strength.strong
-        )
+      this.layoutContext.addConstraint(
+        b.y,
+        kiwi.Operator.Eq,
+        this.layoutContext.expression(
+          [
+            { variable: a.y },
+            { variable: a.height }
+          ],
+          gap
+        ),
+        kiwi.Strength.strong
       )
     }
   }
 
   private addEncloseConstraints(containerId: string, childIds: string[]) {
-    const container = this.vars.get(containerId)!
+    const container = this.boundsMap.get(containerId)
+    if (!container) return
     const padding = 20
 
     for (const childId of childIds) {
-      const child = this.vars.get(childId)!
+      const child = this.boundsMap.get(childId)
+      if (!child) continue
 
-      // Child must be inside container with padding (REQUIRED)
-      // child.x >= container.x + padding
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(child.x),
-          kiwi.Operator.Ge,
-          new kiwi.Expression(container.x, padding),
-          kiwi.Strength.required
-        )
+      this.layoutContext.addConstraint(
+        child.x,
+        kiwi.Operator.Ge,
+        this.layoutContext.expression([{ variable: container.x }], padding),
+        kiwi.Strength.required
       )
 
-      // child.y >= container.y + 50 (for label space) (REQUIRED)
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(child.y),
-          kiwi.Operator.Ge,
-          new kiwi.Expression(container.y, 50),
-          kiwi.Strength.required
-        )
+      this.layoutContext.addConstraint(
+        child.y,
+        kiwi.Operator.Ge,
+        this.layoutContext.expression([{ variable: container.y }], 50),
+        kiwi.Strength.required
       )
 
-      // Container must be large enough to contain children (REQUIRED)
-      // container.width >= child.x - container.x + child.width + padding
-      // Rewritten as: container.width + container.x >= child.x + child.width + padding
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(container.width, container.x),
-          kiwi.Operator.Ge,
-          new kiwi.Expression(child.x, child.width, padding),
-          kiwi.Strength.required
-        )
+      this.layoutContext.addConstraint(
+        this.layoutContext.expression([
+          { variable: container.width },
+          { variable: container.x }
+        ]),
+        kiwi.Operator.Ge,
+        this.layoutContext.expression(
+          [
+            { variable: child.x },
+            { variable: child.width }
+          ],
+          padding
+        ),
+        kiwi.Strength.required
       )
 
-      // container.height + container.y >= child.y + child.height + padding
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(container.height, container.y),
-          kiwi.Operator.Ge,
-          new kiwi.Expression(child.y, child.height, padding),
-          kiwi.Strength.required
-        )
+      this.layoutContext.addConstraint(
+        this.layoutContext.expression([
+          { variable: container.height },
+          { variable: container.y }
+        ]),
+        kiwi.Operator.Ge,
+        this.layoutContext.expression(
+          [
+            { variable: child.y },
+            { variable: child.height }
+          ],
+          padding
+        ),
+        kiwi.Strength.required
       )
     }
   }
 
   private addAlignLeftConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.x = first.x
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.x),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.x)
-        )
-      )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(symbol.x, kiwi.Operator.Eq, first.x, kiwi.Strength.strong)
     }
   }
 
   private addAlignRightConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.x + curr.width = first.x + first.width
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.x, curr.width),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.x, first.width)
-        )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(
+        this.layoutContext.expression([
+          { variable: symbol.x },
+          { variable: symbol.width }
+        ]),
+        kiwi.Operator.Eq,
+        this.layoutContext.expression([
+          { variable: first.x },
+          { variable: first.width }
+        ]),
+        kiwi.Strength.strong
       )
     }
   }
 
   private addAlignTopConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.y = first.y
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.y),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.y)
-        )
-      )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(symbol.y, kiwi.Operator.Eq, first.y, kiwi.Strength.strong)
     }
   }
 
   private addAlignBottomConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.y + curr.height = first.y + first.height
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.y, curr.height),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.y, first.height)
-        )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(
+        this.layoutContext.expression([
+          { variable: symbol.y },
+          { variable: symbol.height }
+        ]),
+        kiwi.Operator.Eq,
+        this.layoutContext.expression([
+          { variable: first.y },
+          { variable: first.height }
+        ]),
+        kiwi.Strength.strong
       )
     }
   }
 
   private addAlignCenterXConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.x + curr.width/2 = first.x + first.width/2
-      // Rewritten as: 2*curr.x + curr.width = 2*first.x + first.width
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression([-2.0, curr.x], [-1.0, curr.width]),
-          kiwi.Operator.Eq,
-          new kiwi.Expression([-2.0, first.x], [-1.0, first.width])
-        )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(
+        this.layoutContext.expression([
+          { variable: symbol.x },
+          { variable: symbol.width, coefficient: 0.5 }
+        ]),
+        kiwi.Operator.Eq,
+        this.layoutContext.expression([
+          { variable: first.x },
+          { variable: first.width, coefficient: 0.5 }
+        ]),
+        kiwi.Strength.strong
       )
     }
   }
 
   private addAlignCenterYConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.y + curr.height/2 = first.y + first.height/2
-      // Rewritten as: 2*curr.y + curr.height = 2*first.y + first.height
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression([-2.0, curr.y], [-1.0, curr.height]),
-          kiwi.Operator.Eq,
-          new kiwi.Expression([-2.0, first.y], [-1.0, first.height])
-        )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(
+        this.layoutContext.expression([
+          { variable: symbol.y },
+          { variable: symbol.height, coefficient: 0.5 }
+        ]),
+        kiwi.Operator.Eq,
+        this.layoutContext.expression([
+          { variable: first.y },
+          { variable: first.height, coefficient: 0.5 }
+        ]),
+        kiwi.Strength.strong
       )
     }
   }
 
   private addAlignWidthConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.width = first.width
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.width),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.width)
-        )
-      )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(symbol.width, kiwi.Operator.Eq, first.width, kiwi.Strength.strong)
     }
   }
 
   private addAlignHeightConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.height = first.height
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.height),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.height)
-        )
-      )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(symbol.height, kiwi.Operator.Eq, first.height, kiwi.Strength.strong)
     }
   }
 
   private addAlignSizeConstraints(symbolIds: string[]) {
     if (symbolIds.length < 2) return
-    
-    const firstId = symbolIds[0]
-    if (!firstId) return
-    const first = this.vars.get(firstId)
+    const first = this.boundsMap.get(symbolIds[0])
     if (!first) return
-    
+
     for (let i = 1; i < symbolIds.length; i++) {
-      const currId = symbolIds[i]
-      if (!currId) continue
-      const curr = this.vars.get(currId)
-      if (!curr) continue
-      
-      // curr.width = first.width
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.width),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.width)
-        )
-      )
-      
-      // curr.height = first.height
-      this.solver.addConstraint(
-        new kiwi.Constraint(
-          new kiwi.Expression(curr.height),
-          kiwi.Operator.Eq,
-          new kiwi.Expression(first.height)
-        )
-      )
+      const symbol = this.boundsMap.get(symbolIds[i])
+      if (!symbol) continue
+      this.layoutContext.addConstraint(symbol.width, kiwi.Operator.Eq, first.width, kiwi.Strength.strong)
+      this.layoutContext.addConstraint(symbol.height, kiwi.Operator.Eq, first.height, kiwi.Strength.strong)
     }
   }
 }

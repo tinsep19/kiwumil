@@ -57,4 +57,11 @@ export abstract class SymbolBase {
     }
     return this.layoutBounds
   }
+
+  ensureLayoutBounds(ctx: LayoutVariableContext): LayoutBounds {
+    if (!this.layoutBounds) {
+      this.attachLayoutContext(ctx)
+    }
+    return this.layoutBounds
+  }
 }

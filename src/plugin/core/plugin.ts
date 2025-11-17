@@ -9,6 +9,7 @@ import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { SymbolId } from "../../model/types"
+import type { LayoutVariableContext } from "../../layout/layout_variable_context"
 
 /**
  * Core Plugin (Namespace-based)
@@ -18,7 +19,7 @@ import type { SymbolId } from "../../model/types"
 export const CorePlugin = {
   name: 'core',
   
-  createSymbolFactory(userSymbols: SymbolBase[]) {
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -29,7 +30,7 @@ export const CorePlugin = {
        */
       circle(label: string): SymbolId {
         const id = idGen.generateSymbolId('circle')
-        const symbol = new CircleSymbol(id, label)
+        const symbol = new CircleSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
@@ -41,7 +42,7 @@ export const CorePlugin = {
        */
       ellipse(label: string): SymbolId {
         const id = idGen.generateSymbolId('ellipse')
-        const symbol = new EllipseSymbol(id, label)
+        const symbol = new EllipseSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
@@ -53,7 +54,7 @@ export const CorePlugin = {
        */
       rectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('rectangle')
-        const symbol = new RectangleSymbol(id, label)
+        const symbol = new RectangleSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
@@ -65,7 +66,7 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('roundedRectangle')
-        const symbol = new RoundedRectangleSymbol(id, label)
+        const symbol = new RoundedRectangleSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
@@ -76,7 +77,7 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
         const id = idGen.generateSymbolId('text')
-        const symbol = new TextSymbol(id, labelOrInfo)
+        const symbol = new TextSymbol(id, labelOrInfo, layout)
         userSymbols.push(symbol)
         return id
       }

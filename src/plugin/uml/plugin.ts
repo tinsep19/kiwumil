@@ -11,6 +11,7 @@ import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { RelationshipBase } from "../../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../../model/types"
+import type { LayoutVariableContext } from "../../layout/layout_variable_context"
 
 /**
  * UML Plugin (Namespace-based)
@@ -20,7 +21,7 @@ import type { SymbolId, RelationshipId } from "../../model/types"
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[]) {
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -31,7 +32,7 @@ export const UMLPlugin = {
        */
       actor(label: string): SymbolId {
         const id = idGen.generateSymbolId('actor')
-        const symbol = new ActorSymbol(id, label)
+        const symbol = new ActorSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
@@ -43,7 +44,7 @@ export const UMLPlugin = {
        */
       usecase(label: string): SymbolId {
         const id = idGen.generateSymbolId('usecase')
-        const symbol = new UsecaseSymbol(id, label)
+        const symbol = new UsecaseSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
@@ -55,14 +56,14 @@ export const UMLPlugin = {
        */
       systemBoundary(label: string): SymbolId {
         const id = idGen.generateSymbolId('systemBoundary')
-        const symbol = new SystemBoundarySymbol(id, label)
+        const symbol = new SystemBoundarySymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       }
     }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[]) {
+  createRelationshipFactory(relationships: RelationshipBase[], _layout: LayoutVariableContext) {
     const idGen = createIdGenerator(this.name)
     
     return {

@@ -3,6 +3,7 @@ import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
+import type { LayoutVariableContext } from "../layout/layout_variable_context"
 
 /**
  * Namespace Builder
@@ -29,13 +30,14 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * ```
    */
   buildElementNamespace(
-    userSymbols: SymbolBase[]
+    userSymbols: SymbolBase[],
+    layout: LayoutVariableContext
   ): BuildElementNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createSymbolFactory === "function") {
-        namespace[plugin.name] = plugin.createSymbolFactory(userSymbols)
+        namespace[plugin.name] = plugin.createSymbolFactory(userSymbols, layout)
       }
     }
 
@@ -55,13 +57,14 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * ```
    */
   buildRelationshipNamespace(
-    relationships: RelationshipBase[]
+    relationships: RelationshipBase[],
+    layout: LayoutVariableContext
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createRelationshipFactory === "function") {
-        namespace[plugin.name] = plugin.createRelationshipFactory(relationships)
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout)
       }
     }
 
