@@ -359,8 +359,8 @@ TypeDiagram("My Diagram", (el, rel, hint) => {
 const layout = new LayoutVariableContext()
 const diagram = diagramSymbol.ensureLayoutBounds(layout)
 
-layout.addConstraint(diagram.x, kiwi.Operator.Eq, 0)
-layout.addConstraint(diagram.y, kiwi.Operator.Eq, 0)
+layout.addConstraint(diagram.x, LayoutConstraintOperator.Eq, 0)
+layout.addConstraint(diagram.y, LayoutConstraintOperator.Eq, 0)
 ```
 
 #### DiagramSymbol のサイズ制約
@@ -369,8 +369,18 @@ DiagramSymbol はコンテナとして扱われるため、最小サイズのみ
 
 ```typescript
 // 最小サイズのみ指定 (LayoutVariableContext)
-layout.addConstraint(diagram.width, kiwi.Operator.Ge, 200, kiwi.Strength.weak)
-layout.addConstraint(diagram.height, kiwi.Operator.Ge, 150, kiwi.Strength.weak)
+layout.addConstraint(
+  diagram.width,
+  LayoutConstraintOperator.Ge,
+  200,
+  LayoutConstraintStrength.Weak
+)
+layout.addConstraint(
+  diagram.height,
+  LayoutConstraintOperator.Ge,
+  150,
+  LayoutConstraintStrength.Weak
+)
 ```
 
 #### ユーザーシンボルの配置制約
@@ -407,19 +417,31 @@ const sidePadding = 20     // 左右のパディング
 ```typescript
 // LayoutVariableContext を使った enclose 制約
 const padding = 20
-layout.addConstraint(child.x, kiwi.Operator.Ge, layout.expression([{ variable: container.x }], padding))
-layout.addConstraint(child.y, kiwi.Operator.Ge, layout.expression([{ variable: container.y }], 50)) // タイトル分
+layout.addConstraint(
+  child.x,
+  LayoutConstraintOperator.Ge,
+  layout.expression([{ variable: container.x }], padding),
+  LayoutConstraintStrength.Required
+)
+layout.addConstraint(
+  child.y,
+  LayoutConstraintOperator.Ge,
+  layout.expression([{ variable: container.y }], 50),
+  LayoutConstraintStrength.Required
+) // タイトル分
 
 layout.addConstraint(
   layout.expression([{ variable: container.width }, { variable: container.x }]),
-  kiwi.Operator.Ge,
-  layout.expression([{ variable: child.x }, { variable: child.width }], padding)
+  LayoutConstraintOperator.Ge,
+  layout.expression([{ variable: child.x }, { variable: child.width }], padding),
+  LayoutConstraintStrength.Required
 )
 
 layout.addConstraint(
   layout.expression([{ variable: container.height }, { variable: container.y }]),
-  kiwi.Operator.Ge,
-  layout.expression([{ variable: child.y }, { variable: child.height }], padding)
+  LayoutConstraintOperator.Ge,
+  layout.expression([{ variable: child.y }, { variable: child.height }], padding),
+  LayoutConstraintStrength.Required
 )
 ```
 
@@ -483,7 +505,8 @@ const viewBox = `0 0 ${diagramSymbol.bounds.width} ${diagramSymbol.bounds.height
 
 - すべてのシンボルは `LayoutVariableContext` から `LayoutVar`（ブランド型）を取得し、`bounds.x/y/width/height` を変数として保持する。
 - レイアウト計算時は `layout.addConstraint(...)` で制約を登録し、`layout.solve()` 後に `layout.valueOf(var)` で数値へ変換して `symbol.bounds` に書き戻す。
-- これにより、ヒントや将来のカスタム制約が `kiwi.Variable` を直接触らずに扱える。
+- これにより、ヒントや将来のカスタム制約が `LayoutVar`（kiwi.Variable のラッパー）を介して安全に扱える。
+- `LayoutConstraintOperator` / `LayoutConstraintStrength` が公開されており、`kiwi.Operator` / `kiwi.Strength` を隠蔽したまま制約タイプと優先度を指定できる。
 
 ### ガイド API
 
@@ -530,7 +553,7 @@ private addHorizontalConstraints(symbolIds: string[], gap: number) {
     // b.x = a.x + a.width + gap (STRONG strength)
     this.layoutContext.addConstraint(
       b.x,
-      kiwi.Operator.Eq,
+      LayoutConstraintOperator.Eq,
       this.layoutContext.expression(
         [
           { variable: a.x },
@@ -538,7 +561,7 @@ private addHorizontalConstraints(symbolIds: string[], gap: number) {
         ],
         gap
       ),
-      kiwi.Strength.strong
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -578,7 +601,7 @@ private addVerticalConstraints(symbolIds: string[], gap: number) {
     // b.y = a.y + a.height + gap (STRONG strength)
     this.layoutContext.addConstraint(
       b.y,
-      kiwi.Operator.Eq,
+      LayoutConstraintOperator.Eq,
       this.layoutContext.expression(
         [
           { variable: a.y },
@@ -586,7 +609,7 @@ private addVerticalConstraints(symbolIds: string[], gap: number) {
         ],
         gap
       ),
-      kiwi.Strength.strong
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -612,19 +635,24 @@ hint.alignLeft(a, b, c)
 
 ```typescript
 private addAlignLeftConstraints(symbolIds: string[]) {
-  const first = this.vars.get(symbolIds[0])!
-  
+  if (symbolIds.length < 2) return
+  const firstId = symbolIds[0]
+  if (!firstId) return
+  const first = this.boundsMap.get(firstId)
+  if (!first) return
+
   for (let i = 1; i < symbolIds.length; i++) {
-    const curr = this.vars.get(symbolIds[i])!
-    
+    const symbolId = symbolIds[i]
+    if (!symbolId) continue
+    const symbol = this.boundsMap.get(symbolId)
+    if (!symbol) continue
+
     // curr.x = first.x
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(curr.x),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(first.x),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      symbol.x,
+      LayoutConstraintOperator.Eq,
+      first.x,
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -646,19 +674,30 @@ hint.alignRight(a, b, c)
 
 ```typescript
 private addAlignRightConstraints(symbolIds: string[]) {
-  const first = this.vars.get(symbolIds[0])!
-  
+  if (symbolIds.length < 2) return
+  const firstId = symbolIds[0]
+  if (!firstId) return
+  const first = this.boundsMap.get(firstId)
+  if (!first) return
+
   for (let i = 1; i < symbolIds.length; i++) {
-    const curr = this.vars.get(symbolIds[i])!
+    const symbolId = symbolIds[i]
+    if (!symbolId) continue
+    const symbol = this.boundsMap.get(symbolId)
+    if (!symbol) continue
     
     // curr.x + curr.width = first.x + first.width
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(curr.x, curr.width),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(first.x, first.width),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      this.layoutContext.expression([
+        { variable: symbol.x },
+        { variable: symbol.width }
+      ]),
+      LayoutConstraintOperator.Eq,
+      this.layoutContext.expression([
+        { variable: first.x },
+        { variable: first.width }
+      ]),
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -680,19 +719,30 @@ hint.alignCenterX(a, b, c)
 
 ```typescript
 private addAlignCenterXConstraints(symbolIds: string[]) {
-  const first = this.vars.get(symbolIds[0])!
+  if (symbolIds.length < 2) return
+  const firstId = symbolIds[0]
+  if (!firstId) return
+  const first = this.boundsMap.get(firstId)
+  if (!first) return
   
   for (let i = 1; i < symbolIds.length; i++) {
-    const curr = this.vars.get(symbolIds[i])!
+    const symbolId = symbolIds[i]
+    if (!symbolId) continue
+    const symbol = this.boundsMap.get(symbolId)
+    if (!symbol) continue
     
     // curr.x + curr.width/2 = first.x + first.width/2
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(curr.x, [curr.width, 0.5]),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(first.x, [first.width, 0.5]),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      this.layoutContext.expression([
+        { variable: symbol.x },
+        { variable: symbol.width, coefficient: 0.5 }
+      ]),
+      LayoutConstraintOperator.Eq,
+      this.layoutContext.expression([
+        { variable: first.x },
+        { variable: first.width, coefficient: 0.5 }
+      ]),
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -712,19 +762,24 @@ hint.alignTop(a, b, c)
 
 ```typescript
 private addAlignTopConstraints(symbolIds: string[]) {
-  const first = this.vars.get(symbolIds[0])!
+  if (symbolIds.length < 2) return
+  const firstId = symbolIds[0]
+  if (!firstId) return
+  const first = this.boundsMap.get(firstId)
+  if (!first) return
   
   for (let i = 1; i < symbolIds.length; i++) {
-    const curr = this.vars.get(symbolIds[i])!
+    const symbolId = symbolIds[i]
+    if (!symbolId) continue
+    const symbol = this.boundsMap.get(symbolId)
+    if (!symbol) continue
     
     // curr.y = first.y
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(curr.y),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(first.y),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      symbol.y,
+      LayoutConstraintOperator.Eq,
+      first.y,
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -745,19 +800,30 @@ hint.alignBottom(a, b, c)
 
 ```typescript
 private addAlignBottomConstraints(symbolIds: string[]) {
-  const first = this.vars.get(symbolIds[0])!
+  if (symbolIds.length < 2) return
+  const firstId = symbolIds[0]
+  if (!firstId) return
+  const first = this.boundsMap.get(firstId)
+  if (!first) return
   
   for (let i = 1; i < symbolIds.length; i++) {
-    const curr = this.vars.get(symbolIds[i])!
+    const symbolId = symbolIds[i]
+    if (!symbolId) continue
+    const symbol = this.boundsMap.get(symbolId)
+    if (!symbol) continue
     
     // curr.y + curr.height = first.y + first.height
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(curr.y, curr.height),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(first.y, first.height),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      this.layoutContext.expression([
+        { variable: symbol.y },
+        { variable: symbol.height }
+      ]),
+      LayoutConstraintOperator.Eq,
+      this.layoutContext.expression([
+        { variable: first.y },
+        { variable: first.height }
+      ]),
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -776,19 +842,30 @@ hint.alignCenterY(a, b, c)
 
 ```typescript
 private addAlignCenterYConstraints(symbolIds: string[]) {
-  const first = this.vars.get(symbolIds[0])!
+  if (symbolIds.length < 2) return
+  const firstId = symbolIds[0]
+  if (!firstId) return
+  const first = this.boundsMap.get(firstId)
+  if (!first) return
   
   for (let i = 1; i < symbolIds.length; i++) {
-    const curr = this.vars.get(symbolIds[i])!
+    const symbolId = symbolIds[i]
+    if (!symbolId) continue
+    const symbol = this.boundsMap.get(symbolId)
+    if (!symbol) continue
     
     // curr.y + curr.height/2 = first.y + first.height/2
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(curr.y, [curr.height, 0.5]),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(first.y, [first.height, 0.5]),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      this.layoutContext.expression([
+        { variable: symbol.y },
+        { variable: symbol.height, coefficient: 0.5 }
+      ]),
+      LayoutConstraintOperator.Eq,
+      this.layoutContext.expression([
+        { variable: first.y },
+        { variable: first.height, coefficient: 0.5 }
+      ]),
+      LayoutConstraintStrength.Strong
     )
   }
 }
@@ -826,24 +903,21 @@ hint.arrangeVertical(a, b, c)
 ```typescript
 // コンテナは最小サイズのみ指定（WEAK）
 const isContainer = hints.some(h => h.type === "enclose" && h.containerId === symbol.id)
+const layoutBounds = symbol.ensureLayoutBounds(this.layoutContext)
 
 if (isContainer) {
   // 最小サイズのみ（子要素に合わせて拡大可能）
-  this.solver.addConstraint(
-    new kiwi.Constraint(
-      new kiwi.Expression(v.width), 
-      kiwi.Operator.Ge, 
-      100, 
-      kiwi.Strength.weak
-    )
+  this.layoutContext.addConstraint(
+    layoutBounds.width,
+    LayoutConstraintOperator.Ge,
+    100,
+    LayoutConstraintStrength.Weak
   )
-  this.solver.addConstraint(
-    new kiwi.Constraint(
-      new kiwi.Expression(v.height), 
-      kiwi.Operator.Ge, 
-      100, 
-      kiwi.Strength.weak
-    )
+  this.layoutContext.addConstraint(
+    layoutBounds.height,
+    LayoutConstraintOperator.Ge,
+    100,
+    LayoutConstraintStrength.Weak
   )
 }
 ```
@@ -851,53 +925,65 @@ if (isContainer) {
 **2. enclose 制約（子要素の配置とコンテナの拡大）:**
 
 ```typescript
-private addEncloseConstraints(containerId: string, childIds: string[]) {
-  const container = this.vars.get(containerId)!
+private addEncloseConstraints(containerId: string, childIds: string[] = []) {
+  const container = this.boundsMap.get(containerId)
+  if (!container) return
   const padding = 20
 
   for (const childId of childIds) {
-    const child = this.vars.get(childId)!
+    const child = this.boundsMap.get(childId)
+    if (!child) continue
 
     // 子要素の最小位置制約（コンテナ内に配置）
     // child.x >= container.x + padding
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(child.x),
-        kiwi.Operator.Ge,
-        new kiwi.Expression(container.x, padding),
-        kiwi.Strength.required
-      )
+    this.layoutContext.addConstraint(
+      child.x,
+      LayoutConstraintOperator.Ge,
+      this.layoutContext.expression([{ variable: container.x }], padding),
+      LayoutConstraintStrength.Required
     )
 
     // child.y >= container.y + 50 (タイトルスペース考慮)
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(child.y),
-        kiwi.Operator.Ge,
-        new kiwi.Expression(container.y, 50),
-        kiwi.Strength.required
-      )
+    this.layoutContext.addConstraint(
+      child.y,
+      LayoutConstraintOperator.Ge,
+      this.layoutContext.expression([{ variable: container.y }], 50),
+      LayoutConstraintStrength.Required
     )
 
     // コンテナを子要素に合わせて拡大（重要！）
     // container.width + container.x >= child.x + child.width + padding
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(container.width, container.x),
-        kiwi.Operator.Ge,
-        new kiwi.Expression(child.x, child.width, padding),
-        kiwi.Strength.required
-      )
+    this.layoutContext.addConstraint(
+      this.layoutContext.expression([
+        { variable: container.width },
+        { variable: container.x }
+      ]),
+      LayoutConstraintOperator.Ge,
+      this.layoutContext.expression(
+        [
+          { variable: child.x },
+          { variable: child.width }
+        ],
+        padding
+      ),
+      LayoutConstraintStrength.Required
     )
 
     // container.height + container.y >= child.y + child.height + padding
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(container.height, container.y),
-        kiwi.Operator.Ge,
-        new kiwi.Expression(child.y, child.height, padding),
-        kiwi.Strength.required
-      )
+    this.layoutContext.addConstraint(
+      this.layoutContext.expression([
+        { variable: container.height },
+        { variable: container.y }
+      ]),
+      LayoutConstraintOperator.Ge,
+      this.layoutContext.expression(
+        [
+          { variable: child.y },
+          { variable: child.height }
+        ],
+        padding
+      ),
+      LayoutConstraintStrength.Required
     )
   }
 }
