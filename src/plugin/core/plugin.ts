@@ -3,6 +3,8 @@ import { CircleSymbol } from "./symbols/circle_symbol"
 import { EllipseSymbol } from "./symbols/ellipse_symbol"
 import { RectangleSymbol } from "./symbols/rectangle_symbol"
 import { RoundedRectangleSymbol } from "./symbols/rounded_rectangle_symbol"
+import { TextSymbol } from "./symbols/text_symbol"
+import type { TextInfo } from "./symbols/text_symbol"
 import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
@@ -64,6 +66,17 @@ export const CorePlugin = {
       roundedRectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('roundedRectangle')
         const symbol = new RoundedRectangleSymbol(id, label)
+        userSymbols.push(symbol)
+        return id
+      },
+
+      /**
+       * Text Symbol を作成
+       * @param labelOrInfo - 改行やスタイルを含めたテキスト指定
+       */
+      text(labelOrInfo: string | TextInfo): SymbolId {
+        const id = idGen.generateSymbolId('text')
+        const symbol = new TextSymbol(id, labelOrInfo)
         userSymbols.push(symbol)
         return id
       }

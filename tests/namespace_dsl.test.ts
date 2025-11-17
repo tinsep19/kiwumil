@@ -44,10 +44,18 @@ describe("Namespace-based DSL", () => {
         // Create symbols
         const circle = el.core.circle("Circle")
         const rect = el.core.rectangle("Rectangle")
+        const text = el.core.text("Line 1\nLine 2")
+        const styledText = el.core.text({
+          label: "Styled text",
+          textAnchor: "start",
+          textColor: "#ff00ff"
+        })
         
         // Check ID format
         expect(circle).toMatch(/^core:circle-\d+$/)
         expect(rect).toMatch(/^core:rectangle-\d+$/)
+        expect(text).toMatch(/^core:text-\d+$/)
+        expect(styledText).toMatch(/^core:text-\d+$/)
       })
     
     expect(diagram.symbols.length).toBeGreaterThan(0)

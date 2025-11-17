@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     width="777.2" 
+     height="532.8" 
+     viewBox="0 0 777.2 532.8">
+  <rect width="100%" height="100%" fill="white"/>
+  
+      <g id="__diagram__">
+        <!-- Title -->
+        <text x="388.6" y="80" 
+              text-anchor="middle" 
+              font-size="18" 
+              font-weight="bold"
+              font-family="Arial"
+              fill="black">
+          Core Text PoC
+        </text>
+        
+      </g>
+    
+
+      <g id="core:text-0">
+        <text x="82" y="122"
+              text-anchor="start"
+              font-size="14"
+              font-family="Arial"
+              fill="black">
+          <tspan x="82" dy="0">Single line text symbol</tspan>
+        </text>
+      </g>
+    
+
+      <g id="core:text-1">
+        <text x="82" y="208.8"
+              text-anchor="start"
+              font-size="18"
+              font-family="Arial"
+              fill="#0066cc">
+          <tspan x="82" dy="0">Multiple line text symbol</tspan>
+<tspan x="82" dy="21.599999999999998">Second line centered</tspan>
+<tspan x="82" dy="21.599999999999998">Third line for spacing</tspan>
+        </text>
+      </g>
+    
+
+      <g id="core:text-2">
+        <text x="82" y="335.6"
+              text-anchor="start"
+              font-size="14"
+              font-family="Courier New"
+              fill="black">
+          <tspan x="82" dy="0">Line with blank</tspan>
+<tspan x="82" dy="16.8"> </tspan>
+<tspan x="82" dy="16.8">Line after blank</tspan>
+        </text>
+      </g>
+    
+
+      <g id="core:text-3">
+        <text x="82" y="452"
+              text-anchor="start"
+              font-size="14"
+              font-family="Arial"
+              fill="#aa0000">
+          <tspan x="82" dy="0">Very looooooooooooooooong text that should expand the width automatically</tspan>
+        </text>
+      </g>
+    
+</svg>

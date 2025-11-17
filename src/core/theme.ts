@@ -84,6 +84,11 @@ export const DefaultTheme: Theme = {
       strokeWidth: 2,
       textColor: 'black',
       fontSize: 12
+    },
+    text: {
+      textColor: 'black',
+      fontSize: 14,
+      fontFamily: 'Arial'
     }
   }
 }
@@ -137,6 +142,11 @@ export const BlueTheme: Theme = {
       fillColor: '#e6f3ff',
       strokeColor: '#0066cc',
       textColor: '#003366'
+    },
+    text: {
+      textColor: '#003366',
+      fontSize: 14,
+      fontFamily: 'Arial'
     }
   }
 }
@@ -190,6 +200,11 @@ export const DarkTheme: Theme = {
       fillColor: '#2d2d2d',
       strokeColor: '#569cd6',
       textColor: '#d4d4d4'
+    },
+    text: {
+      textColor: '#d4d4d4',
+      fontSize: 14,
+      fontFamily: 'Arial'
     }
   }
 }
