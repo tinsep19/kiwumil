@@ -1,11 +1,11 @@
 // tests/namespace_dsl.test.ts
-import { TypedDiagram } from "../src/dsl/diagram_builder"
+import { TypeDiagram } from "../src/dsl/diagram_builder"
 import { UMLPlugin } from "../src/plugin/uml/plugin"
 import { CorePlugin } from "../src/plugin/core/plugin"
 
 describe("Namespace-based DSL", () => {
   test("UML Plugin - Basic usage", () => {
-    const diagram = TypedDiagram("UML Test")
+    const diagram = TypeDiagram("UML Test")
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         // Type check: el.uml should exist
@@ -35,7 +35,7 @@ describe("Namespace-based DSL", () => {
   })
 
   test("Core Plugin - Basic usage", () => {
-    const diagram = TypedDiagram("Core Test")
+    const diagram = TypeDiagram("Core Test")
       .use(CorePlugin)
       .build((el, rel, hint) => {
         // Type check: el.core should exist
@@ -54,7 +54,7 @@ describe("Namespace-based DSL", () => {
   })
 
   test("Multiple Plugins", () => {
-    const diagram = TypedDiagram("Multi Plugin Test")
+    const diagram = TypeDiagram("Multi Plugin Test")
       .use(UMLPlugin, CorePlugin)
       .build((el, rel, hint) => {
         // Both namespaces should exist
@@ -74,7 +74,7 @@ describe("Namespace-based DSL", () => {
   })
 
   test("ID uniqueness", () => {
-    const diagram = TypedDiagram("ID Test")
+    const diagram = TypeDiagram("ID Test")
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         const ids = [
@@ -97,7 +97,7 @@ describe("Namespace-based DSL", () => {
   })
 
   test("Relationship ID uniqueness", () => {
-    const diagram = TypedDiagram("Relationship ID Test")
+    const diagram = TypeDiagram("Relationship ID Test")
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         const user = el.uml.actor("User")

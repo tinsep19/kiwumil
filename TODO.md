@@ -9,7 +9,7 @@
 ### 🟡 中優先度
 
 #### 2. ドキュメントの追加更新
-- [x] README.md を TypedDiagram に更新
+- [x] README.md を TypeDiagram に更新
 - [ ] マイグレーションガイドの追加（もし既存ユーザーがいた場合の参考）
 - [ ] API リファレンスの作成
 
@@ -33,7 +33,7 @@
 ### GALLERY と Example の整理
 - ✅ GALLERY.md の構成見直しと更新
 - ✅ Example ファイルの整理（不要なファイル削除）
-- ✅ すべての Example を TypedDiagram に更新
+- ✅ すべての Example を TypeDiagram に更新
 - ✅ SVG の再生成
 
 ### レイアウト制約の修正
@@ -51,8 +51,8 @@
 - ✅ Phase 2: 新しいプラグインの実装
 - ✅ Phase 3 & 4: DiagramBuilder の移行と旧 API 削除
 
-### TypedDiagram API の実装
-- ✅ TypedDiagram 関数の実装
+### TypeDiagram API の実装
+- ✅ TypeDiagram 関数の実装
 - ✅ IntelliSenseBlock 型の導入
 - ✅ DiagramBuilder の内部クラス化
 - ✅ src/index.ts の更新
@@ -60,13 +60,13 @@
 - ✅ README.md の更新
 
 ### テストの移行
-- ✅ tests/namespace_dsl.test.ts (TypedDiagram ベース)
+- ✅ tests/namespace_dsl.test.ts (TypeDiagram ベース)
 - ✅ tests/uml_relationships.test.ts の移行
 - ✅ すべてのテストが通過 (54/54)
 
 ### ドキュメント
 - ✅ 設計仕様書の作成 (namespace-dsl.md, typed-diagram-api.md)
-- ✅ README.md の TypedDiagram 対応
+- ✅ README.md の TypeDiagram 対応
 - ✅ GALLERY.md の更新
 
 ### PR とマージ
@@ -80,7 +80,7 @@
 
 ## メモ
 
-- TypedDiagram は Option A (diagram_builder.ts を編集) で実装
+- TypeDiagram は Option A (diagram_builder.ts を編集) で実装
 - 内部クラス名は `DiagramBuilder` を維持
 - コールバック型名は `IntelliSenseBlock`
 - CorePlugin がデフォルトで適用される

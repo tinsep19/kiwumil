@@ -1,15 +1,15 @@
 // tests/uml_relationships.test.ts
 import { describe, test, expect } from "bun:test"
-import { TypedDiagram } from "../src/dsl/diagram_builder"
+import { TypeDiagram } from "../src/dsl/diagram_builder"
 import { UMLPlugin } from "../src/plugin/uml/plugin"
 
 describe("UML Relationships", () => {
   describe("Include Relationship", () => {
     test("should create include relationship between use cases", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel) => {
         const usecaseA = el.uml.usecase("UseCase A")
@@ -22,10 +22,10 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with dashed line and stereotype", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
@@ -45,10 +45,10 @@ describe("UML Relationships", () => {
 
   describe("Extend Relationship", () => {
     test("should create extend relationship between use cases", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel) => {
         const usecaseA = el.uml.usecase("UseCase A")
@@ -61,10 +61,10 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with dashed line and stereotype", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
@@ -84,10 +84,10 @@ describe("UML Relationships", () => {
 
   describe("Generalize Relationship", () => {
     test("should create generalization relationship between use cases", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel) => {
         const usecaseA = el.uml.usecase("UseCase A")
@@ -100,10 +100,10 @@ describe("UML Relationships", () => {
     })
 
     test("should generate SVG with solid line and triangle", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")
@@ -123,10 +123,10 @@ describe("UML Relationships", () => {
 
   describe("Combined Relationships", () => {
     test("should support multiple relationship types in same diagram", () => {
-      TypedDiagram("Test Diagram")
+      TypeDiagram("Test Diagram")
         .use(UMLPlugin)
 
-      const result = TypedDiagram("Test Diagram")
+      const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
         .build((el, rel, hint) => {
         const usecaseA = el.uml.usecase("UseCase A")

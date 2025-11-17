@@ -27,9 +27,9 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
 ) => void
 
 /**
- * DiagramBuilder - TypedDiagram の内部実装クラス
+ * DiagramBuilder - TypeDiagram の内部実装クラス
  * 
- * ユーザーには公開されないが、TypedDiagram 関数から返される。
+ * ユーザーには公開されないが、TypeDiagram 関数から返される。
  * メソッドチェーンで流暢な API を提供する。
  */
 class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
@@ -134,7 +134,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 }
 
 /**
- * TypedDiagram - Kiwumil の型安全な図作成エントリポイント
+ * TypeDiagram - Kiwumil の型安全な図作成エントリポイント
  * 
  * IntelliSense による強力な型推論をサポートし、
  * 宣言的で読みやすい図の定義を可能にします。
@@ -147,9 +147,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * 
  * @example 基本的な使い方
  * ```typescript
- * import { TypedDiagram, UMLPlugin } from "kiwumil"
+ * import { TypeDiagram, UMLPlugin } from "kiwumil"
  * 
- * TypedDiagram("My Diagram")
+ * TypeDiagram("My Diagram")
  *   .use(UMLPlugin)
  *   .build((el, rel, hint) => {
  *     // CorePlugin の図形（デフォルトで利用可能）
@@ -166,7 +166,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * 
  * @example DiagramInfo を使用
  * ```typescript
- * TypedDiagram({
+ * TypeDiagram({
  *   title: "E-Commerce System",
  *   createdAt: "2025-11-14",
  *   author: "Architecture Team"
@@ -180,7 +180,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * 
  * @example 複数プラグインとテーマ
  * ```typescript
- * TypedDiagram("Mixed Diagram")
+ * TypeDiagram("Mixed Diagram")
  *   .use(UMLPlugin)
  *   .theme(DarkTheme)
  *   .build((el, rel, hint) => {
@@ -190,6 +190,6 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   .render("output.svg")
  * ```
  */
-export function TypedDiagram(titleOrInfo: string | DiagramInfo): DiagramBuilder<[typeof CorePlugin]> {
+export function TypeDiagram(titleOrInfo: string | DiagramInfo): DiagramBuilder<[typeof CorePlugin]> {
   return new DiagramBuilder(titleOrInfo).use(CorePlugin)
 }

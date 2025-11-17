@@ -332,7 +332,7 @@ DiagramSymbol は、図全体を表す特殊なシンボルです。すべての
 ### 使用例
 
 ```typescript
-TypedDiagram("My Diagram", (el, rel, hint) => {
+TypeDiagram("My Diagram", (el, rel, hint) => {
   const a = el.circle("A")
   const b = el.circle("B")
   hint.arrangeHorizontal(a, b)
@@ -341,7 +341,7 @@ TypedDiagram("My Diagram", (el, rel, hint) => {
 
 内部処理：
 
-1. `TypedDiagram` がユーザーコールバックを実行してシンボルを収集
+1. `TypeDiagram` がユーザーコールバックを実行してシンボルを収集
 2. `DiagramSymbol("__diagram__", "My Diagram")` を作成
 3. `symbols = [diagramSymbol, ...userSymbols]` の配列を構築
 4. 自動的に `hint.enclose(diagramSymbol, userSymbols)` を追加
@@ -406,7 +406,7 @@ this.solver.addConstraint(
 自動的に追加される enclose ヒント：
 
 ```typescript
-// TypedDiagram 内部
+// TypeDiagram 内部
 if (userSymbols.length > 0) {
   hints.push({
     type: "enclose",

@@ -1,6 +1,6 @@
-import { TypedDiagram } from "../src/index.ts"
+import { TypeDiagram } from "../src/index.ts"
 
-TypedDiagram("Grid of arrange")
+TypeDiagram("Grid of arrange")
 .build((el, rel, hint) => {
   const [ k, i1, w, u, m, i2, l]
     = ["k","i","w","u","m","i","l"].map(c => el.core.circle(c))

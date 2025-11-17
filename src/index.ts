@@ -1,5 +1,5 @@
 // メインエントリポイント
-export { TypedDiagram } from "./dsl/diagram_builder"
+export { TypeDiagram } from "./dsl/diagram_builder"
 
 // プラグイン
 export { CorePlugin } from "./plugin/core/plugin"
