@@ -1,8 +1,8 @@
 // example/diagram_info_full.ts
-import { TypedDiagram, UMLPlugin, BlueTheme } from "../src/index"
+import { TypeDiagram, UMLPlugin, BlueTheme } from "../src/index"
 
 // Full example with all metadata
-TypedDiagram({
+TypeDiagram({
   title: "E-Commerce System",
   createdAt: "2025-11-13",
   author: "Architecture Team"

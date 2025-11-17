@@ -41,9 +41,9 @@ rel (Relationship Namespace)
 ### 基本的な使い方
 
 ```typescript
-import { TypedDiagram, UMLPlugin } from 'kiwumil'
+import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
-TypedDiagram("Use Case Diagram")
+TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // UML Plugin の名前空間を使用
@@ -62,10 +62,10 @@ TypedDiagram("Use Case Diagram")
 ### CorePlugin のみを使用
 
 ```typescript
-import { TypedDiagram } from 'kiwumil'
+import { TypeDiagram } from 'kiwumil'
 
 // CorePlugin はデフォルトで適用されています
-TypedDiagram("Simple Diagram")
+TypeDiagram("Simple Diagram")
   .build((el, rel, hint) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
@@ -80,9 +80,9 @@ TypedDiagram("Simple Diagram")
 ### 複数のプラグインを使用
 
 ```typescript
-import { TypedDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
+import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
-TypedDiagram("Mixed Diagram")
+TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
   .build((el, rel, hint) => {
     // CorePlugin の名前空間（デフォルトで利用可能）
@@ -104,9 +104,9 @@ TypedDiagram("Mixed Diagram")
 ### DiagramInfo とテーマを使用
 
 ```typescript
-import { TypedDiagram, UMLPlugin, DarkTheme } from 'kiwumil'
+import { TypeDiagram, UMLPlugin, DarkTheme } from 'kiwumil'
 
-TypedDiagram({
+TypeDiagram({
   title: "E-Commerce System",
   createdAt: "2025-11-14",
   author: "Architecture Team"
@@ -415,15 +415,15 @@ type RelationshipNamespace = {
 }
 ```
 
-## TypedDiagram API
+## TypeDiagram API
 
 ### エントリポイント
 
-`TypedDiagram` は図の作成を開始するエントリポイントです。CorePlugin がデフォルトで適用されるため、基本図形（circle, rectangle, ellipse 等）がすぐに利用可能です。
+`TypeDiagram` は図の作成を開始するエントリポイントです。CorePlugin がデフォルトで適用されるため、基本図形（circle, rectangle, ellipse 等）がすぐに利用可能です。
 
 **メソッドチェーンでの使用**:
 ```typescript
-TypedDiagram(titleOrInfo: string | DiagramInfo)
+TypeDiagram(titleOrInfo: string | DiagramInfo)
   .use(...plugins: DiagramPlugin[])     // プラグインの追加
   .theme(theme: Theme)                   // テーマの設定（オプション）
   .build((el, rel, hint) => { ... })    // 図の定義
@@ -432,9 +432,9 @@ TypedDiagram(titleOrInfo: string | DiagramInfo)
 
 ### 内部処理フロー
 
-`TypedDiagram` および `DiagramBuilder` 内部では以下の処理が行われます：
+`TypeDiagram` および `DiagramBuilder` 内部では以下の処理が行われます：
 
-1. **初期化 (`TypedDiagram()`)**
+1. **初期化 (`TypeDiagram()`)**
    - DiagramBuilder インスタンスを作成
    - CorePlugin がデフォルトで自動登録される
 
@@ -471,14 +471,14 @@ TypedDiagram(titleOrInfo: string | DiagramInfo)
 1. `DiagramPlugin` インターフェースを実装
 2. Symbol と Relationship のクラスを定義
 3. `createSymbolFactory` と `createRelationshipFactory` を実装
-4. `TypedDiagram().use()` で登録
+4. `TypeDiagram().use()` で登録
 
 ```typescript
 // 新しいプラグインの例
-import { TypedDiagram, UMLPlugin } from 'kiwumil'
+import { TypeDiagram, UMLPlugin } from 'kiwumil'
 import { MyCustomPlugin } from './my-plugin'
 
-TypedDiagram("Diagram")
+TypeDiagram("Diagram")
   .use(UMLPlugin, MyCustomPlugin)
   .build((el, rel, hint) => {
     el.uml.actor("User")

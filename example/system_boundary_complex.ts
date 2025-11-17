@@ -1,6 +1,6 @@
-import { TypedDiagram, UMLPlugin } from "../src/index"
+import { TypeDiagram, UMLPlugin } from "../src/index"
 
-TypedDiagram("System Boundary with Multiple Elements")
+TypeDiagram("System Boundary with Multiple Elements")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     const user = el.uml.actor("User")

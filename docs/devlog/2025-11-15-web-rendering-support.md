@@ -107,7 +107,7 @@ bun example/web_rendering_test.ts
 
 ### ケース1: 従来通りのファイルパス指定
 ```typescript
-TypedDiagram("My Diagram")
+TypeDiagram("My Diagram")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     el.uml.actor("User")
@@ -118,7 +118,7 @@ TypedDiagram("My Diagram")
 ### ケース2: import.meta による自動パス生成
 ```typescript
 // example/my_diagram.ts
-TypedDiagram("My Diagram")
+TypeDiagram("My Diagram")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     el.uml.actor("User")
@@ -130,7 +130,7 @@ TypedDiagram("My Diagram")
 ```typescript
 const container = document.getElementById("diagram")!
 
-TypedDiagram("Web Diagram")
+TypeDiagram("Web Diagram")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     el.uml.actor("User")

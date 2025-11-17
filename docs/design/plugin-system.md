@@ -36,9 +36,9 @@ Kiwumil のプラグインシステムは、図の要素（Symbol）と関連（
 ### プラグインの使用例
 
 ```typescript
-import { TypedDiagram, UMLPlugin } from "kiwumil"
+import { TypeDiagram, UMLPlugin } from "kiwumil"
 
-TypedDiagram("My UML Diagram")
+TypeDiagram("My UML Diagram")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // el.uml が UMLPlugin によって提供される
@@ -418,9 +418,9 @@ export { MyDiagramPlugin } from "./plugin/mydiagram/plugin"
 #### Step 6: 使用
 
 ```typescript
-import { TypedDiagram, MyDiagramPlugin } from "kiwumil"
+import { TypeDiagram, MyDiagramPlugin } from "kiwumil"
 
-TypedDiagram("My Diagram")
+TypeDiagram("My Diagram")
   .use(MyDiagramPlugin)
   .build((el, rel, hint) => {
     const a = el.mydiagram.mySymbol("A")
@@ -529,12 +529,12 @@ export const MyPlugin = {
 
 ```typescript
 import { describe, test, expect } from "bun:test"
-import { TypedDiagram } from "../src/dsl/diagram_builder"
+import { TypeDiagram } from "../src/dsl/diagram_builder"
 import { MyDiagramPlugin } from "../src/plugin/mydiagram/plugin"
 
 describe("MyDiagramPlugin", () => {
   test("should create symbols with correct IDs", () => {
-    const result = TypedDiagram("Test")
+    const result = TypeDiagram("Test")
       .use(MyDiagramPlugin)
       .build((el, rel, hint) => {
         const a = el.mydiagram.mySymbol("A")
@@ -548,7 +548,7 @@ describe("MyDiagramPlugin", () => {
   })
   
   test("should create relationships with correct IDs", () => {
-    TypedDiagram("Test")
+    TypeDiagram("Test")
       .use(MyDiagramPlugin)
       .build((el, rel, hint) => {
         const a = el.mydiagram.mySymbol("A")
@@ -560,7 +560,7 @@ describe("MyDiagramPlugin", () => {
   })
   
   test("should work with multiple plugins", () => {
-    TypedDiagram("Test")
+    TypeDiagram("Test")
       .use(MyDiagramPlugin, UMLPlugin)
       .build((el, rel, hint) => {
         const mySymbol = el.mydiagram.mySymbol("A")
@@ -597,7 +597,7 @@ Kiwumil のプラグインシステムを使うことで、型安全で拡張可
 
 ### 参考資料
 
-- [TypedDiagram API](./typed-diagram.md)
+- [TypeDiagram API](./typed-diagram.md)
 - [Namespace-based DSL 設計](./namespace-dsl.md)
 - [Layout System](./layout-system.md)
 - [Theme System](./theme-system.md)

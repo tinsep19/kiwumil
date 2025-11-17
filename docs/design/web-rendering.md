@@ -126,13 +126,13 @@ export function convertMetaUrlToSvgPath(metaUrl: string): string {
 
 ```typescript
 // 従来の方法
-TypedDiagram("Diagram 1")
+TypeDiagram("Diagram 1")
   .use(UMLPlugin)
   .build((el, rel, hint) => { /* ... */ })
   .render("output/diagram1.svg")
 
 // import.meta による自動生成
-TypedDiagram("Diagram 2")
+TypeDiagram("Diagram 2")
   .use(UMLPlugin)
   .build((el, rel, hint) => { /* ... */ })
   .render(import.meta)
@@ -141,11 +141,11 @@ TypedDiagram("Diagram 2")
 ### ブラウザ環境での使用
 
 ```typescript
-import { TypedDiagram, UMLPlugin } from "kiwumil"
+import { TypeDiagram, UMLPlugin } from "kiwumil"
 
 const container = document.getElementById("diagram-container")!
 
-TypedDiagram("Interactive Diagram")
+TypeDiagram("Interactive Diagram")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     const user = el.uml.actor("User")

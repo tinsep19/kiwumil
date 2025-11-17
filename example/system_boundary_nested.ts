@@ -1,6 +1,6 @@
-import { TypedDiagram, UMLPlugin } from "../src/index"
+import { TypeDiagram, UMLPlugin } from "../src/index"
 
-TypedDiagram("Nested System Boundaries")
+TypeDiagram("Nested System Boundaries")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // Create boundaries and use cases

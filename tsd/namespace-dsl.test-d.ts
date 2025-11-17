@@ -1,6 +1,6 @@
 import { expectAssignable, expectType } from "tsd"
 import {
-  TypedDiagram,
+  TypeDiagram,
   UMLPlugin,
   type DiagramPlugin,
   type SymbolId,
@@ -30,7 +30,7 @@ const CustomPlugin = {
   }
 } as const satisfies DiagramPlugin
 
-TypedDiagram("Default Core").build((el, rel) => {
+TypeDiagram("Default Core").build((el, rel) => {
   const _core = el.core
   expectAssignable<object>(_core)
   expectType<SymbolId>(el.core.circle("Circle"))
@@ -45,7 +45,7 @@ TypedDiagram("Default Core").build((el, rel) => {
   void _relCore
 })
 
-TypedDiagram("UML Plugin")
+TypeDiagram("UML Plugin")
   .use(UMLPlugin)
   .build((el, rel) => {
     const _uml = el.uml
@@ -60,7 +60,7 @@ TypedDiagram("UML Plugin")
     void _relUml
   })
 
-TypedDiagram("Multiple Plugins")
+TypeDiagram("Multiple Plugins")
   .use(UMLPlugin)
   .use(CustomPlugin)
   .build((el, rel) => {
