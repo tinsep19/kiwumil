@@ -4,6 +4,7 @@ export { TypeDiagram } from "./dsl/diagram_builder"
 // プラグイン
 export { CorePlugin } from "./plugin/core/plugin"
 export { UMLPlugin } from "./plugin/uml/plugin"
+export type { TextInfo } from "./plugin/core/symbols/text_symbol"
 
 // 型定義
 export type { DiagramPlugin } from "./dsl/diagram_plugin"

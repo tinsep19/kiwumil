@@ -34,6 +34,8 @@ TypeDiagram("Default Core").build((el, rel) => {
   const _core = el.core
   expectAssignable<object>(_core)
   expectType<SymbolId>(el.core.circle("Circle"))
+  expectType<SymbolId>(el.core.text("Multi\nLine"))
+  expectType<SymbolId>(el.core.text({ label: "Info object", textAnchor: "start" }))
 
   // @ts-expect-error - UMLPlugin not registered yet
   const _uml = el.uml
