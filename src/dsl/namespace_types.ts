@@ -1,14 +1,17 @@
 // src/dsl/namespace_types.ts
 import type { DiagramPlugin } from "./diagram_plugin"
+import type { SymbolBase } from "../model/symbol_base"
+import type { RelationshipBase } from "../model/relationship_base"
+import type { SymbolId, RelationshipId } from "../model/types"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createSymbolFactory: (...args: unknown[]) => unknown }
+  { createSymbolFactory: (userSymbols: SymbolBase[]) => Record<string, (...args: any[]) => SymbolId> }
 >
 
 type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createRelationshipFactory: (...args: unknown[]) => unknown }
+  { createRelationshipFactory: (relationships: RelationshipBase[]) => Record<string, (...args: any[]) => RelationshipId> }
 >
 
 /**
