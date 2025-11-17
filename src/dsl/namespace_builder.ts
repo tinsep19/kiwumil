@@ -31,13 +31,15 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildElementNamespace(
     userSymbols: SymbolBase[]
   ): BuildElementNamespace<TPlugins> {
-    const namespace = {} as any
+    const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
-      namespace[plugin.name] = plugin.createSymbolFactory(userSymbols)
+      if (typeof plugin.createSymbolFactory === "function") {
+        namespace[plugin.name] = plugin.createSymbolFactory(userSymbols)
+      }
     }
 
-    return namespace
+    return namespace as BuildElementNamespace<TPlugins>
   }
 
   /**
@@ -55,12 +57,14 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildRelationshipNamespace(
     relationships: RelationshipBase[]
   ): BuildRelationshipNamespace<TPlugins> {
-    const namespace = {} as any
+    const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
-      namespace[plugin.name] = plugin.createRelationshipFactory(relationships)
+      if (typeof plugin.createRelationshipFactory === "function") {
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships)
+      }
     }
 
-    return namespace
+    return namespace as BuildRelationshipNamespace<TPlugins>
   }
 }

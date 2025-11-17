@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@tinsep19/kiwumil": ["./dist/index.d.ts"],
+      "@tinsep19/kiwumil/*": ["./dist/*"],
+      "kiwumil": ["./dist/index.d.ts"],
+      "kiwumil/*": ["./dist/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "tsd/**/*.ts"]
+}

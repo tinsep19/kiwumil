@@ -3,6 +3,11 @@ import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../model/types"
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolId>
+type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 /**
  * Diagram Plugin Interface
  * 
@@ -20,9 +25,9 @@ export interface DiagramPlugin {
    * @param userSymbols - 生成した Symbol を登録する配列
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
-  createSymbolFactory(
+  createSymbolFactory?(
     userSymbols: SymbolBase[]
-  ): Record<string, (...args: any[]) => SymbolId>
+  ): SymbolFactoryMap
 
   /**
    * Relationship 用の DSL ファクトリを生成
@@ -30,7 +35,7 @@ export interface DiagramPlugin {
    * @param relationships - 生成した Relationship を登録する配列
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
-  createRelationshipFactory(
+  createRelationshipFactory?(
     relationships: RelationshipBase[]
-  ): Record<string, (...args: any[]) => RelationshipId>
+  ): RelationshipFactoryMap
 }
