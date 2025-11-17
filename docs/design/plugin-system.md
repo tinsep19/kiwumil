@@ -60,6 +60,8 @@ TypeDiagram("My UML Diagram")
 ### 型定義
 
 ```typescript
+import type { LayoutVariableContext } from "../layout/layout_variable_context"
+
 interface DiagramPlugin {
   /**
    * プラグインの名前空間名（例: "uml", "sequence", "erd"）
@@ -71,7 +73,7 @@ interface DiagramPlugin {
    * @param userSymbols - 生成した Symbol を登録する配列
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
-  createSymbolFactory(
+  createSymbolFactory?(
     userSymbols: SymbolBase[],
     layout: LayoutVariableContext
   ): Record<string, (...args: any[]) => SymbolId>
@@ -81,7 +83,7 @@ interface DiagramPlugin {
    * @param relationships - 生成した Relationship を登録する配列
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
-  createRelationshipFactory(
+  createRelationshipFactory?(
     relationships: RelationshipBase[],
     layout: LayoutVariableContext
   ): Record<string, (...args: any[]) => RelationshipId>
@@ -92,7 +94,8 @@ interface DiagramPlugin {
 
 - **`name`**: プラグインの名前空間（`el.{name}.xxx()` でアクセス）
 - **SymbolId / RelationshipId を返す**: 内部で配列に登録し、ID だけを返す
-- **`LayoutVariableContext` の利用**: `createSymbolFactory` は第2引数 `layout` を受け取り、`new MySymbol(id, label, layout)` のように渡すことでシンボルが `LayoutVar` を初期化できる
+- **`LayoutVariableContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`new MySymbol(id, label, layout)` のように渡すことでシンボルが `LayoutVar` を初期化できる
+- **ファクトリはオプショナル**: Symbol のみ・Relationship のみを提供するプラグインも問題なく動作する
 - **配列への登録はプラグインが担当**: `userSymbols.push(symbol)` を忘れずに
 
 ---
@@ -511,18 +514,49 @@ src/plugin/myplugin/
 └── README.md             # プラグインのドキュメント（オプション）
 ```
 
-### 5. TypeScript の satisfies を活用
+## TypeScript の活用
+
+TypeScript の型レベル機能を活用すると、プラグインの実装から DSL の補完まで滑らかに繋げられます。
+
+### Const Type Parameters
+
+`name` フィールドを literal type として保持することで、`el.{name}` の補完が正しく動作します：
 
 ```typescript
-export const MyPlugin = {
-  name: 'myplugin',
-  createSymbolFactory(userSymbols: SymbolBase[]) {
-    // ...
-  },
-  createRelationshipFactory(relationships: RelationshipBase[]) {
+const MyPlugin = {
+  name: 'uml' as const,
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
     // ...
   }
 } satisfies DiagramPlugin
+```
+
+### Satisfies Operator
+
+`satisfies` を使うと型チェックを厳密にしつつ、オブジェクトリテラルの推論を保てます：
+
+```typescript
+export const UMLPlugin = {
+  name: 'uml',
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
+    // ...
+  },
+  createRelationshipFactory(relationships: RelationshipBase[], layout: LayoutVariableContext) {
+    // ...
+  }
+} satisfies DiagramPlugin
+```
+
+### Mapped Types
+
+登録済みプラグインから `el` / `rel` の型を自動生成する際にも mapped type が使われています。自作プラグインが正確な型情報を持つよう、`name` やファクトリの戻り値を literal にしておくと DSL 側で次のような型が推論されます：
+
+```typescript
+type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
+  [K in TPlugins[number]['name']]: ReturnType<
+    Extract<TPlugins[number], { name: K }>['createSymbolFactory']
+  >
+}
 ```
 
 ---
