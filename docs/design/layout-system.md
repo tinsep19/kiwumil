@@ -341,12 +341,12 @@ TypeDiagram("My Diagram", (el, rel, hint) => {
 
 内部処理：
 
-1. `TypeDiagram` がユーザーコールバックを実行してシンボルを収集
-2. `DiagramSymbol("__diagram__", "My Diagram")` を作成
-3. `symbols = [diagramSymbol, ...userSymbols]` の配列を構築
-4. 自動的に `hint.enclose(diagramSymbol, userSymbols)` を追加
+1. `TypeDiagram` が `LayoutVariableContext` を生成
+2. すべてのシンボルが `layoutBounds = { x, y, width, height }` の `LayoutVar` を取得
+3. `DiagramSymbol("__diagram__", "My Diagram")` を作成し、配列の先頭へ追加
+4. 自動的に `hint.enclose(diagramSymbol, userSymbols)` を挿入
 5. レイアウト計算を実行
-   - DiagramSymbol は最初の要素なので (0, 0) に固定
+   - DiagramSymbol は (0, 0) 付近に固定
    - ユーザーシンボルは DiagramSymbol 内に配置
    - DiagramSymbol のサイズは内容に応じて自動拡大
 
@@ -355,26 +355,12 @@ TypeDiagram("My Diagram", (el, rel, hint) => {
 #### DiagramSymbol の位置固定
 
 ```typescript
-// LayoutSolver.solve() - 最初のシンボルを(0,0)に固定
-if (symbols.length > 0) {
-  const firstSymbol = symbols[0]  // = DiagramSymbol
-  const first = this.vars.get(firstSymbol.id)
-  
-  this.solver.addConstraint(
-    new kiwi.Constraint(
-      new kiwi.Expression(first.x), 
-      kiwi.Operator.Eq, 
-      0  // 以前は50, 現在は0
-    )
-  )
-  this.solver.addConstraint(
-    new kiwi.Constraint(
-      new kiwi.Expression(first.y), 
-      kiwi.Operator.Eq, 
-      0
-    )
-  )
-}
+// LayoutSolver.solve() - DiagramSymbol の LayoutVar を固定
+const layout = new LayoutVariableContext()
+const diagram = diagramSymbol.ensureLayoutBounds(layout)
+
+layout.addConstraint(diagram.x, kiwi.Operator.Eq, 0)
+layout.addConstraint(diagram.y, kiwi.Operator.Eq, 0)
 ```
 
 #### DiagramSymbol のサイズ制約
@@ -382,23 +368,9 @@ if (symbols.length > 0) {
 DiagramSymbol はコンテナとして扱われるため、最小サイズのみ指定されます（WEAK 制約）。
 
 ```typescript
-// 最小サイズのみ指定
-this.solver.addConstraint(
-  new kiwi.Constraint(
-    new kiwi.Expression(v.width), 
-    kiwi.Operator.Ge, 
-    200,  // 最小幅
-    kiwi.Strength.weak
-  )
-)
-this.solver.addConstraint(
-  new kiwi.Constraint(
-    new kiwi.Expression(v.height), 
-    kiwi.Operator.Ge, 
-    150,  // 最小高さ
-    kiwi.Strength.weak
-  )
-)
+// 最小サイズのみ指定 (LayoutVariableContext)
+layout.addConstraint(diagram.width, kiwi.Operator.Ge, 200, kiwi.Strength.weak)
+layout.addConstraint(diagram.height, kiwi.Operator.Ge, 150, kiwi.Strength.weak)
 ```
 
 #### ユーザーシンボルの配置制約
@@ -433,16 +405,22 @@ const sidePadding = 20     // 左右のパディング
 実際の enclose 制約でのパディング：
 
 ```typescript
-// LayoutSolver.addEncloseConstraints()
+// LayoutVariableContext を使った enclose 制約
 const padding = 20
+layout.addConstraint(child.x, kiwi.Operator.Ge, layout.expression([{ variable: container.x }], padding))
+layout.addConstraint(child.y, kiwi.Operator.Ge, layout.expression([{ variable: container.y }], 50)) // タイトル分
 
-// 上部はタイトルスペースを考慮
-child.y >= container.y + 50  // タイトル分のスペース
+layout.addConstraint(
+  layout.expression([{ variable: container.width }, { variable: container.x }]),
+  kiwi.Operator.Ge,
+  layout.expression([{ variable: child.x }, { variable: child.width }], padding)
+)
 
-// 左右と下部は通常のパディング
-child.x >= container.x + padding
-container.width + container.x >= child.x + child.width + padding
-container.height + container.y >= child.y + child.height + padding
+layout.addConstraint(
+  layout.expression([{ variable: container.height }, { variable: container.y }]),
+  kiwi.Operator.Ge,
+  layout.expression([{ variable: child.y }, { variable: child.height }], padding)
+)
 ```
 
 ### SVG 出力
@@ -500,6 +478,26 @@ const viewBox = `0 0 ${diagramSymbol.bounds.width} ${diagramSymbol.bounds.height
 ---
 
 ## 詳細な制約実装
+
+### LayoutVariableContext と LayoutVar
+
+- すべてのシンボルは `LayoutVariableContext` から `LayoutVar`（ブランド型）を取得し、`bounds.x/y/width/height` を変数として保持する。
+- レイアウト計算時は `layout.addConstraint(...)` で制約を登録し、`layout.solve()` 後に `layout.valueOf(var)` で数値へ変換して `symbol.bounds` に書き戻す。
+- これにより、ヒントや将来のカスタム制約が `kiwi.Variable` を直接触らずに扱える。
+
+### ガイド API
+
+`HintFactory.createGuideX/Y()` で仮想ガイド線を生成し、シンボルの `LayoutVar` と結びつけられる。
+
+```typescript
+const guide = hint.createGuideY()
+guide.alignTop(symbolA).alignBottom(symbolB)    // ガイド上に A を揃え、B を反対側に配置
+
+const mainLine = hint.createGuideY().followBottom(symbolA)
+mainLine.alignTop(symbolC)                      // A の下端にガイドを合わせ、C を同じライン上へ
+```
+
+内部では `guide.alignTop()` などが `LayoutVariableContext.addConstraint()` を呼び、ユーザーコードはガイドとシンボル ID を指定するだけで制約を貼れる。
 
 ### Arrange（配置）の実装
 
@@ -958,6 +956,10 @@ export interface LayoutHint {
   childIds?: SymbolId[]
 }
 ```
+
+### Guide ヒント
+
+`HintFactory` は従来の列挙型ヒントに加えて `createGuideX/Y()` を提供し、`HorizontalGuide` / `VerticalGuide` インスタンスを返す。これらは `alignTop/Bottom/Left/Right/Center` や `followTop/Bottom...` などのメソッドを持ち、基準となる `LayoutVar` をガイドとして共有できる。従来のヒントと組み合わせることで、ガイドラインに沿った複雑な整列シナリオをシンプルに記述できる。
 
 ---
 

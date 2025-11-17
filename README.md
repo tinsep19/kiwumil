@@ -75,6 +75,17 @@ TypeDiagram("My Diagram")
     // ...
   })
   .render(import.meta)  // .ts → .svg に自動変換
+
+// ガイドラインで上端/下端を揃える
+TypeDiagram("Guide Sample")
+  .use(UMLPlugin)
+  .build((el, rel, hint) => {
+    const top = el.uml.actor("Top")
+    const bottom = el.uml.actor("Bottom")
+    const guide = hint.createGuideY()
+    guide.alignTop(top).alignBottom(bottom)
+  })
+  .render("guide.svg")
 ```
 
 **出力イメージ:**
@@ -87,6 +98,7 @@ TypeDiagram("My Diagram")
 - 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
 - 🔌 **プラグインシステム** - 名前空間ベースでカスタムシンボルを自由に追加可能
 - ✨ **Arrange + Align API** - 直感的なレイアウト記述
+- 📐 **Guide ベースの整列** - `hint.createGuideX/Y()` で仮想ガイドを作り、複数シンボルを同じラインへ寄せられる
 - 📝 **メタデータサポート** - タイトル、作成日、著者を図に含められる
 - 🎯 **型安全な DSL** - TypeScript の型推論による IntelliSense サポート
 - 🌐 **Web 対応** - ファイル保存とDOM要素への直接レンダリングの両方をサポート
