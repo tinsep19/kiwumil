@@ -1044,7 +1044,26 @@ export interface LayoutHint {
 
 ### Guide ヒント
 
-`HintFactory` は従来の列挙型ヒントに加えて `createGuideX/Y()` を提供し、`HorizontalGuide` / `VerticalGuide` インスタンスを返す。これらは `alignTop/Bottom/Left/Right/Center` や `followTop/Bottom...` などのメソッドを持ち、基準となる `LayoutVar` をガイドとして共有できる。従来のヒントと組み合わせることで、ガイドラインに沿った複雑な整列シナリオをシンプルに記述できる。
+`HintFactory` は `createGuideX()` / `createGuideY()` で `GuideBuilderX` / `GuideBuilderY` を返す。ガイドごとに `alignLeft/Right/Center`（X軸）または `alignTop/Bottom/Center`（Y軸）が用意され、`follow*` で既存シンボルの位置をガイドへコピーできる。`arrange()` を呼ぶとガイドに紐づいたシンボル全体に `arrangeVertical` / `arrangeHorizontal` ヒントが追加され、整列と並べ替えをまとめて表現できる。さらに `guide.x` / `guide.y` から `LayoutVar` を取り出し、低レベルな制約と組み合わせることも可能。
+
+```typescript
+const gy = hint
+  .createGuideY()
+  .alignBottom(user, admin)
+  .alignTop(screen, server)
+  .arrange() // arrangeHorizontal: [user, admin, screen, server]
+
+// レイアウト変数を別制約に使うこともできる
+layoutContext.addConstraint(gy.y, LayoutConstraintOperator.Eq, 200)
+
+const gx = hint
+  .createGuideX()
+  .alignLeft(database)
+  .alignRight(cache)
+  .arrange() // arrangeVertical: [database, cache]
+```
+
+> Note: `follow*` メソッドはガイド自身に強い `Eq` 制約を貼るため、1つのガイドにつき1回だけ呼び出せます。複数のシンボルを基準にしたい場合はガイドを分けてください。
 
 ---
 

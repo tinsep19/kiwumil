@@ -156,26 +156,24 @@ export class HintFactory {
   }
 
   createGuideX(value?: number) {
-    const variable = this.layoutContext.createVar(`guideX-${this.guideCounter++}`)
-    if (typeof value === "number") {
-      this.layoutContext.addConstraint(variable, LayoutConstraintOperator.Eq, value)
-    }
-    return new VerticalGuide(
+    return new GuideBuilderX(
       this.layoutContext,
-      variable,
-      (id: SymbolId) => this.findSymbolById(id)
+      this.hints,
+      this.theme,
+      (id: SymbolId) => this.findSymbolById(id),
+      `guideX-${this.guideCounter++}`,
+      value
     )
   }
 
   createGuideY(value?: number) {
-    const variable = this.layoutContext.createVar(`guideY-${this.guideCounter++}`)
-    if (typeof value === "number") {
-      this.layoutContext.addConstraint(variable, LayoutConstraintOperator.Eq, value)
-    }
-    return new HorizontalGuide(
+    return new GuideBuilderY(
       this.layoutContext,
-      variable,
-      (id: SymbolId) => this.findSymbolById(id)
+      this.hints,
+      this.theme,
+      (id: SymbolId) => this.findSymbolById(id),
+      `guideY-${this.guideCounter++}`,
+      value
     )
   }
 
@@ -184,14 +182,27 @@ export class HintFactory {
   }
 }
 
-export class VerticalGuide {
+export class GuideBuilderX {
+  readonly x: LayoutVar
+  private readonly alignedSymbols = new Set<SymbolId>()
+  private hasFollowConstraint = false
+
   constructor(
-    private ctx: LayoutVariableContext,
-    private variable: LayoutVar,
-    private resolveSymbol: (id: SymbolId) => SymbolBase | undefined
-  ) {}
+    private readonly ctx: LayoutVariableContext,
+    private readonly hints: LayoutHint[],
+    private readonly theme: Theme,
+    private readonly resolveSymbol: (id: SymbolId) => SymbolBase | undefined,
+    variableName: string,
+    initialValue?: number
+  ) {
+    this.x = this.ctx.createVar(variableName)
+    if (typeof initialValue === "number") {
+      this.ctx.addConstraint(this.x, LayoutConstraintOperator.Eq, initialValue)
+    }
+  }
 
   alignLeft(...symbolIds: SymbolId[]) {
+    this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
@@ -199,7 +210,7 @@ export class VerticalGuide {
       this.ctx.addConstraint(
         bounds.x,
         LayoutConstraintOperator.Eq,
-        this.variable,
+        this.x,
         LayoutConstraintStrength.Strong
       )
     }
@@ -207,6 +218,7 @@ export class VerticalGuide {
   }
 
   alignRight(...symbolIds: SymbolId[]) {
+    this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
@@ -217,7 +229,7 @@ export class VerticalGuide {
           { variable: bounds.width }
         ]),
         LayoutConstraintOperator.Eq,
-        this.variable,
+        this.x,
         LayoutConstraintStrength.Strong
       )
     }
@@ -225,6 +237,7 @@ export class VerticalGuide {
   }
 
   alignCenter(...symbolIds: SymbolId[]) {
+    this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
@@ -235,7 +248,7 @@ export class VerticalGuide {
           { variable: bounds.width, coefficient: 0.5 }
         ]),
         LayoutConstraintOperator.Eq,
-        this.variable,
+        this.x,
         LayoutConstraintStrength.Strong
       )
     }
@@ -243,11 +256,12 @@ export class VerticalGuide {
   }
 
   followLeft(symbolId: SymbolId) {
+    this.ensureFollowAvailable("followLeft")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
-      this.variable,
+      this.x,
       LayoutConstraintOperator.Eq,
       bounds.x,
       LayoutConstraintStrength.Strong
@@ -256,11 +270,12 @@ export class VerticalGuide {
   }
 
   followRight(symbolId: SymbolId) {
+    this.ensureFollowAvailable("followRight")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
-      this.variable,
+      this.x,
       LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.x },
@@ -272,11 +287,12 @@ export class VerticalGuide {
   }
 
   followCenter(symbolId: SymbolId) {
+    this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
-      this.variable,
+      this.x,
       LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.x },
@@ -287,16 +303,53 @@ export class VerticalGuide {
     return this
   }
 
+  arrange(gap?: number) {
+    if (this.alignedSymbols.size === 0) return this
+    this.hints.push({
+      type: "arrangeVertical",
+      symbolIds: Array.from(this.alignedSymbols),
+      gap: gap ?? this.theme.defaultStyleSet.verticalGap
+    })
+    return this
+  }
+
+  private collect(symbolIds: SymbolId[]) {
+    for (const id of symbolIds) {
+      this.alignedSymbols.add(id)
+    }
+  }
+
+  private ensureFollowAvailable(method: string) {
+    if (this.hasFollowConstraint) {
+      throw new Error(
+        `GuideBuilderX.${method}(): guide already follows another symbol. Create a new guide for multiple follow constraints.`
+      )
+    }
+    this.hasFollowConstraint = true
+  }
 }
 
-export class HorizontalGuide {
+export class GuideBuilderY {
+  readonly y: LayoutVar
+  private readonly alignedSymbols = new Set<SymbolId>()
+  private hasFollowConstraint = false
+
   constructor(
-    private ctx: LayoutVariableContext,
-    private variable: LayoutVar,
-    private resolveSymbol: (id: SymbolId) => SymbolBase | undefined
-  ) {}
+    private readonly ctx: LayoutVariableContext,
+    private readonly hints: LayoutHint[],
+    private readonly theme: Theme,
+    private readonly resolveSymbol: (id: SymbolId) => SymbolBase | undefined,
+    variableName: string,
+    initialValue?: number
+  ) {
+    this.y = this.ctx.createVar(variableName)
+    if (typeof initialValue === "number") {
+      this.ctx.addConstraint(this.y, LayoutConstraintOperator.Eq, initialValue)
+    }
+  }
 
   alignTop(...symbolIds: SymbolId[]) {
+    this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
@@ -304,7 +357,7 @@ export class HorizontalGuide {
       this.ctx.addConstraint(
         bounds.y,
         LayoutConstraintOperator.Eq,
-        this.variable,
+        this.y,
         LayoutConstraintStrength.Strong
       )
     }
@@ -312,6 +365,7 @@ export class HorizontalGuide {
   }
 
   alignBottom(...symbolIds: SymbolId[]) {
+    this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
@@ -322,7 +376,7 @@ export class HorizontalGuide {
           { variable: bounds.height }
         ]),
         LayoutConstraintOperator.Eq,
-        this.variable,
+        this.y,
         LayoutConstraintStrength.Strong
       )
     }
@@ -330,6 +384,7 @@ export class HorizontalGuide {
   }
 
   alignCenter(...symbolIds: SymbolId[]) {
+    this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
@@ -340,7 +395,7 @@ export class HorizontalGuide {
           { variable: bounds.height, coefficient: 0.5 }
         ]),
         LayoutConstraintOperator.Eq,
-        this.variable,
+        this.y,
         LayoutConstraintStrength.Strong
       )
     }
@@ -348,11 +403,12 @@ export class HorizontalGuide {
   }
 
   followTop(symbolId: SymbolId) {
+    this.ensureFollowAvailable("followTop")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
-      this.variable,
+      this.y,
       LayoutConstraintOperator.Eq,
       bounds.y,
       LayoutConstraintStrength.Strong
@@ -361,11 +417,12 @@ export class HorizontalGuide {
   }
 
   followBottom(symbolId: SymbolId) {
+    this.ensureFollowAvailable("followBottom")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
-      this.variable,
+      this.y,
       LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.y },
@@ -377,11 +434,12 @@ export class HorizontalGuide {
   }
 
   followCenter(symbolId: SymbolId) {
+    this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.ensureLayoutBounds(this.ctx)
     this.ctx.addConstraint(
-      this.variable,
+      this.y,
       LayoutConstraintOperator.Eq,
       this.ctx.expression([
         { variable: bounds.y },
@@ -392,4 +450,28 @@ export class HorizontalGuide {
     return this
   }
 
+  arrange(gap?: number) {
+    if (this.alignedSymbols.size === 0) return this
+    this.hints.push({
+      type: "arrangeHorizontal",
+      symbolIds: Array.from(this.alignedSymbols),
+      gap: gap ?? this.theme.defaultStyleSet.horizontalGap
+    })
+    return this
+  }
+
+  private collect(symbolIds: SymbolId[]) {
+    for (const id of symbolIds) {
+      this.alignedSymbols.add(id)
+    }
+  }
+
+  private ensureFollowAvailable(method: string) {
+    if (this.hasFollowConstraint) {
+      throw new Error(
+        `GuideBuilderY.${method}(): guide already follows another symbol. Create a new guide for multiple follow constraints.`
+      )
+    }
+    this.hasFollowConstraint = true
+  }
 }
