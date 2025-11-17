@@ -205,121 +205,19 @@ abstract class RelationshipBase {
 
 ## プラグインインターフェース
 
-### DiagramPlugin
+Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提供する名前空間を合成することで構築されます。ここでは仕組みのみを扱い、プラグイン作成の詳細は [Plugin System ドキュメント](./plugin-system.md) に集約しています。
 
-プラグインは以下のインターフェースを実装します：
+- 各プラグインは一意の `name` を持ち、`el.{name}` / `rel.{name}` の形で参照されます。
+- `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
+- 両ファクトリは `LayoutVariableContext` を受け取り、Symbol / Relationship がレイアウト用変数を登録できるようになっています。
 
-```typescript
-export interface DiagramPlugin {
-  /**
-   * プラグインの名前空間名（例: "uml", "sequence", "erd"）
-   */
-  readonly name: string
+### 参考資料
 
-  /**
-   * Symbol 用の DSL ファクトリを生成
-   * 
-   * @param userSymbols - 生成した Symbol を登録する配列
-   * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
-   */
-  createSymbolFactory(
-    userSymbols: SymbolBase[]
-  ): Record<string, (...args: any[]) => SymbolId>
+- DiagramPlugin インターフェースの完全な型定義
+- UMLPlugin などの実装例
+- `createIdGenerator` を利用した ID 命名規則
 
-  /**
-   * Relationship 用の DSL ファクトリを生成
-   * 
-   * @param relationships - 生成した Relationship を登録する配列
-   * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
-   */
-  createRelationshipFactory(
-    relationships: RelationshipBase[]
-  ): Record<string, (...args: any[]) => RelationshipId>
-}
-```
-
-**プラグインの実装方法の詳細については、[Plugin System ドキュメント](./plugin-system.md) を参照してください。**
-
-### プラグインの実装例
-
-```typescript
-import { createIdGenerator } from "../../dsl/id_generator"
-import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolBase } from "../../model/symbol_base"
-import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId, RelationshipId } from "../../model/types"
-
-export const UMLPlugin: DiagramPlugin = {
-  name: 'uml',
-  
-  createSymbolFactory(userSymbols: SymbolBase[]) {
-    const idGen = createIdGenerator(this.name)
-    
-    return {
-      actor(label: string): SymbolId {
-        const id = idGen.generateSymbolId('actor')
-        const symbol = new ActorSymbol(id, label)
-        userSymbols.push(symbol)  // 配列に登録
-        return id  // SymbolId を返す (例: "uml:actor-0")
-      },
-      
-      usecase(label: string): SymbolId {
-        const id = idGen.generateSymbolId('usecase')
-        const symbol = new UsecaseSymbol(id, label)
-        userSymbols.push(symbol)
-        return id  // 例: "uml:usecase-1"
-      }
-    }
-  },
-  
-  createRelationshipFactory(relationships: RelationshipBase[]) {
-    const idGen = createIdGenerator(this.name)
-    
-    return {
-      associate(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('association')
-        const rel = new Association(id, from, to)
-        relationships.push(rel)  // 配列に登録
-        return id  // RelationshipId を返す (例: "uml:association-0")
-      },
-      
-      include(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('include')
-        const rel = new Include(id, from, to)
-        relationships.push(rel)
-        return id  // 例: "uml:include-1"
-      }
-    }
-  }
-}
-```
-
-### ID ジェネレータ
-
-プラグイン実装を簡潔にするため、ID 生成ヘルパー関数を提供しています：
-
-```typescript
-export function createIdGenerator(namespace: string) {
-  let symbolCounter = 0
-  let relationshipCounter = 0
-  
-  return {
-    generateSymbolId(symbolName: string): SymbolId {
-      return `${namespace}:${symbolName}-${symbolCounter++}` as SymbolId
-    },
-    
-    generateRelationshipId(relationshipName: string): RelationshipId {
-      return `${namespace}:${relationshipName}-${relationshipCounter++}` as RelationshipId
-    }
-  }
-}
-```
-
-**カウンター管理の特徴**:
-- 各プラグインの `createSymbolFactory` / `createRelationshipFactory` 内でカウンターを管理
-- Symbol と Relationship でそれぞれ独立したカウンター（0 から開始）
-- プラグインごとに独立したカウンター
-- 名前空間プレフィックスにより ID の衝突が完全に防止される
+➡ これらはすべて [Plugin System ドキュメント](./plugin-system.md) で詳しく説明しています。_namespace-dsl.md_ では、プラグインを追加した結果として el/rel 名前空間がどのように組み立てられるかに焦点を当てます。
 
 ## 名前空間システムの実装
 
@@ -463,76 +361,13 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
 
 ## 拡張性
 
-### 新しいプラグインの追加
+Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意の `DiagramPlugin` を登録することで拡張されます。プラグインそのものの作り方（クラス構成、ID 設計、TypeScript パターンなど）は [Plugin System ドキュメント](./plugin-system.md) に詳しい手順がありますので、ここでは仕組みの要点だけをまとめます。
 
-新しいプラグインを作成する方法については、[Plugin System ドキュメント](./plugin-system.md) を参照してください。
+- `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` として追加される
+- 各プラグインは独立した ID カウンターと名前空間を持つため、DSL 側は衝突を気にせず合成できる
+- レイアウト変数 (`LayoutVariableContext`) は共有されるので、プラグイン固有のヒントやサイズ調整も同じ枠組みに乗せられる
 
-プラグインは以下のステップで追加できます：
-
-1. `DiagramPlugin` インターフェースを実装
-2. Symbol と Relationship のクラスを定義
-3. `createSymbolFactory` と `createRelationshipFactory` を実装
-4. `TypeDiagram().use()` で登録
-
-```typescript
-// 新しいプラグインの例
-import { TypeDiagram, UMLPlugin } from 'kiwumil'
-import { MyCustomPlugin } from './my-plugin'
-
-TypeDiagram("Diagram")
-  .use(UMLPlugin, MyCustomPlugin)
-  .build((el, rel, hint) => {
-    el.uml.actor("User")
-    el.mycustom.customSymbol("My Symbol")  // カスタムプラグインの Symbol
-  })
-  .render("output.svg")
-```
-
-### プラグイン間の独立性
-
-各プラグインは独立しており、以下の特性があります：
-
-- **名前空間の分離**: プラグインごとに独立した名前空間
-- **ID の衝突回避**: 名前空間プレフィックスにより ID が重複しない
-- **カウンターの独立**: 各プラグインが独自のカウンターを管理
-
-## TypeScript の高度な機能の活用
-
-### Const Type Parameters
-
-プラグイン名を literal type として保持：
-
-```typescript
-const plugin = {
-  name: 'uml' as const,
-  createSymbolFactory: (symbols) => ({...}),
-  createRelationshipFactory: (relationships) => ({...})
-} satisfies DiagramPlugin
-```
-
-### Satisfies Operator
-
-型安全性を保ちつつ型推論を維持：
-
-```typescript
-export const UMLPlugin = {
-  name: 'uml',
-  createSymbolFactory(userSymbols) { /* ... */ },
-  createRelationshipFactory(relationships) { /* ... */ }
-} satisfies DiagramPlugin
-```
-
-### Mapped Types
-
-プラグイン一覧から名前空間型を生成：
-
-```typescript
-type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
-  [K in TPlugins[number]['name']]: ReturnType<
-    Extract<TPlugins[number], { name: K }>['createSymbolFactory']
-  >
-}
-```
+**プラグインの実装方法（手順、コード例、TypeScript テクニック）は [plugin-system.md](./plugin-system.md) を参照してください。**
 
 ## まとめ
 
