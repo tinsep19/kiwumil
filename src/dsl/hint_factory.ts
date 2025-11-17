@@ -160,7 +160,7 @@ export class HintFactory {
     if (typeof value === "number") {
       this.layoutContext.addConstraint(variable, kiwi.Operator.Eq, value)
     }
-    return new HorizontalGuide(
+    return new VerticalGuide(
       this.layoutContext,
       variable,
       (id: SymbolId) => this.findSymbolById(id)
@@ -172,7 +172,7 @@ export class HintFactory {
     if (typeof value === "number") {
       this.layoutContext.addConstraint(variable, kiwi.Operator.Eq, value)
     }
-    return new VerticalGuide(
+    return new HorizontalGuide(
       this.layoutContext,
       variable,
       (id: SymbolId) => this.findSymbolById(id)
@@ -184,7 +184,7 @@ export class HintFactory {
   }
 }
 
-export class HorizontalGuide {
+export class VerticalGuide {
   constructor(
     private ctx: LayoutVariableContext,
     private variable: LayoutVar,
@@ -279,7 +279,7 @@ export class HorizontalGuide {
 
 }
 
-export class VerticalGuide {
+export class HorizontalGuide {
   constructor(
     private ctx: LayoutVariableContext,
     private variable: LayoutVar,

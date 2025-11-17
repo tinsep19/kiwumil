@@ -413,6 +413,24 @@ describe("LayoutSolver", () => {
 })
 
 describe("Layout guides", () => {
+  test("alignLeft/alignRight with shared guide", () => {
+    const ctx = new LayoutVariableContext()
+    const solver = new LayoutSolver(DefaultTheme, ctx)
+    const actorLeft = new ActorSymbol("guide-left", "Guide Left")
+    const actorRight = new ActorSymbol("guide-right", "Guide Right")
+    const symbols = [actorLeft, actorRight]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    const guide = hintFactory.createGuideX()
+    guide.alignLeft("guide-left").alignRight("guide-right")
+
+    solver.solve(symbols, hints)
+
+    expect(actorLeft.bounds.x).toBe(50)
+    expect(actorRight.bounds.x + actorRight.bounds.width).toBeCloseTo(actorLeft.bounds.x)
+  })
+
   test("alignTop/alignBottom with shared guide", () => {
     const ctx = new LayoutVariableContext()
     const solver = new LayoutSolver(DefaultTheme, ctx)
@@ -446,5 +464,22 @@ describe("Layout guides", () => {
     solver.solve(symbols, hints)
 
     expect(b.bounds.y).toBeCloseTo(a.bounds.y + a.bounds.height)
+  })
+
+  test("guide can follow symbol right and align other symbol left", () => {
+    const ctx = new LayoutVariableContext()
+    const solver = new LayoutSolver(DefaultTheme, ctx)
+    const a = new ActorSymbol("aligned-left", "Aligned Left")
+    const b = new ActorSymbol("aligned-right", "Aligned Right")
+    const symbols = [a, b]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    const guide = hintFactory.createGuideX()
+    guide.followRight("aligned-left").alignLeft("aligned-right")
+
+    solver.solve(symbols, hints)
+
+    expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width)
   })
 })
