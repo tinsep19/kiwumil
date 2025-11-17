@@ -5,7 +5,7 @@
      viewBox="0 0 440 520">
   <rect width="100%" height="100%" fill="white"/>
   
-      <g id="systemBoundary_5">
+      <g id="uml:systemBoundary-5">
         <!-- System Boundary Rectangle -->
         <rect x="210" y="100" width="160" height="350" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
@@ -33,27 +33,27 @@
       </g>
     
 
-      <g id="actor_0">
+      <g id="uml:actor-0">
         <!-- Head -->
-        <circle cx="100" cy="115" r="10" 
+        <circle cx="100" cy="255" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="100" y1="125" x2="100" y2="148" 
+        <line x1="100" y1="265" x2="100" y2="288" 
               stroke="black" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="75" y1="131.9" x2="125" y2="131.9" 
+        <line x1="75" y1="271.9" x2="125" y2="271.9" 
               stroke="black" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="100" y1="148" x2="80" y2="165" 
+        <line x1="100" y1="288" x2="80" y2="305" 
               stroke="black" stroke-width="2"/>
-        <line x1="100" y1="148" x2="120" y2="165" 
+        <line x1="100" y1="288" x2="120" y2="305" 
               stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="180" 
+        <text x="100" y="320" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           User
@@ -61,27 +61,27 @@
       </g>
     
 
-      <g id="actor_1">
+      <g id="uml:actor-1">
         <!-- Head -->
-        <circle cx="100" cy="245" r="10" 
+        <circle cx="100" cy="385" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="100" y1="255" x2="100" y2="278" 
+        <line x1="100" y1="395" x2="100" y2="418" 
               stroke="black" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="75" y1="261.9" x2="125" y2="261.9" 
+        <line x1="75" y1="401.9" x2="125" y2="401.9" 
               stroke="black" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="100" y1="278" x2="80" y2="295" 
+        <line x1="100" y1="418" x2="80" y2="435" 
               stroke="black" stroke-width="2"/>
-        <line x1="100" y1="278" x2="120" y2="295" 
+        <line x1="100" y1="418" x2="120" y2="435" 
               stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="310" 
+        <text x="100" y="450" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Admin
@@ -89,27 +89,27 @@
       </g>
     
 
-      <line x1="130" y1="146.31578947368422" x2="231.28701290079505" y2="173.81968556850475"
+      <line x1="130" y1="264.2105263157895" x2="236.90490665708106" y2="193.97239298497865"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="163.68421052631578" x2="242.90703406799443" y2="271.41067134262937"
+      <line x1="130" y1="281.57894736842104" x2="230.08293024004942" y2="288.4232350063171"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="255.78947368421052" x2="235.7757296663877" y2="192.84259034217135"
+      <line x1="130" y1="373.6842105263158" x2="251.78711318022252" y2="203.1288525488127"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="273.1578947368421" x2="230.32967282471563" y2="286.85945646445873"
+      <line x1="130" y1="391.0526315789474" x2="239.27066581814174" y2="306.01978974163944"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="290.5263157894737" x2="240.48156432501008" y2="383.0594825322403"
+      <line x1="130" y1="408.42105263157896" x2="230.08293024004942" y2="401.5767649936829"
             stroke="black" stroke-width="2"/>
     
 
-      <g id="usecase_2">
+      <g id="uml:usecase-2">
         <!-- Ellipse -->
         <ellipse cx="290" cy="180" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -123,7 +123,7 @@
       </g>
     
 
-      <g id="usecase_3">
+      <g id="uml:usecase-3">
         <!-- Ellipse -->
         <ellipse cx="290" cy="290" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -137,7 +137,7 @@
       </g>
     
 
-      <g id="usecase_4">
+      <g id="uml:usecase-4">
         <!-- Ellipse -->
         <ellipse cx="290" cy="400" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>

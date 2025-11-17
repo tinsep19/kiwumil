@@ -21,14 +21,14 @@
     
 
       <g>
-        <line x1="190" y1="240" x2="270" y2="240"
+        <line x1="182.5729545205988" y1="225.5424375068353" x2="277.42704547940116" y2="144.4575624931647"
               stroke="black" stroke-width="2"
               stroke-dasharray="5,5"/>
-        <line x1="270" y1="240" x2="261.33974596215563" y2="245"
+        <line x1="277.42704547940116" y1="144.4575624931647" x2="274.09310305077486" y2="153.8854375391443"
               stroke="black" stroke-width="2"/>
-        <line x1="270" y1="240" x2="261.33974596215563" y2="235"
+        <line x1="277.42704547940116" y1="144.4575624931647" x2="267.5952949715643" y2="146.28422117820932"
               stroke="black" stroke-width="2"/>
-        <text x="230" y="235" 
+        <text x="230" y="180" 
               font-size="12" 
               fill="black"
               text-anchor="middle">«extend»</text>
@@ -36,9 +36,9 @@
     
 
       <g>
-        <line x1="277.42704547940116" y1="225.5424375068353" x2="182.5729545205988" y2="144.4575624931647"
+        <line x1="270" y1="130" x2="190" y2="130"
               stroke="black" stroke-width="2"/>
-        <polygon points="182.5729545205988,144.4575624931647 194.37105513000307,146.64955291521827 186.5736854349504,155.77101254834022"
+        <polygon points="190,130 200.39230484541326,124 200.39230484541326,136"
                  fill="white" stroke="black" stroke-width="2"/>
       </g>
     
@@ -57,7 +57,7 @@
       </g>
     
 
-      <g id="usecase_0">
+      <g id="uml:usecase-0">
         <!-- Ellipse -->
         <ellipse cx="130" cy="130" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -71,7 +71,7 @@
       </g>
     
 
-      <g id="usecase_1">
+      <g id="uml:usecase-1">
         <!-- Ellipse -->
         <ellipse cx="130" cy="240" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -85,13 +85,13 @@
       </g>
     
 
-      <g id="usecase_2">
+      <g id="uml:usecase-2">
         <!-- Ellipse -->
-        <ellipse cx="330" cy="240" rx="60" ry="30" 
+        <ellipse cx="330" cy="130" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="330" y="245" 
+        <text x="330" y="135" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           UseCase C

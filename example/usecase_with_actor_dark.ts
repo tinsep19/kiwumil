@@ -1,17 +1,17 @@
-import { Diagram, UMLPlugin, DarkTheme } from "../src/index"
+import { TypeDiagram, UMLPlugin, DarkTheme } from "../src/index"
 
-Diagram("Usecase with Actor (Dark Theme)")
+TypeDiagram("Usecase with Actor (Dark Theme)")
   .use(UMLPlugin)
   .theme(DarkTheme)
-  .build((element, relation, hint) => {
-    const user = element.actor("User")
-    const login = element.usecase("Login")
-    const logout = element.usecase("Logout")
+  .build((el, rel, hint) => {
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
     
-    relation.associate(user, login)
-    relation.associate(user, logout)
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
     
-    hint.horizontal(user, login)
-    hint.vertical(login, logout)
+    hint.arrangeHorizontal(user, login)
+    hint.arrangeVertical(login, logout)
   })
   .render("example/usecase_with_actor_dark.svg")

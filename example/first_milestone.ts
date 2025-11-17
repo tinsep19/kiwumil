@@ -1,24 +1,24 @@
-import { Diagram, UMLPlugin } from "../src/index"
+import { TypeDiagram, UMLPlugin } from "../src/index"
 
-Diagram("First Milestone")
+TypeDiagram("First Milestone")
   .use(UMLPlugin)
   .build((el, rel, hint) => {
     // 1. シンボルを定義
-    const user = el.actor("User")
-    const admin = el.actor("Admin")
+    const user = el.uml.actor("User")
+    const admin = el.uml.actor("Admin")
     
-    const login = el.usecase("Login")
-    const logout = el.usecase("Logout")
-    const manage_users = el.usecase("Manage Users")
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
+    const manage_users = el.uml.usecase("Manage Users")
     
-    const system_boundary = el.systemBoundary("システム化範囲")
+    const system_boundary = el.uml.systemBoundary("システム化範囲")
     
     // 2. 関係を定義
-    rel.associate(user, login)
-    rel.associate(user, logout)
-    rel.associate(admin, login)
-    rel.associate(admin, logout)
-    rel.associate(admin, manage_users)
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
+    rel.uml.associate(admin, login)
+    rel.uml.associate(admin, logout)
+    rel.uml.associate(admin, manage_users)
     
     // 3. レイアウトヒントを設定（新しいAPI）
     hint.arrangeVertical(user, admin)

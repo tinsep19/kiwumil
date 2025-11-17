@@ -9,7 +9,7 @@
             stroke="#569cd6" stroke-width="2"/>
     
 
-      <line x1="130" y1="157.64705882352942" x2="218.28394709053384" y2="224.7893962030982"
+      <line x1="112" y1="180" x2="112.75912686601927" y2="211.26521144336544"
             stroke="#569cd6" stroke-width="2"/>
     
 
@@ -27,7 +27,7 @@
       </g>
     
 
-      <g id="actor_0">
+      <g id="uml:actor-0">
         <!-- Head -->
         <circle cx="100" cy="115" r="10" 
                 fill="none" stroke="#4ec9b0" stroke-width="2"/>
@@ -55,7 +55,7 @@
       </g>
     
 
-      <g id="usecase_1">
+      <g id="uml:usecase-1">
         <!-- Ellipse -->
         <ellipse cx="270" cy="130" rx="60" ry="30" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
@@ -69,13 +69,13 @@
       </g>
     
 
-      <g id="usecase_2">
+      <g id="uml:usecase-2">
         <!-- Ellipse -->
-        <ellipse cx="270" cy="240" rx="60" ry="30" 
+        <ellipse cx="130" cy="240" rx="60" ry="30" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="270" y="245" 
+        <text x="130" y="245" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#d4d4d4">
           Logout
