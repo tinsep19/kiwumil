@@ -515,6 +515,7 @@ hint.arrangeHorizontal(a, b, c)
 - 左から右の順序で配置
 - デフォルト間隔: 80px
 - 制約強度: STRONG（enclose 制約より優先）
+- Y 方向の位置は**自動では揃わない**ため、必要なら `alignTop/CenterY` などと組み合わせる
 
 **実装詳細:**
 
@@ -522,27 +523,22 @@ hint.arrangeHorizontal(a, b, c)
 // layout_solver.ts
 private addHorizontalConstraints(symbolIds: string[], gap: number) {
   for (let i = 0; i < symbolIds.length - 1; i++) {
-    const a = this.vars.get(symbolIds[i])!
-    const b = this.vars.get(symbolIds[i + 1])!
-    
+    const a = this.boundsMap.get(symbolIds[i])
+    const b = this.boundsMap.get(symbolIds[i + 1])
+    if (!a || !b) continue
+
     // b.x = a.x + a.width + gap (STRONG strength)
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(b.x),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(a.x, a.width, gap),
-        kiwi.Strength.strong
-      )
-    )
-    
-    // Y軸を揃える (STRONG strength)
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(b.y),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(a.y),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      b.x,
+      kiwi.Operator.Eq,
+      this.layoutContext.expression(
+        [
+          { variable: a.x },
+          { variable: a.width }
+        ],
+        gap
+      ),
+      kiwi.Strength.strong
     )
   }
 }
@@ -567,6 +563,7 @@ hint.arrangeVertical(a, b, c)
 - 上から下の順序で配置
 - デフォルト間隔: 50px
 - 制約強度: STRONG（enclose 制約より優先）
+- X 方向の位置は**自動では揃わない**ため、必要なら `alignLeft/CenterX` などと併用する
 
 **実装詳細:**
 
@@ -574,27 +571,22 @@ hint.arrangeVertical(a, b, c)
 // layout_solver.ts
 private addVerticalConstraints(symbolIds: string[], gap: number) {
   for (let i = 0; i < symbolIds.length - 1; i++) {
-    const a = this.vars.get(symbolIds[i])!
-    const b = this.vars.get(symbolIds[i + 1])!
-    
+    const a = this.boundsMap.get(symbolIds[i])
+    const b = this.boundsMap.get(symbolIds[i + 1])
+    if (!a || !b) continue
+
     // b.y = a.y + a.height + gap (STRONG strength)
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(b.y),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(a.y, a.height, gap),
-        kiwi.Strength.strong
-      )
-    )
-    
-    // X軸を揃える (STRONG strength)
-    this.solver.addConstraint(
-      new kiwi.Constraint(
-        new kiwi.Expression(b.x),
-        kiwi.Operator.Eq,
-        new kiwi.Expression(a.x),
-        kiwi.Strength.strong
-      )
+    this.layoutContext.addConstraint(
+      b.y,
+      kiwi.Operator.Eq,
+      this.layoutContext.expression(
+        [
+          { variable: a.y },
+          { variable: a.height }
+        ],
+        gap
+      ),
+      kiwi.Strength.strong
     )
   }
 }
@@ -802,6 +794,10 @@ private addAlignCenterYConstraints(symbolIds: string[]) {
 }
 ```
 
+#### サイズ整列系
+
+`alignWidth` / `alignHeight` / `alignSize` ではそれぞれ幅、高さ、幅+高さの等値制約を STRONG 強度で追加します。実装は `alignLeft/Right` と同様に先頭シンボルを基準として `width` や `height` の `LayoutVar` を直接 `Eq` で束縛するだけです。
+
 ---
 
 ### Enclose（包含）の実装
@@ -938,18 +934,21 @@ hint.arrangeVertical(a, b, c)  // ✅ 重ならずに配置される
 
 ```typescript
 export interface LayoutHint {
-  type: 
+  type:
     | "horizontal"           // deprecated: use arrangeHorizontal
     | "vertical"             // deprecated: use arrangeVertical
-    | "arrangeHorizontal"    // ✅ 実装済み
-    | "arrangeVertical"      // ✅ 実装済み
-    | "alignLeft"            // ✅ 実装済み
-    | "alignRight"           // ✅ 実装済み
-    | "alignTop"             // ✅ 実装済み
-    | "alignBottom"          // ✅ 実装済み
-    | "alignCenterX"         // ✅ 実装済み
-    | "alignCenterY"         // ✅ 実装済み
-    | "enclose"              // ✅ 実装済み
+    | "arrangeHorizontal"
+    | "arrangeVertical"
+    | "alignLeft"
+    | "alignRight"
+    | "alignTop"
+    | "alignBottom"
+    | "alignCenterX"
+    | "alignCenterY"
+    | "alignWidth"
+    | "alignHeight"
+    | "alignSize"            // width+height
+    | "enclose"
   symbolIds: SymbolId[]
   gap?: number
   containerId?: SymbolId

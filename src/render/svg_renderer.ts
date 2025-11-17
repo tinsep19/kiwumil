@@ -3,6 +3,7 @@ import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId } from "../model/types"
 import type { Theme } from "../core/theme"
+import { DiagramSymbol } from "../model/diagram_symbol"
 
 interface RenderElement {
   zIndex: number
@@ -59,17 +60,35 @@ export class SvgRenderer {
     
     const content = renderElements.map(e => e.svg).join("\n")
     
-    // Calculate canvas size
-    let maxX = 0, maxY = 0
+    // Calculate viewport size based on DiagramSymbol bounds if available
+    let diagramWidth: number | undefined
+    let diagramHeight: number | undefined
     for (const symbol of this.symbols) {
-      if (symbol.bounds) {
-        maxX = Math.max(maxX, symbol.bounds.x + symbol.bounds.width)
-        maxY = Math.max(maxY, symbol.bounds.y + symbol.bounds.height)
+      if (symbol instanceof DiagramSymbol && symbol.bounds) {
+        diagramWidth = symbol.bounds.width
+        diagramHeight = symbol.bounds.height
+        break
       }
     }
 
-    const width = maxX + 50
-    const height = maxY + 50
+    let width: number
+    let height: number
+    if (typeof diagramWidth === "number" && typeof diagramHeight === "number") {
+      width = diagramWidth
+      height = diagramHeight
+    } else {
+      let maxX = 0
+      let maxY = 0
+      for (const symbol of this.symbols) {
+        if (symbol.bounds) {
+          maxX = Math.max(maxX, symbol.bounds.x + symbol.bounds.width)
+          maxY = Math.max(maxY, symbol.bounds.y + symbol.bounds.height)
+        }
+      }
+      width = maxX + 50
+      height = maxY + 50
+    }
+
     const bgColor = this.theme?.defaultStyleSet.backgroundColor || "white"
 
     return `<?xml version="1.0" encoding="UTF-8"?>

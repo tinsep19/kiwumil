@@ -45,15 +45,6 @@ export class LayoutSolver {
       }
     }
 
-    if (symbols.length > 0) {
-      const firstSymbol = symbols[0]
-      const first = firstSymbol ? this.boundsMap.get(firstSymbol.id) : undefined
-      if (first) {
-        this.layoutContext.addConstraint(first.x, kiwi.Operator.Eq, 50)
-        this.layoutContext.addConstraint(first.y, kiwi.Operator.Eq, 50)
-      }
-    }
-
     for (const hint of hints) {
       if (hint.type === "horizontal" || hint.type === "arrangeHorizontal") {
         this.addHorizontalConstraints(hint.symbolIds, hint.gap || this.theme.defaultStyleSet.horizontalGap)

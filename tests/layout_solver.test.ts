@@ -8,6 +8,7 @@ import type { LayoutHint } from "../src/dsl/hint_factory"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { DefaultTheme } from "../src/core/theme"
 import { LayoutVariableContext } from "../src/layout/layout_variable_context"
+import { DiagramSymbol } from "../src/model/diagram_symbol"
 
 describe("LayoutSolver", () => {
   let solver: LayoutSolver
@@ -16,6 +17,24 @@ describe("LayoutSolver", () => {
   beforeEach(() => {
     ctx = new LayoutVariableContext()
     solver = new LayoutSolver(DefaultTheme, ctx)
+  })
+
+  test("DiagramSymbol is anchored at the origin", () => {
+    const diagram = new DiagramSymbol("__diagram__", "Test Diagram", ctx)
+    solver.solve([diagram], [])
+    expect(diagram.bounds.x).toBeCloseTo(0)
+    expect(diagram.bounds.y).toBeCloseTo(0)
+  })
+
+  test("DiagramSymbol keeps minimum size even when acting as container", () => {
+    const diagram = new DiagramSymbol("__diagram__", "Test Diagram", ctx)
+    const child = new ActorSymbol("child", "Child")
+    const hints: LayoutHint[] = [
+      { type: "enclose", containerId: diagram.id, childIds: ["child"], symbolIds: [] }
+    ]
+    solver.solve([diagram, child], hints)
+    expect(diagram.bounds.width).toBeGreaterThanOrEqual(200)
+    expect(diagram.bounds.height).toBeGreaterThanOrEqual(150)
   })
 
   describe("arrangeHorizontal", () => {
@@ -28,10 +47,6 @@ describe("LayoutSolver", () => {
       ]
       
       solver.solve([a, b], hints)
-      
-      // First element at origin (50, 50)
-      expect(a.bounds.x).toBe(50)
-      expect(a.bounds.y).toBe(50)
       
       // Second element should be gap=80 away horizontally
       expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 80)
@@ -49,7 +64,6 @@ describe("LayoutSolver", () => {
       
       solver.solve([a, b, c], hints)
       
-      expect(a.bounds.x).toBe(50)
       expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 100)
       expect(c.bounds.x).toBe(b.bounds.x + b.bounds.width + 100)
       
@@ -68,13 +82,12 @@ describe("LayoutSolver", () => {
       
       solver.solve([a, b, c], hints)
       
-      expect(a.bounds.x).toBe(50)
       expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 100)
       expect(c.bounds.x).toBe(b.bounds.x + b.bounds.width + 100)
       
       // Y coordinates should be aligned by alignCenterY
-      expect(b.bounds.y).toBe(a.bounds.y)
-      expect(c.bounds.y).toBe(a.bounds.y)
+      expect(b.bounds.y).toBeCloseTo(a.bounds.y)
+      expect(c.bounds.y).toBeCloseTo(a.bounds.y)
     })
   })
 
@@ -88,10 +101,6 @@ describe("LayoutSolver", () => {
       ]
       
       solver.solve([a, b], hints)
-      
-      // First element at origin
-      expect(a.bounds.x).toBe(50)
-      expect(a.bounds.y).toBe(50)
       
       // Second element should be gap=50 away vertically
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
@@ -109,7 +118,6 @@ describe("LayoutSolver", () => {
       
       solver.solve([a, b, c], hints)
       
-      expect(a.bounds.y).toBe(50)
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 30)
       expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 30)
       
@@ -128,13 +136,12 @@ describe("LayoutSolver", () => {
       
       solver.solve([a, b, c], hints)
       
-      expect(a.bounds.y).toBe(50)
       expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 30)
       expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 30)
       
       // X coordinates should be aligned by alignLeft
-      expect(b.bounds.x).toBe(a.bounds.x)
-      expect(c.bounds.x).toBe(a.bounds.x)
+      expect(b.bounds.x).toBeCloseTo(a.bounds.x)
+      expect(c.bounds.x).toBeCloseTo(a.bounds.x)
     })
   })
 
@@ -152,8 +159,8 @@ describe("LayoutSolver", () => {
       solver.solve([a, b, c], hints)
       
       // All elements should have the same X coordinate
-      expect(b.bounds.x).toBe(a.bounds.x)
-      expect(c.bounds.x).toBe(a.bounds.x)
+      expect(b.bounds.x).toBeCloseTo(a.bounds.x)
+      expect(c.bounds.x).toBeCloseTo(a.bounds.x)
     })
   })
 
@@ -194,8 +201,8 @@ describe("LayoutSolver", () => {
       solver.solve([a, b, c], hints)
       
       // All elements should have the same Y coordinate
-      expect(b.bounds.y).toBe(a.bounds.y)
-      expect(c.bounds.y).toBe(a.bounds.y)
+      expect(b.bounds.y).toBeCloseTo(a.bounds.y)
+      expect(c.bounds.y).toBeCloseTo(a.bounds.y)
     })
   })
 
@@ -427,8 +434,7 @@ describe("Layout guides", () => {
 
     solver.solve(symbols, hints)
 
-    expect(actorLeft.bounds.x).toBe(50)
-    expect(actorRight.bounds.x + actorRight.bounds.width).toBeCloseTo(actorLeft.bounds.x)
+    expect(actorLeft.bounds.x).toBeCloseTo(actorRight.bounds.x + actorRight.bounds.width)
   })
 
   test("alignTop/alignBottom with shared guide", () => {
@@ -445,8 +451,7 @@ describe("Layout guides", () => {
 
     solver.solve(symbols, hints)
 
-    expect(actorTop.bounds.y).toBe(50)
-    expect(actorBottom.bounds.y + actorBottom.bounds.height).toBeCloseTo(actorTop.bounds.y)
+    expect(actorTop.bounds.y).toBeCloseTo(actorBottom.bounds.y + actorBottom.bounds.height)
   })
 
   test("guide can follow symbol bottom and align other symbol top", () => {

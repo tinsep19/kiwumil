@@ -124,7 +124,7 @@ export const MyPlugin: DiagramPlugin = {
     }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[]) {
+  createRelationshipFactory(relationships: RelationshipBase[], layout: LayoutVariableContext) {
     const namespace = this.name
     let counter = 0
     
@@ -132,7 +132,7 @@ export const MyPlugin: DiagramPlugin = {
       // Relationship 作成関数を定義
       myRelation(from: SymbolId, to: SymbolId): RelationshipId {
         const id = `${namespace}:myRelation-${counter++}` as RelationshipId
-        const rel = new MyRelation(id, from, to)
+        const rel = new MyRelation(id, from, to, layout)
         relationships.push(rel)  // 重要: 配列に登録
         return id
       }

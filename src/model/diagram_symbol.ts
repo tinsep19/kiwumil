@@ -1,12 +1,15 @@
 // src/model/diagram_symbol.ts
+import * as kiwi from "@lume/kiwi"
 import { SymbolBase } from "./symbol_base"
 import { getStyleForSymbol } from "../core/theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
 import type { LayoutVariableContext } from "../layout/layout_variable_context"
+import type { LayoutBounds } from "./symbol_base"
 
 export class DiagramSymbol extends SymbolBase {
   private diagramInfo: DiagramInfo
+  private constraintsApplied = false
 
   constructor(id: string, titleOrInfo: string | DiagramInfo, layoutContext?: LayoutVariableContext) {
     const info = typeof titleOrInfo === "string" 
@@ -15,10 +18,38 @@ export class DiagramSymbol extends SymbolBase {
     
     super(id, info.title, layoutContext)
     this.diagramInfo = info
+    this.applyDiagramConstraints()
   }
 
   getDefaultSize() {
     return { width: 200, height: 150 }
+  }
+
+  override ensureLayoutBounds(ctx: LayoutVariableContext): LayoutBounds {
+    const bounds = super.ensureLayoutBounds(ctx)
+    this.applyDiagramConstraints()
+    return bounds
+  }
+
+  private applyDiagramConstraints() {
+    if (this.constraintsApplied || !this.layoutContext || !this.layoutBounds) {
+      return
+    }
+    this.layoutContext.addConstraint(this.layoutBounds.x, kiwi.Operator.Eq, 0)
+    this.layoutContext.addConstraint(this.layoutBounds.y, kiwi.Operator.Eq, 0)
+    this.layoutContext.addConstraint(
+      this.layoutBounds.width,
+      kiwi.Operator.Ge,
+      200,
+      kiwi.Strength.weak
+    )
+    this.layoutContext.addConstraint(
+      this.layoutBounds.height,
+      kiwi.Operator.Ge,
+      150,
+      kiwi.Strength.weak
+    )
+    this.constraintsApplied = true
   }
 
   getConnectionPoint(from: Point): Point {
