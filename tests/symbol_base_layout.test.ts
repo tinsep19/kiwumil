@@ -1,6 +1,5 @@
-import * as kiwi from "@lume/kiwi"
 import { SymbolBase } from "../src/model/symbol_base"
-import { LayoutVariableContext } from "../src/layout/layout_variable_context"
+import { LayoutVariableContext, LayoutConstraintOperator } from "../src/layout/layout_variable_context"
 import type { Point } from "../src/model/types"
 
 class DummySymbol extends SymbolBase {
@@ -27,8 +26,8 @@ describe("SymbolBase layout bounds", () => {
     const symbol = new DummySymbol("dummy-1", ctx)
     const bounds = symbol.getLayoutBounds()
 
-    ctx.addConstraint(bounds.x, kiwi.Operator.Eq, 15)
-    ctx.addConstraint(bounds.y, kiwi.Operator.Eq, 25)
+    ctx.addConstraint(bounds.x, LayoutConstraintOperator.Eq, 15)
+    ctx.addConstraint(bounds.y, LayoutConstraintOperator.Eq, 25)
     ctx.solve()
 
     expect(ctx.valueOf(bounds.x)).toBeCloseTo(15)
