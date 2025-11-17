@@ -33,6 +33,9 @@ Kiwumil のプラグインシステムは、図の要素（Symbol）と関連（
 1. **Symbol Factory**: 図の要素（Actor、Usecase、Lifeline など）を作成する関数群
 2. **Relationship Factory**: 要素間の関連（Association、Include、Message など）を作成する関数群
 
+> ℹ️ `TypeDiagram()` は常に `CorePlugin` を自動登録します。  
+> そのため `el.core.circle()` などの基本図形は追加設定なしで利用でき、`core` という名前空間は予約済みと考えてください。
+
 ### プラグインの使用例
 
 ```typescript
@@ -97,6 +100,8 @@ interface DiagramPlugin {
 - **`LayoutVariableContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`new MySymbol(id, label, layout)` のように渡すことでシンボルが `LayoutVar` を初期化できる
 - **ファクトリはオプショナル**: Symbol のみ・Relationship のみを提供するプラグインも問題なく動作する
 - **配列への登録はプラグインが担当**: `userSymbols.push(symbol)` を忘れずに
+- **名前空間名はユニークにする**: `NamespaceBuilder` は `plugin.name` をキーに `el` / `rel` を構築するため、同じ名前のプラグインがあると後勝ちで上書きされる。`core` はビルトインなので避けること。
+- **ファクトリ関数の引数に `any` を許容**: `DiagramPlugin` はプラグイン固有の DSL 引数すべてを統一的に受ける必要があり、ここで具象型を強制すると別プラグインの署名が破綻する。`satisfies DiagramPlugin` を使えば各プラグイン実装は個別の厳密なシグネチャ（例: `actor(label: string)`, `lifeline(config: LifelineOptions)`）を保てるため、インターフェース側は `any` で緩く受けて型安全性を失わない。
 
 ---
 
@@ -149,45 +154,52 @@ export const MyPlugin: DiagramPlugin = {
 ```typescript
 import { ActorSymbol } from "./symbols/actor_symbol"
 import { UsecaseSymbol } from "./symbols/usecase_symbol"
+import { SystemBoundarySymbol } from "./symbols/system_boundary_symbol"
 import { Association } from "./relationships/association"
 import { Include } from "./relationships/include"
+import { Extend } from "./relationships/extend"
+import { Generalize } from "./relationships/generalize"
 import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { RelationshipBase } from "../../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../../model/types"
+import type { LayoutVariableContext } from "../../layout/layout_variable_context"
 
-export const UMLPlugin: DiagramPlugin = {
+export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[]) {
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
     const idGen = createIdGenerator(this.name)
     
     return {
       actor(label: string): SymbolId {
         const id = idGen.generateSymbolId('actor')
-        const symbol = new ActorSymbol(id, label)
+        const symbol = new ActorSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
       
       usecase(label: string): SymbolId {
         const id = idGen.generateSymbolId('usecase')
-        const symbol = new UsecaseSymbol(id, label)
+        const symbol = new UsecaseSymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       },
       
       systemBoundary(label: string): SymbolId {
         const id = idGen.generateSymbolId('systemBoundary')
-        const symbol = new SystemBoundarySymbol(id, label)
+        const symbol = new SystemBoundarySymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
       }
     }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[]) {
+  createRelationshipFactory(
+    relationships: RelationshipBase[],
+    _layout: LayoutVariableContext
+  ) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -216,7 +228,7 @@ export const UMLPlugin: DiagramPlugin = {
       }
     }
   }
-}
+} as const satisfies DiagramPlugin
 ```
 
 ---
@@ -514,6 +526,10 @@ src/plugin/myplugin/
 └── README.md             # プラグインのドキュメント（オプション）
 ```
 
+### 5. 名前空間の衝突を避ける
+
+`DiagramPlugin.name` は `NamespaceBuilder` によってそのまま `el.{name}` / `rel.{name}` のキーとして使用されるため、同じ名前を持つプラグインを複数読み込むと後から登録したものが前者を上書きします。`core` は `TypeDiagram()` が自動で登録するビルトイン名前空間なので、ユーザーのプラグインでは必ず一意な名前を選びましょう。
+
 ## TypeScript の活用
 
 TypeScript の型レベル機能を活用すると、プラグインの実装から DSL の補完まで滑らかに繋げられます。
@@ -612,12 +628,22 @@ describe("MyDiagramPlugin", () => {
 })
 ```
 
+### 型テスト（tsd）
+
+DSL の型安全性は `tsd` による型テストで自動検証しています。`bun run test:types`（`package.json` の `test:types` スクリプト）を実行すると `tsd/namespace-dsl.test-d.ts` が走り、以下を含む挙動が静的に保証されます：
+
+- `TypeDiagram().build()` の `el` / `rel` から未登録プラグインの名前空間へアクセスしようとすると `@ts-expect-error` で失敗すること
+- `.use(UMLPlugin)` などで登録済みのプラグインのみが補完され、Symbol/Relationship の戻り値が `SymbolId` / `RelationshipId` になること
+- 複数プラグインを組み合わせた際に、それぞれの factory が正しいシグネチャで推論されること
+
+手動で IntelliSense を確認しなくても、型回りの破壊的変更は CI で検知できる。
+
 ### テストのポイント
 
 1. **ID の形式を検証**: `namespace:symbolName-serial` の形式になっているか
 2. **配列への登録を検証**: `result.symbols` に正しく追加されているか
 3. **複数プラグインの共存**: 他のプラグインと競合しないか
-4. **型推論**: IntelliSense が正しく動作するか（手動確認）
+4. **型推論**: `tsd/namespace-dsl.test-d.ts` で DSL の型が崩れていないかを継続的に確認する
 
 ---
 
