@@ -3,14 +3,16 @@ import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../model/types"
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolId>
+type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 /**
  * Diagram Plugin Interface
  * 
  * プラグインは名前空間を持ち、Symbol と Relationship の DSL ファクトリを提供する
  */
-type SymbolFactoryMap = Record<string, (...args: unknown[]) => SymbolId>
-type RelationshipFactoryMap = Record<string, (...args: unknown[]) => RelationshipId>
-
 export interface DiagramPlugin {
   /**
    * プラグインの名前空間名（例: "uml", "sequence", "erd"）
