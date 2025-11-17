@@ -2,6 +2,7 @@
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../core/theme"
 import type { Point } from "../../../model/types"
+import type { LayoutVariableContext } from "../../../layout/layout_variable_context"
 
 const DEFAULT_PADDING_X = 12
 const DEFAULT_PADDING_Y = 8
@@ -38,15 +39,15 @@ function fallbackStyle() {
 export class TextSymbol extends SymbolBase {
   private overrides: TextOverrides
 
-  constructor(id: string, info: string | TextInfo) {
+  constructor(id: string, info: string | TextInfo, layoutContext?: LayoutVariableContext) {
     if (typeof info === "string") {
-      super(id, info)
+      super(id, info, layoutContext)
       this.overrides = {}
       return
     }
 
     const { label, ...overrides } = info
-    super(id, label)
+    super(id, label, layoutContext)
     this.overrides = overrides
   }
 
