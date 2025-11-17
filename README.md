@@ -1,18 +1,19 @@
 # 🥝 Kiwumil (キューミル)
 
 **Kiwumil** は、[@lume/kiwi](https://github.com/lume/kiwi) 制約ソルバーを使って  
-UML風の図を自動レイアウトするための TypeScript ライブラリです。  
-PlantUML / Mermaid.js のような手軽さを保ちながら、  
-より「制約に基づいた整列の美しさ」を目指しています。
+UML風の図をテキストで記述しつつ、必要な部分だけ制約で整えるための TypeScript ライブラリです。  
+PlantUML / Mermaid.js のような手軽さをリスペクトしながら、  
+「手で配置したいこだわり」と「制約による整列」を両立させることを目指しています。
 
 ---
 
 ## 🌱 コンセプト
 
-PlantUML や Mermaid.js は強力ですが、自動レイアウトの機能は
-嬉しい反面、納得できるきれいなダイアグラムが作成できませんでした。
+PlantUML や Mermaid.js が「テキストで図を書く」体験を切り開いてくれたことに感謝しています。  
+一方で、レイアウトを完全に自動に任せると細部が思い通りにならず、  
+かといってベクターエディタへ移行するとテキスト編集の快適さを失ってしまいます。
 
-Kiwumil はこれを **3つのステップ** で簡潔に表現できることを目指します：
+Kiwumil は、このギャップを埋めるために **3つのステップ** へ集約しました：
 
 1. **ノードを定義する**
 2. **関係を定義する**
@@ -53,39 +54,6 @@ TypeDiagram("First Milestone")
     hint.arrangeVertical(login, logout, manage_users)
   })
   .render("output.svg")
-
-// メタデータ付きの図も作成可能
-TypeDiagram({
-  title: "E-Commerce System",
-  createdAt: "2025-11-14",
-  author: "Architecture Team"
-})
-  .use(UMLPlugin)
-  .build((el, rel, hint) => {
-    // ...
-  })
-  .render("output.svg")
-
-// 🆕 import.meta を使った自動パス生成
-// example/my_diagram.ts というファイルで実行すると
-// 自動的に example/my_diagram.svg に保存されます
-TypeDiagram("My Diagram")
-  .use(UMLPlugin)
-  .build((el, rel, hint) => {
-    // ...
-  })
-  .render(import.meta)  // .ts → .svg に自動変換
-
-// ガイドラインで上端/下端を揃える
-TypeDiagram("Guide Sample")
-  .use(UMLPlugin)
-  .build((el, rel, hint) => {
-    const top = el.uml.actor("Top")
-    const bottom = el.uml.actor("Bottom")
-    const guide = hint.createGuideY()
-    guide.alignTop(top).alignBottom(bottom)
-  })
-  .render("guide.svg")
 ```
 
 **出力イメージ:**
@@ -93,21 +61,14 @@ TypeDiagram("Guide Sample")
 ![First Milestone](example/first_milestone.svg)
 
 **特徴:**
-- 🎨 **テーマシステム** - default, blue, dark の3つのプリセットテーマ
-- 🔧 **制約ベースレイアウト** - Cassowary アルゴリズムによる自動整列
-- 📦 **自動サイズ調整コンテナ** - SystemBoundary が内容物に合わせて自動拡大
-- 🔌 **プラグインシステム** - 名前空間ベースでカスタムシンボルを自由に追加可能
-- ✨ **Arrange + Align API** - 直感的なレイアウト記述
-- 📐 **Guide ベースの整列** - `hint.createGuideX/Y()` で仮想ガイドを作り、複数シンボルを同じラインへ寄せられる
-- 📝 **メタデータサポート** - タイトル、作成日、著者を図に含められる
-- 🎯 **型安全な DSL** - TypeScript の型推論による IntelliSense サポート
-- 🌐 **Web 対応** - ファイル保存とDOM要素への直接レンダリングの両方をサポート
+- 🔧 **制約 + レイアウトヒント** - Cassowary 制約ソルバーをベースに、`hint.arrange*` / `hint.enclose` で意図した整列を記述
+- 📦 **自動サイズ調整コンテナ** - SystemBoundary などが子要素に合わせてスケールし、ラベルで囲みを作成
+- 🔌 **名前空間プラグイン** - `el.uml.actor()` のようにプラグインごとに DSL が分離され、カスタム図形も拡張可能
+- 📐 **Guide ベースの整列** - `hint.createGuideX/Y()` でガイドラインを作り、複数シンボルを同一ラインに寄せられる
+- 📝 **メタデータサポート** - タイトルや作成日を図に添えてアーカイブできる
+- 🎯 **型安全な DSL** - `tsd` テストで守られた型推論により、存在しないメソッド呼び出しをコンパイル前に検知
 
-**🎉 New!** 
-- **名前空間ベースの DSL** - `el.uml.actor()`, `el.core.circle()` のように、プラグインごとの名前空間でシンボルを作成
-- **ID 管理の改善** - すべてのシンボルと関係に一意な ID が付与される（例: `uml:actor-0`, `uml:association-0`）
-- **強力な型安全性** - プラグインの型が自動的に推論され、存在しないメソッドを呼ぶとコンパイルエラー
-- **Web レンダリング** - `render(import.meta)` で自動パス生成、DOM要素への直接レンダリングもサポート
+プラグインは Symbol/Relationship を提供するだけでなく、Namespace DSL と直結します。`TypeDiagram().use(MyPlugin)` と書くだけで `el.myplugin.*` / `rel.myplugin.*` が補完され、独自の図形や関係線をコアの API と同じ手触りで扱えるため、ドメイン特化の作図体験をシームレスに拡張できます。
 
 詳細は [docs/design/layout-system.md](docs/design/layout-system.md) を参照してください。
 
@@ -118,7 +79,6 @@ TypeDiagram("Guide Sample")
 - **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計とAPI使い方
 - **[Plugin System](docs/design/plugin-system.md)** - プラグイン作成ガイド
 - **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの設計
-- **[Theme System](docs/design/theme-system.md)** - テーマシステムの仕様
 - **[Git Workflow](docs/design/git-workflow.md)** - 開発ワークフロー
 
 ---
@@ -154,45 +114,6 @@ bun install @tinsep19/kiwumil
 
 ---
 
-## 🎨 テーマシステム
-
-Kiwumil はプリセットテーマをインポートして適用できます：
-
-```typescript
-import { TypeDiagram, UMLPlugin, BlueTheme, DarkTheme } from "kiwumil"
-
-// Blue テーマを適用
-TypeDiagram("Login System")
-  .use(UMLPlugin)
-  .theme(BlueTheme)
-  .build((el, rel, hint) => {
-    const user = el.uml.actor("User")
-    const login = el.uml.usecase("Login")
-    rel.uml.associate(user, login)
-    hint.arrangeHorizontal(user, login)
-  })
-  .render("output_blue.svg")
-
-// Dark テーマを適用
-TypeDiagram("Login System")
-  .use(UMLPlugin)
-  .theme(DarkTheme)
-  .build((el, rel, hint) => {
-    const user = el.uml.actor("User")
-    const login = el.uml.usecase("Login")
-    rel.uml.associate(user, login)
-    hint.arrangeHorizontal(user, login)
-  })
-  .render("output_dark.svg")
-```
-
-**利用可能なテーマ:**
-- `DefaultTheme` - デフォルトの白基調
-- `BlueTheme` - 青基調のテーマ
-- `DarkTheme` - ダークモードテーマ
-
----
-
 ## 🧠 技術スタック
 
 | 要素       | 内容                                                        |
@@ -200,7 +121,7 @@ TypeDiagram("Login System")
 | 言語       | TypeScript                                                  |
 | 実行環境   | [Bun](https://bun.sh)                                       |
 | 制約ソルバ | [@lume/kiwi](https://github.com/lume/kiwi)（Cassowaryアルゴリズム） |
-| 目的       | UML図などの自動レイアウトエンジンの構築                     |
+| 目的       | テキスト定義 + 制約ヒントで整える図レイアウトエンジン        |
 
 ---
 
@@ -249,76 +170,75 @@ flowchart TD
 ```
 kiwumil/
 ├── src/
-│   ├── dsl/                          # DSL・プラグインシステム層
-│   │   ├── diagram.ts                # Diagramクラス（エントリポイント）
-│   │   ├── diagram_builder.ts        # Diagram構築ビルダー
-│   │   ├── plugin_manager.ts         # Plugin管理・登録
-│   │   ├── element_factory.ts        # SymbolRegistryをProxyでラップ
-│   │   ├── relationship_factory.ts   # Relationship生成
-│   │   └── hint_factory.ts           # hint.horizontal/verticalなどのDSL補助
-│   │
-│   ├── model/                        # モデル層（UML構造定義）
-│   │   ├── symbol_base.ts            # Symbol基底クラス
-│   │   ├── symbol_registry.ts        # Symbol型の登録・生成
-│   │   ├── relationship_registry.ts  # Relationship型の登録・生成
-│   │   └── types.ts                  # 共通型定義（座標・サイズ・IDなど）
-│   │
-│   ├── layout/                       # レイアウト層（Cassowary等）
-│   │   └── layout_solver.ts          # Cassowary制約ソルバーラッパ
-│   │
-│   ├── render/                       # レンダリング層（SVGなど）
-│   │   └── svg_renderer.ts           # SVG出力メインレンダラー
-│   │
-│   ├── core/                         # 共通インフラ・ユーティリティ
-│   │   ├── layout_engine.ts          # レイアウト計算メインエンジン
-│   │   └── theme.ts                  # テーマ定義（色・線幅などのスタイル）
-│   │
-│   ├── plugin/                       # 組み込み・外部プラグイン郡
-│   │   ├── core/                     # コア図形プラグイン
-│   │   │   ├── index.ts              # CorePlugin定義
-│   │   │   └── symbols/              # 基本図形シンボル群
+│   ├── core/                      # 制約計算の基盤（テーマやエンジン）
+│   │   ├── layout_engine.ts
+│   │   └── theme.ts
+│   ├── dsl/                       # TypeDiagram / ヒント / プラグインIF
+│   │   ├── diagram_builder.ts
+│   │   ├── diagram_plugin.ts
+│   │   ├── hint_factory.ts
+│   │   ├── id_generator.ts
+│   │   ├── namespace_builder.ts
+│   │   └── namespace_types.ts
+│   ├── layout/                    # Cassowary 連携
+│   │   ├── layout_solver.ts
+│   │   └── layout_variable_context.ts
+│   ├── model/                     # Symbol / Relationship の共通クラス
+│   │   ├── diagram_info.ts
+│   │   ├── diagram_symbol.ts
+│   │   ├── relationship_base.ts
+│   │   ├── symbol_base.ts
+│   │   └── types.ts
+│   ├── plugin/
+│   │   ├── core/
+│   │   │   ├── plugin.ts
+│   │   │   └── symbols/
 │   │   │       ├── circle_symbol.ts
 │   │   │       ├── ellipse_symbol.ts
 │   │   │       ├── rectangle_symbol.ts
-│   │   │       └── rounded_rectangle_symbol.ts
-│   │   │
-│   │   └── uml/                      # UMLプラグイン
-│   │       ├── index.ts              # UMLPlugin定義
-│   │       ├── symbols/              # UMLシンボル群
-│   │       │   ├── actor_symbol.ts
-│   │       │   ├── usecase_symbol.ts
-│   │       │   └── system_boundary_symbol.ts
-│   │       └── relationships/        # UML関係線群
-│   │           └── association.ts
-│   │
-│   ├── utils/                        # ユーティリティ（現在空）
-│   └── index.ts                      # エントリポイント (各種エクスポート)
+│   │   │       ├── rounded_rectangle_symbol.ts
+│   │   │       └── text_symbol.ts
+│   │   └── uml/
+│   │       ├── plugin.ts
+│   │       ├── relationships/
+│   │       │   ├── association.ts
+│   │       │   ├── extend.ts
+│   │       │   ├── generalize.ts
+│   │       │   └── include.ts
+│   │       └── symbols/
+│   │           ├── actor_symbol.ts
+│   │           ├── system_boundary_symbol.ts
+│   │           └── usecase_symbol.ts
+│   ├── render/
+│   │   └── svg_renderer.ts
+│   ├── utils/
+│   │   └── path_helper.ts
+│   └── index.ts                   # ライブラリの公開エントリポイント
 │
-├── example/                          # 各種実行例
-│   ├── first_milestone.ts            # 基本のユースケース図
-│   ├── actor_simple.ts               # シンプルなアクター図
-│   ├── usecase_with_actor.ts         # アクター付きユースケース図
-│   ├── system_boundary_*.ts          # SystemBoundary各種例
-│   ├── theme_example.ts              # テーマシステム利用例
-│   ├── basic_shapes.ts               # 基本図形利用例
-│   └── *.svg                         # 各tsファイルの出力SVG
+├── example/                       # CLI から動かせるサンプル
+│   ├── core_text_poc.ts
+│   ├── diagram_info_full.ts
+│   ├── first_milestone.ts
+│   ├── system_boundary_complex.ts
+│   ├── uml-relations.ts
+│   └── usecase_with_actor_dark.ts
 │
-├── tests/                            # テストファイル群
-│   ├── diagram_builder.test.ts
+├── tests/                         # Bun test
 │   ├── layout_solver.test.ts
-│   └── theme.test.ts
+│   ├── namespace_dsl.test.ts
+│   └── ...
+├── tsd/                           # 型テスト (`bun run test:types`)
 │
-├── index.ts                          # プロジェクトルートのエントリポイント
+├── docs/
+│   ├── design/
+│   │   ├── git-workflow.md
+│   │   ├── layout-system.md
+│   │   ├── namespace-dsl.md
+│   │   └── plugin-system.md
+│   └── devlog/
+├── scripts/
 ├── package.json
 ├── tsconfig.json
-├── docs/                          # ドキュメント
-│   └── design/                    # 設計ドキュメント
-│       ├── namespace-dsl.md       # 名前空間ベースDSL設計とAPI
-│       ├── plugin-system.md       # プラグイン作成ガイド
-│       ├── layout-system.md       # レイアウトシステム設計
-│       ├── theme-system.md        # テーマシステム設計
-│       └── git-workflow.md        # Git ワークフロー
-├── GALLERY.md                     # スクリーンショット集
 └── README.md
 
 ```
@@ -339,8 +259,8 @@ bun add @lume/kiwi
 * [x] テーマシステム (default, blue, dark)
 * [x] `SystemBoundary` によるコンテナ制約 (`hint.enclose()`)
 * [x] Z-Index ベースのレンダリング（ネスト構造対応）
-* [ ] Include / Extend 関係（ユースケース図）
-* [ ] Generalization 関係（継承矢印）
+* [x] Include / Extend 関係（ユースケース図）
+* [x] Generalization 関係（継承矢印）
 * [ ] Note シンボル（注釈）
 * [ ] 矢印・関係線の自動ルーティング
 * [ ] クラス図対応（Class, Interface, Package）
