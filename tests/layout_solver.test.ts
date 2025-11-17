@@ -487,4 +487,68 @@ describe("Layout guides", () => {
 
     expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width)
   })
+
+  test("guideY follow methods cannot be chained multiple times", () => {
+    const ctx = new LayoutVariableContext()
+    const a = new ActorSymbol("follow-a", "A")
+    const b = new ActorSymbol("follow-b", "B")
+    const symbols = [a, b]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    const guide = hintFactory.createGuideY()
+    guide.followTop("follow-a")
+
+    expect(() => guide.followBottom("follow-b")).toThrowError(
+      /guide already follows another symbol/
+    )
+  })
+
+  test("guideX follow methods cannot be chained multiple times", () => {
+    const ctx = new LayoutVariableContext()
+    const a = new ActorSymbol("follow-x-a", "A")
+    const b = new ActorSymbol("follow-x-b", "B")
+    const symbols = [a, b]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    const guide = hintFactory.createGuideX()
+    guide.followLeft("follow-x-a")
+
+    expect(() => guide.followRight("follow-x-b")).toThrowError(
+      /guide already follows another symbol/
+    )
+  })
+
+  test("guideY arrange collects aligned symbols and emits arrangeHorizontal hint", () => {
+    const ctx = new LayoutVariableContext()
+    const actorA = new ActorSymbol("guide-arr-a", "A")
+    const actorB = new ActorSymbol("guide-arr-b", "B")
+    const actorC = new ActorSymbol("guide-arr-c", "C")
+    const symbols = [actorA, actorB, actorC]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    hintFactory.createGuideY().alignTop("guide-arr-a").alignBottom("guide-arr-b", "guide-arr-c").arrange()
+
+    const arrangeHint = hints[hints.length - 1]
+    expect(arrangeHint.type).toBe("arrangeHorizontal")
+    expect(arrangeHint.symbolIds).toEqual(["guide-arr-a", "guide-arr-b", "guide-arr-c"])
+  })
+
+  test("guideX arrange collects aligned symbols and emits arrangeVertical hint", () => {
+    const ctx = new LayoutVariableContext()
+    const actorA = new ActorSymbol("guide-arr-x-a", "A")
+    const actorB = new ActorSymbol("guide-arr-x-b", "B")
+    const actorC = new ActorSymbol("guide-arr-x-c", "C")
+    const symbols = [actorA, actorB, actorC]
+    const hints: LayoutHint[] = []
+    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
+
+    hintFactory.createGuideX().alignLeft("guide-arr-x-a").alignRight("guide-arr-x-b", "guide-arr-x-c").arrange()
+
+    const arrangeHint = hints[hints.length - 1]
+    expect(arrangeHint.type).toBe("arrangeVertical")
+    expect(arrangeHint.symbolIds).toEqual(["guide-arr-x-a", "guide-arr-x-b", "guide-arr-x-c"])
+  })
 })
