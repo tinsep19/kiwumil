@@ -6,15 +6,14 @@ import { RoundedRectangleSymbol } from "./symbols/rounded_rectangle_symbol"
 import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
-import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId, RelationshipId } from "../../model/types"
+import type { SymbolId } from "../../model/types"
 
 /**
  * Core Plugin (Namespace-based)
  * 
  * 基本的な図形 Symbol を提供する
  */
-export const CorePlugin: DiagramPlugin = {
+export const CorePlugin = {
   name: 'core',
   
   createSymbolFactory(userSymbols: SymbolBase[]) {
@@ -69,10 +68,5 @@ export const CorePlugin: DiagramPlugin = {
         return id
       }
     }
-  },
-  
-  createRelationshipFactory(relationships: RelationshipBase[]) {
-    // Core Plugin は Relationship を提供しない
-    return {}
   }
-}
+} as const satisfies DiagramPlugin

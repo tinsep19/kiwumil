@@ -17,7 +17,7 @@ import type { SymbolId, RelationshipId } from "../../model/types"
  * 
  * UML 図のための Symbol と Relationship を提供する
  */
-export const UMLPlugin: DiagramPlugin = {
+export const UMLPlugin = {
   name: 'uml',
   
   createSymbolFactory(userSymbols: SymbolBase[]) {
@@ -115,4 +115,4 @@ export const UMLPlugin: DiagramPlugin = {
       }
     }
   }
-}
+} as const satisfies DiagramPlugin

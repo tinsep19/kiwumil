@@ -34,7 +34,9 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     const namespace = {} as any
 
     for (const plugin of this.plugins) {
-      namespace[plugin.name] = plugin.createSymbolFactory(userSymbols)
+      if (typeof plugin.createSymbolFactory === "function") {
+        namespace[plugin.name] = plugin.createSymbolFactory(userSymbols)
+      }
     }
 
     return namespace
@@ -58,7 +60,9 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     const namespace = {} as any
 
     for (const plugin of this.plugins) {
-      namespace[plugin.name] = plugin.createRelationshipFactory(relationships)
+      if (typeof plugin.createRelationshipFactory === "function") {
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships)
+      }
     }
 
     return namespace

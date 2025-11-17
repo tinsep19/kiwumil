@@ -1,6 +1,16 @@
 // src/dsl/namespace_types.ts
 import type { DiagramPlugin } from "./diagram_plugin"
 
+type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
+  TPlugins[number],
+  { createSymbolFactory: (...args: any[]) => any }
+>
+
+type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
+  TPlugins[number],
+  { createRelationshipFactory: (...args: any[]) => any }
+>
+
 /**
  * プラグイン配列から ElementNamespace 型を生成
  * 
@@ -12,8 +22,8 @@ import type { DiagramPlugin } from "./diagram_plugin"
  * ```
  */
 export type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
-  [K in TPlugins[number]['name']]: ReturnType<
-    Extract<TPlugins[number], { name: K }>['createSymbolFactory']
+  [K in SymbolEnabledPlugins<TPlugins>['name']]: ReturnType<
+    Extract<SymbolEnabledPlugins<TPlugins>, { name: K }>['createSymbolFactory']
   >
 }
 
@@ -28,7 +38,7 @@ export type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
  * ```
  */
 export type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]> = {
-  [K in TPlugins[number]['name']]: ReturnType<
-    Extract<TPlugins[number], { name: K }>['createRelationshipFactory']
+  [K in RelationshipEnabledPlugins<TPlugins>['name']]: ReturnType<
+    Extract<RelationshipEnabledPlugins<TPlugins>, { name: K }>['createRelationshipFactory']
   >
 }

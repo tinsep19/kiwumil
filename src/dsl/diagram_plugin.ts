@@ -20,7 +20,7 @@ export interface DiagramPlugin {
    * @param userSymbols - 生成した Symbol を登録する配列
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
-  createSymbolFactory(
+  createSymbolFactory?(
     userSymbols: SymbolBase[]
   ): Record<string, (...args: any[]) => SymbolId>
 
@@ -30,7 +30,7 @@ export interface DiagramPlugin {
    * @param relationships - 生成した Relationship を登録する配列
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
-  createRelationshipFactory(
+  createRelationshipFactory?(
     relationships: RelationshipBase[]
   ): Record<string, (...args: any[]) => RelationshipId>
 }

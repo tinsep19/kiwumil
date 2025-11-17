@@ -190,6 +190,6 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   .render("output.svg")
  * ```
  */
-export function TypedDiagram(titleOrInfo: string | DiagramInfo) {
+export function TypedDiagram(titleOrInfo: string | DiagramInfo): DiagramBuilder<[typeof CorePlugin]> {
   return new DiagramBuilder(titleOrInfo).use(CorePlugin)
 }
