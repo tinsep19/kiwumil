@@ -21,10 +21,11 @@
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun --minify && tsc --emitDeclarationOnly --outDir dist",
     "prepublishOnly": "bun run build",
+    "postinstall": "node scripts/patch-scope-manager.mjs",
     "test": "bun test && bun run test:types",
     "test:types": "tsc --emitDeclarationOnly --outDir dist && tsd --tsconfig tsconfig.tsd.json --files \"tsd/**/*.test-d.ts\"",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "npx --no-install eslint . --ext .ts",
+    "lint:fix": "npx --no-install eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
   },

@@ -31,7 +31,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildElementNamespace(
     userSymbols: SymbolBase[]
   ): BuildElementNamespace<TPlugins> {
-    const namespace = {} as any
+    const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createSymbolFactory === "function") {
@@ -39,7 +39,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
       }
     }
 
-    return namespace
+    return namespace as BuildElementNamespace<TPlugins>
   }
 
   /**
@@ -57,7 +57,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildRelationshipNamespace(
     relationships: RelationshipBase[]
   ): BuildRelationshipNamespace<TPlugins> {
-    const namespace = {} as any
+    const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createRelationshipFactory === "function") {
@@ -65,6 +65,6 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
       }
     }
 
-    return namespace
+    return namespace as BuildRelationshipNamespace<TPlugins>
   }
 }

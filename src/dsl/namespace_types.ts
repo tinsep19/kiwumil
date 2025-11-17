@@ -3,12 +3,12 @@ import type { DiagramPlugin } from "./diagram_plugin"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createSymbolFactory: (...args: any[]) => any }
+  { createSymbolFactory: (...args: unknown[]) => unknown }
 >
 
 type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createRelationshipFactory: (...args: any[]) => any }
+  { createRelationshipFactory: (...args: unknown[]) => unknown }
 >
 
 /**
