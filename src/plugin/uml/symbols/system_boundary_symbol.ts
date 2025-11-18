@@ -1,14 +1,41 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
-import { SymbolBase } from "../../../model/symbol_base"
+import { ContainerSymbolBase, type ContainerPadding } from "../../../model/container_symbol_base"
 import { getStyleForSymbol } from "../../../core/theme"
-import type { Point } from "../../../model/types"
+import type { Point, ContainerSymbolId } from "../../../model/types"
+import type { LayoutContext } from "../../../layout/layout_context"
+import type { Theme } from "../../../core/theme"
+import { applyMinSize } from "../../../layout/constraint_helpers"
 
-export class SystemBoundarySymbol extends SymbolBase {
+export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300
   defaultHeight = 200
 
+  constructor(id: ContainerSymbolId, label: string, layout: LayoutContext) {
+    super(id, label, layout)
+    this.applyMinSize()
+  }
+
   getDefaultSize() {
     return { width: this.defaultWidth, height: this.defaultHeight }
+  }
+
+  protected getContainerPadding(theme: Theme): ContainerPadding {
+    const horizontal = theme.defaultStyleSet.horizontalGap / 3
+    const vertical = theme.defaultStyleSet.verticalGap / 3
+    return {
+      top: vertical,
+      right: horizontal,
+      bottom: vertical,
+      left: horizontal
+    }
+  }
+
+  protected override getHeaderHeight(theme: Theme): number {
+    return theme.defaultStyleSet.verticalGap / 2
+  }
+
+  private applyMinSize() {
+    applyMinSize(this.layout, this, this.getDefaultSize())
   }
 
   getConnectionPoint(from: Point): Point {

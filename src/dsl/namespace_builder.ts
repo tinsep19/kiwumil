@@ -3,7 +3,7 @@ import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
-import type { LayoutVariableContext } from "../layout/layout_variable_context"
+import type { LayoutContext } from "../layout/layout_context"
 
 /**
  * Namespace Builder
@@ -31,7 +31,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    */
   buildElementNamespace(
     userSymbols: SymbolBase[],
-    layout: LayoutVariableContext
+    layout: LayoutContext
   ): BuildElementNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 
@@ -58,7 +58,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    */
   buildRelationshipNamespace(
     relationships: RelationshipBase[],
-    layout: LayoutVariableContext
+    layout: LayoutContext
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 

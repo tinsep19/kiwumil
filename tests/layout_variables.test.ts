@@ -1,8 +1,8 @@
-import { LayoutVariableContext, LayoutConstraintOperator } from "../src/layout/layout_variable_context"
+import { LayoutVariables, LayoutConstraintOperator } from "../src/layout/layout_variables"
 
-describe("LayoutVariableContext", () => {
+describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
-    const ctx = new LayoutVariableContext()
+    const ctx = new LayoutVariables()
     const x = ctx.createVar("x")
 
     ctx.addConstraint(x, LayoutConstraintOperator.Eq, 42)
@@ -12,7 +12,7 @@ describe("LayoutVariableContext", () => {
   })
 
   test("supports expressions combining variables and constants", () => {
-    const ctx = new LayoutVariableContext()
+    const ctx = new LayoutVariables()
     const a = ctx.createVar("a")
     const b = ctx.createVar("b")
 

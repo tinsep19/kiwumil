@@ -1,140 +1,73 @@
 // src/dsl/hint_factory.ts
-import type { SymbolId } from "../model/types"
+import type { ContainerSymbolId, SymbolId } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
-import type { Theme } from "../core/theme"
-import type { LayoutVariableContext, LayoutVar } from "../layout/layout_variable_context"
-import { LayoutConstraintOperator, LayoutConstraintStrength } from "../layout/layout_variable_context"
+import { LayoutConstraintOperator, LayoutConstraintStrength, type LayoutVar } from "../layout/layout_variables"
+import type { LayoutContext } from "../layout/layout_context"
+import { ContainerSymbolBase } from "../model/container_symbol_base"
 
-export interface LayoutHint {
-  type: 
-    | "horizontal"           // deprecated: use arrangeHorizontal
-    | "vertical"             // deprecated: use arrangeVertical
-    | "arrangeHorizontal"
-    | "arrangeVertical"
-    | "alignLeft"
-    | "alignRight"
-    | "alignTop"
-    | "alignBottom"
-    | "alignCenterX"
-    | "alignCenterY"
-    | "alignWidth"
-    | "alignHeight"
-    | "alignSize"
-    | "enclose"
-  symbolIds: SymbolId[]
-  gap?: number
-  containerId?: SymbolId
-  childIds?: SymbolId[]
-}
+type LayoutTargetId = SymbolId | ContainerSymbolId
 
 export class HintFactory {
-  constructor(
-    private hints: LayoutHint[],
-    private symbols: SymbolBase[],
-    private theme: Theme,
-    private layoutContext: LayoutVariableContext
-  ) {}
   private guideCounter = 0
 
-  horizontal(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "horizontal",
-      symbolIds,
-      gap: this.theme.defaultStyleSet.horizontalGap
-    })
+  constructor(
+    private readonly layout: LayoutContext,
+    private readonly symbols: SymbolBase[]
+  ) {}
+
+  horizontal(...symbolIds: LayoutTargetId[]) {
+    this.arrangeHorizontal(...symbolIds)
   }
 
-  vertical(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "vertical",
-      symbolIds,
-      gap: this.theme.defaultStyleSet.verticalGap
-    })
+  vertical(...symbolIds: LayoutTargetId[]) {
+    this.arrangeVertical(...symbolIds)
   }
 
-  // New Arrange methods
-  arrangeHorizontal(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "arrangeHorizontal",
-      symbolIds,
-      gap: this.theme.defaultStyleSet.horizontalGap
-    })
+  arrangeHorizontal(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.arrangeHorizontal(symbolIds)
   }
 
-  arrangeVertical(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "arrangeVertical",
-      symbolIds,
-      gap: this.theme.defaultStyleSet.verticalGap
-    })
+  arrangeVertical(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.arrangeVertical(symbolIds)
   }
 
-  // New Align methods
-  alignLeft(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignLeft",
-      symbolIds
-    })
+  alignLeft(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignLeft(symbolIds)
   }
 
-  alignRight(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignRight",
-      symbolIds
-    })
+  alignRight(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignRight(symbolIds)
   }
 
-  alignTop(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignTop",
-      symbolIds
-    })
+  alignTop(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignTop(symbolIds)
   }
 
-  alignBottom(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignBottom",
-      symbolIds
-    })
+  alignBottom(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignBottom(symbolIds)
   }
 
-  alignCenterX(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignCenterX",
-      symbolIds
-    })
+  alignCenterX(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignCenterX(symbolIds)
   }
 
-  alignCenterY(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignCenterY",
-      symbolIds
-    })
+  alignCenterY(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignCenterY(symbolIds)
   }
 
-  alignWidth(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignWidth",
-      symbolIds
-    })
+  alignWidth(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignWidth(symbolIds)
   }
 
-  alignHeight(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignHeight",
-      symbolIds
-    })
+  alignHeight(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignHeight(symbolIds)
   }
 
-  alignSize(...symbolIds: SymbolId[]) {
-    this.hints.push({
-      type: "alignSize",
-      symbolIds
-    })
+  alignSize(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.alignSize(symbolIds)
   }
 
-  enclose(containerId: SymbolId, childIds: SymbolId[]) {
-    // Set nestLevel for children
+  enclose(containerId: ContainerSymbolId, childIds: LayoutTargetId[]) {
     const container = this.symbols.find(s => s.id === containerId)
     if (container) {
       const containerNestLevel = container.nestLevel
@@ -143,24 +76,20 @@ export class HintFactory {
         if (child) {
           child.nestLevel = containerNestLevel + 1
           child.containerId = containerId
+          if (container instanceof ContainerSymbolBase) {
+            container.registerChild(childId)
+          }
         }
       }
     }
 
-    this.hints.push({
-      type: "enclose",
-      symbolIds: [],
-      containerId,
-      childIds
-    })
+    this.layout.constraints.enclose(containerId, childIds)
   }
 
   createGuideX(value?: number) {
     return new GuideBuilderX(
-      this.layoutContext,
-      this.hints,
-      this.theme,
-      (id: SymbolId) => this.findSymbolById(id),
+      this.layout,
+      (id: LayoutTargetId) => this.findSymbolById(id),
       `guideX-${this.guideCounter++}`,
       value
     )
@@ -168,46 +97,42 @@ export class HintFactory {
 
   createGuideY(value?: number) {
     return new GuideBuilderY(
-      this.layoutContext,
-      this.hints,
-      this.theme,
-      (id: SymbolId) => this.findSymbolById(id),
+      this.layout,
+      (id: LayoutTargetId) => this.findSymbolById(id),
       `guideY-${this.guideCounter++}`,
       value
     )
   }
 
-  private findSymbolById(id: SymbolId) {
+  private findSymbolById(id: LayoutTargetId) {
     return this.symbols.find(s => s.id === id)
   }
 }
 
 export class GuideBuilderX {
   readonly x: LayoutVar
-  private readonly alignedSymbols = new Set<SymbolId>()
+  private readonly alignedSymbols = new Set<LayoutTargetId>()
   private hasFollowConstraint = false
 
   constructor(
-    private readonly ctx: LayoutVariableContext,
-    private readonly hints: LayoutHint[],
-    private readonly theme: Theme,
-    private readonly resolveSymbol: (id: SymbolId) => SymbolBase | undefined,
+    private readonly layout: LayoutContext,
+    private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
     variableName: string,
     initialValue?: number
   ) {
-    this.x = this.ctx.createVar(variableName)
+    this.x = this.layout.vars.createVar(variableName)
     if (typeof initialValue === "number") {
-      this.ctx.addConstraint(this.x, LayoutConstraintOperator.Eq, initialValue)
+      this.layout.vars.addConstraint(this.x, LayoutConstraintOperator.Eq, initialValue)
     }
   }
 
-  alignLeft(...symbolIds: SymbolId[]) {
+  alignLeft(...symbolIds: LayoutTargetId[]) {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(
+      const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+      this.layout.vars.addConstraint(
         bounds.x,
         LayoutConstraintOperator.Eq,
         this.x,
@@ -217,14 +142,14 @@ export class GuideBuilderX {
     return this
   }
 
-  alignRight(...symbolIds: SymbolId[]) {
+  alignRight(...symbolIds: LayoutTargetId[]) {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(
-        this.ctx.expression([
+      const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+      this.layout.vars.addConstraint(
+        this.layout.vars.expression([
           { variable: bounds.x },
           { variable: bounds.width }
         ]),
@@ -236,14 +161,14 @@ export class GuideBuilderX {
     return this
   }
 
-  alignCenter(...symbolIds: SymbolId[]) {
+  alignCenter(...symbolIds: LayoutTargetId[]) {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(
-        this.ctx.expression([
+      const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+      this.layout.vars.addConstraint(
+        this.layout.vars.expression([
           { variable: bounds.x },
           { variable: bounds.width, coefficient: 0.5 }
         ]),
@@ -255,12 +180,12 @@ export class GuideBuilderX {
     return this
   }
 
-  followLeft(symbolId: SymbolId) {
+  followLeft(symbolId: LayoutTargetId) {
     this.ensureFollowAvailable("followLeft")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+    this.layout.vars.addConstraint(
       this.x,
       LayoutConstraintOperator.Eq,
       bounds.x,
@@ -269,15 +194,15 @@ export class GuideBuilderX {
     return this
   }
 
-  followRight(symbolId: SymbolId) {
+  followRight(symbolId: LayoutTargetId) {
     this.ensureFollowAvailable("followRight")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+    this.layout.vars.addConstraint(
       this.x,
       LayoutConstraintOperator.Eq,
-      this.ctx.expression([
+      this.layout.vars.expression([
         { variable: bounds.x },
         { variable: bounds.width }
       ]),
@@ -286,15 +211,15 @@ export class GuideBuilderX {
     return this
   }
 
-  followCenter(symbolId: SymbolId) {
+  followCenter(symbolId: LayoutTargetId) {
     this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+    this.layout.vars.addConstraint(
       this.x,
       LayoutConstraintOperator.Eq,
-      this.ctx.expression([
+      this.layout.vars.expression([
         { variable: bounds.x },
         { variable: bounds.width, coefficient: 0.5 }
       ]),
@@ -305,15 +230,14 @@ export class GuideBuilderX {
 
   arrange(gap?: number) {
     if (this.alignedSymbols.size === 0) return this
-    this.hints.push({
-      type: "arrangeVertical",
-      symbolIds: Array.from(this.alignedSymbols),
-      gap: gap ?? this.theme.defaultStyleSet.verticalGap
-    })
+    this.layout.constraints.arrangeVertical(
+      Array.from(this.alignedSymbols),
+      gap ?? this.layout.theme.defaultStyleSet.verticalGap
+    )
     return this
   }
 
-  private collect(symbolIds: SymbolId[]) {
+  private collect(symbolIds: LayoutTargetId[]) {
     for (const id of symbolIds) {
       this.alignedSymbols.add(id)
     }
@@ -331,30 +255,28 @@ export class GuideBuilderX {
 
 export class GuideBuilderY {
   readonly y: LayoutVar
-  private readonly alignedSymbols = new Set<SymbolId>()
+  private readonly alignedSymbols = new Set<LayoutTargetId>()
   private hasFollowConstraint = false
 
   constructor(
-    private readonly ctx: LayoutVariableContext,
-    private readonly hints: LayoutHint[],
-    private readonly theme: Theme,
-    private readonly resolveSymbol: (id: SymbolId) => SymbolBase | undefined,
+    private readonly layout: LayoutContext,
+    private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
     variableName: string,
     initialValue?: number
   ) {
-    this.y = this.ctx.createVar(variableName)
+    this.y = this.layout.vars.createVar(variableName)
     if (typeof initialValue === "number") {
-      this.ctx.addConstraint(this.y, LayoutConstraintOperator.Eq, initialValue)
+      this.layout.vars.addConstraint(this.y, LayoutConstraintOperator.Eq, initialValue)
     }
   }
 
-  alignTop(...symbolIds: SymbolId[]) {
+  alignTop(...symbolIds: LayoutTargetId[]) {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(
+      const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+      this.layout.vars.addConstraint(
         bounds.y,
         LayoutConstraintOperator.Eq,
         this.y,
@@ -364,14 +286,14 @@ export class GuideBuilderY {
     return this
   }
 
-  alignBottom(...symbolIds: SymbolId[]) {
+  alignBottom(...symbolIds: LayoutTargetId[]) {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(
-        this.ctx.expression([
+      const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+      this.layout.vars.addConstraint(
+        this.layout.vars.expression([
           { variable: bounds.y },
           { variable: bounds.height }
         ]),
@@ -383,14 +305,14 @@ export class GuideBuilderY {
     return this
   }
 
-  alignCenter(...symbolIds: SymbolId[]) {
+  alignCenter(...symbolIds: LayoutTargetId[]) {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.ensureLayoutBounds(this.ctx)
-      this.ctx.addConstraint(
-        this.ctx.expression([
+      const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+      this.layout.vars.addConstraint(
+        this.layout.vars.expression([
           { variable: bounds.y },
           { variable: bounds.height, coefficient: 0.5 }
         ]),
@@ -402,12 +324,12 @@ export class GuideBuilderY {
     return this
   }
 
-  followTop(symbolId: SymbolId) {
+  followTop(symbolId: LayoutTargetId) {
     this.ensureFollowAvailable("followTop")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+    this.layout.vars.addConstraint(
       this.y,
       LayoutConstraintOperator.Eq,
       bounds.y,
@@ -416,15 +338,15 @@ export class GuideBuilderY {
     return this
   }
 
-  followBottom(symbolId: SymbolId) {
+  followBottom(symbolId: LayoutTargetId) {
     this.ensureFollowAvailable("followBottom")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+    this.layout.vars.addConstraint(
       this.y,
       LayoutConstraintOperator.Eq,
-      this.ctx.expression([
+      this.layout.vars.expression([
         { variable: bounds.y },
         { variable: bounds.height }
       ]),
@@ -433,15 +355,15 @@ export class GuideBuilderY {
     return this
   }
 
-  followCenter(symbolId: SymbolId) {
+  followCenter(symbolId: LayoutTargetId) {
     this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.ensureLayoutBounds(this.ctx)
-    this.ctx.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
+    this.layout.vars.addConstraint(
       this.y,
       LayoutConstraintOperator.Eq,
-      this.ctx.expression([
+      this.layout.vars.expression([
         { variable: bounds.y },
         { variable: bounds.height, coefficient: 0.5 }
       ]),
@@ -452,15 +374,14 @@ export class GuideBuilderY {
 
   arrange(gap?: number) {
     if (this.alignedSymbols.size === 0) return this
-    this.hints.push({
-      type: "arrangeHorizontal",
-      symbolIds: Array.from(this.alignedSymbols),
-      gap: gap ?? this.theme.defaultStyleSet.horizontalGap
-    })
+    this.layout.constraints.arrangeHorizontal(
+      Array.from(this.alignedSymbols),
+      gap ?? this.layout.theme.defaultStyleSet.horizontalGap
+    )
     return this
   }
 
-  private collect(symbolIds: SymbolId[]) {
+  private collect(symbolIds: LayoutTargetId[]) {
     for (const id of symbolIds) {
       this.alignedSymbols.add(id)
     }

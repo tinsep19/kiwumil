@@ -9,7 +9,8 @@ import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { SymbolId } from "../../model/types"
-import type { LayoutVariableContext } from "../../layout/layout_variable_context"
+import type { LayoutContext } from "../../layout/layout_context"
+import { applyFixedSize } from "../../layout/constraint_helpers"
 
 /**
  * Core Plugin (Namespace-based)
@@ -19,7 +20,7 @@ import type { LayoutVariableContext } from "../../layout/layout_variable_context
 export const CorePlugin = {
   name: 'core',
   
-  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutContext) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -30,7 +31,8 @@ export const CorePlugin = {
        */
       circle(label: string): SymbolId {
         const id = idGen.generateSymbolId('circle')
-        const symbol = new CircleSymbol(id, label, layout)
+        const symbol = new CircleSymbol(id, label, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -42,7 +44,8 @@ export const CorePlugin = {
        */
       ellipse(label: string): SymbolId {
         const id = idGen.generateSymbolId('ellipse')
-        const symbol = new EllipseSymbol(id, label, layout)
+        const symbol = new EllipseSymbol(id, label, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -54,7 +57,8 @@ export const CorePlugin = {
        */
       rectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('rectangle')
-        const symbol = new RectangleSymbol(id, label, layout)
+        const symbol = new RectangleSymbol(id, label, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -66,7 +70,8 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string): SymbolId {
         const id = idGen.generateSymbolId('roundedRectangle')
-        const symbol = new RoundedRectangleSymbol(id, label, layout)
+        const symbol = new RoundedRectangleSymbol(id, label, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -77,7 +82,8 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
         const id = idGen.generateSymbolId('text')
-        const symbol = new TextSymbol(id, labelOrInfo, layout)
+        const symbol = new TextSymbol(id, labelOrInfo, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       }

@@ -11,7 +11,8 @@ export type { DiagramPlugin } from "./dsl/diagram_plugin"
 export type { DiagramInfo } from "./model/diagram_info"
 export type { Theme } from "./core/theme"
 export type { SymbolBase } from "./model/symbol_base"
-export type { SymbolId, RelationshipId } from "./model/types"
+export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model/types"
+export { toContainerSymbolId } from "./model/types"
 
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./core/theme"

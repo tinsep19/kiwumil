@@ -4,7 +4,8 @@ import {
   UMLPlugin,
   type DiagramPlugin,
   type SymbolId,
-  type RelationshipId
+  type RelationshipId,
+  type ContainerSymbolId
 } from "../dist"
 
 const CustomPlugin = {
@@ -57,6 +58,8 @@ TypeDiagram("UML Plugin")
 
     const user = el.uml.actor("User")
     expectType<SymbolId>(user)
+    const boundary = el.uml.systemBoundary("System")
+    expectType<ContainerSymbolId>(boundary)
 
     const _relUml = rel.uml
     expectAssignable<object>(_relUml)

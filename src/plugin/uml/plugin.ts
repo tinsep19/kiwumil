@@ -10,8 +10,10 @@ import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId, RelationshipId } from "../../model/types"
-import type { LayoutVariableContext } from "../../layout/layout_variable_context"
+import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
+import { toContainerSymbolId } from "../../model/types"
+import type { LayoutContext } from "../../layout/layout_context"
+import { applyFixedSize } from "../../layout/constraint_helpers"
 
 /**
  * UML Plugin (Namespace-based)
@@ -21,7 +23,7 @@ import type { LayoutVariableContext } from "../../layout/layout_variable_context
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
+  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutContext) {
     const idGen = createIdGenerator(this.name)
     
     return {
@@ -32,7 +34,8 @@ export const UMLPlugin = {
        */
       actor(label: string): SymbolId {
         const id = idGen.generateSymbolId('actor')
-        const symbol = new ActorSymbol(id, label, layout)
+        const symbol = new ActorSymbol(id, label, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -44,7 +47,8 @@ export const UMLPlugin = {
        */
       usecase(label: string): SymbolId {
         const id = idGen.generateSymbolId('usecase')
-        const symbol = new UsecaseSymbol(id, label, layout)
+        const symbol = new UsecaseSymbol(id, label, layout.vars)
+        applyFixedSize(layout, symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -54,8 +58,8 @@ export const UMLPlugin = {
        * @param label - System Boundary のラベル
        * @returns 生成された SymbolId
        */
-      systemBoundary(label: string): SymbolId {
-        const id = idGen.generateSymbolId('systemBoundary')
+      systemBoundary(label: string): ContainerSymbolId {
+        const id = toContainerSymbolId(idGen.generateSymbolId('systemBoundary'))
         const symbol = new SystemBoundarySymbol(id, label, layout)
         userSymbols.push(symbol)
         return id
@@ -63,7 +67,7 @@ export const UMLPlugin = {
     }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[], _layout: LayoutVariableContext) {
+  createRelationshipFactory(relationships: RelationshipBase[], _layout: LayoutContext) {
     const idGen = createIdGenerator(this.name)
     
     return {

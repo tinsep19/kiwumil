@@ -1,7 +1,7 @@
 // src/model/symbol_base.ts
 import type { SymbolId, Bounds, Point } from "./types"
 import type { Theme } from "../core/theme"
-import type { LayoutVar, LayoutVariableContext } from "../layout/layout_variable_context"
+import type { LayoutVar, LayoutVariables } from "../layout/layout_variables"
 
 export interface LayoutBounds {
   x: LayoutVar
@@ -18,9 +18,9 @@ export abstract class SymbolBase {
   nestLevel: number = 0
   containerId?: SymbolId
   protected layoutBounds?: LayoutBounds
-  protected layoutContext?: LayoutVariableContext
+  protected layoutContext?: LayoutVariables
 
-  constructor(id: SymbolId, label: string, layoutContext?: LayoutVariableContext) {
+  constructor(id: SymbolId, label: string, layoutContext?: LayoutVariables) {
     this.id = id
     this.label = label
     if (layoutContext) {
@@ -38,7 +38,7 @@ export abstract class SymbolBase {
 
   abstract getConnectionPoint(from: Point): Point
 
-  protected attachLayoutContext(ctx: LayoutVariableContext) {
+  protected attachLayoutContext(ctx: LayoutVariables) {
     if (this.layoutBounds) {
       return
     }
@@ -58,7 +58,7 @@ export abstract class SymbolBase {
     return this.layoutBounds!
   }
 
-  ensureLayoutBounds(ctx: LayoutVariableContext): LayoutBounds {
+  ensureLayoutBounds(ctx: LayoutVariables): LayoutBounds {
     if (!this.layoutBounds) {
       this.attachLayoutContext(ctx)
     }
