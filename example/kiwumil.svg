@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="940" 
-     height="190" 
-     viewBox="0 0 940 190">
+     width="980" 
+     height="220" 
+     viewBox="0 0 980 220">
   <rect width="100%" height="100%" fill="white"/>
   
       <g id="__diagram__">
         <!-- Title -->
-        <text x="470" y="30" 
+        <text x="490" y="30" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
@@ -21,13 +21,13 @@
 
       <g id="core:circle-0">
         <!-- Circle -->
-        <circle cx="50" cy="80" r="30" 
+        <circle cx="70" cy="105" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="50" y="85" 
+        <text x="70" y="110" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -39,13 +39,13 @@
 
       <g id="core:circle-1">
         <!-- Circle -->
-        <circle cx="190" cy="80" r="30" 
+        <circle cx="210" cy="105" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="190" y="85" 
+        <text x="210" y="110" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -57,13 +57,13 @@
 
       <g id="core:circle-2">
         <!-- Circle -->
-        <circle cx="330" cy="80" r="30" 
+        <circle cx="350" cy="105" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="330" y="85" 
+        <text x="350" y="110" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -75,13 +75,13 @@
 
       <g id="core:circle-3">
         <!-- Circle -->
-        <circle cx="470" cy="140" r="30" 
+        <circle cx="490" cy="165" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="470" y="145" 
+        <text x="490" y="170" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -93,13 +93,13 @@
 
       <g id="core:circle-4">
         <!-- Circle -->
-        <circle cx="610" cy="140" r="30" 
+        <circle cx="630" cy="165" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="610" y="145" 
+        <text x="630" y="170" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -111,13 +111,13 @@
 
       <g id="core:circle-5">
         <!-- Circle -->
-        <circle cx="750" cy="80" r="30" 
+        <circle cx="770" cy="105" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="750" y="85" 
+        <text x="770" y="110" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -129,13 +129,13 @@
 
       <g id="core:circle-6">
         <!-- Circle -->
-        <circle cx="890" cy="140" r="30" 
+        <circle cx="910" cy="165" r="30" 
                 fill="white" 
                 stroke="black" 
                 stroke-width="2"/>
         
         <!-- Label -->
-        <text x="890" y="145" 
+        <text x="910" y="170" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"

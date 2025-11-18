@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="460" 
-     height="340" 
-     viewBox="0 0 460 340">
+     width="400" 
+     height="270" 
+     viewBox="0 0 400 270">
   <rect width="100%" height="100%" fill="white"/>
   
       <g>
-        <line x1="130" y1="160" x2="130" y2="210"
+        <line x1="100" y1="135" x2="100" y2="185"
               stroke="black" stroke-width="2"
               stroke-dasharray="5,5"/>
-        <line x1="130" y1="210" x2="125" y2="201.3397459621556"
+        <line x1="100" y1="185" x2="95" y2="176.3397459621556"
               stroke="black" stroke-width="2"/>
-        <line x1="130" y1="210" x2="135" y2="201.3397459621556"
+        <line x1="100" y1="185" x2="105" y2="176.3397459621556"
               stroke="black" stroke-width="2"/>
-        <text x="130" y="180" 
+        <text x="100" y="155" 
               font-size="12" 
               fill="black"
               text-anchor="middle">«include»</text>
@@ -21,14 +21,14 @@
     
 
       <g>
-        <line x1="182.5729545205988" y1="225.5424375068353" x2="277.42704547940116" y2="144.4575624931647"
+        <line x1="152.5729545205988" y1="200.5424375068353" x2="247.4270454794012" y2="119.45756249316469"
               stroke="black" stroke-width="2"
               stroke-dasharray="5,5"/>
-        <line x1="277.42704547940116" y1="144.4575624931647" x2="274.09310305077486" y2="153.8854375391443"
+        <line x1="247.4270454794012" y1="119.45756249316469" x2="244.09310305077489" y2="128.8854375391443"
               stroke="black" stroke-width="2"/>
-        <line x1="277.42704547940116" y1="144.4575624931647" x2="267.5952949715643" y2="146.28422117820932"
+        <line x1="247.4270454794012" y1="119.45756249316469" x2="237.5952949715643" y2="121.28422117820932"
               stroke="black" stroke-width="2"/>
-        <text x="230" y="180" 
+        <text x="200" y="155" 
               font-size="12" 
               fill="black"
               text-anchor="middle">«extend»</text>
@@ -36,16 +36,16 @@
     
 
       <g>
-        <line x1="270" y1="130" x2="190" y2="130"
+        <line x1="240" y1="105" x2="160" y2="105"
               stroke="black" stroke-width="2"/>
-        <polygon points="190,130 200.39230484541326,124 200.39230484541326,136"
+        <polygon points="160,105 170.39230484541326,99 170.39230484541326,111"
                  fill="white" stroke="black" stroke-width="2"/>
       </g>
     
 
       <g id="__diagram__">
         <!-- Title -->
-        <text x="230" y="80" 
+        <text x="200" y="30" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
@@ -59,11 +59,11 @@
 
       <g id="uml:usecase-0">
         <!-- Ellipse -->
-        <ellipse cx="130" cy="130" rx="60" ry="30" 
+        <ellipse cx="100" cy="105" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="135" 
+        <text x="100" y="110" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           UseCase A
@@ -73,11 +73,11 @@
 
       <g id="uml:usecase-1">
         <!-- Ellipse -->
-        <ellipse cx="130" cy="240" rx="60" ry="30" 
+        <ellipse cx="100" cy="215" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="245" 
+        <text x="100" y="220" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           UseCase B
@@ -87,11 +87,11 @@
 
       <g id="uml:usecase-2">
         <!-- Ellipse -->
-        <ellipse cx="330" cy="130" rx="60" ry="30" 
+        <ellipse cx="300" cy="105" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="330" y="135" 
+        <text x="300" y="110" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           UseCase C
