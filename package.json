@@ -18,6 +18,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "bump": "bun --print \"const pkg = await Bun.file('package.json').json(); pkg.version = pkg.version.split('.').map((v, i) => i === 2 ? +v + 1 : v).join('.'); await Bun.write('package.json', JSON.stringify(pkg, null, 2)); export default pkg.version\"",
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun --minify && tsc --emitDeclarationOnly --outDir dist",
     "prepublishOnly": "bun run build",
