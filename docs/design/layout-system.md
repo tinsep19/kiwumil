@@ -1516,6 +1516,7 @@ layoutContext.constraints.remove("constraints/user/0")
 - ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
 - ✅ **ContainerSymbolBase**: コンテナの共通基底クラス
 - ✅ **Guide API**: 水平・垂直ガイドラインによる配置
+- ✅ **派生変数**: right/bottom/centerX/centerY の自動計算
 
 ### 今後の拡張
 
@@ -1524,3 +1525,369 @@ layoutContext.constraints.remove("constraints/user/0")
 - [ ] Distribute（等間隔配置）
 - [ ] Flexbox風レイアウト
 - [ ] 制約の動的削除・更新
+
+---
+
+## Guide API - ガイドラインによる配置
+
+### 概要
+
+Guide API は、水平・垂直の「ガイドライン」を定義し、複数のシンボルを共通の位置に配置する機能です。
+Adobe Illustrator や Figma のガイドラインに相当します。
+
+**設計思想:**
+- ガイドラインは `LayoutVar`（制約変数）として表現
+- シンボルを「ガイドに揃える」「ガイドに追従する」制約を追加
+- Fluent API でメソッドチェーン可能
+
+### 基本的な使い方
+
+#### 1. 垂直ガイド（X軸）
+
+```typescript
+// 垂直ガイドを作成（X座標を共有）
+const guide = hint.createGuideX(100)
+
+// シンボルの左端をガイドに揃える
+guide.alignLeft(a, b, c)
+
+// 結果:
+// a, b, c の左端が X=100 に揃う
+```
+
+#### 2. 水平ガイド（Y軸）
+
+```typescript
+// 水平ガイドを作成（Y座標を共有）
+const guide = hint.createGuideY(200)
+
+// シンボルの上端をガイドに揃える
+guide.alignTop(a, b, c)
+
+// 結果:
+// a, b, c の上端が Y=200 に揃う
+```
+
+#### 3. シンボルからガイドを作成
+
+```typescript
+// シンボルの右端を基準にガイドを作成
+const guide = hint.createGuideX(a, "right")
+
+// 他のシンボルをガイドに揃える
+guide.alignLeft(b, c)
+
+// 結果:
+// b, c の左端が a の右端に揃う
+```
+
+### GuideBuilderX のメソッド
+
+垂直ガイド（X軸）用のビルダー。
+
+| メソッド | 説明 | 制約 |
+|---------|------|------|
+| `alignLeft(...symbols)` | 左端を揃える | `symbol.x = guide.x` |
+| `alignRight(...symbols)` | 右端を揃える | `symbol.right = guide.x` |
+| `alignCenter(...symbols)` | X軸中央を揃える | `symbol.centerX = guide.x` |
+| `followLeft(symbol)` | 左端に追従 | `guide.x = symbol.x` |
+| `followRight(symbol)` | 右端に追従 | `guide.x = symbol.right` |
+| `followCenter(symbol)` | X軸中央に追従 | `guide.x = symbol.centerX` |
+| `arrange(gap?)` | 揃えたシンボルを縦に並べる | `arrangeVertical` |
+
+**例:**
+
+```typescript
+const guide = hint.createGuideX(100)
+guide
+  .alignCenter(a, b, c)  // X軸中央を揃える
+  .arrange(10)           // 縦に10px間隔で並べる
+
+// 結果:
+//    a
+//    b  ← X軸中央が揃っている
+//    c
+```
+
+### GuideBuilderY のメソッド
+
+水平ガイド（Y軸）用のビルダー。
+
+| メソッド | 説明 | 制約 |
+|---------|------|------|
+| `alignTop(...symbols)` | 上端を揃える | `symbol.y = guide.y` |
+| `alignBottom(...symbols)` | 下端を揃える | `symbol.bottom = guide.y` |
+| `alignCenter(...symbols)` | Y軸中央を揃える | `symbol.centerY = guide.y` |
+| `followTop(symbol)` | 上端に追従 | `guide.y = symbol.y` |
+| `followBottom(symbol)` | 下端に追従 | `guide.y = symbol.bottom` |
+| `followCenter(symbol)` | Y軸中央に追従 | `guide.y = symbol.centerY` |
+| `arrange(gap?)` | 揃えたシンボルを横に並べる | `arrangeHorizontal` |
+
+**例:**
+
+```typescript
+const guide = hint.createGuideY(200)
+guide
+  .alignCenter(a, b, c)  // Y軸中央を揃える
+  .arrange(20)           // 横に20px間隔で並べる
+
+// 結果:
+// a  b  c  ← Y軸中央が揃っている
+```
+
+### Follow系メソッドの使い方
+
+`follow*` は、ガイドをシンボルの位置に追従させます。
+
+**align vs follow:**
+
+```typescript
+// align: ガイドの位置にシンボルを揃える
+guide.alignLeft(a, b)  // a.x = guide.x, b.x = guide.x
+
+// follow: シンボルの位置にガイドを追従
+guide.followRight(a)   // guide.x = a.right
+```
+
+**実用例（相対配置）:**
+
+```typescript
+// a の右端から 10px 離れた位置にガイドを作成
+const guide = hint.createGuideX()
+guide.followRight(a)
+
+// b をガイドに揃える（= a の右端に揃える）
+guide.alignLeft(b)
+
+// a と b の間に gap を追加
+// （別の制約で gap を指定）
+```
+
+### 応用例
+
+#### 例1: 複雑な整列
+
+```typescript
+// 中央揃えのガイドライン
+const centerX = hint.createGuideX().followCenter(container)
+const centerY = hint.createGuideY().followCenter(container)
+
+// タイトルを中央上部に配置
+centerX.alignCenter(title)
+hint.createGuideY(50).alignTop(title)
+
+// コンテンツを中央に配置
+centerX.alignCenter(content)
+centerY.alignCenter(content)
+
+// 結果:
+// ┌─────────────┐
+// │    title    │  ← X軸中央、Y=50
+// │             │
+// │   content   │  ← XY両方中央
+// │             │
+// └─────────────┘
+```
+
+#### 例2: マルチカラムレイアウト
+
+```typescript
+// 3つのカラムガイドを作成
+const col1 = hint.createGuideX(100)
+const col2 = hint.createGuideX(250)
+const col3 = hint.createGuideX(400)
+
+// 各カラムにシンボルを配置
+col1.alignLeft(a1, a2, a3).arrange(10)
+col2.alignLeft(b1, b2, b3).arrange(10)
+col3.alignLeft(c1, c2, c3).arrange(10)
+
+// 結果:
+// a1  b1  c1
+// a2  b2  c2
+// a3  b3  c3
+```
+
+#### 例3: ベースライン揃え
+
+```typescript
+// テキストのベースラインを揃える
+const baseline = hint.createGuideY()
+baseline.followBottom(title)  // タイトルの下端を基準
+baseline.alignBottom(subtitle, date)  // 他のテキストも揃える
+
+// 結果:
+// Title___  Subtitle___  2024-01-01___  ← 下端が揃う
+```
+
+---
+
+## 派生レイアウト変数
+
+### 概要
+
+`LayoutBounds` は、基本的な4つの変数（`x`, `y`, `width`, `height`）に加えて、**派生変数**を提供します。
+派生変数は、初回アクセス時に自動生成され、以降はキャッシュされます。
+
+### 派生変数の種類
+
+| 変数名 | 計算式 | 説明 |
+|--------|--------|------|
+| `right` | `x + width` | 右端のX座標 |
+| `bottom` | `y + height` | 下端のY座標 |
+| `centerX` | `x + width * 0.5` | X軸中央座標 |
+| `centerY` | `y + height * 0.5` | Y軸中央座標 |
+
+### 実装
+
+```typescript
+export class LayoutBounds {
+  readonly x: LayoutVar
+  readonly y: LayoutVar
+  readonly width: LayoutVar
+  readonly height: LayoutVar
+
+  private _right?: LayoutVar
+  private _bottom?: LayoutVar
+  private _centerX?: LayoutVar
+  private _centerY?: LayoutVar
+
+  constructor(
+    private readonly ctx: LayoutVariables,
+    x: LayoutVar,
+    y: LayoutVar,
+    width: LayoutVar,
+    height: LayoutVar
+  ) {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+  }
+
+  get right(): LayoutVar {
+    if (!this._right) {
+      this._right = this.ctx.createVar(`${this.x.name}.right`)
+      this.ctx.addConstraint(
+        this._right,
+        LayoutConstraintOperator.Eq,
+        this.ctx.expression([
+          { variable: this.x },
+          { variable: this.width }
+        ])
+      )
+    }
+    return this._right
+  }
+
+  // bottom, centerX, centerY も同様
+}
+```
+
+**設計ポイント:**
+
+1. **遅延生成（Lazy Evaluation）**
+   - getter で初回アクセス時のみ変数と制約を生成
+   - 使われない派生変数は生成されない
+
+2. **キャッシュ**
+   - 2回目以降のアクセスは生成済みの変数を返す
+   - 同じ式を複数回計算しない
+
+3. **自動制約登録**
+   - 派生変数は制約として自動登録される
+   - ユーザーは制約を意識する必要がない
+
+### 使用例
+
+#### Guide API での利用
+
+```typescript
+// Before: 毎回 expression を作成
+this.layout.vars.addConstraint(
+  this.layout.vars.expression([
+    { variable: bounds.x },
+    { variable: bounds.width }
+  ]),
+  LayoutConstraintOperator.Eq,
+  this.x
+)
+
+// After: 派生変数を直接使用
+this.layout.vars.addConstraint(
+  bounds.right,
+  LayoutConstraintOperator.Eq,
+  this.x
+)
+```
+
+#### カスタム制約での利用
+
+```typescript
+// 将来的なユーザーAPI
+const boundsA = symbolA.getLayoutBounds()
+const boundsB = symbolB.getLayoutBounds()
+
+// A の右端と B の左端の間に 10px のギャップ
+layout.constraints.withSymbol(symbolB.id, "gap", builder => {
+  builder.eq(boundsB.x, boundsA.right, 10)
+})
+```
+
+### パフォーマンス効果
+
+**Before（式を毎回計算）:**
+
+```typescript
+// GuideBuilderX.alignRight() を2回呼び出すと...
+guide.alignRight(a)  // expression([a.x, a.width]) 生成
+guide.alignRight(b)  // expression([b.x, b.width]) 生成
+```
+
+**After（派生変数を再利用）:**
+
+```typescript
+// 初回のみ変数・制約生成、2回目以降は再利用
+guide.alignRight(a)  // a.right 生成 (x + width)
+guide.alignRight(b)  // b.right 生成 (x + width)
+guide.followRight(a) // a.right 再利用（生成済み）
+```
+
+### メリット
+
+1. **コード簡潔化**
+   - `bounds.right` で直接参照
+   - expression 計算の記述が不要
+
+2. **パフォーマンス向上**
+   - 同じ式を複数回計算しない
+   - 制約も1回だけ登録
+
+3. **可読性向上**
+   - `bounds.right` は `bounds.x + bounds.width` より直感的
+   - Guide API などの実装が読みやすくなる
+
+4. **拡張性**
+   - 将来的に他の派生変数（`area`, `diagonal` など）を追加可能
+
+---
+
+## まとめ（更新）
+
+### 完了した機能
+
+- ✅ **Grid/Figure Builder**: 直感的な2Dレイアウト API
+- ✅ **LayoutContext**: Variables/Constraints のファサード化
+- ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
+- ✅ **ContainerSymbolBase**: コンテナの共通基底クラス
+- ✅ **Guide API**: 水平・垂直ガイドラインによる配置
+- ✅ **派生変数**: right/bottom/centerX/centerY の自動計算
+
+### 今後の拡張
+
+- [ ] Grid/Figure Builder の padding サポート
+- [ ] Theme と LayoutOptions の分離
+- [ ] Distribute（等間隔配置）
+- [ ] Flexbox風レイアウト
+- [ ] 制約の動的削除・更新
+- [ ] Guide API のドキュメント example 追加

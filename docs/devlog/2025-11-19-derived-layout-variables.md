@@ -347,3 +347,49 @@ builder.ge(containerBounds.width, childBounds.right, 10)  // padding
 - docs/draft の更新
 
 **コミット準備完了！**
+
+---
+
+## Phase 2: ドキュメント整備（完了）
+
+**日付:** 2025-11-19  
+**作業内容:** Guide API と派生変数のドキュメント整備
+
+### 実施内容
+
+1. **layout-system.md の更新**
+   - Guide API セクションを追加（約400行）
+   - GuideBuilderX/Y の全メソッドを網羅
+   - 派生変数のセクションを追加
+   - 実装詳細、使用例、応用例を記載
+
+2. **example/guide_layout.ts の作成**
+   - Guide API の基本的な使用例を実装
+   - X軸中央揃え + 縦並びのデモ
+   - 実行可能な実例を提供
+
+### ドキュメント内容
+
+#### Guide API セクション
+- 基本的な使い方（createGuideX/Y）
+- GuideBuilderX のメソッド一覧
+- GuideBuilderY のメソッド一覧
+- align vs follow の違い
+- 応用例（複雑な整列、マルチカラム、ベースライン揃え）
+
+#### 派生変数セクション
+- 派生変数の種類（right/bottom/centerX/centerY）
+- 実装詳細（遅延生成・キャッシュ）
+- 使用例（Guide API、カスタム制約）
+- パフォーマンス効果
+
+### 成果
+
+- ✅ layout-system.md: 完全なGuide APIドキュメント
+- ✅ example/guide_layout.ts: 実行可能なサンプル
+- ✅ docs/design/layout-system.md: 1526行 → 1900行以上に拡充
+
+### 次のステップ
+
+Phase 2 完了により、派生変数実装プロジェクトは完了。
+残作業は docs/draft の整理のみ。
