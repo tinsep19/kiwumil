@@ -1,4 +1,23 @@
-# 指摘事項3の再検討: Theme と LayoutOptions の分離
+# Theme と LayoutOptions の分離提案
+
+**ステータス:** 📋 将来の改善項目（Phase 3以降）  
+**優先度:** 中  
+**破壊的変更:** なし（段階的移行を推奨）
+
+## 概要
+
+このドラフトは、Theme（視覚スタイル）とLayoutOptions（配置パラメータ）を分離する提案です。
+feat/layout-context-rework PRには**含めず**、別PRで段階的に実施することを推奨します。
+
+## 推奨実装順序
+
+1. **短期（次のPR）:** LayoutOptions導入、Theme.gapはフォールバック
+2. **中期:** DiagramBuilder.layoutOptions() API追加
+3. **長期:** Theme.gap削除、完全分離
+
+---
+
+# 詳細提案
 
 ## 現状分析
 

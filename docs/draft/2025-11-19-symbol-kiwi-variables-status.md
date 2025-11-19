@@ -1,5 +1,12 @@
 # Symbol内kiwi.Variable移行 - 実装状況と残課題
 
+**最終更新:** 2025-11-19  
+**ステータス:** ✅ Phase 1/2 完了、Phase 3は将来実施
+
+## 📊 実装状況サマリー
+
+**結論:** 提案の90%以上が feat/layout-context-rework ブランチで実装完了！
+
 ## 📊 実装状況サマリー
 
 `docs/draft/2025-11-17-symbol-kiwi-variables.md` で提案されていた内容を確認したところ、**大部分が既に実装済み**でした！

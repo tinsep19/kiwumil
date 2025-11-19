@@ -1,5 +1,29 @@
 # Symbol 内に kiwi.Variable を移す案の検討
 
+**ステータス:** 📋 長期検討中（実装の90%以上は完了済み）  
+**関連:** feat/layout-context-rework で大部分を実装済み  
+**次のステップ:** Phase 3（Relationship対応など）は別PRで実施予定
+
+## 実装状況
+
+このドラフトで提案されていた内容の**90%以上は既に実装済み**です：
+
+- ✅ LayoutVar ブランド型
+- ✅ LayoutVariables（旧: LayoutVariableContext）
+- ✅ Symbol内のLayoutBounds
+- ✅ LayoutContext ファサード
+- ✅ Guide API
+- ✅ Symbol生成時の制約適用
+- ✅ 派生変数（right/bottom/centerX/centerY）
+
+詳細は `docs/draft/2025-11-19-symbol-kiwi-variables-status.md` を参照。
+
+残作業は主にRelationshipのガイド対応など長期的な改善項目です。
+
+---
+
+# 元の提案内容
+
 ## 背景
 - 現状は `LayoutSolver` が各 Symbol ごとに `kiwi.Variable` を管理し、`Map<SymbolId, NodeVar>` で保持している。
 - 追加したいレイアウト機能として `createGuideX(x)` / `createGuideY(y)` のような「ガイド線」を想定しており、ヒント API から特定のガイドに対して `Symbol A` は `alignBottom`、`Symbol B` は `alignTop` などを直接制約に落としたい。
