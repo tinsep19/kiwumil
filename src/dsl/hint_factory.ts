@@ -1,5 +1,6 @@
 // src/dsl/hint_factory.ts
 import type { ContainerSymbolId, SymbolId } from "../model/types"
+import { DIAGRAM_CONTAINER_ID } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
 import { LayoutConstraintOperator, LayoutConstraintStrength, type LayoutVar } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
@@ -19,16 +20,20 @@ export class HintFactory {
 
   /**
    * Grid Builder を返す（矩形行列レイアウト用）
+   * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
-  grid(container: ContainerSymbolId): GridBuilder {
-    return new GridBuilder(this, container)
+  grid(container?: ContainerSymbolId): GridBuilder {
+    const targetContainer = container ?? DIAGRAM_CONTAINER_ID
+    return new GridBuilder(this, targetContainer)
   }
 
   /**
    * Figure Builder を返す（非矩形レイアウト用）
+   * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
-  figure(container: ContainerSymbolId): FigureBuilder {
-    return new FigureBuilder(this, container)
+  figure(container?: ContainerSymbolId): FigureBuilder {
+    const targetContainer = container ?? DIAGRAM_CONTAINER_ID
+    return new FigureBuilder(this, targetContainer)
   }
 
   /**

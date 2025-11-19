@@ -13,6 +13,7 @@ export type { Theme } from "./core/theme"
 export type { SymbolBase } from "./model/symbol_base"
 export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model/types"
 export { toContainerSymbolId } from "./model/container_symbol_base"
+export { DIAGRAM_CONTAINER_ID } from "./model/types"
 
 // Layout 型定義
 export type { LayoutContext } from "./layout/layout_context"
