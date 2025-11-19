@@ -1,12 +1,12 @@
 // src/dsl/diagram_builder.ts
 import { NamespaceBuilder } from "./namespace_builder"
-import { HintFactory, LayoutHint } from "./hint_factory"
+import { HintFactory } from "./hint_factory"
 import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
 import { DiagramSymbol } from "../model/diagram_symbol"
 import { CorePlugin } from "../plugin/core/plugin"
 import { convertMetaUrlToSvgPath } from "../utils/path_helper"
-import { LayoutVariableContext } from "../layout/layout_variable_context"
+import { LayoutContext } from "../layout/layout_context"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
@@ -14,6 +14,8 @@ import type { DiagramInfo } from "../model/diagram_info"
 import type { Theme } from "../core/theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../core/theme"
+import type { SymbolId } from "../model/types"
+import { toContainerSymbolId } from "../model/container_symbol_base"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -71,21 +73,30 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // Symbol と Relationship を格納する配列
     const userSymbols: SymbolBase[] = []
     const relationships: RelationshipBase[] = []
-    const hints: LayoutHint[] = []
-    const layoutContext = new LayoutVariableContext()
+    let diagramSymbol: DiagramSymbol | undefined
+    const diagramSymbolId = toContainerSymbolId("__diagram__")
+    const layoutContext = new LayoutContext(
+      this.currentTheme,
+      (id: SymbolId) => {
+        if (diagramSymbol && diagramSymbol.id === id) {
+          return diagramSymbol
+        }
+        return userSymbols.find(s => s.id === id)
+      }
+    )
 
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
     const el = namespaceBuilder.buildElementNamespace(userSymbols, layoutContext)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, layoutContext)
-    const hint = new HintFactory(hints, userSymbols, this.currentTheme, layoutContext)
+    const hint = new HintFactory(layoutContext, userSymbols)
 
     // ユーザーのコールバックを実行
     // この中で el.uml.actor() などが呼ばれ、userSymbols / relationships に追加される
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
-    const diagramSymbol = new DiagramSymbol("__diagram__", this.titleOrInfo, layoutContext)
+    diagramSymbol = new DiagramSymbol(diagramSymbolId, this.titleOrInfo, layoutContext)
     diagramSymbol.setTheme(this.currentTheme)
 
     // すべての Symbol を含む配列
@@ -101,17 +112,12 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (userSymbols.length > 0) {
-      hints.push({
-        type: "enclose",
-        symbolIds: [],
-        containerId: diagramSymbol.id,
-        childIds: userSymbols.map(s => s.id)
-      })
+      hint.enclose(diagramSymbolId, userSymbols.map(s => s.id))
     }
 
     // レイアウト計算
-    const solver = new LayoutSolver(this.currentTheme, layoutContext)
-    solver.solve(allSymbols, hints)
+    const solver = new LayoutSolver(layoutContext)
+    solver.solve(allSymbols)
 
     return {
       symbols: allSymbols,

@@ -1,0 +1,258 @@
+// tests/grid_figure_builder.test.ts
+
+import { describe, expect, test } from "bun:test"
+import { isRectMatrix } from "../src/dsl/matrix_utils"
+import { TypeDiagram } from "../src/dsl/diagram_builder"
+import { CorePlugin } from "../src/plugin/core/core_plugin"
+import { UMLPlugin } from "../src/plugin/uml/plugin"
+
+describe("Matrix Utils", () => {
+  test("isRectMatrix returns true for rectangular matrix", () => {
+    expect(isRectMatrix([[1, 2], [3, 4]])).toBe(true)
+    expect(isRectMatrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).toBe(true)
+    expect(isRectMatrix([['a', 'b'], ['c', 'd']])).toBe(true)
+  })
+
+  test("isRectMatrix returns false for non-rectangular matrix", () => {
+    expect(isRectMatrix([[1, 2], [3]])).toBe(false)
+    expect(isRectMatrix([[1], [2, 3]])).toBe(false)
+    expect(isRectMatrix([[1, 2, 3], [4, 5]])).toBe(false)
+  })
+
+  test("isRectMatrix returns false for empty matrix", () => {
+    expect(isRectMatrix([])).toBe(false)
+    expect(isRectMatrix([[]])).toBe(false)
+  })
+
+  test("isRectMatrix returns true for single row", () => {
+    expect(isRectMatrix([[1, 2, 3]])).toBe(true)
+  })
+
+  test("isRectMatrix returns true for single column", () => {
+    expect(isRectMatrix([[1], [2], [3]])).toBe(true)
+  })
+})
+
+describe("Grid Builder", () => {
+  test("should create grid layout with default gap", () => {
+    let boundaryId: any
+    let symbolIds: any[] = []
+
+    const result = TypeDiagram("Grid Test")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+        const d = el.core.rectangle("D")
+        
+        symbolIds = [a, b, c, d]
+
+        hint.grid(boundaryId)
+          .enclose([[a, b], [c, d]] as const)
+          .layout()
+      })
+
+    expect(result.symbols.length).toBeGreaterThan(4)
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find(s => s.label === "A")).toBeDefined()
+  })
+
+  test("should create grid layout with custom gap", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Grid Custom Gap")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+        const d = el.core.rectangle("D")
+
+        hint.grid(boundaryId)
+          .enclose([[a, b], [c, d]] as const)
+          .gap(20)
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+  })
+
+  test("should create grid layout with row/col gap", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Grid Row/Col Gap")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+        const d = el.core.rectangle("D")
+
+        hint.grid(boundaryId)
+          .enclose([[a, b], [c, d]] as const)
+          .gap({ row: 30, col: 60 })
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+  })
+
+  test("should throw error for non-rectangular matrix", () => {
+    expect(() => {
+      TypeDiagram("Grid Invalid")
+        .use(UMLPlugin)
+        .build((el, rel, hint) => {
+          const boundaryId = el.uml.systemBoundary("Boundary")
+          
+          const a = el.core.rectangle("A")
+          const b = el.core.rectangle("B")
+          const c = el.core.rectangle("C")
+
+          hint.grid(boundaryId)
+            .enclose([[a, b], [c]] as const)
+            .layout()
+        })
+    }).toThrow(/rectangular matrix/)
+  })
+
+  test("should throw error when enclose not called", () => {
+    expect(() => {
+      TypeDiagram("Grid No Enclose")
+        .use(UMLPlugin)
+        .build((el, rel, hint) => {
+          const boundaryId = el.uml.systemBoundary("Boundary")
+          
+          hint.grid(boundaryId).layout()
+        })
+    }).toThrow(/enclose.*must be called/)
+  })
+})
+
+describe("Figure Builder", () => {
+  test("should create figure layout with default gap", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Figure Test")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+
+        hint.figure(boundaryId)
+          .enclose([[a, b], [c]] as const)
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find(s => s.label === "A")).toBeDefined()
+  })
+
+  test("should create figure layout with custom gap", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Figure Custom Gap")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+
+        hint.figure(boundaryId)
+          .enclose([[a, b], [c]] as const)
+          .gap(15)
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+  })
+
+  test("should create figure layout with center alignment", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Figure Center")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+
+        hint.figure(boundaryId)
+          .enclose([[a, b], [c]] as const)
+          .align('center')
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+  })
+
+  test("should create figure layout with right alignment", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Figure Right")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+
+        hint.figure(boundaryId)
+          .enclose([[a, b], [c]] as const)
+          .align('right')
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+  })
+
+  test("should throw error when enclose not called", () => {
+    expect(() => {
+      TypeDiagram("Figure No Enclose")
+        .use(UMLPlugin)
+        .build((el, rel, hint) => {
+          const boundaryId = el.uml.systemBoundary("Boundary")
+          
+          hint.figure(boundaryId).layout()
+        })
+    }).toThrow(/enclose.*must be called/)
+  })
+
+  test("should work with non-rectangular matrix", () => {
+    let boundaryId: any
+
+    const result = TypeDiagram("Figure Non-Rect")
+      .use(UMLPlugin)
+      .build((el, rel, hint) => {
+        boundaryId = el.uml.systemBoundary("Boundary")
+        
+        const a = el.core.rectangle("A")
+        const b = el.core.rectangle("B")
+        const c = el.core.rectangle("C")
+        const d = el.core.rectangle("D")
+        const e = el.core.rectangle("E")
+
+        hint.figure(boundaryId)
+          .enclose([[a], [b, c, d], [e]] as const)
+          .layout()
+      })
+
+    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find(s => s.label === "A")).toBeDefined()
+    expect(result.symbols.find(s => s.label === "E")).toBeDefined()
+  })
+})

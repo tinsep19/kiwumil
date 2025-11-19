@@ -2,7 +2,7 @@
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../model/types"
-import type { LayoutVariableContext } from "../layout/layout_variable_context"
+import type { LayoutContext } from "../layout/layout_context"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolId>
@@ -28,7 +28,7 @@ export interface DiagramPlugin {
    */
   createSymbolFactory?(
     userSymbols: SymbolBase[],
-    layout: LayoutVariableContext
+    layout: LayoutContext
   ): SymbolFactoryMap
 
   /**
@@ -39,6 +39,6 @@ export interface DiagramPlugin {
    */
   createRelationshipFactory?(
     relationships: RelationshipBase[],
-    layout: LayoutVariableContext
+    layout: LayoutContext
   ): RelationshipFactoryMap
 }

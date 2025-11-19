@@ -1,4 +1,4 @@
-// src/layout/layout_variable_context.ts
+// src/layout/layout_variables.ts
 import * as kiwi from "@lume/kiwi"
 
 const LAYOUT_VAR_BRAND = Symbol("LayoutVarBrand")
@@ -15,7 +15,7 @@ export interface LayoutExpression {
   constant?: number
 }
 
-type LayoutExpressionInput = LayoutExpression | LayoutVar | number
+export type LayoutExpressionInput = LayoutExpression | LayoutVar | number
 
 function isLayoutVar(input: LayoutExpressionInput): input is LayoutVar {
   return typeof input === "object" && input !== null && LAYOUT_VAR_BRAND in input
@@ -47,7 +47,7 @@ export const LayoutConstraintStrength = Object.freeze({
 export type LayoutConstraintStrength =
   (typeof LayoutConstraintStrength)[keyof typeof LayoutConstraintStrength]
 
-export class LayoutVariableContext {
+export class LayoutVariables {
   private readonly solver: kiwi.Solver
 
   constructor(solver?: kiwi.Solver) {
@@ -83,6 +83,7 @@ export class LayoutVariableContext {
       strength
     )
     this.solver.addConstraint(constraint)
+    return constraint
   }
 
   solve() {

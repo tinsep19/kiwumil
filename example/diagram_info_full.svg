@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="400" 
-     height="450" 
-     viewBox="0 0 400 450">
+     width="340" 
+     height="380" 
+     viewBox="0 0 340 380">
   <rect width="100%" height="100%" fill="#f0f8ff"/>
   
-      <line x1="130" y1="138.23529411764707" x2="210.10353760950025" y2="131.76166065854412"
+      <line x1="100" y1="277.94117647058823" x2="202.24810627992213" y2="128.31734612122457"
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="112" y1="180" x2="112.75912686601927" y2="211.26521144336544"
+      <line x1="82" y1="275" x2="82.75912686601927" y2="243.73478855663456"
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="105.71428571428571" y1="180" x2="121.51471862576143" y2="320.301515190165"
+      <line x1="100" y1="325" x2="43.07900211696917" y2="315.51316701949486"
             stroke="#0066cc" stroke-width="2"/>
     
 
       <g id="__diagram__">
         <!-- Title -->
-        <text x="200" y="80" 
+        <text x="170" y="30" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
@@ -29,7 +29,7 @@
         </text>
         
         <!-- Metadata -->
-        <text x="340" y="390" 
+        <text x="330" y="370" 
               text-anchor="end" 
               font-size="9" 
               font-family="Arial"
@@ -42,25 +42,25 @@
 
       <g id="uml:actor-0">
         <!-- Head -->
-        <circle cx="100" cy="115" r="10" 
+        <circle cx="70" cy="290" r="10" 
                 fill="none" stroke="#003366" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="100" y1="125" x2="100" y2="148" 
+        <line x1="70" y1="300" x2="70" y2="323" 
               stroke="#003366" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="75" y1="131.9" x2="125" y2="131.9" 
+        <line x1="45" y1="306.9" x2="95" y2="306.9" 
               stroke="#003366" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="100" y1="148" x2="80" y2="165" 
+        <line x1="70" y1="323" x2="50" y2="340" 
               stroke="#003366" stroke-width="2"/>
-        <line x1="100" y1="148" x2="120" y2="165" 
+        <line x1="70" y1="323" x2="90" y2="340" 
               stroke="#003366" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="180" 
+        <text x="70" y="355" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           User
@@ -70,11 +70,11 @@
 
       <g id="uml:usecase-1">
         <!-- Ellipse -->
-        <ellipse cx="270" cy="130" rx="60" ry="30" 
+        <ellipse cx="240" cy="105" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="270" y="135" 
+        <text x="240" y="110" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Browse Products
@@ -84,11 +84,11 @@
 
       <g id="uml:usecase-2">
         <!-- Ellipse -->
-        <ellipse cx="130" cy="240" rx="60" ry="30" 
+        <ellipse cx="100" cy="215" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="245" 
+        <text x="100" y="220" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Add to Cart
@@ -98,11 +98,11 @@
 
       <g id="uml:usecase-3">
         <!-- Ellipse -->
-        <ellipse cx="130" cy="350" rx="60" ry="30" 
+        <ellipse cx="100" cy="325" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="130" y="355" 
+        <text x="100" y="330" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#003366">
           Checkout

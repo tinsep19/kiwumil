@@ -1,25 +1,23 @@
 // src/model/diagram_symbol.ts
-import { SymbolBase } from "./symbol_base"
+import { ContainerSymbolBase, type ContainerPadding } from "./container_symbol_base"
 import { getStyleForSymbol } from "../core/theme"
-import type { Point } from "./types"
+import type { Theme } from "../core/theme"
+import type { Point, ContainerSymbolId } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import {
-  LayoutConstraintOperator,
-  LayoutConstraintStrength
-} from "../layout/layout_variable_context"
-import type { LayoutVariableContext } from "../layout/layout_variable_context"
 import type { LayoutBounds } from "./symbol_base"
+import type { LayoutVariables } from "../layout/layout_variables"
+import type { LayoutContext } from "../layout/layout_context"
+import { LayoutConstraintStrength } from "../layout/layout_variables"
 
-export class DiagramSymbol extends SymbolBase {
+export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo
   private constraintsApplied = false
 
-  constructor(id: string, titleOrInfo: string | DiagramInfo, layoutContext?: LayoutVariableContext) {
-    const info = typeof titleOrInfo === "string" 
+  constructor(id: ContainerSymbolId, titleOrInfo: string | DiagramInfo, layout: LayoutContext) {
+    const info = typeof titleOrInfo === "string"
       ? { title: titleOrInfo }
       : titleOrInfo
-    
-    super(id, info.title, layoutContext)
+    super(id, info.title, layout)
     this.diagramInfo = info
     this.applyDiagramConstraints()
   }
@@ -28,30 +26,33 @@ export class DiagramSymbol extends SymbolBase {
     return { width: 200, height: 150 }
   }
 
-  override ensureLayoutBounds(ctx: LayoutVariableContext): LayoutBounds {
+  override ensureLayoutBounds(ctx: LayoutVariables): LayoutBounds {
     const bounds = super.ensureLayoutBounds(ctx)
     this.applyDiagramConstraints()
     return bounds
   }
 
+  protected getContainerPadding(theme: Theme): ContainerPadding {
+    const horizontal = theme.defaultStyleSet.horizontalGap / 2
+    const vertical = theme.defaultStyleSet.verticalGap / 2
+    return {
+      top: vertical,
+      right: horizontal,
+      bottom: vertical,
+      left: horizontal
+    }
+  }
+
+  protected override getHeaderHeight(theme: Theme): number {
+    return theme.defaultStyleSet.verticalGap
+  }
+
   private applyDiagramConstraints() {
-    if (this.constraintsApplied || !this.layoutContext || !this.layoutBounds) {
+    if (this.constraintsApplied) {
       return
     }
-    this.layoutContext.addConstraint(this.layoutBounds.x, LayoutConstraintOperator.Eq, 0)
-    this.layoutContext.addConstraint(this.layoutBounds.y, LayoutConstraintOperator.Eq, 0)
-    this.layoutContext.addConstraint(
-      this.layoutBounds.width,
-      LayoutConstraintOperator.Ge,
-      200,
-      LayoutConstraintStrength.Weak
-    )
-    this.layoutContext.addConstraint(
-      this.layoutBounds.height,
-      LayoutConstraintOperator.Ge,
-      150,
-      LayoutConstraintStrength.Weak
-    )
+    this.layout.anchorToOrigin(this, LayoutConstraintStrength.Strong)
+    this.layout.applyMinSize(this, { width: 200, height: 150 }, LayoutConstraintStrength.Weak)
     this.constraintsApplied = true
   }
 
@@ -92,14 +93,14 @@ export class DiagramSymbol extends SymbolBase {
     const { x, y, width, height } = this.bounds
     const cx = x + width / 2
 
-    const style = this.theme ? getStyleForSymbol(this.theme, 'rectangle') : {
-      strokeColor: '#e0e0e0',
+    const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : {
+      strokeColor: "#e0e0e0",
       strokeWidth: 1,
-      fillColor: 'white',
-      textColor: 'black',
+      fillColor: "white",
+      textColor: "black",
       fontSize: 12,
-      fontFamily: 'Arial',
-      backgroundColor: 'white',
+      fontFamily: "Arial",
+      backgroundColor: "white",
       horizontalGap: 80,
       verticalGap: 50
     }
@@ -107,7 +108,6 @@ export class DiagramSymbol extends SymbolBase {
     const titleFontSize = style.fontSize * 1.5
     const metaFontSize = style.fontSize * 0.75
 
-    // Build metadata string
     let metaText = ""
     if (this.diagramInfo.createdAt && this.diagramInfo.author) {
       metaText = `Created: ${this.diagramInfo.createdAt} | Author: ${this.diagramInfo.author}`
@@ -137,7 +137,7 @@ export class DiagramSymbol extends SymbolBase {
               fill="${style.textColor}"
               opacity="0.5">
           ${metaText}
-        </text>` : ''}
+        </text>` : ""}
       </g>
     `
   }

@@ -1,9 +1,9 @@
 import { SymbolBase } from "../src/model/symbol_base"
-import { LayoutVariableContext, LayoutConstraintOperator } from "../src/layout/layout_variable_context"
+import { LayoutVariables, LayoutConstraintOperator } from "../src/layout/layout_variables"
 import type { Point } from "../src/model/types"
 
 class DummySymbol extends SymbolBase {
-  constructor(id: string, layoutContext?: LayoutVariableContext) {
+  constructor(id: string, layoutContext?: LayoutVariables) {
     super(id, "Dummy", layoutContext)
   }
 
@@ -22,7 +22,7 @@ class DummySymbol extends SymbolBase {
 
 describe("SymbolBase layout bounds", () => {
   test("initializes layout bounds when context is provided", () => {
-    const ctx = new LayoutVariableContext()
+    const ctx = new LayoutVariables()
     const symbol = new DummySymbol("dummy-1", ctx)
     const bounds = symbol.getLayoutBounds()
 

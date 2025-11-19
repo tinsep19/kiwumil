@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="440" 
-     height="520" 
-     viewBox="0 0 440 520">
+     width="520" 
+     height="438.33333333333337" 
+     viewBox="0 0 520 438.33333333333337">
   <rect width="100%" height="100%" fill="white"/>
   
       <g id="uml:systemBoundary-5">
         <!-- System Boundary Rectangle -->
-        <rect x="210" y="100" width="160" height="350" 
+        <rect x="180" y="75" width="300" height="338.33333333333337" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
-        <text x="220" y="119" 
+        <text x="190" y="94" 
               font-size="14" font-family="Arial" font-weight="bold"
               fill="black">
           システム化範囲
@@ -21,7 +21,7 @@
 
       <g id="__diagram__">
         <!-- Title -->
-        <text x="220" y="80" 
+        <text x="260" y="30" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
@@ -35,25 +35,25 @@
 
       <g id="uml:actor-0">
         <!-- Head -->
-        <circle cx="100" cy="255" r="10" 
+        <circle cx="70" cy="90" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="100" y1="265" x2="100" y2="288" 
+        <line x1="70" y1="100" x2="70" y2="123" 
               stroke="black" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="75" y1="271.9" x2="125" y2="271.9" 
+        <line x1="45" y1="106.9" x2="95" y2="106.9" 
               stroke="black" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="100" y1="288" x2="80" y2="305" 
+        <line x1="70" y1="123" x2="50" y2="140" 
               stroke="black" stroke-width="2"/>
-        <line x1="100" y1="288" x2="120" y2="305" 
+        <line x1="70" y1="123" x2="90" y2="140" 
               stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="320" 
+        <text x="70" y="155" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           User
@@ -63,25 +63,25 @@
 
       <g id="uml:actor-1">
         <!-- Head -->
-        <circle cx="100" cy="385" r="10" 
+        <circle cx="70" cy="220" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="100" y1="395" x2="100" y2="418" 
+        <line x1="70" y1="230" x2="70" y2="253" 
               stroke="black" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="75" y1="401.9" x2="125" y2="401.9" 
+        <line x1="45" y1="236.9" x2="95" y2="236.9" 
               stroke="black" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="100" y1="418" x2="80" y2="435" 
+        <line x1="70" y1="253" x2="50" y2="270" 
               stroke="black" stroke-width="2"/>
-        <line x1="100" y1="418" x2="120" y2="435" 
+        <line x1="70" y1="253" x2="90" y2="270" 
               stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="450" 
+        <text x="70" y="285" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Admin
@@ -89,33 +89,33 @@
       </g>
     
 
-      <line x1="130" y1="264.2105263157895" x2="236.90490665708106" y2="193.97239298497865"
+      <line x1="100" y1="117.93814432989691" x2="333.6190360521392" y2="143.7425129338247"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="281.57894736842104" x2="230.08293024004942" y2="288.4232350063171"
+      <line x1="100" y1="136.61016949152543" x2="217.98243290213475" y2="239.13209094639038"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="373.6842105263158" x2="251.78711318022252" y2="203.1288525488127"
+      <line x1="100" y1="235.87628865979383" x2="335.929318187734" y2="155.39562773262122"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="391.0526315789474" x2="239.27066581814174" y2="306.01978974163944"
+      <line x1="100" y1="246.77966101694915" x2="206.77196195043018" y2="254.8901288149139"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="130" y1="408.42105263157896" x2="230.08293024004942" y2="401.5767649936829"
+      <line x1="100" y1="256.2886597938144" x2="337.17741002541436" y2="356.10124810615616"
             stroke="black" stroke-width="2"/>
     
 
       <g id="uml:usecase-2">
         <!-- Ellipse -->
-        <ellipse cx="290" cy="180" rx="60" ry="30" 
+        <ellipse cx="393.3333333333333" cy="146.66666666666669" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="290" y="185" 
+        <text x="393.3333333333333" y="151.66666666666669" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Login
@@ -125,11 +125,11 @@
 
       <g id="uml:usecase-3">
         <!-- Ellipse -->
-        <ellipse cx="290" cy="290" rx="60" ry="30" 
+        <ellipse cx="266.66666666666663" cy="256.6666666666667" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="290" y="295" 
+        <text x="266.66666666666663" y="261.6666666666667" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Logout
@@ -139,11 +139,11 @@
 
       <g id="uml:usecase-4">
         <!-- Ellipse -->
-        <ellipse cx="290" cy="400" rx="60" ry="30" 
+        <ellipse cx="393.3333333333333" cy="366.6666666666667" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="290" y="405" 
+        <text x="393.3333333333333" y="371.6666666666667" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="black">
           Manage Users

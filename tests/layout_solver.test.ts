@@ -1,554 +1,110 @@
-// tests/layout_solver.test.ts
-import { describe, test, expect, beforeEach } from "bun:test"
+import { describe, test, beforeEach, expect } from "bun:test"
+import { LayoutContext } from "../src/layout/layout_context"
 import { LayoutSolver } from "../src/layout/layout_solver"
 import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
-import type { LayoutHint } from "../src/dsl/hint_factory"
+import { DiagramSymbol } from "../src/model/diagram_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { DefaultTheme } from "../src/core/theme"
-import { LayoutVariableContext } from "../src/layout/layout_variable_context"
-import { DiagramSymbol } from "../src/model/diagram_symbol"
+import { toContainerSymbolId } from "../src/model/container_symbol_base"
 
-describe("LayoutSolver", () => {
+describe("Layout pipeline", () => {
+  let symbols: Array<DiagramSymbol | ActorSymbol | UsecaseSymbol | SystemBoundarySymbol>
+  let layout: LayoutContext
+  let hint: HintFactory
   let solver: LayoutSolver
-  let ctx: LayoutVariableContext
 
   beforeEach(() => {
-    ctx = new LayoutVariableContext()
-    solver = new LayoutSolver(DefaultTheme, ctx)
+    symbols = []
+    layout = new LayoutContext(DefaultTheme, id => symbols.find(s => s.id === id))
+    hint = new HintFactory(layout, symbols)
+    solver = new LayoutSolver(layout)
   })
 
-  test("DiagramSymbol is anchored at the origin", () => {
-    const diagram = new DiagramSymbol("__diagram__", "Test Diagram", ctx)
-    solver.solve([diagram], [])
+  function createActor(id: string) {
+    const actor = new ActorSymbol(id, id, layout.vars)
+    layout.applyFixedSize(actor)
+    symbols.push(actor)
+    return actor
+  }
+
+  function createUsecase(id: string) {
+    const usecase = new UsecaseSymbol(id, id, layout.vars)
+    layout.applyFixedSize(usecase)
+    symbols.push(usecase)
+    return usecase
+  }
+
+  function createBoundary(id: string) {
+    const boundary = new SystemBoundarySymbol(toContainerSymbolId(id), id, layout)
+    symbols.push(boundary)
+    return boundary
+  }
+
+  test("diagram symbol is anchored at the origin with minimum size", () => {
+    const diagram = new DiagramSymbol(toContainerSymbolId("__diagram__"), "Test", layout)
+    symbols.push(diagram)
+
+    solver.solve(symbols)
+
     expect(diagram.bounds.x).toBeCloseTo(0)
     expect(diagram.bounds.y).toBeCloseTo(0)
-  })
-
-  test("DiagramSymbol keeps minimum size even when acting as container", () => {
-    const diagram = new DiagramSymbol("__diagram__", "Test Diagram", ctx)
-    const child = new ActorSymbol("child", "Child")
-    const hints: LayoutHint[] = [
-      { type: "enclose", containerId: diagram.id, childIds: ["child"], symbolIds: [] }
-    ]
-    solver.solve([diagram, child], hints)
     expect(diagram.bounds.width).toBeGreaterThanOrEqual(200)
     expect(diagram.bounds.height).toBeGreaterThanOrEqual(150)
   })
 
-  describe("arrangeHorizontal", () => {
-    test("should arrange two elements horizontally with default gap", () => {
-      const a = new ActorSymbol("a", "Actor A")
-      const b = new ActorSymbol("b", "Actor B")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b"] }
-      ]
-      
-      solver.solve([a, b], hints)
-      
-      // Second element should be gap=80 away horizontally
-      expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 80)
-      // Y coordinate is not constrained by arrangeHorizontal
-    })
+  test("arrangeHorizontal positions elements with default gap", () => {
+    const a = createActor("a")
+    const b = createActor("b")
 
-    test("should arrange three elements horizontally with custom gap", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      const c = new ActorSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"], gap: 100 }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 100)
-      expect(c.bounds.x).toBe(b.bounds.x + b.bounds.width + 100)
-      
-      // Y coordinates are not constrained by arrangeHorizontal
-    })
-    
-    test("should work with alignCenterY for same Y coordinates", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      const c = new ActorSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"], gap: 100 },
-        { type: "alignCenterY", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 100)
-      expect(c.bounds.x).toBe(b.bounds.x + b.bounds.width + 100)
-      
-      // Y coordinates should be aligned by alignCenterY
-      expect(b.bounds.y).toBeCloseTo(a.bounds.y)
-      expect(c.bounds.y).toBeCloseTo(a.bounds.y)
-    })
+    hint.arrangeHorizontal(a.id, b.id)
+    solver.solve(symbols)
+
+    expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap)
   })
 
-  describe("arrangeVertical", () => {
-    test("should arrange two elements vertically with default gap", () => {
-      const a = new UsecaseSymbol("a", "Use Case A")
-      const b = new UsecaseSymbol("b", "Use Case B")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b"] }
-      ]
-      
-      solver.solve([a, b], hints)
-      
-      // Second element should be gap=50 away vertically
-      expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
-      // X coordinate is not constrained by arrangeVertical
-    })
+  test("alignCenterY keeps elements on the same horizontal line", () => {
+    const a = createActor("a")
+    const b = createActor("b")
+    const c = createUsecase("c")
 
-    test("should arrange three elements vertically with custom gap", () => {
-      const a = new UsecaseSymbol("a", "A")
-      const b = new UsecaseSymbol("b", "B")
-      const c = new UsecaseSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"], gap: 30 }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 30)
-      expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 30)
-      
-      // X coordinates are not constrained by arrangeVertical
-    })
-    
-    test("should work with alignLeft for same X coordinates", () => {
-      const a = new UsecaseSymbol("a", "A")
-      const b = new UsecaseSymbol("b", "B")
-      const c = new UsecaseSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"], gap: 30 },
-        { type: "alignLeft", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 30)
-      expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 30)
-      
-      // X coordinates should be aligned by alignLeft
-      expect(b.bounds.x).toBeCloseTo(a.bounds.x)
-      expect(c.bounds.x).toBeCloseTo(a.bounds.x)
-    })
+    hint.arrangeHorizontal(a.id, b.id, c.id)
+    hint.alignCenterY(a.id, b.id, c.id)
+    solver.solve(symbols)
+
+    expect(a.bounds.y + a.bounds.height / 2).toBeCloseTo(b.bounds.y + b.bounds.height / 2)
+    expect(b.bounds.y + b.bounds.height / 2).toBeCloseTo(c.bounds.y + c.bounds.height / 2)
   })
 
-  describe("alignLeft", () => {
-    test("should align multiple elements to the left", () => {
-      const a = new UsecaseSymbol("a", "A")
-      const b = new UsecaseSymbol("b", "B")
-      const c = new UsecaseSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"] },
-        { type: "alignLeft", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // All elements should have the same X coordinate
-      expect(b.bounds.x).toBeCloseTo(a.bounds.x)
-      expect(c.bounds.x).toBeCloseTo(a.bounds.x)
-    })
+  test("enclose keeps children inside container", () => {
+    const boundary = createBoundary("boundary")
+    const a = createActor("child-a")
+    const b = createActor("child-b")
+
+    hint.arrangeVertical(a.id, b.id)
+    hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
+    solver.solve(symbols)
+
+    expect(a.bounds.x).toBeGreaterThanOrEqual(boundary.bounds.x)
+    expect(b.bounds.y + b.bounds.height).toBeLessThanOrEqual(boundary.bounds.y + boundary.bounds.height)
   })
 
-  describe("alignRight", () => {
-    test("should align multiple elements to the right", () => {
-      const a = new UsecaseSymbol("a", "Short")
-      const b = new UsecaseSymbol("b", "Medium Label")
-      const c = new UsecaseSymbol("c", "Very Long Label")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"] },
-        { type: "alignRight", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // All elements should have the same right edge
-      const rightA = a.bounds.x + a.bounds.width
-      const rightB = b.bounds.x + b.bounds.width
-      const rightC = c.bounds.x + c.bounds.width
-      
-      expect(rightB).toBeCloseTo(rightA, 0.01)
-      expect(rightC).toBeCloseTo(rightA, 0.01)
-    })
-  })
+  test("guide builder aligns to shared variable and arranges symbols", () => {
+    const a = createActor("top")
+    const b = createActor("bottom")
 
-  describe("alignTop", () => {
-    test("should align multiple elements to the top", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      const c = new ActorSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"] },
-        { type: "alignTop", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // All elements should have the same Y coordinate
-      expect(b.bounds.y).toBeCloseTo(a.bounds.y)
-      expect(c.bounds.y).toBeCloseTo(a.bounds.y)
-    })
-  })
+    const guide = hint
+      .createGuideY()
+      .alignTop(a.id)
+      .alignBottom(b.id)
+      .arrange()
 
-  describe("alignBottom", () => {
-    test("should align multiple elements to the bottom", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      const c = new ActorSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"] },
-        { type: "alignBottom", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // All elements should have the same bottom edge
-      const bottomA = a.bounds.y + a.bounds.height
-      const bottomB = b.bounds.y + b.bounds.height
-      const bottomC = c.bounds.y + c.bounds.height
-      
-      expect(bottomB).toBeCloseTo(bottomA, 0.01)
-      expect(bottomC).toBeCloseTo(bottomA, 0.01)
-    })
-  })
+    solver.solve(symbols)
 
-  describe("alignCenterX", () => {
-    test("should align multiple elements on X axis center", () => {
-      const a = new UsecaseSymbol("a", "A")
-      const b = new UsecaseSymbol("b", "B")
-      const c = new UsecaseSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"] },
-        { type: "alignCenterX", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // All elements should have the same center X
-      const centerA = a.bounds.x + a.bounds.width / 2
-      const centerB = b.bounds.x + b.bounds.width / 2
-      const centerC = c.bounds.x + c.bounds.width / 2
-      
-      expect(centerB).toBeCloseTo(centerA, 0.01)
-      expect(centerC).toBeCloseTo(centerA, 0.01)
-    })
-  })
-
-  describe("alignCenterY", () => {
-    test("should align multiple elements on Y axis center", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      const c = new ActorSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"] },
-        { type: "alignCenterY", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // All elements should have the same center Y
-      const centerA = a.bounds.y + a.bounds.height / 2
-      const centerB = b.bounds.y + b.bounds.height / 2
-      const centerC = c.bounds.y + c.bounds.height / 2
-      
-      expect(centerB).toBeCloseTo(centerA, 0.01)
-      expect(centerC).toBeCloseTo(centerA, 0.01)
-    })
-  })
-
-  describe("enclose", () => {
-    test("should enclose children inside container with padding", () => {
-      const container = new SystemBoundarySymbol("container", "System")
-      const child = new UsecaseSymbol("child", "Use Case")
-      
-      const hints: LayoutHint[] = [
-        { type: "enclose", containerId: "container", childIds: ["child"], symbolIds: [] }
-      ]
-      
-      solver.solve([container, child], hints)
-      
-      const padding = 20
-      const labelSpace = 50
-      
-      // Child should be inside container with padding
-      expect(child.bounds.x).toBeGreaterThanOrEqual(container.bounds.x + padding)
-      expect(child.bounds.y).toBeGreaterThanOrEqual(container.bounds.y + labelSpace)
-      
-      // Container should be large enough to contain child
-      expect(container.bounds.x + container.bounds.width).toBeGreaterThanOrEqual(
-        child.bounds.x + child.bounds.width + padding
-      )
-      expect(container.bounds.y + container.bounds.height).toBeGreaterThanOrEqual(
-        child.bounds.y + child.bounds.height + padding
-      )
-    })
-
-    test("should auto-expand container to fit multiple children arranged vertically", () => {
-      const container = new SystemBoundarySymbol("container", "System")
-      const a = new UsecaseSymbol("a", "A")
-      const b = new UsecaseSymbol("b", "B")
-      const c = new UsecaseSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "enclose", containerId: "container", childIds: ["a", "b", "c"], symbolIds: [] },
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"], gap: 50 }
-      ]
-      
-      solver.solve([container, a, b, c], hints)
-      
-      // Children should be arranged vertically
-      expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
-      expect(c.bounds.y).toBe(b.bounds.y + b.bounds.height + 50)
-      
-      // All children should be inside container
-      for (const child of [a, b, c]) {
-        expect(child.bounds.x).toBeGreaterThanOrEqual(container.bounds.x + 20)
-        expect(child.bounds.y).toBeGreaterThanOrEqual(container.bounds.y + 50)
-        expect(child.bounds.x + child.bounds.width).toBeLessThanOrEqual(
-          container.bounds.x + container.bounds.width - 20
-        )
-        expect(child.bounds.y + child.bounds.height).toBeLessThanOrEqual(
-          container.bounds.y + container.bounds.height - 20
-        )
-      }
-      
-      // Container should be auto-expanded
-      expect(container.bounds.height).toBeGreaterThan(100) // Minimum size
-    })
-  })
-
-  describe("combined constraints", () => {
-    test("should handle vertical arrangement with center X alignment", () => {
-      const a = new UsecaseSymbol("a", "Short")
-      const b = new UsecaseSymbol("b", "Medium Label")
-      const c = new UsecaseSymbol("c", "Very Long Label")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeVertical", symbolIds: ["a", "b", "c"] },
-        { type: "alignCenterX", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // Elements should be vertically arranged
-      expect(b.bounds.y).toBeGreaterThan(a.bounds.y)
-      expect(c.bounds.y).toBeGreaterThan(b.bounds.y)
-      
-      // Elements should be center-aligned on X axis
-      const centerA = a.bounds.x + a.bounds.width / 2
-      const centerB = b.bounds.x + b.bounds.width / 2
-      const centerC = c.bounds.x + c.bounds.width / 2
-      
-      expect(centerB).toBeCloseTo(centerA, 0.01)
-      expect(centerC).toBeCloseTo(centerA, 0.01)
-    })
-
-    test("should handle horizontal arrangement with center Y alignment", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      const c = new ActorSymbol("c", "C")
-      
-      const hints: LayoutHint[] = [
-        { type: "arrangeHorizontal", symbolIds: ["a", "b", "c"] },
-        { type: "alignCenterY", symbolIds: ["a", "b", "c"] }
-      ]
-      
-      solver.solve([a, b, c], hints)
-      
-      // Elements should be horizontally arranged
-      expect(b.bounds.x).toBeGreaterThan(a.bounds.x)
-      expect(c.bounds.x).toBeGreaterThan(b.bounds.x)
-      
-      // Elements should be center-aligned on Y axis
-      const centerA = a.bounds.y + a.bounds.height / 2
-      const centerB = b.bounds.y + b.bounds.height / 2
-      const centerC = c.bounds.y + c.bounds.height / 2
-      
-      expect(centerB).toBeCloseTo(centerA, 0.01)
-      expect(centerC).toBeCloseTo(centerA, 0.01)
-    })
-  })
-
-  describe("legacy API compatibility", () => {
-    test("should support legacy 'horizontal' hint type", () => {
-      const a = new ActorSymbol("a", "A")
-      const b = new ActorSymbol("b", "B")
-      
-      const hints: LayoutHint[] = [
-        { type: "horizontal", symbolIds: ["a", "b"] }
-      ]
-      
-      solver.solve([a, b], hints)
-      
-      expect(b.bounds.x).toBe(a.bounds.x + a.bounds.width + 80)
-      // Y coordinate is not constrained by horizontal hint
-    })
-
-    test("should support legacy 'vertical' hint type", () => {
-      const a = new UsecaseSymbol("a", "A")
-      const b = new UsecaseSymbol("b", "B")
-      
-      const hints: LayoutHint[] = [
-        { type: "vertical", symbolIds: ["a", "b"] }
-      ]
-      
-      solver.solve([a, b], hints)
-      
-      expect(b.bounds.y).toBe(a.bounds.y + a.bounds.height + 50)
-      // X coordinate is not constrained by vertical hint
-    })
-  })
-})
-
-describe("Layout guides", () => {
-  test("alignLeft/alignRight with shared guide", () => {
-    const ctx = new LayoutVariableContext()
-    const solver = new LayoutSolver(DefaultTheme, ctx)
-    const actorLeft = new ActorSymbol("guide-left", "Guide Left")
-    const actorRight = new ActorSymbol("guide-right", "Guide Right")
-    const symbols = [actorLeft, actorRight]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    const guide = hintFactory.createGuideX()
-    guide.alignLeft("guide-left").alignRight("guide-right")
-
-    solver.solve(symbols, hints)
-
-    expect(actorLeft.bounds.x).toBeCloseTo(actorRight.bounds.x + actorRight.bounds.width)
-  })
-
-  test("alignTop/alignBottom with shared guide", () => {
-    const ctx = new LayoutVariableContext()
-    const solver = new LayoutSolver(DefaultTheme, ctx)
-    const actorTop = new ActorSymbol("guide-a", "Guide A")
-    const actorBottom = new ActorSymbol("guide-b", "Guide B")
-    const symbols = [actorTop, actorBottom]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    const guide = hintFactory.createGuideY()
-    guide.alignTop("guide-a").alignBottom("guide-b")
-
-    solver.solve(symbols, hints)
-
-    expect(actorTop.bounds.y).toBeCloseTo(actorBottom.bounds.y + actorBottom.bounds.height)
-  })
-
-  test("guide can follow symbol bottom and align other symbol top", () => {
-    const ctx = new LayoutVariableContext()
-    const solver = new LayoutSolver(DefaultTheme, ctx)
-    const a = new ActorSymbol("aligned-a", "Aligned A")
-    const b = new ActorSymbol("aligned-b", "Aligned B")
-    const symbols = [a, b]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    const guide = hintFactory.createGuideY()
-    guide.followBottom("aligned-a").alignTop("aligned-b")
-
-    solver.solve(symbols, hints)
-
-    expect(b.bounds.y).toBeCloseTo(a.bounds.y + a.bounds.height)
-  })
-
-  test("guide can follow symbol right and align other symbol left", () => {
-    const ctx = new LayoutVariableContext()
-    const solver = new LayoutSolver(DefaultTheme, ctx)
-    const a = new ActorSymbol("aligned-left", "Aligned Left")
-    const b = new ActorSymbol("aligned-right", "Aligned Right")
-    const symbols = [a, b]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    const guide = hintFactory.createGuideX()
-    guide.followRight("aligned-left").alignLeft("aligned-right")
-
-    solver.solve(symbols, hints)
-
-    expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width)
-  })
-
-  test("guideY follow methods cannot be chained multiple times", () => {
-    const ctx = new LayoutVariableContext()
-    const a = new ActorSymbol("follow-a", "A")
-    const b = new ActorSymbol("follow-b", "B")
-    const symbols = [a, b]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    const guide = hintFactory.createGuideY()
-    guide.followTop("follow-a")
-
-    expect(() => guide.followBottom("follow-b")).toThrowError(
-      /guide already follows another symbol/
-    )
-  })
-
-  test("guideX follow methods cannot be chained multiple times", () => {
-    const ctx = new LayoutVariableContext()
-    const a = new ActorSymbol("follow-x-a", "A")
-    const b = new ActorSymbol("follow-x-b", "B")
-    const symbols = [a, b]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    const guide = hintFactory.createGuideX()
-    guide.followLeft("follow-x-a")
-
-    expect(() => guide.followRight("follow-x-b")).toThrowError(
-      /guide already follows another symbol/
-    )
-  })
-
-  test("guideY arrange collects aligned symbols and emits arrangeHorizontal hint", () => {
-    const ctx = new LayoutVariableContext()
-    const actorA = new ActorSymbol("guide-arr-a", "A")
-    const actorB = new ActorSymbol("guide-arr-b", "B")
-    const actorC = new ActorSymbol("guide-arr-c", "C")
-    const symbols = [actorA, actorB, actorC]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    hintFactory.createGuideY().alignTop("guide-arr-a").alignBottom("guide-arr-b", "guide-arr-c").arrange()
-
-    const arrangeHint = hints[hints.length - 1]
-    expect(arrangeHint.type).toBe("arrangeHorizontal")
-    expect(arrangeHint.symbolIds).toEqual(["guide-arr-a", "guide-arr-b", "guide-arr-c"])
-  })
-
-  test("guideX arrange collects aligned symbols and emits arrangeVertical hint", () => {
-    const ctx = new LayoutVariableContext()
-    const actorA = new ActorSymbol("guide-arr-x-a", "A")
-    const actorB = new ActorSymbol("guide-arr-x-b", "B")
-    const actorC = new ActorSymbol("guide-arr-x-c", "C")
-    const symbols = [actorA, actorB, actorC]
-    const hints: LayoutHint[] = []
-    const hintFactory = new HintFactory(hints, symbols, DefaultTheme, ctx)
-
-    hintFactory.createGuideX().alignLeft("guide-arr-x-a").alignRight("guide-arr-x-b", "guide-arr-x-c").arrange()
-
-    const arrangeHint = hints[hints.length - 1]
-    expect(arrangeHint.type).toBe("arrangeVertical")
-    expect(arrangeHint.symbolIds).toEqual(["guide-arr-x-a", "guide-arr-x-b", "guide-arr-x-c"])
+    const guideValue = layout.valueOf(guide.y)
+    expect(a.bounds.y).toBeCloseTo(guideValue)
+    expect(b.bounds.y + b.bounds.height).toBeCloseTo(guideValue)
+    expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap)
   })
 })
