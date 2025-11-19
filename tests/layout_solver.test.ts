@@ -7,8 +7,7 @@ import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_
 import { DiagramSymbol } from "../src/model/diagram_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { DefaultTheme } from "../src/core/theme"
-import { toContainerSymbolId } from "../src/model/types"
-import { applyFixedSize } from "../src/layout/constraint_helpers"
+import { toContainerSymbolId } from "../src/model/container_symbol_base"
 
 describe("Layout pipeline", () => {
   let symbols: Array<DiagramSymbol | ActorSymbol | UsecaseSymbol | SystemBoundarySymbol>
@@ -25,14 +24,14 @@ describe("Layout pipeline", () => {
 
   function createActor(id: string) {
     const actor = new ActorSymbol(id, id, layout.vars)
-    applyFixedSize(layout, actor)
+    layout.applyFixedSize(actor)
     symbols.push(actor)
     return actor
   }
 
   function createUsecase(id: string) {
     const usecase = new UsecaseSymbol(id, id, layout.vars)
-    applyFixedSize(layout, usecase)
+    layout.applyFixedSize(usecase)
     symbols.push(usecase)
     return usecase
   }

@@ -8,7 +8,6 @@ import type { LayoutBounds } from "./symbol_base"
 import type { LayoutVariables } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
-import { anchorToOrigin, applyMinSize } from "../layout/constraint_helpers"
 
 export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo
@@ -52,8 +51,8 @@ export class DiagramSymbol extends ContainerSymbolBase {
     if (this.constraintsApplied) {
       return
     }
-    anchorToOrigin(this.layout, this, LayoutConstraintStrength.Strong)
-    applyMinSize(this.layout, this, { width: 200, height: 150 }, LayoutConstraintStrength.Weak)
+    this.layout.anchorToOrigin(this, LayoutConstraintStrength.Strong)
+    this.layout.applyMinSize(this, { width: 200, height: 150 }, LayoutConstraintStrength.Weak)
     this.constraintsApplied = true
   }
 

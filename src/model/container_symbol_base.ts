@@ -4,13 +4,16 @@ import type { LayoutBounds } from "./symbol_base"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../core/theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
-import { expressionFromBounds } from "../layout/constraint_helpers"
 
 export interface ContainerPadding {
   top: number
   right: number
   bottom: number
   left: number
+}
+
+export function toContainerSymbolId(id: SymbolId): ContainerSymbolId {
+  return id as ContainerSymbolId
 }
 
 interface ContainerContentProvider {
@@ -81,22 +84,22 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
     this.layout.constraints.withSymbol(this, "containerInbounds", builder => {
       builder.eq(
         content.x,
-        expressionFromBounds(this.layout, bounds, [{ axis: "x" }], padding.left),
+        this.layout.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
         LayoutConstraintStrength.Strong
       )
       builder.eq(
         content.y,
-        expressionFromBounds(this.layout, bounds, [{ axis: "y" }], padding.top + header),
+        this.layout.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
         LayoutConstraintStrength.Strong
       )
       builder.eq(
         content.width,
-        expressionFromBounds(this.layout, bounds, [{ axis: "width" }], -horizontalPadding),
+        this.layout.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
         LayoutConstraintStrength.Strong
       )
       builder.eq(
         content.height,
-        expressionFromBounds(this.layout, bounds, [{ axis: "height" }], -verticalPadding),
+        this.layout.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
         LayoutConstraintStrength.Strong
       )
     })

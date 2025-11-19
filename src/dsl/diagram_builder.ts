@@ -15,7 +15,7 @@ import type { Theme } from "../core/theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../core/theme"
 import type { SymbolId } from "../model/types"
-import { toContainerSymbolId } from "../model/types"
+import { toContainerSymbolId } from "../model/container_symbol_base"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型

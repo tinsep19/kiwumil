@@ -4,7 +4,6 @@ import { getStyleForSymbol } from "../../../core/theme"
 import type { Point, ContainerSymbolId } from "../../../model/types"
 import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../core/theme"
-import { applyMinSize } from "../../../layout/constraint_helpers"
 
 export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300
@@ -35,7 +34,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   }
 
   private applyMinSize() {
-    applyMinSize(this.layout, this, this.getDefaultSize())
+    this.layout.applyMinSize(this, this.getDefaultSize())
   }
 
   getConnectionPoint(from: Point): Point {

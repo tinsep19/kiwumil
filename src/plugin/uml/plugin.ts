@@ -11,9 +11,8 @@ import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolBase } from "../../model/symbol_base"
 import type { RelationshipBase } from "../../model/relationship_base"
 import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
-import { toContainerSymbolId } from "../../model/types"
+import { toContainerSymbolId } from "../../model/container_symbol_base"
 import type { LayoutContext } from "../../layout/layout_context"
-import { applyFixedSize } from "../../layout/constraint_helpers"
 
 /**
  * UML Plugin (Namespace-based)
@@ -35,7 +34,7 @@ export const UMLPlugin = {
       actor(label: string): SymbolId {
         const id = idGen.generateSymbolId('actor')
         const symbol = new ActorSymbol(id, label, layout.vars)
-        applyFixedSize(layout, symbol)
+        layout.applyFixedSize(symbol)
         userSymbols.push(symbol)
         return id
       },
@@ -48,7 +47,7 @@ export const UMLPlugin = {
       usecase(label: string): SymbolId {
         const id = idGen.generateSymbolId('usecase')
         const symbol = new UsecaseSymbol(id, label, layout.vars)
-        applyFixedSize(layout, symbol)
+        layout.applyFixedSize(symbol)
         userSymbols.push(symbol)
         return id
       },

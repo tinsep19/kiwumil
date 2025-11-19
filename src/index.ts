@@ -12,7 +12,12 @@ export type { DiagramInfo } from "./model/diagram_info"
 export type { Theme } from "./core/theme"
 export type { SymbolBase } from "./model/symbol_base"
 export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model/types"
-export { toContainerSymbolId } from "./model/types"
+export { toContainerSymbolId } from "./model/container_symbol_base"
+
+// Layout 型定義
+export type { LayoutContext } from "./layout/layout_context"
+export type { LayoutConstraintType } from "./layout/layout_constraints"
+export { LayoutConstraintStrength } from "./layout/layout_variables"
 
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./core/theme"

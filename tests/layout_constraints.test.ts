@@ -4,9 +4,8 @@ import { HintFactory } from "../src/dsl/hint_factory"
 import { DefaultTheme } from "../src/core/theme"
 import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
-import { toContainerSymbolId } from "../src/model/types"
+import { toContainerSymbolId } from "../src/model/container_symbol_base"
 import type { SymbolBase } from "../src/model/symbol_base"
-import { applyFixedSize } from "../src/layout/constraint_helpers"
 
 describe("LayoutConstraints metadata", () => {
   let layout: LayoutContext
@@ -21,7 +20,7 @@ describe("LayoutConstraints metadata", () => {
 
   function createActor(id: string) {
     const actor = new ActorSymbol(id, id, layout.vars)
-    applyFixedSize(layout, actor)
+    layout.applyFixedSize(actor)
     symbols.push(actor)
     return actor
   }
