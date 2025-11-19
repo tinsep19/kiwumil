@@ -298,7 +298,8 @@ export const CorePlugin = {
 
 ### 3. Theme の依存方向
 - `LayoutConstraints` が `Theme` を保持しているが、これはレイアウトとスタイリングの責務が混在している
-- gap などのレイアウトパラメータは別の設定オブジェクト（`LayoutConfig` など）に分離する方が望ましい
+- gap などのレイアウトパラメータは別の設定オブジェクト（`LayoutOptions` など）に分離する方が望ましい
+- **→ 独立したトピックとして `docs/draft/2025-11-19-theme-layout-separation.md` に詳細を記載**
 
 ---
 
@@ -332,7 +333,10 @@ export const CorePlugin = {
 
 - `SymbolBase` の実装変更（大規模リファクタリングを回避）
 - `layout/api`, `layout/internal` へのディレクトリ分割（提案B）
-- `Theme` と `LayoutConfig` の分離（追加の指摘事項3）
+- `Theme` と `LayoutOptions` の分離（追加の指摘事項3）
+  - **別ドラフト**: `docs/draft/2025-11-19-theme-layout-separation.md`
+  - **理由**: 影響範囲が大きく（38箇所+）、段階的実装が必要
+  - **優先度**: 次のPRで実施推奨
 
 ### 作業手順
 
