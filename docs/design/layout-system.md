@@ -1141,10 +1141,17 @@ Grid/Figure Builderは、コンテナ内の要素配置を直感的に記述で�
 N×M の矩形配置をサポート。すべての行が同じ列数である必要があります。
 
 ```typescript
-hint.grid(container)
+// 基本的な使い方（container引数省略 - diagram全体がデフォルト）
+hint.grid()
   .enclose([[a, b], [c, d]] as const)
   .gap(10)                              // 行・列共通
   .gap({ row: 20, col: 10 })           // 個別指定
+  .layout()
+
+// 特定のコンテナを指定する場合
+hint.grid(container)
+  .enclose([[a, b], [c, d]] as const)
+  .gap(10)
   .layout()
 
 // 結果:
@@ -1155,6 +1162,7 @@ hint.grid(container)
 ```
 
 **特徴:**
+- **引数省略対応**: `grid()` の引数を省略すると、diagram全体（`DIAGRAM_CONTAINER_ID`）がデフォルトコンテナになる
 - 矩形検証: `isRectMatrix()` で検証、非矩形の場合はエラー
 - gap設定: row/col 別々に指定可能
 - alignment: なし（矩形グリッドのため）
@@ -1164,10 +1172,18 @@ hint.grid(container)
 行ごとに異なる要素数を許容する柔軟な配置。
 
 ```typescript
-hint.figure(container)
+// 基本的な使い方（container引数省略 - diagram全体がデフォルト）
+hint.figure()
   .enclose([[a, b], [c]] as const)
   .gap(15)                              // 行間のみ
   .align('center')                      // left/center/right
+  .layout()
+
+// 特定のコンテナを指定する場合
+hint.figure(container)
+  .enclose([[a, b], [c]] as const)
+  .gap(15)
+  .align('center')
   .layout()
 
 // 結果 (center):
@@ -1178,11 +1194,64 @@ hint.figure(container)
 ```
 
 **特徴:**
+- **引数省略対応**: `figure()` の引数を省略すると、diagram全体（`DIAGRAM_CONTAINER_ID`）がデフォルトコンテナになる
 - 非矩形許容: 各行の要素数が異なってもOK
 - gap設定: 行間のみ（列間は自動）
 - alignment: left（デフォルト）, center, right
 
 ### 設計方針
+
+#### Diagram全体のレイアウト対応
+
+Grid/Figure Builder は diagram 全体のレイアウトにも対応しています。
+
+**引数省略版（推奨）:**
+
+```typescript
+TypeDiagram("System Architecture")
+  .build((el, rel, hint) => {
+    const frontend = el.core.rectangle("Frontend")
+    const backend = el.core.rectangle("Backend")
+    const database = el.core.rectangle("Database")
+    
+    // ✅ 引数なしで diagram 全体を Grid レイアウト
+    hint.grid()
+      .enclose([
+        [frontend],
+        [backend, database]
+      ])
+      .gap({ row: 40, col: 60 })
+      .layout()
+  })
+```
+
+**明示的指定版（下位互換）:**
+
+```typescript
+import { TypeDiagram, DIAGRAM_CONTAINER_ID } from "kiwumil"
+
+TypeDiagram("System Architecture")
+  .build((el, rel, hint) => {
+    const a = el.core.circle("A")
+    const b = el.core.circle("B")
+    
+    // ✅ DIAGRAM_CONTAINER_ID を明示的に指定
+    hint.grid(DIAGRAM_CONTAINER_ID)
+      .enclose([[a, b]])
+      .gap(20)
+      .layout()
+  })
+```
+
+**動作:**
+1. `DiagramSymbol` は `build()` 開始時に事前生成される（制約適用は遅延）
+2. ユーザーが `hint.grid()` / `hint.figure()` を使った場合、その制約が適用される
+3. 明示的レイアウトがない場合のみ、デフォルトの `enclose` 制約が適用される
+
+**メリット:**
+- diagram 全体の配置を柔軟に制御可能
+- 入れ子コンテナとの併用も可能
+- 既存コードへの影響なし（後方互換性維持）
 
 #### DX（Developer Experience）重視
 
@@ -1193,12 +1262,16 @@ hint.enclose(container, [[a,b],[c,d]]).auto()
 // ✅ 型を明示的に指定（直感的）
 hint.grid(container).enclose([[a,b],[c,d]]).layout()
 hint.figure(container).enclose([[a,b],[c]]).layout()
+
+// ✅ 引数省略でさらにシンプルに（diagram全体）
+hint.grid().enclose([[a,b],[c,d]]).layout()
 ```
 
 **メリット:**
 - レイアウトタイプが一目瞭然
 - 予測可能な動作
 - IntelliSenseによる完全な補完
+- 最も一般的なケース（diagram全体）がシンプルに記述可能
 
 #### Guide APIとの一貫性
 
