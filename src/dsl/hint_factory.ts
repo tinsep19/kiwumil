@@ -179,10 +179,7 @@ export class GuideBuilderX {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.layout.vars)
       this.layout.vars.addConstraint(
-        this.layout.vars.expression([
-          { variable: bounds.x },
-          { variable: bounds.width }
-        ]),
+        bounds.right,
         LayoutConstraintOperator.Eq,
         this.x,
         LayoutConstraintStrength.Strong
@@ -198,10 +195,7 @@ export class GuideBuilderX {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.layout.vars)
       this.layout.vars.addConstraint(
-        this.layout.vars.expression([
-          { variable: bounds.x },
-          { variable: bounds.width, coefficient: 0.5 }
-        ]),
+        bounds.centerX,
         LayoutConstraintOperator.Eq,
         this.x,
         LayoutConstraintStrength.Strong
@@ -232,10 +226,7 @@ export class GuideBuilderX {
     this.layout.vars.addConstraint(
       this.x,
       LayoutConstraintOperator.Eq,
-      this.layout.vars.expression([
-        { variable: bounds.x },
-        { variable: bounds.width }
-      ]),
+      bounds.right,
       LayoutConstraintStrength.Strong
     )
     return this
@@ -249,10 +240,7 @@ export class GuideBuilderX {
     this.layout.vars.addConstraint(
       this.x,
       LayoutConstraintOperator.Eq,
-      this.layout.vars.expression([
-        { variable: bounds.x },
-        { variable: bounds.width, coefficient: 0.5 }
-      ]),
+      bounds.centerX,
       LayoutConstraintStrength.Strong
     )
     return this
@@ -323,10 +311,7 @@ export class GuideBuilderY {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.layout.vars)
       this.layout.vars.addConstraint(
-        this.layout.vars.expression([
-          { variable: bounds.y },
-          { variable: bounds.height }
-        ]),
+        bounds.bottom,
         LayoutConstraintOperator.Eq,
         this.y,
         LayoutConstraintStrength.Strong
@@ -342,10 +327,7 @@ export class GuideBuilderY {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.layout.vars)
       this.layout.vars.addConstraint(
-        this.layout.vars.expression([
-          { variable: bounds.y },
-          { variable: bounds.height, coefficient: 0.5 }
-        ]),
+        bounds.centerY,
         LayoutConstraintOperator.Eq,
         this.y,
         LayoutConstraintStrength.Strong
@@ -376,10 +358,7 @@ export class GuideBuilderY {
     this.layout.vars.addConstraint(
       this.y,
       LayoutConstraintOperator.Eq,
-      this.layout.vars.expression([
-        { variable: bounds.y },
-        { variable: bounds.height }
-      ]),
+      bounds.bottom,
       LayoutConstraintStrength.Strong
     )
     return this
@@ -393,10 +372,7 @@ export class GuideBuilderY {
     this.layout.vars.addConstraint(
       this.y,
       LayoutConstraintOperator.Eq,
-      this.layout.vars.expression([
-        { variable: bounds.y },
-        { variable: bounds.height, coefficient: 0.5 }
-      ]),
+      bounds.centerY,
       LayoutConstraintStrength.Strong
     )
     return this

@@ -1,6 +1,5 @@
 import type { ContainerSymbolId, SymbolId } from "./types"
-import { SymbolBase } from "./symbol_base"
-import type { LayoutBounds } from "./symbol_base"
+import { SymbolBase, LayoutBounds } from "./symbol_base"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../core/theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
@@ -52,12 +51,13 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
   protected ensureContentBounds(): LayoutBounds {
     if (!this.contentBounds) {
       const vars = this.layout.vars
-      this.contentBounds = {
-        x: vars.createVar(`${this.id}.content.x`),
-        y: vars.createVar(`${this.id}.content.y`),
-        width: vars.createVar(`${this.id}.content.width`),
-        height: vars.createVar(`${this.id}.content.height`)
-      }
+      this.contentBounds = new LayoutBounds(
+        vars,
+        vars.createVar(`${this.id}.content.x`),
+        vars.createVar(`${this.id}.content.y`),
+        vars.createVar(`${this.id}.content.width`),
+        vars.createVar(`${this.id}.content.height`)
+      )
     }
     if (!this.containerConstraintsApplied) {
       this.applyContainerConstraints()
