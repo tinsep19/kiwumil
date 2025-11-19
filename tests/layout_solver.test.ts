@@ -1,6 +1,5 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "../src/layout/layout_context"
-import { LayoutSolver } from "../src/layout/layout_solver"
 import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
@@ -13,13 +12,11 @@ describe("Layout pipeline", () => {
   let symbols: Array<DiagramSymbol | ActorSymbol | UsecaseSymbol | SystemBoundarySymbol>
   let layout: LayoutContext
   let hint: HintFactory
-  let solver: LayoutSolver
 
   beforeEach(() => {
     symbols = []
     layout = new LayoutContext(DefaultTheme, id => symbols.find(s => s.id === id))
     hint = new HintFactory(layout, symbols)
-    solver = new LayoutSolver(layout)
   })
 
   function createActor(id: string) {
@@ -46,7 +43,7 @@ describe("Layout pipeline", () => {
     const diagram = new DiagramSymbol(toContainerSymbolId("__diagram__"), "Test", layout)
     symbols.push(diagram)
 
-    solver.solve(symbols)
+    layout.solveAndApply(symbols)
 
     expect(diagram.bounds.x).toBeCloseTo(0)
     expect(diagram.bounds.y).toBeCloseTo(0)
@@ -59,7 +56,7 @@ describe("Layout pipeline", () => {
     const b = createActor("b")
 
     hint.arrangeHorizontal(a.id, b.id)
-    solver.solve(symbols)
+    layout.solveAndApply(symbols)
 
     expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap)
   })
@@ -71,7 +68,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
     hint.alignCenterY(a.id, b.id, c.id)
-    solver.solve(symbols)
+    layout.solveAndApply(symbols)
 
     expect(a.bounds.y + a.bounds.height / 2).toBeCloseTo(b.bounds.y + b.bounds.height / 2)
     expect(b.bounds.y + b.bounds.height / 2).toBeCloseTo(c.bounds.y + c.bounds.height / 2)
@@ -84,7 +81,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeVertical(a.id, b.id)
     hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
-    solver.solve(symbols)
+    layout.solveAndApply(symbols)
 
     expect(a.bounds.x).toBeGreaterThanOrEqual(boundary.bounds.x)
     expect(b.bounds.y + b.bounds.height).toBeLessThanOrEqual(boundary.bounds.y + boundary.bounds.height)
@@ -100,7 +97,7 @@ describe("Layout pipeline", () => {
       .alignBottom(b.id)
       .arrange()
 
-    solver.solve(symbols)
+    layout.solveAndApply(symbols)
 
     const guideValue = layout.valueOf(guide.y)
     expect(a.bounds.y).toBeCloseTo(guideValue)

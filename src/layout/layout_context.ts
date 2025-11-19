@@ -29,6 +29,14 @@ export class LayoutContext {
     this.vars.solve()
   }
 
+  solveAndApply(symbols: SymbolBase[]) {
+    this.solve()
+
+    for (const symbol of symbols) {
+      symbol.applyLayoutBounds()
+    }
+  }
+
   valueOf(variable: LayoutVar): number {
     return this.vars.valueOf(variable)
   }
