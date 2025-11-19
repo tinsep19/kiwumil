@@ -1125,3 +1125,402 @@ hint.flex(container, [a, b, c], {
 ---
 
 **🎉 First Milestone 達成！** Enclose 内要素の自動配置をサポートし、ユーザーが直感的にレイアウトを記述できるようになりました。
+
+---
+
+## Grid/Figure Builder（v0.x実装済み）
+
+### 概要
+
+Grid/Figure Builderは、コンテナ内の要素配置を直感的に記述できるfluent-style APIです。ユーザーのイメージに基づいた設計となっています。
+
+### API設計
+
+#### Grid Builder - 矩形行列配置
+
+N×M の矩形配置をサポート。すべての行が同じ列数である必要があります。
+
+```typescript
+hint.grid(container)
+  .enclose([[a, b], [c, d]] as const)
+  .gap(10)                              // 行・列共通
+  .gap({ row: 20, col: 10 })           // 個別指定
+  .layout()
+
+// 結果:
+// ┌─────────────┐
+// │  a     b    │
+// │  c     d    │
+// └─────────────┘
+```
+
+**特徴:**
+- 矩形検証: `isRectMatrix()` で検証、非矩形の場合はエラー
+- gap設定: row/col 別々に指定可能
+- alignment: なし（矩形グリッドのため）
+
+#### Figure Builder - 非矩形配置
+
+行ごとに異なる要素数を許容する柔軟な配置。
+
+```typescript
+hint.figure(container)
+  .enclose([[a, b], [c]] as const)
+  .gap(15)                              // 行間のみ
+  .align('center')                      // left/center/right
+  .layout()
+
+// 結果 (center):
+// ┌─────────────┐
+// │   a    b    │
+// │      c      │
+// └─────────────┘
+```
+
+**特徴:**
+- 非矩形許容: 各行の要素数が異なってもOK
+- gap設定: 行間のみ（列間は自動）
+- alignment: left（デフォルト）, center, right
+
+### 設計方針
+
+#### DX（Developer Experience）重視
+
+```typescript
+// ❌ 型を自動選択（暗黙的）
+hint.enclose(container, [[a,b],[c,d]]).auto()
+
+// ✅ 型を明示的に指定（直感的）
+hint.grid(container).enclose([[a,b],[c,d]]).layout()
+hint.figure(container).enclose([[a,b],[c]]).layout()
+```
+
+**メリット:**
+- レイアウトタイプが一目瞭然
+- 予測可能な動作
+- IntelliSenseによる完全な補完
+
+#### Guide APIとの一貫性
+
+Grid/Figure Builderは既存のGuide APIと同じパターンを採用：
+
+```typescript
+// Guide API
+hint.createGuideY()
+  .alignBottom(user, admin)
+  .alignTop(screen, server)
+  .arrange()
+
+// Grid/Figure Builder
+hint.grid(container)
+  .enclose([[a, b], [c, d]])
+  .gap(10)
+  .layout()
+```
+
+**共通パターン:** 型指定 → 対象指定 → オプション → 適用
+
+### 実装詳細
+
+#### 矩形検証
+
+```typescript
+// src/dsl/matrix_utils.ts
+export function isRectMatrix<T>(matrix: readonly (readonly T[])[]): boolean {
+  if (matrix.length === 0) return false
+  const width = matrix[0]?.length
+  if (width === undefined || width === 0) return false
+  return matrix.every(row => row.length === width)
+}
+```
+
+#### 制約生成
+
+Grid/Figure Builderは `LayoutConstraints.encloseGrid()` / `.encloseFigure()` を呼び出します：
+
+```typescript
+// src/layout/layout_constraints.ts
+
+encloseGrid(
+  containerId: ContainerSymbolId,
+  matrix: SymbolId[][],
+  options?: { rowGap?: number; colGap?: number; padding?: ... }
+): void {
+  // 1. enclose 制約（Required）
+  this.enclose(containerId, matrix.flat())
+  
+  // 2. 各行を水平配置
+  for (const row of matrix) {
+    this.createArrangeHorizontalConstraints(row, colGap)
+  }
+  
+  // 3. 各列を垂直配置
+  for (let col = 0; col < numCols; col++) {
+    const column = matrix.map(row => row[col])
+    this.createArrangeVerticalConstraints(column, rowGap)
+  }
+}
+```
+
+### 使用例
+
+#### 2×2グリッド
+
+```typescript
+const boundary = el.uml.systemBoundary("System")
+const [a, b, c, d] = [
+  el.core.rectangle("A"),
+  el.core.rectangle("B"),
+  el.core.rectangle("C"),
+  el.core.rectangle("D")
+]
+
+hint.grid(boundary)
+  .enclose([[a, b], [c, d]] as const)
+  .gap({ row: 30, col: 60 })
+  .layout()
+```
+
+#### 非矩形配置
+
+```typescript
+const boundary = el.uml.systemBoundary("System")
+const [a, b, c, d, e] = [
+  el.core.rectangle("A"),
+  el.core.rectangle("B"),
+  el.core.rectangle("C"),
+  el.core.rectangle("D"),
+  el.core.rectangle("E")
+]
+
+hint.figure(boundary)
+  .enclose([[a], [b, c, d], [e]] as const)
+  .gap(20)
+  .align('center')
+  .layout()
+
+// 結果:
+// ┌─────────────┐
+// │      a      │
+// │  b  c  d    │
+// │      e      │
+// └─────────────┘
+```
+
+### 将来の拡張
+
+- [ ] padding サポート
+- [ ] 複雑なalignmentオプション（stretch, baseline等）
+- [ ] ネストされたグリッド
+- [ ] レスポンシブ対応（min/max constraints）
+
+---
+
+## LayoutContext（v0.x実装済み）
+
+### 概要
+
+`LayoutContext` は、レイアウトシステムの中核となるファサードです。`LayoutVariables` と `LayoutConstraints` を束ね、シンボルやヒントからの制約操作を一元管理します。
+
+### アーキテクチャ
+
+```
+┌─────────────────────────────────────┐
+│        LayoutContext                │
+│  (ファサード・コーディネーター)       │
+├─────────────────────────────────────┤
+│  - solver: kiwi.Solver              │
+│  - variables: LayoutVariables       │
+│  - constraints: LayoutConstraints   │
+└─────────────────────────────────────┘
+         │                    │
+         ▼                    ▼
+┌──────────────┐    ┌──────────────────┐
+│ Layout       │    │ Layout           │
+│ Variables    │    │ Constraints      │
+├──────────────┤    ├──────────────────┤
+│ - 変数生成   │    │ - 制約生成       │
+│ - Expression │    │ - 制約管理       │
+│              │    │ - ID採番         │
+└──────────────┘    └──────────────────┘
+```
+
+### 役割分担
+
+#### LayoutVariables（変数管理）
+
+kiwi の Variable/Constraint 生成を担う薄い層。
+
+```typescript
+export class LayoutVariables {
+  createVariable(name: string): LayoutVar
+  expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
+  addConstraint(
+    lhs: LayoutExpressionInput,
+    op: LayoutConstraintOperator,
+    rhs: LayoutExpressionInput,
+    strength: LayoutConstraintStrength
+  ): kiwi.Constraint
+}
+```
+
+#### LayoutConstraints（制約管理）
+
+kiwumil レベルの制約を管理。各制約に ID とメタ情報を付与。
+
+```typescript
+export interface LayoutConstraint {
+  id: LayoutConstraintId          // "constraints/${id}" 形式
+  type: LayoutConstraintType      // "arrangeHorizontal", "encloseGrid" 等
+  rawConstraints: kiwi.Constraint[]
+}
+
+export class LayoutConstraints {
+  arrangeHorizontal(symbolIds: LayoutSymbolId[], gap?: number): void
+  arrangeVertical(symbolIds: LayoutSymbolId[], gap?: number): void
+  alignLeft(symbolIds: LayoutSymbolId[]): void
+  // ... 他のヒントメソッド
+  encloseGrid(containerId: ContainerSymbolId, matrix: SymbolId[][], options?): void
+  encloseFigure(containerId: ContainerSymbolId, rows: SymbolId[][], options?): void
+}
+```
+
+#### LayoutContext（ファサード）
+
+Variables と Constraints を束ね、統一されたインターフェースを提供。
+
+```typescript
+export class LayoutContext {
+  readonly solver: kiwi.Solver
+  readonly variables: LayoutVariables
+  readonly constraints: LayoutConstraints
+  
+  constructor(theme: Theme, resolveSymbol: (id: LayoutSymbolId) => SymbolBase | undefined)
+  
+  solve(): void
+  getVariable(name: string): LayoutVar | undefined
+  getBounds(symbolId: LayoutSymbolId): Bounds
+}
+```
+
+### オンライン制約適用
+
+従来はヒント情報を `LayoutHint[]` に蓄積し、solve時にバッチ処理していましたが、現在は**ヒント呼び出し時に即座に制約を追加**します。
+
+#### 旧設計（バッチ処理）
+
+```typescript
+// ❌ 旧: ヒントを蓄積
+hint.arrangeHorizontal(a, b, c)  // → hints.push({ type: "horizontal", ids: [a,b,c] })
+
+// solve時に制約生成
+solver.solve(symbols, hints)     // → hints をループして制約追加
+```
+
+#### 新設計（オンライン適用）
+
+```typescript
+// ✅ 新: 即座に制約追加
+hint.arrangeHorizontal(a, b, c)  // → layoutContext.constraints.arrangeHorizontal([a,b,c])
+                                  // → solver.addConstraint(...) が即座に実行
+```
+
+**メリット:**
+- シンプルな実装（中間データ構造が不要）
+- 制約の追跡が容易（`LayoutConstraint` ID で管理）
+- Guide APIとの統一感
+
+### Symbol生成時の制約適用
+
+Symbol生成時に `LayoutContext` を注入し、初期制約を登録します。
+
+```typescript
+// src/plugin/core/plugin.ts
+export const CorePlugin: DiagramPlugin = {
+  createSymbolFactory: (layout: LayoutContext) => ({
+    rectangle: (label: string, options?: { width?: number; height?: number }) => {
+      const symbol = new Rectangle(
+        generateSymbolId(label),
+        label,
+        layout,  // ← LayoutContext を渡す
+        options
+      )
+      return symbol.id
+    }
+  })
+}
+
+// src/plugin/core/symbols/rectangle.ts
+export class Rectangle extends SymbolBase {
+  constructor(
+    id: SymbolId,
+    label: string,
+    layout: LayoutContext,
+    options?: { width?: number; height?: number }
+  ) {
+    super(id, label, "rectangle")
+    const bounds = this.ensureLayoutBounds(layout.variables)
+    
+    // 初期制約を登録（Required, サイズ固定）
+    layout.constraints.withSymbol(this.id, "symbolBounds", builder => {
+      builder.eq(bounds.width, options?.width ?? 80)
+      builder.eq(bounds.height, options?.height ?? 60)
+    })
+  }
+}
+```
+
+### ヒントからの制約適用
+
+`HintFactory` は `LayoutContext.constraints` を直接呼び出します。
+
+```typescript
+// src/dsl/hint_factory.ts
+export class HintFactory {
+  constructor(
+    private readonly layout: LayoutContext,
+    private readonly symbols: SymbolBase[]
+  ) {}
+  
+  arrangeHorizontal(...symbolIds: LayoutTargetId[]) {
+    this.layout.constraints.arrangeHorizontal(symbolIds)
+  }
+  
+  grid(container: ContainerSymbolId): GridBuilder {
+    return new GridBuilder(this, container)
+  }
+}
+```
+
+### 制約の追跡
+
+各制約には一意なIDが付与され、デバッグや削除が可能です。
+
+```typescript
+// 制約ID形式
+"constraints/${serial}"                    // 通常の制約
+"constraints/${symbolId}/${serial}"        // Symbol固有の制約
+
+// 制約の削除（将来実装予定）
+layoutContext.constraints.remove("constraints/user/0")
+```
+
+---
+
+## まとめ
+
+### 完了した機能
+
+- ✅ **Grid/Figure Builder**: 直感的な2Dレイアウト API
+- ✅ **LayoutContext**: Variables/Constraints のファサード化
+- ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
+- ✅ **ContainerSymbolBase**: コンテナの共通基底クラス
+- ✅ **Guide API**: 水平・垂直ガイドラインによる配置
+
+### 今後の拡張
+
+- [ ] Grid/Figure Builder の padding サポート
+- [ ] Theme と LayoutOptions の分離
+- [ ] Distribute（等間隔配置）
+- [ ] Flexbox風レイアウト
+- [ ] 制約の動的削除・更新
