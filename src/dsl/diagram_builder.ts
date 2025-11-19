@@ -1,7 +1,6 @@
 // src/dsl/diagram_builder.ts
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
-import { LayoutSolver } from "../layout/layout_solver"
 import { SvgRenderer } from "../render/svg_renderer"
 import { DiagramSymbol } from "../model/diagram_symbol"
 import { CorePlugin } from "../plugin/core/plugin"
@@ -116,8 +115,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     // レイアウト計算
-    const solver = new LayoutSolver(layoutContext)
-    solver.solve(allSymbols)
+    layoutContext.solveAndApply(allSymbols)
 
     return {
       symbols: allSymbols,
