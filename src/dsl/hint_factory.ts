@@ -4,6 +4,8 @@ import type { SymbolBase } from "../model/symbol_base"
 import { LayoutConstraintOperator, LayoutConstraintStrength, type LayoutVar } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
 import { ContainerSymbolBase } from "../model/container_symbol_base"
+import { GridBuilder } from "./grid_builder"
+import { FigureBuilder } from "./figure_builder"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 
@@ -14,6 +16,34 @@ export class HintFactory {
     private readonly layout: LayoutContext,
     private readonly symbols: SymbolBase[]
   ) {}
+
+  /**
+   * Grid Builder を返す（矩形行列レイアウト用）
+   */
+  grid(container: ContainerSymbolId): GridBuilder {
+    return new GridBuilder(this, container)
+  }
+
+  /**
+   * Figure Builder を返す（非矩形レイアウト用）
+   */
+  figure(container: ContainerSymbolId): FigureBuilder {
+    return new FigureBuilder(this, container)
+  }
+
+  /**
+   * LayoutContext を取得（Builder から参照）
+   */
+  getLayoutContext(): LayoutContext {
+    return this.layout
+  }
+
+  /**
+   * Symbols 配列を取得（Builder から参照）
+   */
+  getSymbols(): SymbolBase[] {
+    return this.symbols
+  }
 
   horizontal(...symbolIds: LayoutTargetId[]) {
     this.arrangeHorizontal(...symbolIds)
