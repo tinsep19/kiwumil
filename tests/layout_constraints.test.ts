@@ -1,34 +1,36 @@
 import { describe, beforeEach, test, expect } from "bun:test"
 import { LayoutContext } from "../src/layout/layout_context"
 import { HintFactory } from "../src/dsl/hint_factory"
+import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/core/theme"
 import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
 import { toContainerSymbolId } from "../src/model/container_symbol_base"
-import type { SymbolBase } from "../src/model/symbol_base"
 
 describe("LayoutConstraints metadata", () => {
   let layout: LayoutContext
   let hint: HintFactory
-  let symbols: SymbolBase[]
+  let symbols: Symbols
 
   beforeEach(() => {
-    symbols = []
-    layout = new LayoutContext(DefaultTheme, id => symbols.find(symbol => symbol.id === id))
+    symbols = new Symbols()
+    layout = new LayoutContext(DefaultTheme, id => symbols.findById(id))
     hint = new HintFactory(layout, symbols)
   })
 
   function createActor(id: string) {
-    const actor = new ActorSymbol(id, id, layout.vars)
-    layout.applyFixedSize(actor)
-    symbols.push(actor)
-    return actor
+    return symbols.register("test", "actor", (symbolId) => {
+      const actor = new ActorSymbol(symbolId, id, layout.vars)
+      layout.applyFixedSize(actor)
+      return actor
+    })
   }
 
   function createBoundary(id: string) {
-    const boundary = new SystemBoundarySymbol(toContainerSymbolId(id), id, layout)
-    symbols.push(boundary)
-    return boundary
+    return symbols.register("test", "systemBoundary", (symbolId) => {
+      const containerId = toContainerSymbolId(symbolId)
+      return new SystemBoundarySymbol(containerId, id, layout)
+    })
   }
 
   test("arrangeHorizontal records logical constraints per neighbor pair", () => {

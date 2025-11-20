@@ -6,6 +6,8 @@ export { CorePlugin } from "./plugin/core/plugin"
 export { UMLPlugin } from "./plugin/uml/plugin"
 export type { TextInfo } from "./plugin/core/symbols/text_symbol"
 
+export { Symbols } from "./dsl/symbols"
+export { Relationships } from "./dsl/relationships"
 // 型定義
 export type { DiagramPlugin } from "./dsl/diagram_plugin"
 export type { DiagramInfo } from "./model/diagram_info"

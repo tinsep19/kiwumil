@@ -7,27 +7,54 @@ import {
   type RelationshipId,
   type ContainerSymbolId
 } from "../dist"
+import { SymbolBase } from "../dist/model/symbol_base"
+import { RelationshipBase } from "../dist/model/relationship_base"
+
+class TestSymbol extends SymbolBase {
+  constructor(id: SymbolId, label: string) {
+    super(id, label)
+  }
+
+  getDefaultSize() {
+    return { width: 0, height: 0 }
+  }
+
+  toSVG() {
+    return ""
+  }
+
+  getConnectionPoint() {
+    return { x: 0, y: 0 }
+  }
+}
+
+class TestRelationship extends RelationshipBase {
+  toSVG() {
+    return ""
+  }
+}
 
 const CustomPlugin = {
   name: "custom",
-  createSymbolFactory(userSymbols, layout) {
-    void userSymbols
+  createSymbolFactory(symbols, layout) {
     void layout
+    const plugin = this.name
+
     return {
       node(label: string): SymbolId {
-        void label
-        return "custom:node-0" as SymbolId
+        const symbol = symbols.register(plugin, "node", (symbolId) => new TestSymbol(symbolId, label))
+        return symbol.id
       }
     }
   },
   createRelationshipFactory(relationships, layout) {
-    void relationships
     void layout
+    const plugin = this.name
+
     return {
       link(from: SymbolId, to: SymbolId): RelationshipId {
-        void from
-        void to
-        return "custom:link-0" as RelationshipId
+        const relationship = relationships.register(plugin, "link", (id) => new TestRelationship(id, from, to))
+        return relationship.id
       }
     }
   }

@@ -5,45 +5,47 @@ import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
 import { DiagramSymbol } from "../src/model/diagram_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
+import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/core/theme"
 import { toContainerSymbolId } from "../src/model/container_symbol_base"
 
 describe("Layout pipeline", () => {
-  let symbols: Array<DiagramSymbol | ActorSymbol | UsecaseSymbol | SystemBoundarySymbol>
+  let symbols: Symbols
   let layout: LayoutContext
   let hint: HintFactory
 
   beforeEach(() => {
-    symbols = []
-    layout = new LayoutContext(DefaultTheme, id => symbols.find(s => s.id === id))
+    symbols = new Symbols()
+    layout = new LayoutContext(DefaultTheme, id => symbols.findById(id))
     hint = new HintFactory(layout, symbols)
   })
 
   function createActor(id: string) {
-    const actor = new ActorSymbol(id, id, layout.vars)
-    layout.applyFixedSize(actor)
-    symbols.push(actor)
-    return actor
+    return symbols.register("test", "actor", (symbolId) => {
+      const actor = new ActorSymbol(symbolId, id, layout.vars)
+      layout.applyFixedSize(actor)
+      return actor
+    })
   }
 
   function createUsecase(id: string) {
-    const usecase = new UsecaseSymbol(id, id, layout.vars)
-    layout.applyFixedSize(usecase)
-    symbols.push(usecase)
-    return usecase
+    return symbols.register("test", "usecase", (symbolId) => {
+      const usecase = new UsecaseSymbol(symbolId, id, layout.vars)
+      layout.applyFixedSize(usecase)
+      return usecase
+    })
   }
 
   function createBoundary(id: string) {
-    const boundary = new SystemBoundarySymbol(toContainerSymbolId(id), id, layout)
-    symbols.push(boundary)
-    return boundary
+    return symbols.register("test", "systemBoundary", (symbolId) => {
+      const containerId = toContainerSymbolId(symbolId)
+      return new SystemBoundarySymbol(containerId, id, layout)
+    })
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
     const diagram = new DiagramSymbol(toContainerSymbolId("__diagram__"), "Test", layout)
-    symbols.push(diagram)
-
-    layout.solveAndApply(symbols)
+    layout.solveAndApply([...symbols.getAll(), diagram])
 
     expect(diagram.bounds.x).toBeCloseTo(0)
     expect(diagram.bounds.y).toBeCloseTo(0)
@@ -56,7 +58,7 @@ describe("Layout pipeline", () => {
     const b = createActor("b")
 
     hint.arrangeHorizontal(a.id, b.id)
-    layout.solveAndApply(symbols)
+    layout.solveAndApply(symbols.getAll())
 
     expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap)
   })
@@ -68,7 +70,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
     hint.alignCenterY(a.id, b.id, c.id)
-    layout.solveAndApply(symbols)
+    layout.solveAndApply(symbols.getAll())
 
     expect(a.bounds.y + a.bounds.height / 2).toBeCloseTo(b.bounds.y + b.bounds.height / 2)
     expect(b.bounds.y + b.bounds.height / 2).toBeCloseTo(c.bounds.y + c.bounds.height / 2)
@@ -81,7 +83,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeVertical(a.id, b.id)
     hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
-    layout.solveAndApply(symbols)
+    layout.solveAndApply(symbols.getAll())
 
     expect(a.bounds.x).toBeGreaterThanOrEqual(boundary.bounds.x)
     expect(b.bounds.y + b.bounds.height).toBeLessThanOrEqual(boundary.bounds.y + boundary.bounds.height)
@@ -97,7 +99,7 @@ describe("Layout pipeline", () => {
       .alignBottom(b.id)
       .arrange()
 
-    layout.solveAndApply(symbols)
+    layout.solveAndApply(symbols.getAll())
 
     const guideValue = layout.valueOf(guide.y)
     expect(a.bounds.y).toBeCloseTo(guideValue)

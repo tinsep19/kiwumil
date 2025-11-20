@@ -117,32 +117,30 @@ import type { LayoutVariableContext } from "kiwumil"
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
   
-  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
-    const namespace = this.name
-    let counter = 0
+  createSymbolFactory(symbols: Symbols, layout: LayoutVariableContext) {
+    const plugin = this.name
     
     return {
-      // Symbol 作成関数を定義
       mySymbol(label: string): SymbolId {
-        const id = `${namespace}:mySymbol-${counter++}` as SymbolId
-        const symbol = new MySymbol(id, label, layout)
-        userSymbols.push(symbol)  // 重要: 配列に登録
-        return id
+        const symbol = symbols.register(plugin, "mySymbol", (symbolId) => {
+          const instance = new MySymbol(symbolId, label, layout)
+          layout.applyFixedSize(instance)
+          return instance
+        })
+        return symbol.id
       }
     }
   },
-  
-  createRelationshipFactory(relationships: RelationshipBase[], layout: LayoutVariableContext) {
-    const namespace = this.name
-    let counter = 0
+
+  createRelationshipFactory(relationships: Relationships, layout: LayoutVariableContext) {
+    const plugin = this.name
     
     return {
-      // Relationship 作成関数を定義
       myRelation(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = `${namespace}:myRelation-${counter++}` as RelationshipId
-        const rel = new MyRelation(id, from, to, layout)
-        relationships.push(rel)  // 重要: 配列に登録
-        return id
+        const relationship = relationships.register(plugin, "myRelation", (id) => {
+          return new MyRelation(id, from, to, layout)
+        })
+        return relationship.id
       }
     }
   }
@@ -159,72 +157,73 @@ import { Association } from "./relationships/association"
 import { Include } from "./relationships/include"
 import { Extend } from "./relationships/extend"
 import { Generalize } from "./relationships/generalize"
-import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolBase } from "../../model/symbol_base"
-import type { RelationshipBase } from "../../model/relationship_base"
-import type { SymbolId, RelationshipId } from "../../model/types"
+import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
+import { toContainerSymbolId } from "../../model/container_symbol_base"
 import type { LayoutVariableContext } from "../../layout/layout_variable_context"
+import { Symbols } from "../../dsl/symbols"
+import { Relationships } from "../../dsl/relationships"
 
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutVariableContext) {
-    const idGen = createIdGenerator(this.name)
+  createSymbolFactory(symbols: Symbols, layout: LayoutVariableContext) {
+    const plugin = this.name
     
     return {
       actor(label: string): SymbolId {
-        const id = idGen.generateSymbolId('actor')
-        const symbol = new ActorSymbol(id, label, layout)
-        userSymbols.push(symbol)
-        return id
+        const symbol = symbols.register(plugin, "actor", (symbolId) => {
+          const actor = new ActorSymbol(symbolId, label, layout)
+          layout.applyFixedSize(actor)
+          return actor
+        })
+        return symbol.id
       },
       
       usecase(label: string): SymbolId {
-        const id = idGen.generateSymbolId('usecase')
-        const symbol = new UsecaseSymbol(id, label, layout)
-        userSymbols.push(symbol)
-        return id
+        const symbol = symbols.register(plugin, "usecase", (symbolId) => {
+          const usecase = new UsecaseSymbol(symbolId, label, layout)
+          layout.applyFixedSize(usecase)
+          return usecase
+        })
+        return symbol.id
       },
       
-      systemBoundary(label: string): SymbolId {
-        const id = idGen.generateSymbolId('systemBoundary')
-        const symbol = new SystemBoundarySymbol(id, label, layout)
-        userSymbols.push(symbol)
-        return id
+      systemBoundary(label: string): ContainerSymbolId {
+        const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
+          const containerId = toContainerSymbolId(symbolId)
+          return new SystemBoundarySymbol(containerId, label, layout)
+        })
+        return symbol.id
       }
     }
   },
   
   createRelationshipFactory(
-    relationships: RelationshipBase[],
+    relationships: Relationships,
     _layout: LayoutVariableContext
   ) {
-    const idGen = createIdGenerator(this.name)
+    const plugin = this.name
     
     return {
       associate(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('association')
-        relationships.push(new Association(id, from, to))
-        return id
+        const relationship = relationships.register(plugin, "association", (id) => new Association(id, from, to))
+        return relationship.id
       },
       
       include(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('include')
-        relationships.push(new Include(id, from, to))
-        return id
+        const relationship = relationships.register(plugin, "include", (id) => new Include(id, from, to))
+        return relationship.id
       },
       
       extend(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('extend')
-        relationships.push(new Extend(id, from, to))
-        return id
+        const relationship = relationships.register(plugin, "extend", (id) => new Extend(id, from, to))
+        return relationship.id
       },
       
       generalize(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('generalize')
-        relationships.push(new Generalize(id, from, to))
-        return id
+        const relationship = relationships.register(plugin, "generalize", (id) => new Generalize(id, from, to))
+        return relationship.id
       }
     }
   }

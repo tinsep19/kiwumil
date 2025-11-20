@@ -15,6 +15,8 @@ import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namesp
 import { DefaultTheme } from "../core/theme"
 import type { SymbolId } from "../model/types"
 import { toContainerSymbolId } from "../model/container_symbol_base"
+import { Symbols } from "./symbols"
+import { Relationships } from "./relationships"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -69,9 +71,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
    * @returns レンダリング可能な図オブジェクト
    */
   build(callback: IntelliSenseBlock<TPlugins>) {
-    // Symbol と Relationship を格納する配列
-    const userSymbols: SymbolBase[] = []
-    const relationships: RelationshipBase[] = []
+    const symbols = new Symbols()
+    const relationships = new Relationships()
     let diagramSymbol: DiagramSymbol | undefined
     const diagramSymbolId = toContainerSymbolId("__diagram__")
     const layoutContext = new LayoutContext(
@@ -80,18 +81,18 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
         if (diagramSymbol && diagramSymbol.id === id) {
           return diagramSymbol
         }
-        return userSymbols.find(s => s.id === id)
+        return symbols.findById(id)
       }
     )
 
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
-    const el = namespaceBuilder.buildElementNamespace(userSymbols, layoutContext)
+    const el = namespaceBuilder.buildElementNamespace(symbols, layoutContext)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, layoutContext)
-    const hint = new HintFactory(layoutContext, userSymbols)
+    const hint = new HintFactory(layoutContext, symbols)
 
     // ユーザーのコールバックを実行
-    // この中で el.uml.actor() などが呼ばれ、userSymbols / relationships に追加される
+    // この中で el.uml.actor() などが呼ばれ、Symbols / Relationships に追加される
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
@@ -99,19 +100,21 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     diagramSymbol.setTheme(this.currentTheme)
 
     // すべての Symbol を含む配列
-    const allSymbols: SymbolBase[] = [diagramSymbol, ...userSymbols]
+    const symbolList = symbols.getAll()
+    const relationshipList = relationships.getAll()
+    const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
 
     // テーマを適用
-    for (const symbol of userSymbols) {
+    for (const symbol of symbolList) {
       symbol.setTheme(this.currentTheme)
     }
-    for (const relationship of relationships) {
+    for (const relationship of relationshipList) {
       relationship.setTheme(this.currentTheme)
     }
 
     // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
-    if (userSymbols.length > 0) {
-      hint.enclose(diagramSymbolId, userSymbols.map(s => s.id))
+    if (symbolList.length > 0) {
+      hint.enclose(diagramSymbolId, symbolList.map(s => s.id))
     }
 
     // レイアウト計算
@@ -119,9 +122,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     return {
       symbols: allSymbols,
-      relationships,
+      relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(allSymbols, relationships, this.currentTheme)
+        const renderer = new SvgRenderer(allSymbols, [...relationshipList], this.currentTheme)
         
         if (typeof target === "string") {
           // ケース1: 文字列パス → ファイル保存

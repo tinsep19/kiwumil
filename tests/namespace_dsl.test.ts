@@ -16,18 +16,18 @@ describe("Namespace-based DSL", () => {
         const login = el.uml.usecase("Login")
         const system = el.uml.systemBoundary("System")
         
-        // Check ID format: namespace:symbolName-serial
-        expect(user).toMatch(/^uml:actor-\d+$/)
-        expect(login).toMatch(/^uml:usecase-\d+$/)
-        expect(system).toMatch(/^uml:systemBoundary-\d+$/)
+        // Check ID format: namespace:symbolName/serial
+        expect(user).toMatch(/^uml:actor\/\d+$/)
+        expect(login).toMatch(/^uml:usecase\/\d+$/)
+        expect(system).toMatch(/^uml:systemBoundary\/\d+$/)
         
         // Create relationships
         const rel1 = rel.uml.associate(user, login)
         const rel2 = rel.uml.include(login, system)
         
         // Check relationship ID format
-        expect(rel1).toMatch(/^uml:association-\d+$/)
-        expect(rel2).toMatch(/^uml:include-\d+$/)
+        expect(rel1).toMatch(/^uml:association\/\d+$/)
+        expect(rel2).toMatch(/^uml:include\/\d+$/)
       })
     
     expect(diagram.symbols.length).toBeGreaterThan(0)
@@ -52,10 +52,10 @@ describe("Namespace-based DSL", () => {
         })
         
         // Check ID format
-        expect(circle).toMatch(/^core:circle-\d+$/)
-        expect(rect).toMatch(/^core:rectangle-\d+$/)
-        expect(text).toMatch(/^core:text-\d+$/)
-        expect(styledText).toMatch(/^core:text-\d+$/)
+        expect(circle).toMatch(/^core:circle\/\d+$/)
+        expect(rect).toMatch(/^core:rectangle\/\d+$/)
+        expect(text).toMatch(/^core:text\/\d+$/)
+        expect(styledText).toMatch(/^core:text\/\d+$/)
       })
     
     expect(diagram.symbols.length).toBeGreaterThan(0)
@@ -97,10 +97,10 @@ describe("Namespace-based DSL", () => {
         expect(uniqueIds.size).toBe(ids.length)
         
         // Check sequential numbering
-        expect(ids[0]).toBe("uml:actor-0")
-        expect(ids[1]).toBe("uml:actor-1")
-        expect(ids[2]).toBe("uml:usecase-2")
-        expect(ids[3]).toBe("uml:usecase-3")
+        expect(ids[0]).toBe("uml:actor/0")
+        expect(ids[1]).toBe("uml:actor/1")
+        expect(ids[2]).toBe("uml:usecase/2")
+        expect(ids[3]).toBe("uml:usecase/3")
       })
   })
 
@@ -123,9 +123,9 @@ describe("Namespace-based DSL", () => {
         expect(uniqueIds.size).toBe(relIds.length)
         
         // Check format and sequential numbering
-        expect(relIds[0]).toBe("uml:association-0")
-        expect(relIds[1]).toBe("uml:association-1")
-        expect(relIds[2]).toBe("uml:include-2")
+        expect(relIds[0]).toBe("uml:association/0")
+        expect(relIds[1]).toBe("uml:association/1")
+        expect(relIds[2]).toBe("uml:include/2")
       })
   })
 })
