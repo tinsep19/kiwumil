@@ -1,5 +1,6 @@
 import type { ContainerSymbolId, SymbolId } from "./types"
-import { SymbolBase, LayoutBounds } from "./symbol_base"
+import { SymbolBase } from "./symbol_base"
+import { LayoutBound } from "../layout/layout_bound"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../core/theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
@@ -16,7 +17,7 @@ export function toContainerSymbolId(id: SymbolId): ContainerSymbolId {
 }
 
 interface ContainerContentProvider {
-  getContentLayoutBounds(): LayoutBounds
+  getContentLayoutBounds(): LayoutBound
 }
 
 export function isContainerContentProvider(symbol: SymbolBase): symbol is SymbolBase & ContainerContentProvider {
@@ -26,7 +27,7 @@ export function isContainerContentProvider(symbol: SymbolBase): symbol is Symbol
 export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = ContainerSymbolId> extends SymbolBase {
   override readonly id: TId
   protected readonly layout: LayoutContext
-  private contentBounds?: LayoutBounds
+  private contentBounds?: LayoutBound
   private containerConstraintsApplied = false
   protected readonly childIds = new Set<SymbolId | ContainerSymbolId>()
 
@@ -44,14 +45,14 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
     this.childIds.clear()
   }
 
-  getContentLayoutBounds(): LayoutBounds {
+  getContentLayoutBounds(): LayoutBound {
     return this.ensureContentBounds()
   }
 
-  protected ensureContentBounds(): LayoutBounds {
+  protected ensureContentBounds(): LayoutBound {
     if (!this.contentBounds) {
       const vars = this.layout.vars
-      this.contentBounds = new LayoutBounds(
+      this.contentBounds = new LayoutBound(
         vars,
         vars.createVar(`${this.id}.content.x`),
         vars.createVar(`${this.id}.content.y`),

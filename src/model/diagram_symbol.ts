@@ -4,7 +4,7 @@ import { getStyleForSymbol } from "../core/theme"
 import type { Theme } from "../core/theme"
 import type { Point, ContainerSymbolId } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import type { LayoutBounds } from "./symbol_base"
+import type { LayoutBound } from "../layout/layout_bound"
 import type { LayoutVariables } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
@@ -26,7 +26,7 @@ export class DiagramSymbol extends ContainerSymbolBase {
     return { width: 200, height: 150 }
   }
 
-  override ensureLayoutBounds(ctx: LayoutVariables): LayoutBounds {
+  override ensureLayoutBounds(ctx: LayoutVariables): LayoutBound {
     const bounds = super.ensureLayoutBounds(ctx)
     this.applyDiagramConstraints()
     return bounds
