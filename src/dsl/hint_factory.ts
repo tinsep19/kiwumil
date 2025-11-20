@@ -7,6 +7,7 @@ import type { LayoutContext } from "../layout/layout_context"
 import { ContainerSymbolBase } from "../model/container_symbol_base"
 import { GridBuilder } from "./grid_builder"
 import { FigureBuilder } from "./figure_builder"
+import { Symbols } from "./symbols"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 
@@ -15,7 +16,7 @@ export class HintFactory {
 
   constructor(
     private readonly layout: LayoutContext,
-    private readonly symbols: SymbolBase[]
+    private readonly symbols: Symbols
   ) {}
 
   /**
@@ -46,8 +47,8 @@ export class HintFactory {
   /**
    * Symbols 配列を取得（Builder から参照）
    */
-  getSymbols(): SymbolBase[] {
-    return this.symbols
+  getSymbols(): readonly SymbolBase[] {
+    return this.symbols.getAll()
   }
 
   horizontal(...symbolIds: LayoutTargetId[]) {
@@ -103,11 +104,11 @@ export class HintFactory {
   }
 
   enclose(containerId: ContainerSymbolId, childIds: LayoutTargetId[]) {
-    const container = this.symbols.find(s => s.id === containerId)
+    const container = this.symbols.findById(containerId)
     if (container) {
       const containerNestLevel = container.nestLevel
       for (const childId of childIds) {
-        const child = this.symbols.find(s => s.id === childId)
+        const child = this.symbols.findById(childId)
         if (child) {
           child.nestLevel = containerNestLevel + 1
           child.containerId = containerId
@@ -140,7 +141,7 @@ export class HintFactory {
   }
 
   private findSymbolById(id: LayoutTargetId) {
-    return this.symbols.find(s => s.id === id)
+    return this.symbols.findById(id)
   }
 }
 

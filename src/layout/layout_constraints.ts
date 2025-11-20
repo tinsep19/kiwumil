@@ -1,6 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../core/theme"
-import type { SymbolBase, LayoutBounds } from "../model/symbol_base"
+import type { SymbolBase } from "../model/symbol_base"
+import type { LayoutBound } from "./layout_bound"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import {
   LayoutConstraintOperator,
@@ -41,7 +42,7 @@ export interface LayoutConstraint {
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
 type ContainerContentBoundsProvider = SymbolBase & {
-  getContentLayoutBounds: () => LayoutBounds
+  getContentLayoutBounds: () => LayoutBound
 }
 
 function hasContentLayoutBounds(symbol: SymbolBase): symbol is ContainerContentBoundsProvider {

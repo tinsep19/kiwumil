@@ -1,10 +1,11 @@
 import type { Theme } from "../core/theme"
-import type { SymbolBase, LayoutBounds } from "../model/symbol_base"
+import type { SymbolBase } from "../model/symbol_base"
+import type { LayoutBound } from "./layout_bound"
 import type { SymbolId, ContainerSymbolId, Size } from "../model/types"
 import { LayoutVariables, type LayoutVar, LayoutConstraintStrength } from "./layout_variables"
 import { LayoutConstraints } from "./layout_constraints"
 
-type BoundsAxis = keyof LayoutBounds
+type BoundsAxis = keyof LayoutBound
 
 interface BoundsTerm {
   axis: BoundsAxis
@@ -42,7 +43,7 @@ export class LayoutContext {
   }
 
   expressionFromBounds(
-    bounds: LayoutBounds,
+    bounds: LayoutBound,
     terms: BoundsTerm[],
     constant = 0
   ) {
