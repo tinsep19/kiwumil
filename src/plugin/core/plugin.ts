@@ -5,9 +5,8 @@ import { RectangleSymbol } from "./symbols/rectangle_symbol"
 import { RoundedRectangleSymbol } from "./symbols/rounded_rectangle_symbol"
 import { TextSymbol } from "./symbols/text_symbol"
 import type { TextInfo } from "./symbols/text_symbol"
-import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolBase } from "../../model/symbol_base"
+import type { SymbolsRegistry } from "../../symbols/registry"
 import type { SymbolId } from "../../model/types"
 import type { LayoutContext } from "../../layout/layout_context"
 
@@ -19,9 +18,7 @@ import type { LayoutContext } from "../../layout/layout_context"
 export const CorePlugin = {
   name: 'core',
   
-  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutContext) {
-    const idGen = createIdGenerator(this.name)
-    
+  createSymbolFactory(registry: SymbolsRegistry, layout: LayoutContext) {
     return {
       /**
        * Circle Symbol を作成
@@ -29,11 +26,12 @@ export const CorePlugin = {
        * @returns 生成された SymbolId
        */
       circle(label: string): SymbolId {
-        const id = idGen.generateSymbolId('circle')
-        const symbol = new CircleSymbol(id, label, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('core', 'circle', (id, _boundsBuilder) => {
+          const symbol = new CircleSymbol(id, label, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       },
       
       /**
@@ -42,11 +40,12 @@ export const CorePlugin = {
        * @returns 生成された SymbolId
        */
       ellipse(label: string): SymbolId {
-        const id = idGen.generateSymbolId('ellipse')
-        const symbol = new EllipseSymbol(id, label, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('core', 'ellipse', (id, _boundsBuilder) => {
+          const symbol = new EllipseSymbol(id, label, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       },
       
       /**
@@ -55,11 +54,12 @@ export const CorePlugin = {
        * @returns 生成された SymbolId
        */
       rectangle(label: string): SymbolId {
-        const id = idGen.generateSymbolId('rectangle')
-        const symbol = new RectangleSymbol(id, label, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('core', 'rectangle', (id, _boundsBuilder) => {
+          const symbol = new RectangleSymbol(id, label, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       },
       
       /**
@@ -68,11 +68,12 @@ export const CorePlugin = {
        * @returns 生成された SymbolId
        */
       roundedRectangle(label: string): SymbolId {
-        const id = idGen.generateSymbolId('roundedRectangle')
-        const symbol = new RoundedRectangleSymbol(id, label, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('core', 'roundedRectangle', (id, _boundsBuilder) => {
+          const symbol = new RoundedRectangleSymbol(id, label, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       },
 
       /**
@@ -80,11 +81,12 @@ export const CorePlugin = {
        * @param labelOrInfo - 改行やスタイルを含めたテキスト指定
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
-        const id = idGen.generateSymbolId('text')
-        const symbol = new TextSymbol(id, labelOrInfo, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('core', 'text', (id, _boundsBuilder) => {
+          const symbol = new TextSymbol(id, labelOrInfo, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       }
     }
   }

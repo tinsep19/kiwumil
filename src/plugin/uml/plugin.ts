@@ -8,7 +8,7 @@ import { Extend } from "./relationships/extend"
 import { Generalize } from "./relationships/generalize"
 import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolBase } from "../../model/symbol_base"
+import type { SymbolsRegistry } from "../../symbols/registry"
 import type { RelationshipBase } from "../../model/relationship_base"
 import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
 import { toContainerSymbolId } from "../../model/container_symbol_base"
@@ -22,9 +22,7 @@ import type { LayoutContext } from "../../layout/layout_context"
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(userSymbols: SymbolBase[], layout: LayoutContext) {
-    const idGen = createIdGenerator(this.name)
-    
+  createSymbolFactory(registry: SymbolsRegistry, layout: LayoutContext) {
     return {
       /**
        * Actor Symbol を作成
@@ -32,11 +30,12 @@ export const UMLPlugin = {
        * @returns 生成された SymbolId
        */
       actor(label: string): SymbolId {
-        const id = idGen.generateSymbolId('actor')
-        const symbol = new ActorSymbol(id, label, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('uml', 'actor', (id, _boundsBuilder) => {
+          const symbol = new ActorSymbol(id, label, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       },
       
       /**
@@ -45,11 +44,12 @@ export const UMLPlugin = {
        * @returns 生成された SymbolId
        */
       usecase(label: string): SymbolId {
-        const id = idGen.generateSymbolId('usecase')
-        const symbol = new UsecaseSymbol(id, label, layout.vars)
-        layout.applyFixedSize(symbol)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('uml', 'usecase', (id, _boundsBuilder) => {
+          const symbol = new UsecaseSymbol(id, label, layout.vars)
+          layout.applyFixedSize(symbol)
+          return symbol
+        })
+        return symbol.id
       },
       
       /**
@@ -58,10 +58,12 @@ export const UMLPlugin = {
        * @returns 生成された SymbolId
        */
       systemBoundary(label: string): ContainerSymbolId {
-        const id = toContainerSymbolId(idGen.generateSymbolId('systemBoundary'))
-        const symbol = new SystemBoundarySymbol(id, label, layout)
-        userSymbols.push(symbol)
-        return id
+        const symbol = registry.register('uml', 'systemBoundary', (id, _boundsBuilder) => {
+          const containerId = toContainerSymbolId(id)
+          const symbol = new SystemBoundarySymbol(containerId, label, layout)
+          return symbol
+        })
+        return symbol.id as ContainerSymbolId
       }
     }
   },

@@ -3,7 +3,10 @@ import * as kiwi from "@lume/kiwi"
 
 const LAYOUT_VAR_BRAND = Symbol("LayoutVarBrand")
 
-export type LayoutVar = kiwi.Variable & { readonly [LAYOUT_VAR_BRAND]: true }
+export type LayoutVar = kiwi.Variable & { 
+  readonly [LAYOUT_VAR_BRAND]: true
+  readonly varId: string
+}
 
 export interface LayoutTerm {
   variable: LayoutVar
@@ -60,6 +63,12 @@ export class LayoutVariables {
       value: true,
       enumerable: false,
       configurable: false
+    })
+    Object.defineProperty(variable, 'varId', {
+      value: name,
+      enumerable: false,
+      configurable: false,
+      writable: false
     })
     return variable as LayoutVar
   }

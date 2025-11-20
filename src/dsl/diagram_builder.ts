@@ -6,6 +6,7 @@ import { DiagramSymbol } from "../model/diagram_symbol"
 import { CorePlugin } from "../plugin/core/plugin"
 import { convertMetaUrlToSvgPath } from "../utils/path_helper"
 import { LayoutContext } from "../layout/layout_context"
+import { SymbolsRegistry } from "../symbols/registry"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
@@ -69,34 +70,43 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
    * @returns レンダリング可能な図オブジェクト
    */
   build(callback: IntelliSenseBlock<TPlugins>) {
-    // Symbol と Relationship を格納する配列
-    const userSymbols: SymbolBase[] = []
+    // Relationship を格納する配列
     const relationships: RelationshipBase[] = []
     let diagramSymbol: DiagramSymbol | undefined
     const diagramSymbolId = toContainerSymbolId("__diagram__")
-    const layoutContext = new LayoutContext(
+    
+    // SymbolsRegistry のための一時変数
+    let symbolsRegistry: SymbolsRegistry | undefined
+    
+    const layoutContext: LayoutContext = new LayoutContext(
       this.currentTheme,
-      (id: SymbolId) => {
+      (id: SymbolId): SymbolBase | undefined => {
         if (diagramSymbol && diagramSymbol.id === id) {
           return diagramSymbol
         }
-        return userSymbols.find(s => s.id === id)
+        return symbolsRegistry?.get(id)
       }
     )
 
+    // SymbolsRegistry を作成
+    symbolsRegistry = new SymbolsRegistry(layoutContext)
+
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
-    const el = namespaceBuilder.buildElementNamespace(userSymbols, layoutContext)
+    const el = namespaceBuilder.buildElementNamespace(symbolsRegistry, layoutContext)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, layoutContext)
-    const hint = new HintFactory(layoutContext, userSymbols)
+    const hint = new HintFactory(layoutContext, symbolsRegistry.list())
 
     // ユーザーのコールバックを実行
-    // この中で el.uml.actor() などが呼ばれ、userSymbols / relationships に追加される
+    // この中で el.uml.actor() などが呼ばれ、symbolsRegistry に登録される
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
     diagramSymbol = new DiagramSymbol(diagramSymbolId, this.titleOrInfo, layoutContext)
     diagramSymbol.setTheme(this.currentTheme)
+
+    // Registry からすべての Symbol を取得
+    const userSymbols = symbolsRegistry.list()
 
     // すべての Symbol を含む配列
     const allSymbols: SymbolBase[] = [diagramSymbol, ...userSymbols]
@@ -111,7 +121,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (userSymbols.length > 0) {
-      hint.enclose(diagramSymbolId, userSymbols.map(s => s.id))
+      hint.enclose(diagramSymbolId, userSymbols.map((s: SymbolBase) => s.id))
     }
 
     // レイアウト計算
