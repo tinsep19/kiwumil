@@ -1,6 +1,6 @@
 // src/plugin/uml/symbols/actor_symbol.ts
 import { SymbolBase } from "../../../model/symbol_base"
-import { getStyleForSymbol } from "../../../core/theme"
+import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 
 export class ActorSymbol extends SymbolBase {

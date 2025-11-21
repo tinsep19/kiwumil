@@ -6,7 +6,7 @@ import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_
 import { DiagramSymbol } from "../src/model/diagram_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { Symbols } from "../src/dsl/symbols"
-import { DefaultTheme } from "../src/core/theme"
+import { DefaultTheme } from "../src/theme"
 import { toContainerSymbolId } from "../src/model/container_symbol_base"
 
 describe("Layout pipeline", () => {

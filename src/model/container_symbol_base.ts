@@ -2,7 +2,7 @@ import type { ContainerSymbolId, SymbolId } from "./types"
 import { SymbolBase } from "./symbol_base"
 import { LayoutBound } from "../layout/layout_bound"
 import type { LayoutContext } from "../layout/layout_context"
-import type { Theme } from "../core/theme"
+import type { Theme } from "../theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
 
 export interface ContainerPadding {

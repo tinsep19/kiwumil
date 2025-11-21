@@ -1,9 +1,9 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
 import { ContainerSymbolBase, type ContainerPadding } from "../../../model/container_symbol_base"
-import { getStyleForSymbol } from "../../../core/theme"
+import { getStyleForSymbol } from "../../../theme"
 import type { Point, ContainerSymbolId } from "../../../model/types"
 import type { LayoutContext } from "../../../layout/layout_context"
-import type { Theme } from "../../../core/theme"
+import type { Theme } from "../../../theme"
 
 export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300

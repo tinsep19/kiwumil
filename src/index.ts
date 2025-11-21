@@ -11,7 +11,7 @@ export { Relationships } from "./dsl/relationships"
 // 型定義
 export type { DiagramPlugin } from "./dsl/diagram_plugin"
 export type { DiagramInfo } from "./model/diagram_info"
-export type { Theme } from "./core/theme"
+export type { Theme } from "./theme"
 export type { SymbolBase } from "./model/symbol_base"
 export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model/types"
 export { toContainerSymbolId } from "./model/container_symbol_base"
@@ -23,4 +23,4 @@ export type { LayoutConstraintType } from "./layout/layout_constraints"
 export { LayoutConstraintStrength } from "./layout/layout_variables"
 
 // テーマ
-export { DefaultTheme, BlueTheme, DarkTheme } from "./core/theme"
+export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"

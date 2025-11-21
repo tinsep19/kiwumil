@@ -1,6 +1,6 @@
 // src/model/symbol_base.ts
 import type { SymbolId, Bounds, Point } from "./types"
-import type { Theme } from "../core/theme"
+import type { Theme } from "../theme"
 import type { LayoutVariables } from "../layout/layout_variables"
 import { LayoutBound } from "../layout/layout_bound"
 
