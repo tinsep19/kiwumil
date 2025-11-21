@@ -53,19 +53,6 @@ export abstract class SymbolBase {
     return this.layoutBounds!
   }
 
-  protected getBoundsValues(): { x: number; y: number; width: number; height: number } {
-    if (!this.layoutBounds) {
-      throw new Error(`Layout bounds not initialized for symbol ${this.id}`)
-    }
-    
-    return {
-      x: this.layoutBounds.x.value(),
-      y: this.layoutBounds.y.value(),
-      width: this.layoutBounds.width.value(),
-      height: this.layoutBounds.height.value()
-    }
-  }
-
   ensureLayoutBounds(ctx: LayoutVariables | any): LayoutBound {
     if (!this.layoutBounds) {
       this.attachLayoutContext(ctx)

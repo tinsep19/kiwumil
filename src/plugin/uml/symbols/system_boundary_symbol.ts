@@ -4,6 +4,7 @@ import { getStyleForSymbol } from "../../../theme"
 import type { Point, ContainerSymbolId } from "../../../model/types"
 import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../theme"
+import { getBoundsValues } from "../../../layout/layout_bound"
 
 export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300
@@ -38,7 +39,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = this.getBoundsValues()
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -65,7 +66,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = this.getBoundsValues()
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
     // テーマからスタイルを取得
     const style = this.theme ? getStyleForSymbol(this.theme, 'systemBoundary') : {

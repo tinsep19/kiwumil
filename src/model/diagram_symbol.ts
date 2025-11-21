@@ -8,6 +8,7 @@ import type { LayoutBound } from "../layout/layout_bound"
 import type { LayoutVariables } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
+import { getBoundsValues } from "../layout/layout_bound"
 
 export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo
@@ -57,7 +58,7 @@ export class DiagramSymbol extends ContainerSymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = this.getBoundsValues()
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -84,7 +85,7 @@ export class DiagramSymbol extends ContainerSymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = this.getBoundsValues()
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
     const cx = x + width / 2
 

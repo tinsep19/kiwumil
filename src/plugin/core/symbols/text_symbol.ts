@@ -3,6 +3,7 @@ import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import type { LayoutVariables } from "../../../layout/layout_variables"
+import { getBoundsValues } from "../../../layout/layout_bound"
 
 const DEFAULT_PADDING_X = 12
 const DEFAULT_PADDING_Y = 8
@@ -92,7 +93,7 @@ export class TextSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = this.getBoundsValues()
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -116,7 +117,7 @@ export class TextSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width } = this.getBoundsValues()
+    const { x, y, width } = getBoundsValues(this.getLayoutBounds())
 
     const style = this.getStyle()
     const lines = this.getLines()
