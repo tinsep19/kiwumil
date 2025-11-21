@@ -1,5 +1,5 @@
 import { TextSymbol } from "../src/plugin/core/symbols/text_symbol"
-import { DefaultTheme } from "../src/core/theme"
+import { DefaultTheme } from "../src/theme"
 
 describe("TextSymbol", () => {
   test("calculates default size from multiline text", () => {
