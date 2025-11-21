@@ -54,22 +54,16 @@ export abstract class SymbolBase {
   }
 
   protected getBoundsValues(): { x: number; y: number; width: number; height: number } {
-    // Try to use layout bounds first
-    if (this.layoutBounds) {
-      return {
-        x: this.layoutBounds.x.value(),
-        y: this.layoutBounds.y.value(),
-        width: this.layoutBounds.width.value(),
-        height: this.layoutBounds.height.value()
-      }
+    if (!this.layoutBounds) {
+      throw new Error(`Layout bounds not initialized for symbol ${this.id}`)
     }
     
-    // Fallback to this.bounds for backwards compatibility (e.g., in tests)
-    if (this.bounds) {
-      return this.bounds
+    return {
+      x: this.layoutBounds.x.value(),
+      y: this.layoutBounds.y.value(),
+      width: this.layoutBounds.width.value(),
+      height: this.layoutBounds.height.value()
     }
-    
-    throw new Error(`Neither layout bounds nor bounds are initialized for symbol ${this.id}`)
   }
 
   ensureLayoutBounds(ctx: LayoutVariables | any): LayoutBound {
