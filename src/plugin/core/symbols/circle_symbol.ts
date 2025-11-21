@@ -2,6 +2,7 @@
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
+import { getBoundsValues } from "../../../layout/layout_bound"
 
 export class CircleSymbol extends SymbolBase {
   getDefaultSize() {
@@ -9,13 +10,11 @@ export class CircleSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`Circle ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
-    const r = Math.min(this.bounds.width, this.bounds.height) / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
+    const r = Math.min(width, height) / 2
 
     const dx = from.x - cx
     const dy = from.y - cy
@@ -32,11 +31,8 @@ export class CircleSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`Circle ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const { x, y, width, height } = this.bounds
     const cx = x + width / 2
     const cy = y + height / 2
     const r = Math.min(width, height) / 2

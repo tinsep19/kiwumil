@@ -14,3 +14,15 @@ export interface LayoutBound {
   readonly centerX: LayoutVar
   readonly centerY: LayoutVar
 }
+
+/**
+ * LayoutBound から現在の座標値を取得するヘルパー関数
+ */
+export function getBoundsValues(bounds: LayoutBound): { x: number; y: number; width: number; height: number } {
+  return {
+    x: bounds.x.value(),
+    y: bounds.y.value(),
+    width: bounds.width.value(),
+    height: bounds.height.value()
+  }
+}

@@ -2,6 +2,7 @@
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
+import { getBoundsValues } from "../../../layout/layout_bound"
 
 export class RoundedRectangleSymbol extends SymbolBase {
   getDefaultSize() {
@@ -9,18 +10,16 @@ export class RoundedRectangleSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`RoundedRectangle ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
 
     const dx = from.x - cx
     const dy = from.y - cy
 
-    const halfWidth = this.bounds.width / 2
-    const halfHeight = this.bounds.height / 2
+    const halfWidth = width / 2
+    const halfHeight = height / 2
 
     if (dx === 0 && dy === 0) {
       return { x: cx + halfWidth, y: cy }
@@ -38,11 +37,8 @@ export class RoundedRectangleSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`RoundedRectangle ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const { x, y, width, height } = this.bounds
     const cx = x + width / 2
     const cy = y + height / 2
     const rx = 10 // 角丸の半径

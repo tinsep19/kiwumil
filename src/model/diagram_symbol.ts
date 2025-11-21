@@ -8,6 +8,7 @@ import type { LayoutBound } from "../layout/layout_bound"
 import type { LayoutVariables } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
+import { getBoundsValues } from "../layout/layout_bound"
 
 export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo
@@ -57,18 +58,16 @@ export class DiagramSymbol extends ContainerSymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`DiagramSymbol ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
 
     const dx = from.x - cx
     const dy = from.y - cy
 
-    const halfWidth = this.bounds.width / 2
-    const halfHeight = this.bounds.height / 2
+    const halfWidth = width / 2
+    const halfHeight = height / 2
 
     if (dx === 0 && dy === 0) {
       return { x: cx + halfWidth, y: cy }
@@ -86,11 +85,8 @@ export class DiagramSymbol extends ContainerSymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`DiagramSymbol ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const { x, y, width, height } = this.bounds
     const cx = x + width / 2
 
     const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : {

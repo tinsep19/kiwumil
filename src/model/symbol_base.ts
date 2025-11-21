@@ -59,16 +59,4 @@ export abstract class SymbolBase {
     }
     return this.layoutBounds!
   }
-
-  applyLayoutBounds() {
-    if (!this.layoutBounds) {
-      throw new Error(`Layout bounds not initialized for symbol ${this.id}`)
-    }
-    this.bounds = {
-      x: this.layoutBounds.x.value(),
-      y: this.layoutBounds.y.value(),
-      width: this.layoutBounds.width.value(),
-      height: this.layoutBounds.height.value()
-    }
-  }
 }

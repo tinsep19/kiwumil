@@ -2,6 +2,7 @@
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
+import { getBoundsValues } from "../../../layout/layout_bound"
 
 export class UsecaseSymbol extends SymbolBase {
   getDefaultSize() {
@@ -9,14 +10,12 @@ export class UsecaseSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`Usecase ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
-    const rx = this.bounds.width / 2
-    const ry = this.bounds.height / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
+    const rx = width / 2
+    const ry = height / 2
 
     const dx = from.x - cx
     const dy = from.y - cy
@@ -30,11 +29,8 @@ export class UsecaseSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`Usecase ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const { x, y, width, height } = this.bounds
     const cx = x + width / 2
     const cy = y + height / 2
     const rx = width / 2
