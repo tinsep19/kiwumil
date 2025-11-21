@@ -9,14 +9,12 @@ export class EllipseSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`Ellipse ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = this.getBoundsValues()
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
-    const rx = this.bounds.width / 2
-    const ry = this.bounds.height / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
+    const rx = width / 2
+    const ry = height / 2
 
     const dx = from.x - cx
     const dy = from.y - cy
@@ -30,11 +28,8 @@ export class EllipseSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`Ellipse ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = this.getBoundsValues()
 
-    const { x, y, width, height } = this.bounds
     const cx = x + width / 2
     const cy = y + height / 2
     const rx = width / 2

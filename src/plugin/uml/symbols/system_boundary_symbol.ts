@@ -38,18 +38,16 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`SystemBoundary ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = this.getBoundsValues()
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
 
     const dx = from.x - cx
     const dy = from.y - cy
 
-    const halfWidth = this.bounds.width / 2
-    const halfHeight = this.bounds.height / 2
+    const halfWidth = width / 2
+    const halfHeight = height / 2
 
     if (dx === 0 && dy === 0) {
       return { x: cx + halfWidth, y: cy }
@@ -67,11 +65,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`SystemBoundary ${this.id} has no bounds`)
-    }
-
-    const { x, y, width, height } = this.bounds
+    const { x, y, width, height } = this.getBoundsValues()
 
     // テーマからスタイルを取得
     const style = this.theme ? getStyleForSymbol(this.theme, 'systemBoundary') : {

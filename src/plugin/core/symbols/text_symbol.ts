@@ -92,16 +92,14 @@ export class TextSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    if (!this.bounds) {
-      throw new Error(`TextSymbol ${this.id} has no bounds`)
-    }
+    const { x, y, width, height } = this.getBoundsValues()
 
-    const cx = this.bounds.x + this.bounds.width / 2
-    const cy = this.bounds.y + this.bounds.height / 2
+    const cx = x + width / 2
+    const cy = y + height / 2
     const dx = from.x - cx
     const dy = from.y - cy
-    const halfWidth = this.bounds.width / 2
-    const halfHeight = this.bounds.height / 2
+    const halfWidth = width / 2
+    const halfHeight = height / 2
 
     if (dx === 0 && dy === 0) {
       return { x: cx + halfWidth, y: cy }
@@ -118,12 +116,9 @@ export class TextSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    if (!this.bounds) {
-      throw new Error(`TextSymbol ${this.id} has no bounds`)
-    }
+    const { x, y, width } = this.getBoundsValues()
 
     const style = this.getStyle()
-    const { x, y, width } = this.bounds
     const lines = this.getLines()
     const anchor = this.getAnchor()
     const lineHeightFactor = this.getLineHeightFactor()
