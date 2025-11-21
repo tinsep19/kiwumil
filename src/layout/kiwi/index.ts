@@ -1,40 +1,19 @@
 // src/layout/kiwi/index.ts
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
+import {
+  LAYOUT_VAR_BRAND,
+  isLayoutVar,
+  isLayoutExpression,
+  type LayoutVar,
+  type LayoutTerm,
+  type LayoutExpression,
+  type LayoutExpressionInput
+} from "../layout_types"
 
-// ブランドシンボル（LayoutVar 型の識別用）
-const LAYOUT_VAR_BRAND = Symbol("LayoutVarBrand")
-
-// ====================================
-// 型定義
-// ====================================
-
-/**
- * ブランド付き kiwi.Variable
- * Layout システム内で使用される変数型
- */
-export type LayoutVar = kiwi.Variable & { readonly [LAYOUT_VAR_BRAND]: true }
-
-/**
- * レイアウト式の項（変数 + 係数）
- */
-export interface LayoutTerm {
-  variable: LayoutVar
-  coefficient?: number
-}
-
-/**
- * レイアウト式（項の配列 + 定数）
- */
-export interface LayoutExpression {
-  terms?: LayoutTerm[]
-  constant?: number
-}
-
-/**
- * レイアウト式の入力型（式、変数、定数のいずれか）
- */
-export type LayoutExpressionInput = LayoutExpression | LayoutVar | number
+// 型を再エクスポート（互換性のため）
+export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
+export { isLayoutVar, isLayoutExpression }
 
 // ====================================
 // Operator / Strength の再エクスポート
@@ -59,30 +38,6 @@ export const Strength = Object.freeze({
   Weak: kiwi.Strength.weak
 } as const)
 export type Strength = (typeof Strength)[keyof typeof Strength]
-
-// ====================================
-// 型ガード関数
-// ====================================
-
-/**
- * LayoutVar 型の判定
- */
-export function isLayoutVar(input: LayoutExpressionInput): input is LayoutVar {
-  return typeof input === "object" && input !== null && LAYOUT_VAR_BRAND in input
-}
-
-/**
- * LayoutExpression 型の判定
- */
-export function isLayoutExpression(input: LayoutExpressionInput): input is LayoutExpression {
-  if (typeof input !== "object" || input === null) {
-    return false
-  }
-  if (isLayoutVar(input)) {
-    return false
-  }
-  return "terms" in input || "constant" in input
-}
 
 // ====================================
 // 変換ユーティリティ
