@@ -9,6 +9,7 @@ import {
   type LayoutExpression,
   type LayoutExpressionInput
 } from "./kiwi"
+import type { LayoutBound } from "./layout_bound"
 
 // 互換性のため既存の export を維持
 export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
@@ -33,6 +34,68 @@ export class LayoutVariables {
 
   createVar(name: string): LayoutVar {
     return createLayoutVar(name)
+  }
+
+  /**
+   * LayoutBound を生成する factory メソッド
+   * すべての computed properties (right, bottom, centerX, centerY) も作成し、制約を設定する
+   */
+  createBound(prefix: string): LayoutBound {
+    const solver = this.getSolver()
+    if (!solver) {
+      throw new Error("LayoutVariables: solver is not injected. Cannot create bound with constraints.")
+    }
+
+    // 基本的な 4 つの変数を作成
+    const x = this.createVar(`${prefix}.x`)
+    const y = this.createVar(`${prefix}.y`)
+    const width = this.createVar(`${prefix}.width`)
+    const height = this.createVar(`${prefix}.height`)
+
+    // computed properties を作成
+    const right = this.createVar(`${prefix}.right`)
+    const bottom = this.createVar(`${prefix}.bottom`)
+    const centerX = this.createVar(`${prefix}.centerX`)
+    const centerY = this.createVar(`${prefix}.centerY`)
+
+    // right = x + width
+    solver.addConstraint(
+      right,
+      Operator.Eq,
+      solver.expression([{ variable: x }, { variable: width }])
+    )
+
+    // bottom = y + height
+    solver.addConstraint(
+      bottom,
+      Operator.Eq,
+      solver.expression([{ variable: y }, { variable: height }])
+    )
+
+    // centerX = x + width * 0.5
+    solver.addConstraint(
+      centerX,
+      Operator.Eq,
+      solver.expression([{ variable: x }, { variable: width, coefficient: 0.5 }])
+    )
+
+    // centerY = y + height * 0.5
+    solver.addConstraint(
+      centerY,
+      Operator.Eq,
+      solver.expression([{ variable: y }, { variable: height, coefficient: 0.5 }])
+    )
+
+    return {
+      x,
+      y,
+      width,
+      height,
+      right,
+      bottom,
+      centerX,
+      centerY
+    }
   }
 
   valueOf(variable: LayoutVar): number {

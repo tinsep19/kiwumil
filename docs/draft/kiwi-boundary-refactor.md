@@ -44,14 +44,20 @@
 6. ✅ 呼び出し元の更新（評価完了）
    - solve() は既に Context 経由で実行される設計に移行済み。
 
-7. **🔄 責務の最終調整（実施中）**
+7. ✅ **責務の最終調整（完了）**
    - **LayoutSolver に expression() メソッドを追加**
    - **LayoutVariables から expression() と addConstraint() を削除し、変数生成のみに専念**
    - **LayoutConstraints のコンストラクタを (vars, solver, theme, resolveSymbol) に変更**
    - **LayoutConstraints が vars と solver を独立して使用する設計に変更**
    - **LayoutContext を vars, solver, constraints の統括役として明確化**
 
-8. 副次作業と検証
+8. **🔄 LayoutBound の interface 化（実施中）**
+   - **LayoutBound を class から interface に変更**
+   - **LayoutVariables に createBound() factory メソッドを追加**
+   - **computed properties (right, bottom, centerX, centerY) の制約生成を LayoutVariables 内に集約**
+   - **LayoutBound が vars と solver への依存を持たないシンプルな構造に**
+
+9. 副次作業と検証
    - tsc（型チェック）および既存テストを実行して動作確認。
    - solve の呼び出しタイミング（バッチ化）による動作やパフォーマンスの回帰がないか簡易ベンチを実施。
    - 変更点をドキュメント（README や開発者向けメモ）に追記。
@@ -64,10 +70,12 @@
 ## 実施予定の差分（概略）
 - ✅ 追加: src/layout/kiwi/index.ts（toKiwiExpression、LayoutSolver）
 - ✅ 追加: src/layout/layout_types.ts（型定義とブランドシンボル）
-- 🔄 変更: src/layout/kiwi/index.ts（LayoutSolver に expression() メソッドを追加）
-- 🔄 変更: src/layout/layout_variables.ts（expression() と addConstraint() を削除、変数生成のみに専念）
-- 🔄 変更: src/layout/layout_constraints.ts（コンストラクタに solver を追加、vars と solver を独立して使用）
-- 🔄 変更: src/layout/layout_context.ts（solver を constraints にも注入）
+- ✅ 変更: src/layout/kiwi/index.ts（LayoutSolver に expression() メソッドを追加）
+- ✅ 変更: src/layout/layout_variables.ts（expression() と addConstraint() を削除、変数生成のみに専念）
+- ✅ 変更: src/layout/layout_constraints.ts（コンストラクタに solver を追加、vars と solver を独立して使用）
+- ✅ 変更: src/layout/layout_context.ts（solver を constraints にも注入）
+- 🔄 変更: src/layout/layout_bound.ts（class から interface に変更）
+- 🔄 変更: src/layout/layout_variables.ts（createBound() factory メソッドを追加、制約生成を内包）
 
 ## 最終アーキテクチャ
 
@@ -79,9 +87,10 @@ LayoutContext (オーケストレーション)
 
 LayoutVariables（変数とバウンドの生成・管理）
   - createVar(): LayoutVar の生成
-  - ensureLayoutBounds(): LayoutBound の生成
+  - createBound(): LayoutBound の生成（factory メソッド）
   - valueOf(): 変数値の取得
   ※ expression() と addConstraint() は削除
+  ※ LayoutBound は interface として定義し、factory で生成
 
 LayoutSolver（kiwi ラッパー）
   - expression(): 式の作成 ← LayoutVariables から移動

@@ -41,20 +41,9 @@ export abstract class SymbolBase {
     // LayoutContext か LayoutVariables かを判定
     const isContext = 'vars' in ctx && 'getSolver' in ctx
     const vars = isContext ? ctx.vars : ctx
-    const solver = isContext ? ctx.getSolver() : vars.getSolver()
     
-    if (!solver) {
-      throw new Error("LayoutVariables without solver is no longer supported. Use LayoutContext or LayoutVariables with solver.")
-    }
-    
-    this.layoutBounds = new LayoutBound(
-      vars,
-      solver,
-      vars.createVar(`${this.id}.x`),
-      vars.createVar(`${this.id}.y`),
-      vars.createVar(`${this.id}.width`),
-      vars.createVar(`${this.id}.height`)
-    )
+    // createBound を使用して LayoutBound を生成
+    this.layoutBounds = vars.createBound(this.id)
   }
 
   getLayoutBounds(): LayoutBound {
