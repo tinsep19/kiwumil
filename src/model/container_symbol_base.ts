@@ -52,8 +52,10 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
   protected ensureContentBounds(): LayoutBound {
     if (!this.contentBounds) {
       const vars = this.layout.vars
+      const solver = this.layout.getSolver()
       this.contentBounds = new LayoutBound(
         vars,
+        solver,
         vars.createVar(`${this.id}.content.x`),
         vars.createVar(`${this.id}.content.y`),
         vars.createVar(`${this.id}.content.width`),

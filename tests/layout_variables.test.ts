@@ -1,26 +1,29 @@
-import { LayoutVariables, LayoutConstraintOperator } from "../src/layout/layout_variables"
+import { LayoutVariables } from "../src/layout/layout_variables"
+import { LayoutSolver, Operator } from "../src/layout/kiwi"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
-    const ctx = new LayoutVariables()
-    const x = ctx.createVar("x")
+    const vars = new LayoutVariables()
+    const solver = new LayoutSolver()
+    const x = vars.createVar("x")
 
-    ctx.addConstraint(x, LayoutConstraintOperator.Eq, 42)
-    ctx.solve()
+    solver.addConstraint(x, Operator.Eq, 42)
+    solver.updateVariables()
 
-    expect(ctx.valueOf(x)).toBeCloseTo(42)
+    expect(vars.valueOf(x)).toBeCloseTo(42)
   })
 
   test("supports expressions combining variables and constants", () => {
-    const ctx = new LayoutVariables()
-    const a = ctx.createVar("a")
-    const b = ctx.createVar("b")
+    const vars = new LayoutVariables()
+    const solver = new LayoutSolver()
+    const a = vars.createVar("a")
+    const b = vars.createVar("b")
 
-    ctx.addConstraint(a, LayoutConstraintOperator.Eq, 10)
-    ctx.addConstraint(
+    solver.addConstraint(a, Operator.Eq, 10)
+    solver.addConstraint(
       b,
-      LayoutConstraintOperator.Eq,
-      ctx.expression(
+      Operator.Eq,
+      solver.expression(
         [
           { variable: a, coefficient: 1 }
         ],
@@ -28,9 +31,9 @@ describe("LayoutVariables", () => {
       )
     )
 
-    ctx.solve()
+    solver.updateVariables()
 
-    expect(ctx.valueOf(a)).toBeCloseTo(10)
-    expect(ctx.valueOf(b)).toBeCloseTo(30)
+    expect(vars.valueOf(a)).toBeCloseTo(10)
+    expect(vars.valueOf(b)).toBeCloseTo(30)
   })
 })

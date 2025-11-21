@@ -106,6 +106,17 @@ export class LayoutSolver {
   }
 
   /**
+   * 式を作成（LayoutVariables から移動）
+   * 
+   * @param terms - 式の項（変数と係数のペア）
+   * @param constant - 定数項
+   * @returns LayoutExpression
+   */
+  expression(terms: LayoutTerm[] = [], constant = 0): LayoutExpression {
+    return { terms, constant }
+  }
+
+  /**
    * 制約を追加
    * 
    * @param left - 左辺の式
