@@ -4,12 +4,20 @@ import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutBound } from "./layout_bound"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import {
-  LayoutConstraintOperator,
-  LayoutConstraintStrength,
-  LayoutVariables,
+  Operator,
+  Strength,
+  LayoutSolver,
   type LayoutExpressionInput,
   type LayoutTerm
-} from "./layout_variables"
+} from "./kiwi"
+import { LayoutVariables } from "./layout_variables"
+
+// 互換性のため既存の export を維持
+export const LayoutConstraintOperator = Operator
+export type LayoutConstraintOperator = Operator
+
+export const LayoutConstraintStrength = Strength
+export type LayoutConstraintStrength = Strength
 
 const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
 
@@ -52,10 +60,10 @@ function hasContentLayoutBounds(symbol: SymbolBase): symbol is ContainerContentB
 export class LayoutConstraintBuilder {
   private readonly raws: kiwi.Constraint[] = []
 
-  constructor(private readonly vars: LayoutVariables) {}
+  constructor(private readonly solver: LayoutSolver) {}
 
   expression(terms?: LayoutTerm[], constant = 0) {
-    return this.vars.expression(terms, constant)
+    return this.solver.expression(terms, constant)
   }
 
   eq(
@@ -64,7 +72,7 @@ export class LayoutConstraintBuilder {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Strong
   ) {
     this.raws.push(
-      this.vars.addConstraint(left, LayoutConstraintOperator.Eq, right, strength)
+      this.solver.addConstraint(left, LayoutConstraintOperator.Eq, right, strength)
     )
     return this
   }
@@ -75,7 +83,7 @@ export class LayoutConstraintBuilder {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
   ) {
     this.raws.push(
-      this.vars.addConstraint(left, LayoutConstraintOperator.Ge, right, strength)
+      this.solver.addConstraint(left, LayoutConstraintOperator.Ge, right, strength)
     )
     return this
   }
@@ -92,6 +100,7 @@ export class LayoutConstraints {
 
   constructor(
     private readonly vars: LayoutVariables,
+    private readonly solver: LayoutSolver,
     private readonly theme: Theme,
     private readonly resolveSymbol: (id: LayoutSymbolId) => SymbolBase | undefined
   ) {}
@@ -105,14 +114,14 @@ export class LayoutConstraints {
     type: LayoutConstraintType,
     build: (builder: LayoutConstraintBuilder) => void
   ) {
-    const builder = new LayoutConstraintBuilder(this.vars)
+    const builder = new LayoutConstraintBuilder(this.solver)
     build(builder)
     const targetId = typeof symbol === "string" ? symbol : symbol.id
     this.record(type, builder.getRawConstraints(), targetId)
   }
 
   expression(terms?: LayoutTerm[], constant = 0) {
-    return this.vars.expression(terms, constant)
+    return this.solver.expression(terms, constant)
   }
 
   arrangeHorizontal(symbolIds: LayoutSymbolId[], gap = this.theme.defaultStyleSet.horizontalGap) {
@@ -126,10 +135,10 @@ export class LayoutConstraints {
       const bBounds = b.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           bBounds.x,
           LayoutConstraintOperator.Eq,
-          this.vars.expression(
+          this.solver.expression(
             [
               { variable: aBounds.x },
               { variable: aBounds.width }
@@ -155,10 +164,10 @@ export class LayoutConstraints {
       const bBounds = b.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           bBounds.y,
           LayoutConstraintOperator.Eq,
-          this.vars.expression(
+          this.solver.expression(
             [
               { variable: aBounds.y },
               { variable: aBounds.height }
@@ -185,7 +194,7 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           bounds.x,
           LayoutConstraintOperator.Eq,
           refBounds.x,
@@ -209,13 +218,13 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: bounds.x },
             { variable: bounds.width }
           ]),
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: refBounds.x },
             { variable: refBounds.width }
           ]),
@@ -239,7 +248,7 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           bounds.y,
           LayoutConstraintOperator.Eq,
           refBounds.y,
@@ -263,13 +272,13 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: bounds.y },
             { variable: bounds.height }
           ]),
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: refBounds.y },
             { variable: refBounds.height }
           ]),
@@ -293,13 +302,13 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: bounds.x },
             { variable: bounds.width, coefficient: 0.5 }
           ]),
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: refBounds.x },
             { variable: refBounds.width, coefficient: 0.5 }
           ]),
@@ -323,13 +332,13 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: bounds.y },
             { variable: bounds.height, coefficient: 0.5 }
           ]),
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: refBounds.y },
             { variable: refBounds.height, coefficient: 0.5 }
           ]),
@@ -353,7 +362,7 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           bounds.width,
           LayoutConstraintOperator.Eq,
           refBounds.width,
@@ -377,7 +386,7 @@ export class LayoutConstraints {
       if (!symbol) continue
       const bounds = symbol.ensureLayoutBounds(this.vars)
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           bounds.height,
           LayoutConstraintOperator.Eq,
           refBounds.height,
@@ -408,7 +417,7 @@ export class LayoutConstraints {
       const childBounds = child.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           childBounds.x,
           LayoutConstraintOperator.Ge,
           containerBounds.x,
@@ -417,7 +426,7 @@ export class LayoutConstraints {
       )
 
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           childBounds.y,
           LayoutConstraintOperator.Ge,
           containerBounds.y,
@@ -426,13 +435,13 @@ export class LayoutConstraints {
       )
 
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: containerBounds.x },
             { variable: containerBounds.width }
           ]),
           LayoutConstraintOperator.Ge,
-          this.vars.expression(
+          this.solver.expression(
             [
               { variable: childBounds.x },
               { variable: childBounds.width }
@@ -443,13 +452,13 @@ export class LayoutConstraints {
       )
 
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: containerBounds.y },
             { variable: containerBounds.height }
           ]),
           LayoutConstraintOperator.Ge,
-          this.vars.expression(
+          this.solver.expression(
             [
               { variable: childBounds.y },
               { variable: childBounds.height }
@@ -569,10 +578,10 @@ export class LayoutConstraints {
       const nextBounds = next.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           nextBounds.x,
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: currentBounds.x },
             { variable: currentBounds.width }
           ], actualGap),
@@ -597,10 +606,10 @@ export class LayoutConstraints {
       const nextBounds = next.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
+        this.solver.addConstraint(
           nextBounds.y,
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: currentBounds.y },
             { variable: currentBounds.height }
           ], actualGap),
@@ -626,13 +635,13 @@ export class LayoutConstraints {
       const currentBounds = current.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: currentBounds.x },
             { variable: currentBounds.width, coefficient: 0.5 }
           ]),
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: firstBounds.x },
             { variable: firstBounds.width, coefficient: 0.5 }
           ]),
@@ -658,13 +667,13 @@ export class LayoutConstraints {
       const currentBounds = current.ensureLayoutBounds(this.vars)
 
       raws.push(
-        this.vars.addConstraint(
-          this.vars.expression([
+        this.solver.addConstraint(
+          this.solver.expression([
             { variable: currentBounds.x },
             { variable: currentBounds.width }
           ]),
           LayoutConstraintOperator.Eq,
-          this.vars.expression([
+          this.solver.expression([
             { variable: firstBounds.x },
             { variable: firstBounds.width }
           ]),

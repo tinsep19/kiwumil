@@ -2,8 +2,9 @@ import type { Theme } from "../core/theme"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutBound } from "./layout_bound"
 import type { SymbolId, ContainerSymbolId, Size } from "../model/types"
-import { LayoutVariables, type LayoutVar, LayoutConstraintStrength } from "./layout_variables"
-import { LayoutConstraints } from "./layout_constraints"
+import { LayoutVariables, type LayoutVar } from "./layout_variables"
+import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
+import { LayoutSolver } from "./kiwi"
 
 type BoundsAxis = keyof LayoutBound
 
@@ -13,6 +14,7 @@ interface BoundsTerm {
 }
 
 export class LayoutContext {
+  private readonly solver: LayoutSolver
   readonly vars: LayoutVariables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
@@ -22,12 +24,13 @@ export class LayoutContext {
     resolveSymbol: (id: SymbolId | ContainerSymbolId) => SymbolBase | undefined
   ) {
     this.theme = theme
-    this.vars = new LayoutVariables()
-    this.constraints = new LayoutConstraints(this.vars, theme, resolveSymbol)
+    this.solver = new LayoutSolver()
+    this.vars = new LayoutVariables(this.solver)
+    this.constraints = new LayoutConstraints(this.vars, this.solver, theme, resolveSymbol)
   }
 
   solve() {
-    this.vars.solve()
+    this.solver.updateVariables()
   }
 
   solveAndApply(symbols: SymbolBase[]) {
@@ -40,6 +43,14 @@ export class LayoutContext {
 
   valueOf(variable: LayoutVar): number {
     return this.vars.valueOf(variable)
+  }
+
+  /**
+   * LayoutSolver へのアクセサ（制約追加や式作成のため）
+   * @returns LayoutSolver
+   */
+  getSolver(): LayoutSolver {
+    return this.solver
   }
 
   expressionFromBounds(

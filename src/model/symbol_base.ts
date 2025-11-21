@@ -32,18 +32,18 @@ export abstract class SymbolBase {
 
   abstract getConnectionPoint(from: Point): Point
 
-  protected attachLayoutContext(ctx: LayoutVariables) {
+  protected attachLayoutContext(ctx: LayoutVariables | any) {
     if (this.layoutBounds) {
       return
     }
     this.layoutContext = ctx
-    this.layoutBounds = new LayoutBound(
-      ctx,
-      ctx.createVar(`${this.id}.x`),
-      ctx.createVar(`${this.id}.y`),
-      ctx.createVar(`${this.id}.width`),
-      ctx.createVar(`${this.id}.height`)
-    )
+    
+    // LayoutContext か LayoutVariables かを判定
+    const isContext = 'vars' in ctx && 'getSolver' in ctx
+    const vars = isContext ? ctx.vars : ctx
+    
+    // createBound を使用して LayoutBound を生成
+    this.layoutBounds = vars.createBound(this.id)
   }
 
   getLayoutBounds(): LayoutBound {
@@ -53,7 +53,7 @@ export abstract class SymbolBase {
     return this.layoutBounds!
   }
 
-  ensureLayoutBounds(ctx: LayoutVariables): LayoutBound {
+  ensureLayoutBounds(ctx: LayoutVariables | any): LayoutBound {
     if (!this.layoutBounds) {
       this.attachLayoutContext(ctx)
     }

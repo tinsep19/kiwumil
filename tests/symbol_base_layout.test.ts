@@ -1,5 +1,6 @@
 import { SymbolBase } from "../src/model/symbol_base"
-import { LayoutVariables, LayoutConstraintOperator } from "../src/layout/layout_variables"
+import { LayoutVariables } from "../src/layout/layout_variables"
+import { LayoutSolver, Operator } from "../src/layout/kiwi"
 import type { Point } from "../src/model/types"
 
 class DummySymbol extends SymbolBase {
@@ -22,16 +23,17 @@ class DummySymbol extends SymbolBase {
 
 describe("SymbolBase layout bounds", () => {
   test("initializes layout bounds when context is provided", () => {
-    const ctx = new LayoutVariables()
-    const symbol = new DummySymbol("dummy-1", ctx)
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+    const symbol = new DummySymbol("dummy-1", vars)
     const bounds = symbol.getLayoutBounds()
 
-    ctx.addConstraint(bounds.x, LayoutConstraintOperator.Eq, 15)
-    ctx.addConstraint(bounds.y, LayoutConstraintOperator.Eq, 25)
-    ctx.solve()
+    solver.addConstraint(bounds.x, Operator.Eq, 15)
+    solver.addConstraint(bounds.y, Operator.Eq, 25)
+    solver.updateVariables()
 
-    expect(ctx.valueOf(bounds.x)).toBeCloseTo(15)
-    expect(ctx.valueOf(bounds.y)).toBeCloseTo(25)
+    expect(vars.valueOf(bounds.x)).toBeCloseTo(15)
+    expect(vars.valueOf(bounds.y)).toBeCloseTo(25)
   })
 
   test("throws when layout bounds are not initialized", () => {
