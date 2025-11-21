@@ -167,7 +167,7 @@ import { SymbolBase, LayoutBounds } from "./symbol_base"
 
 protected ensureContentBounds(): LayoutBounds {
   if (!this.contentBounds) {
-    const vars = this.layout.vars
+    const vars = this.layout.variables
     this.contentBounds = new LayoutBounds(
       vars,
       vars.createVar(`${this.id}.content.x`),
@@ -193,9 +193,9 @@ alignRight(...symbolIds: LayoutTargetId[]) {
   for (const id of symbolIds) {
     const symbol = this.resolveSymbol(id)
     if (!symbol) continue
-    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
-    this.layout.vars.addConstraint(
-      this.layout.vars.expression([
+    const bounds = symbol.ensureLayoutBounds(this.layout.variables)
+    this.layout.variables.addConstraint(
+      this.layout.variables.expression([
         { variable: bounds.x },
         { variable: bounds.width }
       ]),
@@ -216,8 +216,8 @@ alignRight(...symbolIds: LayoutTargetId[]) {
   for (const id of symbolIds) {
     const symbol = this.resolveSymbol(id)
     if (!symbol) continue
-    const bounds = symbol.ensureLayoutBounds(this.layout.vars)
-    this.layout.vars.addConstraint(
+    const bounds = symbol.ensureLayoutBounds(this.layout.variables)
+    this.layout.variables.addConstraint(
       bounds.right,
       LayoutConstraintOperator.Eq,
       this.x,
@@ -247,7 +247,7 @@ alignRight(...symbolIds: LayoutTargetId[]) {
 
 **Before:**
 ```typescript
-this.layout.vars.expression([
+this.layout.variables.expression([
   { variable: bounds.x },
   { variable: bounds.width }
 ])

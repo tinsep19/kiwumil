@@ -24,12 +24,12 @@ export class LayoutContext {
     resolveSymbol: (id: SymbolId | ContainerSymbolId) => SymbolBase | undefined
   ) {
     this.theme = theme
-    this.vars = new LayoutVariables()
-    this.constraints = new LayoutConstraints(this.vars, theme, resolveSymbol)
+    this.variables = new LayoutVariables()
+    this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
   }
 
   solve() {
-    this.vars.solve()
+    this.variables.solve()
   }
 }
 ```
@@ -50,8 +50,8 @@ export class LayoutContext {
   ) {
     this.theme = theme
     this.solver = new LayoutSolver()
-    this.vars = new LayoutVariables(this.solver)
-    this.constraints = new LayoutConstraints(this.vars, theme, resolveSymbol)
+    this.variables = new LayoutVariables(this.solver)
+    this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
   }
 
   solve() {
@@ -72,7 +72,7 @@ export class LayoutContext {
 - これにより、vars と constraints が同じ solver を共有する
 
 #### solve メソッドの変更
-- **旧**: `this.vars.solve()` - LayoutVariables 経由で solver を呼び出し
+- **旧**: `this.variables.solve()` - LayoutVariables 経由で solver を呼び出し
 - **新**: `this.solver.updateVariables()` - LayoutContext が直接 solver を操作
 
 これにより、solver のライフサイクル管理が LayoutContext に集約された。
@@ -153,8 +153,8 @@ solver の所有権が LayoutVariables から LayoutContext に移動し、よ�
 ```typescript
 // 既存の使い方はすべてそのまま動作
 const context = new LayoutContext(theme, resolveSymbol)
-const x = context.vars.createVar("x")
-context.vars.addConstraint(x, Operator.Eq, 42)
+const x = context.variables.createVar("x")
+context.variables.addConstraint(x, Operator.Eq, 42)
 context.solve() // 内部実装が変わっただけで、呼び出し方は同じ
 ```
 

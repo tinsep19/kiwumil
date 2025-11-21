@@ -33,7 +33,7 @@ export class LayoutConstraintBuilder {
   
   eq(left, right, strength) {
     this.raws.push(
-      this.vars.addConstraint(left, operator, right, strength)
+      this.variables.addConstraint(left, operator, right, strength)
     )
     return this
   }
@@ -55,7 +55,7 @@ arrangeHorizontal(symbolIds, gap) {
   
   for (...) {
     raws.push(
-      this.vars.addConstraint(...)
+      this.variables.addConstraint(...)
     )
   }
   

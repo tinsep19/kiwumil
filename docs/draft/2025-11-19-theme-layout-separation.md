@@ -160,8 +160,8 @@ export class LayoutContext {
   ) {
     this.theme = theme
     this.options = options
-    this.vars = new LayoutVariables()
-    this.constraints = new LayoutConstraints(this.vars, options, resolveSymbol) // theme → options
+    this.variables = new LayoutVariables()
+    this.constraints = new LayoutConstraints(this.variables, options, resolveSymbol) // theme → options
   }
 }
 ```

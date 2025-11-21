@@ -39,8 +39,8 @@ export abstract class SymbolBase {
     this.layoutContext = ctx
     
     // LayoutContext か LayoutVariables かを判定
-    const isContext = 'vars' in ctx && 'getSolver' in ctx
-    const vars = isContext ? ctx.vars : ctx
+    const isContext = 'variables' in ctx && 'getSolver' in ctx
+    const vars = isContext ? ctx.variables : ctx
     
     // createBound を使用して LayoutBound を生成
     this.layoutBounds = vars.createBound(this.id)

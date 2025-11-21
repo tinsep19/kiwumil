@@ -32,7 +32,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
   protected readonly childIds = new Set<SymbolId | ContainerSymbolId>()
 
   protected constructor(id: TId, label: string, layout: LayoutContext) {
-    super(id, label, layout.vars)
+    super(id, label, layout.variables)
     this.id = id
     this.layout = layout
   }
@@ -51,7 +51,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
 
   protected ensureContentBounds(): LayoutBound {
     if (!this.contentBounds) {
-      const vars = this.layout.vars
+      const vars = this.layout.variables
       this.contentBounds = vars.createBound(`${this.id}.content`)
     }
     if (!this.containerConstraintsApplied) {
