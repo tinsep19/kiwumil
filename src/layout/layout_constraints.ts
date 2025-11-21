@@ -1,5 +1,5 @@
 import * as kiwi from "@lume/kiwi"
-import type { Theme } from "../core/theme"
+import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutBound } from "./layout_bound"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
