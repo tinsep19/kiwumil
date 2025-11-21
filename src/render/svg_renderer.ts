@@ -2,7 +2,7 @@
 import type { SymbolBase } from "../model/symbol_base"
 import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId } from "../model/types"
-import type { Theme } from "../core/theme"
+import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model/diagram_symbol"
 
 interface RenderElement {

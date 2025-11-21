@@ -1,7 +1,7 @@
 // src/model/diagram_symbol.ts
 import { ContainerSymbolBase, type ContainerPadding } from "./container_symbol_base"
-import { getStyleForSymbol } from "../core/theme"
-import type { Theme } from "../core/theme"
+import { getStyleForSymbol } from "../theme"
+import type { Theme } from "../theme"
 import type { Point, ContainerSymbolId } from "./types"
 import type { DiagramInfo } from "./diagram_info"
 import type { LayoutBound } from "../layout/layout_bound"

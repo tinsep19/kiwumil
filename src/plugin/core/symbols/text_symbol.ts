@@ -1,6 +1,6 @@
 // src/plugin/core/symbols/text_symbol.ts
 import { SymbolBase } from "../../../model/symbol_base"
-import { getStyleForSymbol } from "../../../core/theme"
+import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import type { LayoutVariables } from "../../../layout/layout_variables"
 
