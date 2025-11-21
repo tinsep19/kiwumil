@@ -15,7 +15,7 @@ interface BoundsTerm {
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
-  readonly vars: LayoutVariables
+  readonly variables: LayoutVariables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
 
@@ -25,8 +25,8 @@ export class LayoutContext {
   ) {
     this.theme = theme
     this.solver = new LayoutSolver()
-    this.vars = new LayoutVariables(this.solver)
-    this.constraints = new LayoutConstraints(this.vars, this.solver, theme, resolveSymbol)
+    this.variables = new LayoutVariables(this.solver)
+    this.constraints = new LayoutConstraints(this.variables, this.solver, theme, resolveSymbol)
   }
 
   solve() {
@@ -42,7 +42,7 @@ export class LayoutContext {
   }
 
   valueOf(variable: LayoutVar): number {
-    return this.vars.valueOf(variable)
+    return this.variables.valueOf(variable)
   }
 
   /**

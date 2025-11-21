@@ -139,8 +139,8 @@ bun test
 ```typescript
 // 冗長な制約記述
 hint.arrangeHorizontal(symbolA, symbolB)
-layout.vars.addConstraint(
-  layout.vars.expression([
+layout.variables.addConstraint(
+  layout.variables.expression([
     { variable: bounds.x },
     { variable: bounds.width }
   ]),

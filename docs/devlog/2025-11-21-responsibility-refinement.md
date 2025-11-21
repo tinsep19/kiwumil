@@ -35,7 +35,7 @@ LayoutVariables, LayoutSolver, LayoutConstraints の責務をさらに明確化�
 - computed properties（right, bottom, centerX, centerY）も同様に更新
 
 ### 6. その他の調整
-- `hint_factory.ts`: `layout.vars.addConstraint` を `layout.getSolver().addConstraint` に変更
+- `hint_factory.ts`: `layout.variables.addConstraint` を `layout.getSolver().addConstraint` に変更
 - `symbol_base.ts`: vars から solver を取得するロジックを追加
 - `container_symbol_base.ts`: layout.getSolver() を使用するよう変更
 

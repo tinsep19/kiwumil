@@ -42,13 +42,13 @@ export class LayoutContext {
 
 #### 現在の使用箇所
 
-LayoutConstraints が `this.vars.addConstraint()` を使用：
+LayoutConstraints が `this.variables.addConstraint()` を使用：
 ```typescript
 // src/layout/layout_constraints.ts
 export class LayoutConstraintBuilder {
   eq(left, right, strength) {
     this.raws.push(
-      this.vars.addConstraint(left, operator, right, strength)
+      this.variables.addConstraint(left, operator, right, strength)
     )
     return this
   }
@@ -60,7 +60,7 @@ export class LayoutConstraints {
     
     for (...) {
       raws.push(
-        this.vars.addConstraint(...)
+        this.variables.addConstraint(...)
       )
     }
     
@@ -84,8 +84,8 @@ export class LayoutConstraints {
    ```typescript
    // LayoutContext のコンストラクタ
    this.solver = new LayoutSolver()
-   this.vars = new LayoutVariables(this.solver)
-   this.constraints = new LayoutConstraints(this.vars, theme, resolveSymbol)
+   this.variables = new LayoutVariables(this.solver)
+   this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
    ```
 
 3. **データフロー**
@@ -135,7 +135,7 @@ export class LayoutContext {
    実装:     LayoutSolver (solver ラッパー)
    ```
 
-4. **必要な場合は `context.vars.addConstraint()` で可能**
+4. **必要な場合は `context.variables.addConstraint()` で可能**
    - vars は public フィールド
    - 必要に応じて直接アクセス可能
    - 通常は constraints 経由の方が適切
@@ -174,8 +174,8 @@ context.solve()
 
 #### パターン 3: 低レベル API（特殊なケース）
 ```typescript
-const x = context.vars.createVar("x")
-context.vars.addConstraint(x, Operator.Eq, 42)
+const x = context.variables.createVar("x")
+context.variables.addConstraint(x, Operator.Eq, 42)
 context.solve()
 ```
 
@@ -198,7 +198,7 @@ context.solve()
 
 3. **context.addConstraint() の追加は不要**
    - 既存の高レベル API で十分
-   - 必要な場合は `context.vars.addConstraint()` で対応可能
+   - 必要な場合は `context.variables.addConstraint()` で対応可能
    - 追加すると責務が曖昧になるリスク
 
 4. **アーキテクチャは健全**
@@ -211,7 +211,7 @@ context.solve()
 元の計画：「まずは変数・制約作成は従来どおり行い、追加先だけ Context に切り替える」
 
 **実現状況**：
-- 変数作成: `context.vars.createVar()` ✅
+- 変数作成: `context.variables.createVar()` ✅
 - 制約作成: `context.constraints.arrangeHorizontal()` など ✅
 - 制約追加: vars 経由 → solver (Context 所有) ✅
 - solve 実行: `context.solve()` → `this.solver.updateVariables()` ✅
