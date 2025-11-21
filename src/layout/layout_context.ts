@@ -1,7 +1,7 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutBound } from "./layout_bound"
-import type { SymbolId, ContainerSymbolId, Size } from "../model/types"
+import type { SymbolId, ContainerSymbolId } from "../model/types"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
 import { LayoutSolver } from "./kiwi"
@@ -78,7 +78,7 @@ export class LayoutContext {
 
   applyFixedSize(
     symbol: SymbolBase,
-    size: Size = symbol.getDefaultSize()
+    size: { width: number; height: number } = symbol.getDefaultSize()
   ) {
     const bounds = symbol.getLayoutBounds()
     this.constraints.withSymbol(symbol, "symbolBounds", builder => {
@@ -89,7 +89,7 @@ export class LayoutContext {
 
   applyMinSize(
     symbol: SymbolBase,
-    size: Size,
+    size: { width: number; height: number },
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
   ) {
     const bounds = symbol.getLayoutBounds()
