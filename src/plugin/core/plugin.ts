@@ -29,7 +29,7 @@ export const CorePlugin = {
        */
       circle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'circle', (symbolId) => {
-          const circle = new CircleSymbol(symbolId, label, layout.vars)
+          const circle = new CircleSymbol(symbolId, label, layout.variables)
           layout.applyFixedSize(circle)
           return circle
         })
@@ -43,7 +43,7 @@ export const CorePlugin = {
        */
       ellipse(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'ellipse', (symbolId) => {
-          const ellipse = new EllipseSymbol(symbolId, label, layout.vars)
+          const ellipse = new EllipseSymbol(symbolId, label, layout.variables)
           layout.applyFixedSize(ellipse)
           return ellipse
         })
@@ -57,7 +57,7 @@ export const CorePlugin = {
        */
       rectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'rectangle', (symbolId) => {
-          const rectangle = new RectangleSymbol(symbolId, label, layout.vars)
+          const rectangle = new RectangleSymbol(symbolId, label, layout.variables)
           layout.applyFixedSize(rectangle)
           return rectangle
         })
@@ -71,7 +71,7 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'roundedRectangle', (symbolId) => {
-          const rounded = new RoundedRectangleSymbol(symbolId, label, layout.vars)
+          const rounded = new RoundedRectangleSymbol(symbolId, label, layout.variables)
           layout.applyFixedSize(rounded)
           return rounded
         })
@@ -84,7 +84,7 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
         const symbol = symbols.register(plugin, 'text', (symbolId) => {
-          const text = new TextSymbol(symbolId, labelOrInfo, layout.vars)
+          const text = new TextSymbol(symbolId, labelOrInfo, layout.variables)
           layout.applyFixedSize(text)
           return text
         })

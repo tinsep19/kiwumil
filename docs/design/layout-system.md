@@ -1877,8 +1877,8 @@ export class LayoutBounds {
 
 ```typescript
 // Before: 毎回 expression を作成
-this.layout.vars.addConstraint(
-  this.layout.vars.expression([
+this.layout.variables.addConstraint(
+  this.layout.variables.expression([
     { variable: bounds.x },
     { variable: bounds.width }
   ]),
@@ -1887,7 +1887,7 @@ this.layout.vars.addConstraint(
 )
 
 // After: 派生変数を直接使用
-this.layout.vars.addConstraint(
+this.layout.variables.addConstraint(
   bounds.right,
   LayoutConstraintOperator.Eq,
   this.x
