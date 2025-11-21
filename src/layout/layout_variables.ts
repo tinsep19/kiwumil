@@ -1,10 +1,10 @@
 // src/layout/layout_variables.ts
-import * as kiwi from "@lume/kiwi"
 import {
   createLayoutVar,
   toKiwiExpression,
   Operator,
   Strength,
+  LayoutSolver,
   type LayoutVar,
   type LayoutTerm,
   type LayoutExpression,
@@ -21,10 +21,10 @@ export const LayoutConstraintStrength = Strength
 export type LayoutConstraintStrength = Strength
 
 export class LayoutVariables {
-  private readonly solver: kiwi.Solver
+  private readonly solver: LayoutSolver
 
-  constructor(solver?: kiwi.Solver) {
-    this.solver = solver ?? new kiwi.Solver()
+  constructor(solver?: LayoutSolver) {
+    this.solver = solver ?? new LayoutSolver()
   }
 
   createVar(name: string): LayoutVar {
@@ -41,16 +41,7 @@ export class LayoutVariables {
     right: LayoutExpressionInput,
     strength?: LayoutConstraintStrength
   ) {
-    const leftExpr = toKiwiExpression(left)
-    const rightExpr = toKiwiExpression(right)
-    const constraint = new kiwi.Constraint(
-      leftExpr,
-      operator,
-      rightExpr,
-      strength
-    )
-    this.solver.addConstraint(constraint)
-    return constraint
+    return this.solver.addConstraint(left, operator, right, strength)
   }
 
   solve() {
