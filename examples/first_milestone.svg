@@ -5,7 +5,7 @@
      viewBox="0 0 520 438.33333333333337">
   <rect width="100%" height="100%" fill="white"/>
   
-      <g id="uml:systemBoundary-5">
+      <g id="uml:systemBoundary/5">
         <!-- System Boundary Rectangle -->
         <rect x="180" y="75" width="300" height="338.33333333333337" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
@@ -33,7 +33,7 @@
       </g>
     
 
-      <g id="uml:actor-0">
+      <g id="uml:actor/0">
         <!-- Head -->
         <circle cx="70" cy="90" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
@@ -61,7 +61,7 @@
       </g>
     
 
-      <g id="uml:actor-1">
+      <g id="uml:actor/1">
         <!-- Head -->
         <circle cx="70" cy="220" r="10" 
                 fill="none" stroke="black" stroke-width="2"/>
@@ -109,7 +109,7 @@
             stroke="black" stroke-width="2"/>
     
 
-      <g id="uml:usecase-2">
+      <g id="uml:usecase/2">
         <!-- Ellipse -->
         <ellipse cx="393.3333333333333" cy="146.66666666666669" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -123,7 +123,7 @@
       </g>
     
 
-      <g id="uml:usecase-3">
+      <g id="uml:usecase/3">
         <!-- Ellipse -->
         <ellipse cx="266.66666666666663" cy="256.6666666666667" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -137,7 +137,7 @@
       </g>
     
 
-      <g id="uml:usecase-4">
+      <g id="uml:usecase/4">
         <!-- Ellipse -->
         <ellipse cx="393.3333333333333" cy="366.6666666666667" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>

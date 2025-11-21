@@ -24,4 +24,3 @@ TypeDiagram("Guide Example: Basic Alignment")
   })
   .render(import.meta)
 
-console.log("✅ Generated: example/guide_layout.svg")

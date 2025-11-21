@@ -40,7 +40,7 @@
       </g>
     
 
-      <g id="uml:actor-0">
+      <g id="uml:actor/0">
         <!-- Head -->
         <circle cx="70" cy="290" r="10" 
                 fill="none" stroke="#003366" stroke-width="2"/>
@@ -68,7 +68,7 @@
       </g>
     
 
-      <g id="uml:usecase-1">
+      <g id="uml:usecase/1">
         <!-- Ellipse -->
         <ellipse cx="240" cy="105" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
@@ -82,7 +82,7 @@
       </g>
     
 
-      <g id="uml:usecase-2">
+      <g id="uml:usecase/2">
         <!-- Ellipse -->
         <ellipse cx="100" cy="215" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
@@ -96,7 +96,7 @@
       </g>
     
 
-      <g id="uml:usecase-3">
+      <g id="uml:usecase/3">
         <!-- Ellipse -->
         <ellipse cx="100" cy="325" rx="60" ry="30" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>

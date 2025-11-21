@@ -19,7 +19,7 @@
       </g>
     
 
-      <g id="core:circle-0">
+      <g id="core:circle/0">
         <!-- Circle -->
         <circle cx="70" cy="105" r="30" 
                 fill="white" 
@@ -37,7 +37,7 @@
       </g>
     
 
-      <g id="core:circle-1">
+      <g id="core:circle/1">
         <!-- Circle -->
         <circle cx="210" cy="105" r="30" 
                 fill="white" 
@@ -55,7 +55,7 @@
       </g>
     
 
-      <g id="core:circle-2">
+      <g id="core:circle/2">
         <!-- Circle -->
         <circle cx="350" cy="105" r="30" 
                 fill="white" 
@@ -73,7 +73,7 @@
       </g>
     
 
-      <g id="core:circle-3">
+      <g id="core:circle/3">
         <!-- Circle -->
         <circle cx="490" cy="165" r="30" 
                 fill="white" 
@@ -91,7 +91,7 @@
       </g>
     
 
-      <g id="core:circle-4">
+      <g id="core:circle/4">
         <!-- Circle -->
         <circle cx="630" cy="165" r="30" 
                 fill="white" 
@@ -109,7 +109,7 @@
       </g>
     
 
-      <g id="core:circle-5">
+      <g id="core:circle/5">
         <!-- Circle -->
         <circle cx="770" cy="105" r="30" 
                 fill="white" 
@@ -127,7 +127,7 @@
       </g>
     
 
-      <g id="core:circle-6">
+      <g id="core:circle/6">
         <!-- Circle -->
         <circle cx="910" cy="165" r="30" 
                 fill="white" 

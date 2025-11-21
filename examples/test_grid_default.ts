@@ -19,6 +19,5 @@ TypeDiagram("Grid Default Test")
       .gap({ row: 20, col: 30 })
       .layout()
   })
-  .render("example/output/grid_default.svg")
+  .render(import.meta)
 
-console.log("✅ Grid default test completed")
