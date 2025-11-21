@@ -57,7 +57,7 @@
       </g>
     
 
-      <g id="uml:usecase-0">
+      <g id="uml:usecase/0">
         <!-- Ellipse -->
         <ellipse cx="100" cy="105" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -71,7 +71,7 @@
       </g>
     
 
-      <g id="uml:usecase-1">
+      <g id="uml:usecase/1">
         <!-- Ellipse -->
         <ellipse cx="100" cy="215" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
@@ -85,7 +85,7 @@
       </g>
     
 
-      <g id="uml:usecase-2">
+      <g id="uml:usecase/2">
         <!-- Ellipse -->
         <ellipse cx="300" cy="105" rx="60" ry="30" 
                  fill="white" stroke="black" stroke-width="2"/>
