@@ -2,7 +2,6 @@
 import type { SymbolId, Bounds, Point } from "./types"
 import type { Theme } from "../theme"
 import type { LayoutVariables } from "../layout/layout_variables"
-import type { LayoutContext } from "../layout/layout_context"
 import { LayoutBound } from "../layout/layout_bound"
 
 export abstract class SymbolBase {
@@ -13,9 +12,9 @@ export abstract class SymbolBase {
   nestLevel: number = 0
   containerId?: SymbolId
   protected layoutBounds?: LayoutBound
-  protected layoutContext?: LayoutVariables | LayoutContext
+  protected layoutContext?: LayoutVariables
 
-  constructor(id: SymbolId, label: string, layoutContext?: LayoutVariables | LayoutContext) {
+  constructor(id: SymbolId, label: string, layoutContext?: LayoutVariables) {
     this.id = id
     this.label = label
     if (layoutContext) {
@@ -57,25 +56,5 @@ export abstract class SymbolBase {
       this.attachLayoutContext(ctx)
     }
     return this.layoutBounds!
-  }
-
-  protected isLayoutContext(ctx: LayoutVariables | LayoutContext): ctx is LayoutContext {
-    return 'constraints' in ctx
-  }
-
-  protected applyFixedSize(size: { width: number; height: number }) {
-    if (!this.layoutContext) {
-      throw new Error(`Layout context not initialized for symbol ${this.id}`)
-    }
-    
-    if (!this.isLayoutContext(this.layoutContext)) {
-      throw new Error(`Cannot apply fixed size without full LayoutContext for symbol ${this.id}`)
-    }
-    
-    const bounds = this.getLayoutBounds()
-    this.layoutContext.constraints.withSymbol(this, "symbolBounds", builder => {
-      builder.eq(bounds.width, size.width)
-      builder.eq(bounds.height, size.height)
-    })
   }
 }

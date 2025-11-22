@@ -1,16 +1,10 @@
 // src/plugin/core/symbols/rectangle_symbol.ts
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
-import type { Point, SymbolId } from "../../../model/types"
-import type { LayoutContext } from "../../../layout/layout_context"
+import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/layout_bound"
 
 export class RectangleSymbol extends SymbolBase {
-  constructor(id: SymbolId, label: string, layout: LayoutContext) {
-    super(id, label, layout)
-    this.applyFixedSize(this.getDefaultSize())
-  }
-
   getDefaultSize() {
     return { width: 120, height: 60 }
   }
