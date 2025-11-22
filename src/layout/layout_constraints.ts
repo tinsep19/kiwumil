@@ -116,6 +116,10 @@ export class LayoutConstraints {
   ) {
     const builder = new LayoutConstraintBuilder(this.solver)
     build(builder)
+    // シンボルオブジェクトが渡された場合、シンボル側で制約を追加できるようにする
+    if (typeof symbol !== "string") {
+      symbol.ensureLayoutBounds(builder)
+    }
     const targetId = typeof symbol === "string" ? symbol : symbol.id
     this.record(type, builder.getRawConstraints(), targetId)
   }
