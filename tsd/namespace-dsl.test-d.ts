@@ -9,10 +9,11 @@ import {
 } from "../dist"
 import { SymbolBase } from "../dist/model/symbol_base"
 import { RelationshipBase } from "../dist/model/relationship_base"
+import type { LayoutBound } from "../dist/layout/layout_bound"
 
 class TestSymbol extends SymbolBase {
-  constructor(id: SymbolId, label: string) {
-    super(id, label)
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
+    super(id, label, layoutBounds)
   }
 
   getDefaultSize() {
@@ -37,12 +38,14 @@ class TestRelationship extends RelationshipBase {
 const CustomPlugin = {
   name: "custom",
   createSymbolFactory(symbols, layout) {
-    void layout
     const plugin = this.name
 
     return {
       node(label: string): SymbolId {
-        const symbol = symbols.register(plugin, "node", (symbolId) => new TestSymbol(symbolId, label))
+        const symbol = symbols.register(plugin, "node", (symbolId) => {
+          const bound = layout.variables.createBound(symbolId)
+          return new TestSymbol(symbolId, label, bound)
+        })
         return symbol.id
       }
     }

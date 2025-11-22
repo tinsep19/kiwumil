@@ -1,8 +1,8 @@
 // src/model/symbol_base.ts
 import type { SymbolId, Bounds, Point } from "./types"
 import type { Theme } from "../theme"
-import type { LayoutVariables } from "../layout/layout_variables"
-import { LayoutBound } from "../layout/layout_bound"
+import type { LayoutBound } from "../layout/layout_bound"
+import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 
 export abstract class SymbolBase {
   readonly id: SymbolId
@@ -11,15 +11,12 @@ export abstract class SymbolBase {
   protected theme?: Theme
   nestLevel: number = 0
   containerId?: SymbolId
-  protected layoutBounds?: LayoutBound
-  protected layoutContext?: LayoutVariables
+  protected readonly layoutBounds: LayoutBound
 
-  constructor(id: SymbolId, label: string, layoutContext?: LayoutVariables) {
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
     this.id = id
     this.label = label
-    if (layoutContext) {
-      this.attachLayoutContext(layoutContext)
-    }
+    this.layoutBounds = layoutBounds
   }
 
   setTheme(theme: Theme) {
@@ -30,31 +27,18 @@ export abstract class SymbolBase {
 
   abstract getConnectionPoint(from: Point): Point
 
-  protected attachLayoutContext(ctx: LayoutVariables | any) {
-    if (this.layoutBounds) {
-      return
-    }
-    this.layoutContext = ctx
-    
-    // LayoutContext か LayoutVariables かを判定
-    const isContext = 'variables' in ctx && 'getSolver' in ctx
-    const vars = isContext ? ctx.variables : ctx
-    
-    // createBound を使用して LayoutBound を生成
-    this.layoutBounds = vars.createBound(this.id)
-  }
-
   getLayoutBounds(): LayoutBound {
-    if (!this.layoutBounds) {
-      throw new Error(`Layout bounds not initialized for symbol ${this.id}`)
-    }
-    return this.layoutBounds!
+    return this.layoutBounds
   }
 
-  ensureLayoutBounds(ctx: LayoutVariables | any): LayoutBound {
-    if (!this.layoutBounds) {
-      this.attachLayoutContext(ctx)
+  ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
+    if (builder) {
+      this.buildLayoutConstraints(builder)
     }
-    return this.layoutBounds!
+    return this.layoutBounds
+  }
+
+  protected buildLayoutConstraints(_builder: LayoutConstraintBuilder): void {
+    // noop; サブクラスでオーバーライド
   }
 }
