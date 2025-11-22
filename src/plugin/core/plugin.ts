@@ -29,7 +29,8 @@ export const CorePlugin = {
        */
       circle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'circle', (symbolId) => {
-          const circle = new CircleSymbol(symbolId, label, layout.variables)
+          const bound = layout.variables.createBound(symbolId)
+          const circle = new CircleSymbol(symbolId, label, bound)
           return circle
         })
         return symbol.id
@@ -42,7 +43,8 @@ export const CorePlugin = {
        */
       ellipse(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'ellipse', (symbolId) => {
-          const ellipse = new EllipseSymbol(symbolId, label, layout.variables)
+          const bound = layout.variables.createBound(symbolId)
+          const ellipse = new EllipseSymbol(symbolId, label, bound)
           return ellipse
         })
         return symbol.id
@@ -55,7 +57,8 @@ export const CorePlugin = {
        */
       rectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'rectangle', (symbolId) => {
-          const rectangle = new RectangleSymbol(symbolId, label, layout.variables)
+          const bound = layout.variables.createBound(symbolId)
+          const rectangle = new RectangleSymbol(symbolId, label, bound)
           return rectangle
         })
         return symbol.id
@@ -68,7 +71,8 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'roundedRectangle', (symbolId) => {
-          const rounded = new RoundedRectangleSymbol(symbolId, label, layout.variables)
+          const bound = layout.variables.createBound(symbolId)
+          const rounded = new RoundedRectangleSymbol(symbolId, label, bound)
           return rounded
         })
         return symbol.id
@@ -80,7 +84,8 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
         const symbol = symbols.register(plugin, 'text', (symbolId) => {
-          const text = new TextSymbol(symbolId, labelOrInfo, layout.variables)
+          const bound = layout.variables.createBound(symbolId)
+          const text = new TextSymbol(symbolId, labelOrInfo, bound)
           return text
         })
         return symbol.id
