@@ -317,10 +317,10 @@ export class MySymbol extends SymbolBase {
 
   toSVG(): string {
     const bounds = this.getLayoutBounds()
-    const x = bounds.x.value ?? 0
-    const y = bounds.y.value ?? 0
-    const width = bounds.width.value ?? 100
-    const height = bounds.height.value ?? 60
+    const x = bounds.x.value()
+    const y = bounds.y.value()
+    const width = bounds.width.value()
+    const height = bounds.height.value()
     
     // SVG 描画ロジック
     return `<rect x="${x}" y="${y}" 
@@ -329,10 +329,10 @@ export class MySymbol extends SymbolBase {
 
   getConnectionPoint(from: Point): Point {
     const bounds = this.getLayoutBounds()
-    const x = bounds.x.value ?? 0
-    const y = bounds.y.value ?? 0
-    const width = bounds.width.value ?? 100
-    const height = bounds.height.value ?? 60
+    const x = bounds.x.value()
+    const y = bounds.y.value()
+    const width = bounds.width.value()
+    const height = bounds.height.value()
     
     // 接続点の計算ロジック
     return { x: x + width / 2, y: y + height / 2 }
@@ -362,10 +362,10 @@ export class MyRelation extends RelationshipBase {
     const fromBounds = fromSymbol.getLayoutBounds()
     const toBounds = toSymbol.getLayoutBounds()
     
-    const fromX = fromBounds.x.value ?? 0
-    const fromY = fromBounds.y.value ?? 0
-    const toX = toBounds.x.value ?? 0
-    const toY = toBounds.y.value ?? 0
+    const fromX = fromBounds.x.value()
+    const fromY = fromBounds.y.value()
+    const toX = toBounds.x.value()
+    const toY = toBounds.y.value()
     
     // SVG 描画ロジック（線を描く）
     return `<line x1="${fromX}" y1="${fromY}"
