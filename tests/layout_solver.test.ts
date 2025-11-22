@@ -16,7 +16,7 @@ describe("Layout pipeline", () => {
 
   beforeEach(() => {
     symbols = new Symbols()
-    layout = new LayoutContext(DefaultTheme, id => symbols.findById(id))
+    layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
     hint = new HintFactory(layout, symbols)
   })
 
@@ -63,7 +63,9 @@ describe("Layout pipeline", () => {
     hint.arrangeHorizontal(a.id, b.id)
     layout.solveAndApply(symbols.getAll())
 
-    expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap)
+    expect(b.bounds.x).toBeCloseTo(
+      a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap
+    )
   })
 
   test("alignCenterY keeps elements on the same horizontal line", () => {
@@ -89,24 +91,24 @@ describe("Layout pipeline", () => {
     layout.solveAndApply(symbols.getAll())
 
     expect(a.bounds.x).toBeGreaterThanOrEqual(boundary.bounds.x)
-    expect(b.bounds.y + b.bounds.height).toBeLessThanOrEqual(boundary.bounds.y + boundary.bounds.height)
+    expect(b.bounds.y + b.bounds.height).toBeLessThanOrEqual(
+      boundary.bounds.y + boundary.bounds.height
+    )
   })
 
   test("guide builder aligns to shared variable and arranges symbols", () => {
     const a = createActor("top")
     const b = createActor("bottom")
 
-    const guide = hint
-      .createGuideY()
-      .alignTop(a.id)
-      .alignBottom(b.id)
-      .arrange()
+    const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
 
     layout.solveAndApply(symbols.getAll())
 
     const guideValue = layout.valueOf(guide.y)
     expect(a.bounds.y).toBeCloseTo(guideValue)
     expect(b.bounds.y + b.bounds.height).toBeCloseTo(guideValue)
-    expect(b.bounds.x).toBeCloseTo(a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap)
+    expect(b.bounds.x).toBeCloseTo(
+      a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap
+    )
   })
 })

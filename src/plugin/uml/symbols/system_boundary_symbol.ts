@@ -10,7 +10,12 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300
   defaultHeight = 200
 
-  constructor(id: ContainerSymbolId, label: string, layoutBounds: LayoutBound, layout: LayoutContext) {
+  constructor(
+    id: ContainerSymbolId,
+    label: string,
+    layoutBounds: LayoutBound,
+    layout: LayoutContext
+  ) {
     super(id, label, layoutBounds, layout)
     this.applyMinSize()
   }
@@ -26,7 +31,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
       top: vertical,
       right: horizontal,
       bottom: vertical,
-      left: horizontal
+      left: horizontal,
     }
   }
 
@@ -61,7 +66,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
 
     return {
       x: cx + dx * t,
-      y: cy + dy * t
+      y: cy + dy * t,
     }
   }
 
@@ -69,17 +74,19 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
     const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
     // テーマからスタイルを取得
-    const style = this.theme ? getStyleForSymbol(this.theme, 'systemBoundary') : {
-      strokeColor: '#999',
-      strokeWidth: 2,
-      fillColor: '#f8f8f8',
-      textColor: 'black',
-      fontSize: 14,
-      fontFamily: 'Arial',
-      backgroundColor: '#f8f8f8',
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "systemBoundary")
+      : {
+          strokeColor: "#999",
+          strokeWidth: 2,
+          fillColor: "#f8f8f8",
+          textColor: "black",
+          fontSize: 14,
+          fontFamily: "Arial",
+          backgroundColor: "#f8f8f8",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     return `
       <g id="${this.id}">

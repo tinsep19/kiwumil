@@ -21,11 +21,15 @@ interface ContainerContentProvider {
   getContentLayoutBounds(): LayoutBound
 }
 
-export function isContainerContentProvider(symbol: SymbolBase): symbol is SymbolBase & ContainerContentProvider {
+export function isContainerContentProvider(
+  symbol: SymbolBase
+): symbol is SymbolBase & ContainerContentProvider {
   return typeof (symbol as Partial<ContainerContentProvider>).getContentLayoutBounds === "function"
 }
 
-export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = ContainerSymbolId> extends SymbolBase {
+export abstract class ContainerSymbolBase<
+  TId extends ContainerSymbolId = ContainerSymbolId,
+> extends SymbolBase {
   override readonly id: TId
   protected readonly layout: LayoutContext
   private contentBounds?: LayoutBound
@@ -75,7 +79,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
 
   protected abstract getContainerPadding(theme: Theme): ContainerPadding
 
-  protected getHeaderHeight(theme: Theme): number {
+  protected getHeaderHeight(_theme: Theme): number {
     return 0
   }
 
@@ -88,7 +92,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    this.layout.constraints.withSymbol(this, "containerInbounds", builder => {
+    this.layout.constraints.withSymbol(this, "containerInbounds", (builder) => {
       builder.eq(
         content.x,
         this.layout.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
