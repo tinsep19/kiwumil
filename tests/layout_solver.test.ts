@@ -22,16 +22,14 @@ describe("Layout pipeline", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const actor = new ActorSymbol(symbolId, id, layout.variables)
-      layout.applyFixedSize(actor, actor.getDefaultSize())
+      const actor = new ActorSymbol(symbolId, id, layout)
       return actor
     })
   }
 
   function createUsecase(id: string) {
     return symbols.register("test", "usecase", (symbolId) => {
-      const usecase = new UsecaseSymbol(symbolId, id, layout.variables)
-      layout.applyFixedSize(usecase, usecase.getDefaultSize())
+      const usecase = new UsecaseSymbol(symbolId, id, layout)
       return usecase
     })
   }

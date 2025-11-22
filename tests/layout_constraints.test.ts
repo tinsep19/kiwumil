@@ -20,8 +20,7 @@ describe("LayoutConstraints metadata", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const actor = new ActorSymbol(symbolId, id, layout.variables)
-      layout.applyFixedSize(actor, actor.getDefaultSize())
+      const actor = new ActorSymbol(symbolId, id, layout)
       return actor
     })
   }

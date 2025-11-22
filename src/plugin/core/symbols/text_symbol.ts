@@ -40,16 +40,22 @@ function fallbackStyle() {
 export class TextSymbol extends SymbolBase {
   private overrides: TextOverrides
 
-  constructor(id: string, info: string | TextInfo, layoutContext?: LayoutVariables) {
+  constructor(id: string, info: string | TextInfo, layoutContext?: LayoutVariables | import("../../../layout/layout_context").LayoutContext) {
     if (typeof info === "string") {
       super(id, info, layoutContext)
       this.overrides = {}
+      if (layoutContext && 'constraints' in layoutContext) {
+        this.applyFixedSize(this.getDefaultSize())
+      }
       return
     }
 
     const { label, ...overrides } = info
     super(id, label, layoutContext)
     this.overrides = overrides
+    if (layoutContext && 'constraints' in layoutContext) {
+      this.applyFixedSize(this.getDefaultSize())
+    }
   }
 
   private getLines(): string[] {
