@@ -503,8 +503,8 @@ const viewBox = `0 0 ${diagramSymbol.bounds.width} ${diagramSymbol.bounds.height
 
 ### LayoutVariableContext と LayoutVar
 
-- すべてのシンボルは `LayoutVariableContext` から `LayoutVar`（ブランド型）を取得し、`bounds.x/y/width/height` を変数として保持する。
-- レイアウト計算時は `layout.addConstraint(...)` で制約を登録し、`layout.solve()` 後に `layout.valueOf(var)` で数値へ変換して `symbol.bounds` に書き戻す。
+- すべてのシンボルは `LayoutContext.variables.createBound(symbolId)` から `LayoutBound` を取得し、`x/y/width/height` および派生プロパティ `right/bottom/centerX/centerY` を LayoutVar として保持する。
+- レイアウト計算時は `layout.constraints.addConstraint(...)` で制約を登録し、`layout.solve()` 後に `layoutVar.value()` で数値へ変換できる。
 - これにより、ヒントや将来のカスタム制約が `LayoutVar`（kiwi.Variable のラッパー）を介して安全に扱える。
 - `LayoutConstraintOperator` / `LayoutConstraintStrength` が公開されており、`kiwi.Operator` / `kiwi.Strength` を隠蔽したまま制約タイプと優先度を指定できる。
 
@@ -514,13 +514,13 @@ const viewBox = `0 0 ${diagramSymbol.bounds.width} ${diagramSymbol.bounds.height
 
 ```typescript
 const guide = hint.createGuideY()
-guide.alignTop(symbolA).alignBottom(symbolB)    // ガイド上に A を揃え、B を反対側に配置
+guide.alignTop(symbolA).alignBottom(symbolB)    // ガイド上に A の上端を揃え、B の下端を配置
 
 const mainLine = hint.createGuideY().followBottom(symbolA)
 mainLine.alignTop(symbolC)                      // A の下端にガイドを合わせ、C を同じライン上へ
 ```
 
-内部では `guide.alignTop()` などが `LayoutVariableContext.addConstraint()` を呼び、ユーザーコードはガイドとシンボル ID を指定するだけで制約を貼れる。
+内部では `guide.alignTop()` などが `LayoutContext.constraints` を通じて制約を追加し、ユーザーコードはガイドとシンボル ID を指定するだけで制約を貼れる。
 
 ### Arrange（配置）の実装
 
@@ -543,7 +543,7 @@ hint.arrangeHorizontal(a, b, c)
 **実装詳細:**
 
 ```typescript
-// layout_solver.ts
+// layout_solver.ts (概念的な例。実際は LayoutConstraints が制約を管理)
 private addHorizontalConstraints(symbolIds: string[], gap: number) {
   for (let i = 0; i < symbolIds.length - 1; i++) {
     const a = this.boundsMap.get(symbolIds[i])
@@ -551,10 +551,10 @@ private addHorizontalConstraints(symbolIds: string[], gap: number) {
     if (!a || !b) continue
 
     // b.x = a.x + a.width + gap (STRONG strength)
-    this.layoutContext.addConstraint(
+    this.layoutContext.constraints.addConstraint(
       b.x,
       LayoutConstraintOperator.Eq,
-      this.layoutContext.expression(
+      this.layoutContext.constraints.expression(
         [
           { variable: a.x },
           { variable: a.width }
@@ -591,7 +591,7 @@ hint.arrangeVertical(a, b, c)
 **実装詳細:**
 
 ```typescript
-// layout_solver.ts
+// layout_solver.ts (概念的な例。実際は LayoutConstraints が制約を管理)
 private addVerticalConstraints(symbolIds: string[], gap: number) {
   for (let i = 0; i < symbolIds.length - 1; i++) {
     const a = this.boundsMap.get(symbolIds[i])
@@ -599,10 +599,10 @@ private addVerticalConstraints(symbolIds: string[], gap: number) {
     if (!a || !b) continue
 
     // b.y = a.y + a.height + gap (STRONG strength)
-    this.layoutContext.addConstraint(
+    this.layoutContext.constraints.addConstraint(
       b.y,
       LayoutConstraintOperator.Eq,
-      this.layoutContext.expression(
+      this.layoutContext.constraints.expression(
         [
           { variable: a.y },
           { variable: a.height }
@@ -634,6 +634,7 @@ hint.alignLeft(a, b, c)
 **実装詳細:**
 
 ```typescript
+// 概念的な例（実際は LayoutConstraints で管理）
 private addAlignLeftConstraints(symbolIds: string[]) {
   if (symbolIds.length < 2) return
   const firstId = symbolIds[0]
@@ -648,7 +649,7 @@ private addAlignLeftConstraints(symbolIds: string[]) {
     if (!symbol) continue
 
     // curr.x = first.x
-    this.layoutContext.addConstraint(
+    this.layoutContext.constraints.addConstraint(
       symbol.x,
       LayoutConstraintOperator.Eq,
       first.x,
@@ -673,6 +674,7 @@ hint.alignRight(a, b, c)
 **実装詳細:**
 
 ```typescript
+// 概念的な例（実際は LayoutConstraints で管理）
 private addAlignRightConstraints(symbolIds: string[]) {
   if (symbolIds.length < 2) return
   const firstId = symbolIds[0]
@@ -686,17 +688,11 @@ private addAlignRightConstraints(symbolIds: string[]) {
     const symbol = this.boundsMap.get(symbolId)
     if (!symbol) continue
     
-    // curr.x + curr.width = first.x + first.width
-    this.layoutContext.addConstraint(
-      this.layoutContext.expression([
-        { variable: symbol.x },
-        { variable: symbol.width }
-      ]),
+    // curr.right = first.right (派生変数を利用)
+    this.layoutContext.constraints.addConstraint(
+      symbol.right,
       LayoutConstraintOperator.Eq,
-      this.layoutContext.expression([
-        { variable: first.x },
-        { variable: first.width }
-      ]),
+      first.right,
       LayoutConstraintStrength.Strong
     )
   }
@@ -718,6 +714,7 @@ hint.alignCenterX(a, b, c)
 **実装詳細:**
 
 ```typescript
+// 概念的な例（実際は LayoutConstraints で管理）
 private addAlignCenterXConstraints(symbolIds: string[]) {
   if (symbolIds.length < 2) return
   const firstId = symbolIds[0]
@@ -731,17 +728,11 @@ private addAlignCenterXConstraints(symbolIds: string[]) {
     const symbol = this.boundsMap.get(symbolId)
     if (!symbol) continue
     
-    // curr.x + curr.width/2 = first.x + first.width/2
-    this.layoutContext.addConstraint(
-      this.layoutContext.expression([
-        { variable: symbol.x },
-        { variable: symbol.width, coefficient: 0.5 }
-      ]),
+    // curr.centerX = first.centerX (派生変数を利用)
+    this.layoutContext.constraints.addConstraint(
+      symbol.centerX,
       LayoutConstraintOperator.Eq,
-      this.layoutContext.expression([
-        { variable: first.x },
-        { variable: first.width, coefficient: 0.5 }
-      ]),
+      first.centerX,
       LayoutConstraintStrength.Strong
     )
   }
@@ -761,6 +752,7 @@ hint.alignTop(a, b, c)
 **実装詳細:**
 
 ```typescript
+// 概念的な例（実際は LayoutConstraints で管理）
 private addAlignTopConstraints(symbolIds: string[]) {
   if (symbolIds.length < 2) return
   const firstId = symbolIds[0]
@@ -775,7 +767,7 @@ private addAlignTopConstraints(symbolIds: string[]) {
     if (!symbol) continue
     
     // curr.y = first.y
-    this.layoutContext.addConstraint(
+    this.layoutContext.constraints.addConstraint(
       symbol.y,
       LayoutConstraintOperator.Eq,
       first.y,
@@ -799,6 +791,7 @@ hint.alignBottom(a, b, c)
 **実装詳細:**
 
 ```typescript
+// 概念的な例（実際は LayoutConstraints で管理）
 private addAlignBottomConstraints(symbolIds: string[]) {
   if (symbolIds.length < 2) return
   const firstId = symbolIds[0]
@@ -812,17 +805,11 @@ private addAlignBottomConstraints(symbolIds: string[]) {
     const symbol = this.boundsMap.get(symbolId)
     if (!symbol) continue
     
-    // curr.y + curr.height = first.y + first.height
-    this.layoutContext.addConstraint(
-      this.layoutContext.expression([
-        { variable: symbol.y },
-        { variable: symbol.height }
-      ]),
+    // curr.bottom = first.bottom (派生変数を利用)
+    this.layoutContext.constraints.addConstraint(
+      symbol.bottom,
       LayoutConstraintOperator.Eq,
-      this.layoutContext.expression([
-        { variable: first.y },
-        { variable: first.height }
-      ]),
+      first.bottom,
       LayoutConstraintStrength.Strong
     )
   }
@@ -841,6 +828,7 @@ hint.alignCenterY(a, b, c)
 **実装詳細:**
 
 ```typescript
+// 概念的な例（実際は LayoutConstraints で管理）
 private addAlignCenterYConstraints(symbolIds: string[]) {
   if (symbolIds.length < 2) return
   const firstId = symbolIds[0]
@@ -854,17 +842,11 @@ private addAlignCenterYConstraints(symbolIds: string[]) {
     const symbol = this.boundsMap.get(symbolId)
     if (!symbol) continue
     
-    // curr.y + curr.height/2 = first.y + first.height/2
-    this.layoutContext.addConstraint(
-      this.layoutContext.expression([
-        { variable: symbol.y },
-        { variable: symbol.height, coefficient: 0.5 }
-      ]),
+    // curr.centerY = first.centerY (派生変数を利用)
+    this.layoutContext.constraints.addConstraint(
+      symbol.centerY,
       LayoutConstraintOperator.Eq,
-      this.layoutContext.expression([
-        { variable: first.y },
-        { variable: first.height, coefficient: 0.5 }
-      ]),
+      first.centerY,
       LayoutConstraintStrength.Strong
     )
   }
@@ -1811,64 +1793,63 @@ baseline.alignBottom(subtitle, date)  // 他のテキストも揃える
 | `centerX` | `x + width * 0.5` | X軸中央座標 |
 | `centerY` | `y + height * 0.5` | Y軸中央座標 |
 
+**注意**: 現在の実装では、すべての派生変数は LayoutBound 生成時に事前に作成され、制約が設定されます。遅延評価ではなく、事前作成されたプロパティとして扱われます。
+
 ### 実装
 
 ```typescript
-export class LayoutBounds {
+// LayoutBound はインターフェースとして定義され、すべてのプロパティが事前に作成される
+export interface LayoutBound {
   readonly x: LayoutVar
   readonly y: LayoutVar
   readonly width: LayoutVar
   readonly height: LayoutVar
+  readonly right: LayoutVar    // 事前計算された派生変数
+  readonly bottom: LayoutVar   // 事前計算された派生変数
+  readonly centerX: LayoutVar  // 事前計算された派生変数
+  readonly centerY: LayoutVar  // 事前計算された派生変数
+}
 
-  private _right?: LayoutVar
-  private _bottom?: LayoutVar
-  private _centerX?: LayoutVar
-  private _centerY?: LayoutVar
+// LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
+createBound(id: SymbolId | ContainerSymbolId): LayoutBound {
+  const x = this.createVar(`${id}.x`)
+  const y = this.createVar(`${id}.y`)
+  const width = this.createVar(`${id}.width`)
+  const height = this.createVar(`${id}.height`)
 
-  constructor(
-    private readonly ctx: LayoutVariables,
-    x: LayoutVar,
-    y: LayoutVar,
-    width: LayoutVar,
-    height: LayoutVar
-  ) {
-    this.x = x
-    this.y = y
-    this.width = width
-    this.height = height
-  }
+  // 派生変数を作成し、制約を設定
+  const right = this.createVar(`${id}.right`)
+  this.addConstraint(right, LayoutConstraintOperator.Eq, 
+    this.expression([{ variable: x }, { variable: width }]))
 
-  get right(): LayoutVar {
-    if (!this._right) {
-      this._right = this.ctx.createVar(`${this.x.name}.right`)
-      this.ctx.addConstraint(
-        this._right,
-        LayoutConstraintOperator.Eq,
-        this.ctx.expression([
-          { variable: this.x },
-          { variable: this.width }
-        ])
-      )
-    }
-    return this._right
-  }
+  const bottom = this.createVar(`${id}.bottom`)
+  this.addConstraint(bottom, LayoutConstraintOperator.Eq,
+    this.expression([{ variable: y }, { variable: height }]))
 
-  // bottom, centerX, centerY も同様
+  const centerX = this.createVar(`${id}.centerX`)
+  this.addConstraint(centerX, LayoutConstraintOperator.Eq,
+    this.expression([{ variable: x }, { variable: width, coefficient: 0.5 }]))
+
+  const centerY = this.createVar(`${id}.centerY`)
+  this.addConstraint(centerY, LayoutConstraintOperator.Eq,
+    this.expression([{ variable: y }, { variable: height, coefficient: 0.5 }]))
+
+  return { x, y, width, height, right, bottom, centerX, centerY }
 }
 ```
 
 **設計ポイント:**
 
-1. **遅延生成（Lazy Evaluation）**
-   - getter で初回アクセス時のみ変数と制約を生成
-   - 使われない派生変数は生成されない
+1. **事前生成**
+   - すべての派生変数は createBound() 呼び出し時に生成される
+   - 制約も同時に設定される
 
-2. **キャッシュ**
-   - 2回目以降のアクセスは生成済みの変数を返す
-   - 同じ式を複数回計算しない
+2. **一貫性**
+   - 派生変数は常に存在し、nullable でない
+   - アクセス時の条件分岐が不要
 
 3. **自動制約登録**
-   - 派生変数は制約として自動登録される
+   - 派生変数の定義式は制約として自動登録される
    - ユーザーは制約を意識する必要がない
 
 ### 使用例
@@ -1876,18 +1857,8 @@ export class LayoutBounds {
 #### Guide API での利用
 
 ```typescript
-// Before: 毎回 expression を作成
-this.layout.variables.addConstraint(
-  this.layout.variables.expression([
-    { variable: bounds.x },
-    { variable: bounds.width }
-  ]),
-  LayoutConstraintOperator.Eq,
-  this.x
-)
-
-// After: 派生変数を直接使用
-this.layout.variables.addConstraint(
+// 派生変数を直接使用
+this.layout.constraints.addConstraint(
   bounds.right,
   LayoutConstraintOperator.Eq,
   this.x
@@ -1902,29 +1873,35 @@ const boundsA = symbolA.getLayoutBounds()
 const boundsB = symbolB.getLayoutBounds()
 
 // A の右端と B の左端の間に 10px のギャップ
-layout.constraints.withSymbol(symbolB.id, "gap", builder => {
-  builder.eq(boundsB.x, boundsA.right, 10)
-})
+layout.constraints.addConstraint(
+  boundsB.x,
+  LayoutConstraintOperator.Eq,
+  layout.constraints.expression([{ variable: boundsA.right }], 10)
+)
 ```
 
 ### パフォーマンス効果
 
-**Before（式を毎回計算）:**
+**事前作成アプローチ:**
 
 ```typescript
-// GuideBuilderX.alignRight() を2回呼び出すと...
-guide.alignRight(a)  // expression([a.x, a.width]) 生成
-guide.alignRight(b)  // expression([b.x, b.width]) 生成
+// すべての派生変数が createBound() 時に生成される
+const bound = layout.variables.createBound(symbolId)
+
+// アクセスは単純なプロパティ参照
+guide.alignRight(a)  // a.right を直接参照
+guide.alignRight(b)  // b.right を直接参照
+guide.followRight(a) // a.right を再利用
 ```
 
-**After（派生変数を再利用）:**
+**利点:**
+- アクセスが高速（getter のオーバーヘッドなし）
+- すべてのプロパティが常に存在（nullable チェック不要）
+- 制約の一貫性が保証される
 
-```typescript
-// 初回のみ変数・制約生成、2回目以降は再利用
-guide.alignRight(a)  // a.right 生成 (x + width)
-guide.alignRight(b)  // b.right 生成 (x + width)
-guide.followRight(a) // a.right 再利用（生成済み）
-```
+**トレードオフ:**
+- 使われない派生変数も作成される（メモリ使用量が若干増加）
+- しかし、実際にはほとんどの場合で派生変数は使用されるため、問題にならない
 
 ### メリット
 
@@ -1961,6 +1938,8 @@ export abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
   protected readonly layoutBounds: LayoutBound
+  // 後方互換性のため残されているが、layoutBounds を使用することを推奨
+  bounds?: { x: number; y: number; width: number; height: number }
 
   constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
     this.id = id
@@ -1972,37 +1951,40 @@ export abstract class SymbolBase {
     return this.layoutBounds
   }
 
-  ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
-    if (builder) {
-      this.buildLayoutConstraints(builder)
-    }
-    return this.layoutBounds
-  }
-
-  protected buildLayoutConstraints(_builder: LayoutConstraintBuilder): void {
-    // noop; サブクラスでオーバーライド
-  }
+  // toSVG や getConnectionPoint 内で layoutBounds を使用
+  abstract toSVG(): string
+  abstract getConnectionPoint(from: Point): Point
 }
 ```
 
-#### LayoutConstraints.withSymbol の統合
+#### LayoutConstraints での制約適用
 
-`withSymbol` メソッドは、シンボルオブジェクトが渡された場合に `ensureLayoutBounds(builder)` を自動的に呼び出します：
+制約は `LayoutContext.constraints` のメソッドを通じて適用されます：
 
 ```typescript
-withSymbol(
-  symbol: SymbolBase | LayoutSymbolId,
-  type: LayoutConstraintType,
-  build: (builder: LayoutConstraintBuilder) => void
-) {
-  const builder = new LayoutConstraintBuilder(this.solver)
-  build(builder)
-  // シンボルオブジェクトが渡された場合、シンボル側で制約を追加
-  if (typeof symbol !== "string") {
-    symbol.ensureLayoutBounds(builder)
-  }
-  const targetId = typeof symbol === "string" ? symbol : symbol.id
-  this.record(type, builder.getRawConstraints(), targetId)
+// プラグインでのシンボル生成時
+circle(label: string): SymbolId {
+  const symbol = symbols.register(plugin, 'circle', (symbolId) => {
+    const bound = layout.variables.createBound(symbolId)
+    const circle = new CircleSymbol(symbolId, label, bound)
+    
+    // 必要に応じて制約を追加（例: 固定サイズ）
+    layout.constraints.addConstraint(
+      bound.width,
+      LayoutConstraintOperator.Eq,
+      80,
+      LayoutConstraintStrength.Required
+    )
+    layout.constraints.addConstraint(
+      bound.height,
+      LayoutConstraintOperator.Eq,
+      80,
+      LayoutConstraintStrength.Required
+    )
+    
+    return circle
+  })
+  return symbol.id
 }
 ```
 
@@ -2022,37 +2004,24 @@ circle(label: string): SymbolId {
 }
 ```
 
-#### カスタム制約の追加
-
-サブクラスで `buildLayoutConstraints` をオーバーライドすることで、シンボル固有の制約を追加できます：
+#### Symbol 内での LayoutBound の使用
 
 ```typescript
-export class CustomSymbol extends SymbolBase {
-  protected override buildLayoutConstraints(builder: LayoutConstraintBuilder): void {
-    const bounds = this.layoutBounds
+export class CircleSymbol extends SymbolBase {
+  toSVG(): string {
+    const bounds = this.getLayoutBounds()
+    const x = bounds.x.value()
+    const y = bounds.y.value()
+    const width = bounds.width.value()
+    const height = bounds.height.value()
     
-    // 最小サイズ制約
-    builder.ge(bounds.width, 50, LayoutConstraintStrength.Strong)
-    builder.ge(bounds.height, 50, LayoutConstraintStrength.Strong)
+    const cx = x + width / 2
+    const cy = y + height / 2
+    const r = Math.min(width, height) / 2
     
-    // アスペクト比制約（正方形）
-    builder.eq(bounds.width, bounds.height, LayoutConstraintStrength.Medium)
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" ... />`
   }
 }
-```
-
-#### 自動的な呼び出し
-
-`LayoutContext` の以下のメソッドで自動的に `ensureLayoutBounds` が呼ばれます：
-
-```typescript
-// 最小サイズ制約
-layout.applyMinSize(symbol, { width: 100, height: 60 })
-// → withSymbol を経由して symbol.ensureLayoutBounds(builder) が呼ばれる
-
-// 原点固定
-layout.anchorToOrigin(symbol)
-// → withSymbol を経由して symbol.ensureLayoutBounds(builder) が呼ばれる
 ```
 
 ### メリット

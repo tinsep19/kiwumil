@@ -15,10 +15,13 @@ Kiwumil のテーマシステムは、UML図の視覚的スタイル（色、線
 export interface StyleSet {
   textColor: string        // テキストの色
   fontSize: number         // フォントサイズ
+  fontFamily: string       // フォントファミリー
   strokeWidth: number      // 線の太さ
   strokeColor: string      // 線の色
   fillColor: string        // 塗りつぶし色
   backgroundColor?: string // 背景色（オプション）
+  horizontalGap: number    // 水平方向のデフォルトギャップ
+  verticalGap: number      // 垂直方向のデフォルトギャップ
 }
 
 // テーマ定義
@@ -99,16 +102,32 @@ export const DefaultTheme: Theme = {
   defaultStyleSet: {
     textColor: 'black',
     fontSize: 12,
+    fontFamily: 'Arial',
     strokeWidth: 2,
     strokeColor: 'black',
     fillColor: 'white',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    horizontalGap: 80,
+    verticalGap: 50
   },
   symbols: {
     systemBoundary: {
       fillColor: '#f8f8f8',
       strokeColor: '#999',
       fontSize: 14
+    },
+    // CorePlugin の基本図形
+    circle: {
+      fillColor: 'white',
+      strokeColor: 'black'
+    },
+    rectangle: {
+      fillColor: 'white',
+      strokeColor: 'black'
+    },
+    text: {
+      fontSize: 14,
+      fontFamily: 'Arial'
     }
   }
 }
@@ -126,10 +145,13 @@ export const BlueTheme: Theme = {
   defaultStyleSet: {
     textColor: '#003366',
     fontSize: 12,
+    fontFamily: 'Arial',
     strokeWidth: 2,
     strokeColor: '#0066cc',
     fillColor: '#e6f3ff',
-    backgroundColor: '#f0f8ff'
+    backgroundColor: '#f0f8ff',
+    horizontalGap: 80,
+    verticalGap: 50
   },
   symbols: {
     actor: {
@@ -160,10 +182,13 @@ export const DarkTheme: Theme = {
   defaultStyleSet: {
     textColor: '#d4d4d4',
     fontSize: 12,
+    fontFamily: 'Arial',
     strokeWidth: 2,
     strokeColor: '#569cd6',
     fillColor: '#2d2d2d',
-    backgroundColor: '#1e1e1e'
+    backgroundColor: '#1e1e1e',
+    horizontalGap: 80,
+    verticalGap: 50
   },
   symbols: {
     actor: {
