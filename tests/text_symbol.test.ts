@@ -5,7 +5,10 @@ import { LayoutSolver } from "../src/layout/kiwi"
 
 describe("TextSymbol", () => {
   test("calculates default size from multiline text", () => {
-    const symbol = new TextSymbol("core:text-0", "First line\nSecond line is longer")
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+    const bound = vars.createBound("core:text-0")
+    const symbol = new TextSymbol("core:text-0", "First line\nSecond line is longer", bound)
     symbol.setTheme(DefaultTheme)
 
     const size = symbol.getDefaultSize()
@@ -17,7 +20,8 @@ describe("TextSymbol", () => {
   test("renders tspans for each line including blanks", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const symbol = new TextSymbol("core:text-1", "Line A\n\nLine C", vars)
+    const bound = vars.createBound("core:text-1")
+    const symbol = new TextSymbol("core:text-1", "Line A\n\nLine C", bound)
     symbol.setTheme(DefaultTheme)
     
     // Set up layout bounds
@@ -42,13 +46,14 @@ describe("TextSymbol", () => {
   test("applies text info overrides", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
+    const bound = vars.createBound("core:text-2")
     const symbol = new TextSymbol("core:text-2", {
       label: "Align start",
       textAnchor: "start",
       textColor: "#ff0000",
       fontSize: 20,
       fontFamily: "Courier New",
-    }, vars)
+    }, bound)
     symbol.setTheme(DefaultTheme)
     
     // Set up layout bounds
