@@ -33,7 +33,6 @@ export const UMLPlugin = {
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'actor', (symbolId) => {
           const actor = new ActorSymbol(symbolId, label, layout.variables)
-          layout.applyFixedSize(actor)
           return actor
         })
         return symbol.id
@@ -47,7 +46,6 @@ export const UMLPlugin = {
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'usecase', (symbolId) => {
           const usecase = new UsecaseSymbol(symbolId, label, layout.variables)
-          layout.applyFixedSize(usecase)
           return usecase
         })
         return symbol.id

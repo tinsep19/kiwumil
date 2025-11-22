@@ -26,8 +26,6 @@ export abstract class SymbolBase {
     this.theme = theme
   }
 
-  abstract getDefaultSize(): { width: number; height: number }
-
   abstract toSVG(): string
 
   abstract getConnectionPoint(from: Point): Point
