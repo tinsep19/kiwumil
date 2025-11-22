@@ -30,7 +30,7 @@ export const CorePlugin = {
       circle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'circle', (symbolId) => {
           const circle = new CircleSymbol(symbolId, label, layout.variables)
-          layout.applyFixedSize(circle)
+          layout.applyFixedSize(circle, circle.getDefaultSize())
           return circle
         })
         return symbol.id
@@ -44,7 +44,7 @@ export const CorePlugin = {
       ellipse(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'ellipse', (symbolId) => {
           const ellipse = new EllipseSymbol(symbolId, label, layout.variables)
-          layout.applyFixedSize(ellipse)
+          layout.applyFixedSize(ellipse, ellipse.getDefaultSize())
           return ellipse
         })
         return symbol.id
@@ -58,7 +58,7 @@ export const CorePlugin = {
       rectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'rectangle', (symbolId) => {
           const rectangle = new RectangleSymbol(symbolId, label, layout.variables)
-          layout.applyFixedSize(rectangle)
+          layout.applyFixedSize(rectangle, rectangle.getDefaultSize())
           return rectangle
         })
         return symbol.id
@@ -72,7 +72,7 @@ export const CorePlugin = {
       roundedRectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'roundedRectangle', (symbolId) => {
           const rounded = new RoundedRectangleSymbol(symbolId, label, layout.variables)
-          layout.applyFixedSize(rounded)
+          layout.applyFixedSize(rounded, rounded.getDefaultSize())
           return rounded
         })
         return symbol.id
@@ -85,7 +85,7 @@ export const CorePlugin = {
       text(labelOrInfo: string | TextInfo): SymbolId {
         const symbol = symbols.register(plugin, 'text', (symbolId) => {
           const text = new TextSymbol(symbolId, labelOrInfo, layout.variables)
-          layout.applyFixedSize(text)
+          layout.applyFixedSize(text, text.getDefaultSize())
           return text
         })
         return symbol.id

@@ -78,7 +78,7 @@ export class LayoutContext {
 
   applyFixedSize(
     symbol: SymbolBase,
-    size: { width: number; height: number } = symbol.getDefaultSize()
+    size: { width: number; height: number }
   ) {
     const bounds = symbol.getLayoutBounds()
     this.constraints.withSymbol(symbol, "symbolBounds", builder => {

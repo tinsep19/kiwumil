@@ -23,7 +23,7 @@ describe("Layout pipeline", () => {
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
       const actor = new ActorSymbol(symbolId, id, layout.variables)
-      layout.applyFixedSize(actor)
+      layout.applyFixedSize(actor, actor.getDefaultSize())
       return actor
     })
   }
@@ -31,7 +31,7 @@ describe("Layout pipeline", () => {
   function createUsecase(id: string) {
     return symbols.register("test", "usecase", (symbolId) => {
       const usecase = new UsecaseSymbol(symbolId, id, layout.variables)
-      layout.applyFixedSize(usecase)
+      layout.applyFixedSize(usecase, usecase.getDefaultSize())
       return usecase
     })
   }
