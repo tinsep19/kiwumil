@@ -59,19 +59,21 @@ export abstract class SymbolBase {
     return this.layoutBounds!
   }
 
+  protected isLayoutContext(ctx: LayoutVariables | LayoutContext): ctx is LayoutContext {
+    return 'constraints' in ctx
+  }
+
   protected applyFixedSize(size: { width: number; height: number }) {
     if (!this.layoutContext) {
       throw new Error(`Layout context not initialized for symbol ${this.id}`)
     }
     
-    const isContext = 'constraints' in this.layoutContext
-    if (!isContext) {
+    if (!this.isLayoutContext(this.layoutContext)) {
       throw new Error(`Cannot apply fixed size without full LayoutContext for symbol ${this.id}`)
     }
     
-    const layout = this.layoutContext as LayoutContext
     const bounds = this.getLayoutBounds()
-    layout.constraints.withSymbol(this, "symbolBounds", builder => {
+    this.layoutContext.constraints.withSymbol(this, "symbolBounds", builder => {
       builder.eq(bounds.width, size.width)
       builder.eq(bounds.height, size.height)
     })

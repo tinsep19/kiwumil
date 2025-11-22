@@ -3,6 +3,7 @@ import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import type { LayoutVariables } from "../../../layout/layout_variables"
+import type { LayoutContext } from "../../../layout/layout_context"
 import { getBoundsValues } from "../../../layout/layout_bound"
 
 const DEFAULT_PADDING_X = 12
@@ -40,19 +41,21 @@ function fallbackStyle() {
 export class TextSymbol extends SymbolBase {
   private overrides: TextOverrides
 
-  constructor(id: string, info: string | TextInfo, layoutContext?: LayoutVariables | import("../../../layout/layout_context").LayoutContext) {
+  constructor(id: string, info: string | TextInfo, layoutContext?: LayoutVariables | LayoutContext) {
     if (typeof info === "string") {
       super(id, info, layoutContext)
       this.overrides = {}
-      if (layoutContext && 'constraints' in layoutContext) {
-        this.applyFixedSize(this.getDefaultSize())
-      }
+      this.applySizeIfContext(layoutContext)
       return
     }
 
     const { label, ...overrides } = info
     super(id, label, layoutContext)
     this.overrides = overrides
+    this.applySizeIfContext(layoutContext)
+  }
+
+  private applySizeIfContext(layoutContext?: LayoutVariables | LayoutContext) {
     if (layoutContext && 'constraints' in layoutContext) {
       this.applyFixedSize(this.getDefaultSize())
     }
