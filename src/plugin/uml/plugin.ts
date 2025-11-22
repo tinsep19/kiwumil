@@ -15,15 +15,15 @@ import type { Relationships } from "../../dsl/relationships"
 
 /**
  * UML Plugin (Namespace-based)
- * 
+ *
  * UML 図のための Symbol と Relationship を提供する
  */
 export const UMLPlugin = {
-  name: 'uml',
-  
+  name: "uml",
+
   createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
     const plugin = this.name
-    
+
     return {
       /**
        * Actor Symbol を作成
@@ -31,46 +31,47 @@ export const UMLPlugin = {
        * @returns 生成された SymbolId
        */
       actor(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'actor', (symbolId) => {
+        const symbol = symbols.register(plugin, "actor", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const actor = new ActorSymbol(symbolId, label, bound)
           return actor
         })
         return symbol.id
       },
-      
+
       /**
        * Usecase Symbol を作成
        * @param label - Usecase のラベル
        * @returns 生成された SymbolId
        */
       usecase(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'usecase', (symbolId) => {
+        const symbol = symbols.register(plugin, "usecase", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const usecase = new UsecaseSymbol(symbolId, label, bound)
           return usecase
         })
         return symbol.id
       },
-      
+
       /**
        * System Boundary Symbol を作成
        * @param label - System Boundary のラベル
        * @returns 生成された SymbolId
        */
       systemBoundary(label: string): ContainerSymbolId {
-        const symbol = symbols.register(plugin, 'systemBoundary', (symbolId) => {
+        const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
-          return new SystemBoundarySymbol(id, label, layout)
+          const bound = layout.variables.createBound(id)
+          return new SystemBoundarySymbol(id, label, bound, layout)
         })
         return symbol.id as ContainerSymbolId
-      }
+      },
     }
   },
-  
+
   createRelationshipFactory(relationships: Relationships, _layout: LayoutContext) {
     const plugin = this.name
-    
+
     return {
       /**
        * Association Relationship を作成
@@ -79,10 +80,14 @@ export const UMLPlugin = {
        * @returns 生成された RelationshipId
        */
       associate(from: SymbolId, to: SymbolId): RelationshipId {
-        const relationship = relationships.register(plugin, 'association', (id) => new Association(id, from, to))
+        const relationship = relationships.register(
+          plugin,
+          "association",
+          (id) => new Association(id, from, to)
+        )
         return relationship.id
       },
-      
+
       /**
        * Include Relationship を作成
        * @param from - 開始 Symbol の ID
@@ -90,10 +95,14 @@ export const UMLPlugin = {
        * @returns 生成された RelationshipId
        */
       include(from: SymbolId, to: SymbolId): RelationshipId {
-        const relationship = relationships.register(plugin, 'include', (id) => new Include(id, from, to))
+        const relationship = relationships.register(
+          plugin,
+          "include",
+          (id) => new Include(id, from, to)
+        )
         return relationship.id
       },
-      
+
       /**
        * Extend Relationship を作成
        * @param from - 開始 Symbol の ID
@@ -101,10 +110,14 @@ export const UMLPlugin = {
        * @returns 生成された RelationshipId
        */
       extend(from: SymbolId, to: SymbolId): RelationshipId {
-        const relationship = relationships.register(plugin, 'extend', (id) => new Extend(id, from, to))
+        const relationship = relationships.register(
+          plugin,
+          "extend",
+          (id) => new Extend(id, from, to)
+        )
         return relationship.id
       },
-      
+
       /**
        * Generalize Relationship を作成
        * @param from - 開始 Symbol の ID (子)
@@ -112,9 +125,13 @@ export const UMLPlugin = {
        * @returns 生成された RelationshipId
        */
       generalize(from: SymbolId, to: SymbolId): RelationshipId {
-        const relationship = relationships.register(plugin, 'generalize', (id) => new Generalize(id, from, to))
+        const relationship = relationships.register(
+          plugin,
+          "generalize",
+          (id) => new Generalize(id, from, to)
+        )
         return relationship.id
-      }
+      },
     }
-  }
+  },
 } as const satisfies DiagramPlugin
