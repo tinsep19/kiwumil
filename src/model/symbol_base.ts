@@ -32,9 +32,6 @@ export abstract class SymbolBase {
   }
 
   ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
-    if (!this.layoutBounds) {
-      throw new Error(`Layout bounds not initialized for symbol ${this.id}`)
-    }
     if (builder) {
       this.buildLayoutConstraints(builder)
     }
