@@ -58,7 +58,7 @@ TypeDiagram("First Milestone")
 
 **出力イメージ:**
 
-![First Milestone](example/first_milestone.svg)
+![First Milestone](examples/first_milestone.svg)
 
 **特徴:**
 - 🔧 **制約 + レイアウトヒント** - Cassowary 制約ソルバーをベースに、`hint.arrange*` / `hint.enclose` で意図した整列を記述
