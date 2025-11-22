@@ -63,7 +63,9 @@ TypeDiagram("My UML Diagram")
 ### 型定義
 
 ```typescript
-import type { LayoutVariableContext } from "../layout/layout_variable_context"
+import type { LayoutContext } from "../layout/layout_context"
+import type { Symbols } from "./symbols"
+import type { Relationships } from "./relationships"
 
 interface DiagramPlugin {
   /**
@@ -73,22 +75,24 @@ interface DiagramPlugin {
 
   /**
    * Symbol 用の DSL ファクトリを生成
-   * @param userSymbols - 生成した Symbol を登録する配列
+   * @param symbols - 生成した Symbol を登録するインスタンス
+   * @param layout - レイアウトコンテキスト（LayoutBound 生成用）
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
   createSymbolFactory?(
-    userSymbols: SymbolBase[],
-    layout: LayoutVariableContext
+    symbols: Symbols,
+    layout: LayoutContext
   ): Record<string, (...args: any[]) => SymbolId>
 
   /**
    * Relationship 用の DSL ファクトリを生成
-   * @param relationships - 生成した Relationship を登録する配列
+   * @param relationships - 生成した Relationship を登録するインスタンス
+   * @param layout - レイアウトコンテキスト
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
   createRelationshipFactory?(
-    relationships: RelationshipBase[],
-    layout: LayoutVariableContext
+    relationships: Relationships,
+    layout: LayoutContext
   ): Record<string, (...args: any[]) => RelationshipId>
 }
 ```
@@ -96,10 +100,10 @@ interface DiagramPlugin {
 ### 重要な点
 
 - **`name`**: プラグインの名前空間（`el.{name}.xxx()` でアクセス）
-- **SymbolId / RelationshipId を返す**: 内部で配列に登録し、ID だけを返す
-- **`LayoutVariableContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`new MySymbol(id, label, layout)` のように渡すことでシンボルが `LayoutVar` を初期化できる
+- **SymbolId / RelationshipId を返す**: `Symbols.register()` / `Relationships.register()` で登録し、ID を返す
+- **`LayoutContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`layout.variables.createBound(id)` で LayoutBound を生成してシンボルに注入する
 - **ファクトリはオプショナル**: Symbol のみ・Relationship のみを提供するプラグインも問題なく動作する
-- **配列への登録はプラグインが担当**: `userSymbols.push(symbol)` を忘れずに
+- **登録は Symbols/Relationships が担当**: `symbols.register(plugin, name, factory)` を呼び出すと、ID の生成と配列への追加が自動的に行われる
 - **名前空間名はユニークにする**: `NamespaceBuilder` は `plugin.name` をキーに `el` / `rel` を構築するため、同じ名前のプラグインがあると後勝ちで上書きされる。`core` はビルトインなので避けること。
 - **ファクトリ関数の引数に `any` を許容**: `DiagramPlugin` はプラグイン固有の DSL 引数すべてを統一的に受ける必要があり、ここで具象型を強制すると別プラグインの署名が破綻する。`satisfies DiagramPlugin` を使えば各プラグイン実装は個別の厳密なシグネチャ（例: `actor(label: string)`, `lifeline(config: LifelineOptions)`）を保てるため、インターフェース側は `any` で緩く受けて型安全性を失わない。
 
@@ -112,19 +116,20 @@ interface DiagramPlugin {
 ```typescript
 import type { DiagramPlugin } from "kiwumil"
 import type { SymbolBase, RelationshipBase, SymbolId, RelationshipId } from "kiwumil"
-import type { LayoutVariableContext } from "kiwumil"
+import type { LayoutContext } from "kiwumil"
+import type { Symbols, Relationships } from "kiwumil"
 
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutVariableContext) {
+  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
     const plugin = this.name
     
     return {
       mySymbol(label: string): SymbolId {
         const symbol = symbols.register(plugin, "mySymbol", (symbolId) => {
-          const instance = new MySymbol(symbolId, label, layout)
-          layout.applyFixedSize(instance)
+          const bound = layout.variables.createBound(symbolId)
+          const instance = new MySymbol(symbolId, label, bound)
           return instance
         })
         return symbol.id
@@ -132,13 +137,13 @@ export const MyPlugin: DiagramPlugin = {
     }
   },
 
-  createRelationshipFactory(relationships: Relationships, layout: LayoutVariableContext) {
+  createRelationshipFactory(relationships: Relationships, layout: LayoutContext) {
     const plugin = this.name
     
     return {
       myRelation(from: SymbolId, to: SymbolId): RelationshipId {
         const relationship = relationships.register(plugin, "myRelation", (id) => {
-          return new MyRelation(id, from, to, layout)
+          return new MyRelation(id, from, to)
         })
         return relationship.id
       }
@@ -160,21 +165,21 @@ import { Generalize } from "./relationships/generalize"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
 import { toContainerSymbolId } from "../../model/container_symbol_base"
-import type { LayoutVariableContext } from "../../layout/layout_variable_context"
+import type { LayoutContext } from "../../layout/layout_context"
 import { Symbols } from "../../dsl/symbols"
 import { Relationships } from "../../dsl/relationships"
 
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutVariableContext) {
+  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
     const plugin = this.name
     
     return {
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, "actor", (symbolId) => {
-          const actor = new ActorSymbol(symbolId, label, layout)
-          layout.applyFixedSize(actor)
+          const bound = layout.variables.createBound(symbolId)
+          const actor = new ActorSymbol(symbolId, label, bound)
           return actor
         })
         return symbol.id
@@ -182,8 +187,8 @@ export const UMLPlugin = {
       
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-          const usecase = new UsecaseSymbol(symbolId, label, layout)
-          layout.applyFixedSize(usecase)
+          const bound = layout.variables.createBound(symbolId)
+          const usecase = new UsecaseSymbol(symbolId, label, bound)
           return usecase
         })
         return symbol.id
@@ -191,17 +196,18 @@ export const UMLPlugin = {
       
       systemBoundary(label: string): ContainerSymbolId {
         const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
-          const containerId = toContainerSymbolId(symbolId)
-          return new SystemBoundarySymbol(containerId, label, layout)
+          const id = toContainerSymbolId(symbolId)
+          const bound = layout.variables.createBound(id)
+          return new SystemBoundarySymbol(id, label, bound, layout)
         })
-        return symbol.id
+        return symbol.id as ContainerSymbolId
       }
     }
   },
   
   createRelationshipFactory(
     relationships: Relationships,
-    _layout: LayoutVariableContext
+    _layout: LayoutContext
   ) {
     const plugin = this.name
     
@@ -237,71 +243,43 @@ export const UMLPlugin = {
 プラグインで生成する ID は以下の形式に従います：
 
 ```
-${namespace}:${symbolName|relationshipName}-${serial}
+${namespace}:${symbolName|relationshipName}/${index}
 ```
 
 ### 例
 
 **Symbol ID:**
-- `uml:actor-0`
-- `uml:usecase-1`
-- `sequence:lifeline-0`
-- `erd:entity-2`
+- `uml:actor/0`
+- `uml:usecase/1`
+- `sequence:lifeline/0`
+- `erd:entity/2`
 
 **Relationship ID:**
-- `uml:association-0`
-- `uml:include-1`
-- `sequence:message-0`
-- `erd:relation-3`
+- `uml:association/0`
+- `uml:include/1`
+- `sequence:message/0`
+- `erd:relation/3`
 
 ### メリット
 
 1. **デバッグしやすい**: ログやエラーメッセージでどのプラグインの要素か一目でわかる
 2. **衝突しない**: 名前空間により、プラグイン間で ID が衝突しない
 3. **可読性**: 要素の種類が ID から推測できる
+4. **生成順序の追跡**: インデックスにより、要素の生成順序が明確
 
-### ID 生成ヘルパー
+### ID 生成の自動化
 
-手動で ID を生成する代わりに、`createIdGenerator` ヘルパーを使うことを推奨します：
+`Symbols` / `Relationships` クラスが ID 生成を自動的に行うため、手動での ID 生成は不要です：
 
 ```typescript
-import { createIdGenerator } from "../../dsl/id_generator"
-
-export const MyPlugin: DiagramPlugin = {
-  name: 'myplugin',
-  
-  createSymbolFactory(userSymbols: SymbolBase[]) {
-    const idGen = createIdGenerator(this.name)
-    
-    return {
-      mySymbol(label: string): SymbolId {
-        const id = idGen.generateSymbolId('mySymbol')
-        // ... 
-        return id
-      }
-    }
-  }
+// Symbols.register() 内で自動生成される
+private createSymbolId(plugin: string, symbolName: string): SymbolId {
+  const idIndex = this.symbols.length
+  return `${plugin}:${symbolName}/${idIndex}` as SymbolId
 }
 ```
 
-**`createIdGenerator` の実装:**
-
-```typescript
-export function createIdGenerator(namespace: string) {
-  let symbolCounter = 0
-  let relationshipCounter = 0
-  
-  return {
-    generateSymbolId(symbolName: string): SymbolId {
-      return `${namespace}:${symbolName}-${symbolCounter++}` as SymbolId
-    },
-    
-    generateRelationshipId(relationshipName: string): RelationshipId {
-      return `${namespace}:${relationshipName}-${relationshipCounter++}` as RelationshipId
-    }
-  }
-}
-```
+プラグイン開発者は、`symbols.register(plugin, symbolName, factory)` を呼び出すだけで、適切な ID が自動的に割り当てられます。
 
 ---
 
@@ -329,26 +307,35 @@ src/plugin/
 import { SymbolBase } from "../../../model/symbol_base"
 import type { SymbolId } from "../../../model/types"
 import type { Theme } from "../../../theme/theme"
+import type { LayoutBound } from "../../../layout/layout_bound"
+import type { Point } from "../../../model/types"
 
 export class MySymbol extends SymbolBase {
-  constructor(id: SymbolId, label: string) {
-    super(id, label)
-  }
-
-  getDefaultSize() {
-    return { width: 100, height: 60 }
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
+    super(id, label, layoutBounds)
   }
 
   toSVG(): string {
+    const bounds = this.getLayoutBounds()
+    const x = bounds.x.value ?? 0
+    const y = bounds.y.value ?? 0
+    const width = bounds.width.value ?? 100
+    const height = bounds.height.value ?? 60
+    
     // SVG 描画ロジック
-    return `<rect x="${this.bounds.x}" y="${this.bounds.y}" 
-                  width="${this.bounds.width}" height="${this.bounds.height}" />`
+    return `<rect x="${x}" y="${y}" 
+                  width="${width}" height="${height}" />`
   }
 
   getConnectionPoint(from: Point): Point {
+    const bounds = this.getLayoutBounds()
+    const x = bounds.x.value ?? 0
+    const y = bounds.y.value ?? 0
+    const width = bounds.width.value ?? 100
+    const height = bounds.height.value ?? 60
+    
     // 接続点の計算ロジック
-    return { x: this.bounds.x + this.bounds.width / 2, 
-             y: this.bounds.y + this.bounds.height / 2 }
+    return { x: x + width / 2, y: y + height / 2 }
   }
 }
 ```
@@ -372,9 +359,17 @@ export class MyRelation extends RelationshipBase {
     
     if (!fromSymbol || !toSymbol) return ""
     
+    const fromBounds = fromSymbol.getLayoutBounds()
+    const toBounds = toSymbol.getLayoutBounds()
+    
+    const fromX = fromBounds.x.value ?? 0
+    const fromY = fromBounds.y.value ?? 0
+    const toX = toBounds.x.value ?? 0
+    const toY = toBounds.y.value ?? 0
+    
     // SVG 描画ロジック（線を描く）
-    return `<line x1="${fromSymbol.bounds.x}" y1="${fromSymbol.bounds.y}"
-                  x2="${toSymbol.bounds.x}" y2="${toSymbol.bounds.y}" />`
+    return `<line x1="${fromX}" y1="${fromY}"
+                  x2="${toX}" y2="${toY}" />`
   }
 
   calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {
@@ -390,36 +385,38 @@ export class MyRelation extends RelationshipBase {
 // src/plugin/mydiagram/plugin.ts
 import { MySymbol } from "./symbols/my_symbol"
 import { MyRelation } from "./relationships/my_relation"
-import { createIdGenerator } from "../../dsl/id_generator"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolBase } from "../../model/symbol_base"
-import type { RelationshipBase } from "../../model/relationship_base"
 import type { SymbolId, RelationshipId } from "../../model/types"
+import type { LayoutContext } from "../../layout/layout_context"
+import type { Symbols } from "../../dsl/symbols"
+import type { Relationships } from "../../dsl/relationships"
 
 export const MyDiagramPlugin: DiagramPlugin = {
   name: 'mydiagram',
   
-  createSymbolFactory(userSymbols: SymbolBase[]) {
-    const idGen = createIdGenerator(this.name)
+  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+    const plugin = this.name
     
     return {
       mySymbol(label: string): SymbolId {
-        const id = idGen.generateSymbolId('mySymbol')
-        const symbol = new MySymbol(id, label)
-        userSymbols.push(symbol)
-        return id
+        const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
+          const bound = layout.variables.createBound(symbolId)
+          return new MySymbol(symbolId, label, bound)
+        })
+        return symbol.id
       }
     }
   },
   
-  createRelationshipFactory(relationships: RelationshipBase[]) {
-    const idGen = createIdGenerator(this.name)
+  createRelationshipFactory(relationships: Relationships, _layout: LayoutContext) {
+    const plugin = this.name
     
     return {
       myRelation(from: SymbolId, to: SymbolId): RelationshipId {
-        const id = idGen.generateRelationshipId('myRelation')
-        relationships.push(new MyRelation(id, from, to))
-        return id
+        const relationship = relationships.register(plugin, 'myRelation', (id) => {
+          return new MyRelation(id, from, to)
+        })
+        return relationship.id
       }
     }
   }
@@ -456,7 +453,7 @@ TypeDiagram("My Diagram")
 
 **❌ 避けるべき:**
 ```typescript
-createSymbolFactory(userSymbols: any[]) {
+createSymbolFactory(symbols: any, layout: any) {
   return {
     mySymbol: (label: any) => {
       // any の使用は避ける
@@ -467,7 +464,7 @@ createSymbolFactory(userSymbols: any[]) {
 
 **✅ 推奨:**
 ```typescript
-createSymbolFactory(userSymbols: SymbolBase[]) {
+createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
   return {
     mySymbol(label: string): SymbolId {
       // 明示的な型定義
@@ -476,39 +473,58 @@ createSymbolFactory(userSymbols: SymbolBase[]) {
 }
 ```
 
-### 2. ID 生成に createIdGenerator を使う
+### 2. Symbols/Relationships の register メソッドを使う
 
 **❌ 避けるべき:**
 ```typescript
-let counter = 0
-const id = `myplugin:mySymbol-${counter++}` as SymbolId
-```
-
-**✅ 推奨:**
-```typescript
-const idGen = createIdGenerator(this.name)
-const id = idGen.generateSymbolId('mySymbol')
-```
-
-### 3. 配列への登録を忘れない
-
-**❌ 間違い:**
-```typescript
 mySymbol(label: string): SymbolId {
-  const id = idGen.generateSymbolId('mySymbol')
-  const symbol = new MySymbol(id, label)
-  // userSymbols.push(symbol) を忘れている！
+  const id = `myplugin:mySymbol/${counter++}` as SymbolId
+  const symbol = new MySymbol(id, label, bound)
+  symbols.push(symbol)  // 直接 push しない
   return id
 }
 ```
 
-**✅ 正しい:**
+**✅ 推奨:**
 ```typescript
 mySymbol(label: string): SymbolId {
-  const id = idGen.generateSymbolId('mySymbol')
-  const symbol = new MySymbol(id, label)
-  userSymbols.push(symbol)  // 必ず登録
-  return id
+  const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
+    const bound = layout.variables.createBound(symbolId)
+    return new MySymbol(symbolId, label, bound)
+  })
+  return symbol.id
+}
+```
+
+### 3. LayoutBound をコンストラクタで注入する
+
+**❌ 避けるべき:**
+```typescript
+// Symbol 内部で LayoutContext に直接依存
+class MySymbol extends SymbolBase {
+  constructor(id: SymbolId, label: string, layout: LayoutContext) {
+    super(id, label)
+    this.layoutBounds = layout.variables.createBound(id)
+  }
+}
+```
+
+**✅ 推奨:**
+```typescript
+// LayoutBound をコンストラクタで注入
+class MySymbol extends SymbolBase {
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
+    super(id, label, layoutBounds)
+  }
+}
+
+// プラグイン側で LayoutBound を生成
+mySymbol(label: string): SymbolId {
+  const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
+    const bound = layout.variables.createBound(symbolId)
+    return new MySymbol(symbolId, label, bound)
+  })
+  return symbol.id
 }
 ```
 
@@ -587,17 +603,19 @@ import { MyDiagramPlugin } from "../src/plugin/mydiagram/plugin"
 
 describe("MyDiagramPlugin", () => {
   test("should create symbols with correct IDs", () => {
-    const result = TypeDiagram("Test")
+    let symbolCount = 0
+    TypeDiagram("Test")
       .use(MyDiagramPlugin)
       .build((el, rel, hint) => {
         const a = el.mydiagram.mySymbol("A")
         const b = el.mydiagram.mySymbol("B")
         
-        expect(a).toBe("mydiagram:mySymbol-0")
-        expect(b).toBe("mydiagram:mySymbol-1")
+        expect(a).toBe("mydiagram:mySymbol/0")
+        expect(b).toBe("mydiagram:mySymbol/1")
+        symbolCount = 2
       })
     
-    expect(result.symbols).toHaveLength(3) // DiagramSymbol + 2つの Symbol
+    expect(symbolCount).toBe(2)
   })
   
   test("should create relationships with correct IDs", () => {
@@ -608,7 +626,7 @@ describe("MyDiagramPlugin", () => {
         const b = el.mydiagram.mySymbol("B")
         const relId = rel.mydiagram.myRelation(a, b)
         
-        expect(relId).toBe("mydiagram:myRelation-0")
+        expect(relId).toBe("mydiagram:myRelation/0")
       })
   })
   
@@ -639,10 +657,10 @@ DSL の型安全性は `tsd` による型テストで自動検証しています
 
 ### テストのポイント
 
-1. **ID の形式を検証**: `namespace:symbolName-serial` の形式になっているか
-2. **配列への登録を検証**: `result.symbols` に正しく追加されているか
+1. **ID の形式を検証**: `namespace:symbolName/index` の形式になっているか
+2. **型推論**: `tsd/namespace-dsl.test-d.ts` で DSL の型が崩れていないかを継続的に確認する
 3. **複数プラグインの共存**: 他のプラグインと競合しないか
-4. **型推論**: `tsd/namespace-dsl.test-d.ts` で DSL の型が崩れていないかを継続的に確認する
+4. **LayoutBound の注入**: コンストラクタで正しく LayoutBound が渡されているか
 
 ---
 
