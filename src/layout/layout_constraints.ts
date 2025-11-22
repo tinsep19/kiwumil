@@ -115,6 +115,12 @@ export class LayoutConstraints {
     build: (builder: LayoutConstraintBuilder) => void
   ) {
     const builder = new LayoutConstraintBuilder(this.solver)
+    
+    // If symbol is a SymbolBase instance, call ensureLayoutBounds to let it add constraints
+    if (typeof symbol !== "string") {
+      symbol.ensureLayoutBounds(builder)
+    }
+    
     build(builder)
     const targetId = typeof symbol === "string" ? symbol : symbol.id
     this.record(type, builder.getRawConstraints(), targetId)

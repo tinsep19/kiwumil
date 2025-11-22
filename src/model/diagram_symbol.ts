@@ -14,11 +14,11 @@ export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo
   private constraintsApplied = false
 
-  constructor(id: ContainerSymbolId, titleOrInfo: string | DiagramInfo, layout: LayoutContext) {
+  constructor(id: ContainerSymbolId, titleOrInfo: string | DiagramInfo, layoutBounds: LayoutBound, layout: LayoutContext) {
     const info = typeof titleOrInfo === "string"
       ? { title: titleOrInfo }
       : titleOrInfo
-    super(id, info.title, layout)
+    super(id, info.title, layoutBounds, layout)
     this.diagramInfo = info
     this.applyDiagramConstraints()
   }

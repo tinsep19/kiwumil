@@ -61,7 +61,8 @@ export const UMLPlugin = {
       systemBoundary(label: string): ContainerSymbolId {
         const symbol = symbols.register(plugin, 'systemBoundary', (symbolId) => {
           const id = toContainerSymbolId(symbolId)
-          return new SystemBoundarySymbol(id, label, layout)
+          const bound = layout.variables.createBound(id)
+          return new SystemBoundarySymbol(id, label, bound, layout)
         })
         return symbol.id as ContainerSymbolId
       }

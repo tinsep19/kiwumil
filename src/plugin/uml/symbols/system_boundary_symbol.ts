@@ -4,14 +4,14 @@ import { getStyleForSymbol } from "../../../theme"
 import type { Point, ContainerSymbolId } from "../../../model/types"
 import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../theme"
-import { getBoundsValues } from "../../../layout/layout_bound"
+import { getBoundsValues, type LayoutBound } from "../../../layout/layout_bound"
 
 export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300
   defaultHeight = 200
 
-  constructor(id: ContainerSymbolId, label: string, layout: LayoutContext) {
-    super(id, label, layout)
+  constructor(id: ContainerSymbolId, label: string, layoutBounds: LayoutBound, layout: LayoutContext) {
+    super(id, label, layoutBounds, layout)
     this.applyMinSize()
   }
 

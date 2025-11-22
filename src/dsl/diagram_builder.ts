@@ -96,7 +96,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
-    diagramSymbol = new DiagramSymbol(diagramSymbolId, this.titleOrInfo, layoutContext)
+    const diagramBound = layoutContext.variables.createBound(diagramSymbolId)
+    diagramSymbol = new DiagramSymbol(diagramSymbolId, this.titleOrInfo, diagramBound, layoutContext)
     diagramSymbol.setTheme(this.currentTheme)
 
     // すべての Symbol を含む配列

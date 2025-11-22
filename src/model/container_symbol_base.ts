@@ -4,6 +4,7 @@ import { LayoutBound } from "../layout/layout_bound"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
+import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 
 export interface ContainerPadding {
   top: number
@@ -31,8 +32,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
   private containerConstraintsApplied = false
   protected readonly childIds = new Set<SymbolId | ContainerSymbolId>()
 
-  protected constructor(id: TId, label: string, layout: LayoutContext) {
-    const layoutBounds = layout.variables.createBound(id)
+  protected constructor(id: TId, label: string, layoutBounds: LayoutBound, layout: LayoutContext) {
     super(id, label, layoutBounds)
     this.id = id
     this.layout = layout
@@ -48,6 +48,17 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
 
   getContentLayoutBounds(): LayoutBound {
     return this.ensureContentBounds()
+  }
+
+  override ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
+    if (builder) {
+      this.buildLayoutConstraints(builder)
+    }
+    return this.layoutBounds
+  }
+
+  protected override buildLayoutConstraints(_builder: LayoutConstraintBuilder): void {
+    // noop; サブクラスでオーバーライド可能
   }
 
   protected ensureContentBounds(): LayoutBound {

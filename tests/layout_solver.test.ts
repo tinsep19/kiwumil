@@ -39,12 +39,15 @@ describe("Layout pipeline", () => {
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
-      return new SystemBoundarySymbol(containerId, id, layout)
+      const bound = layout.variables.createBound(containerId)
+      return new SystemBoundarySymbol(containerId, id, bound, layout)
     })
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
-    const diagram = new DiagramSymbol(toContainerSymbolId("__diagram__"), "Test", layout)
+    const diagramId = toContainerSymbolId("__diagram__")
+    const diagramBound = layout.variables.createBound(diagramId)
+    const diagram = new DiagramSymbol(diagramId, "Test", diagramBound, layout)
     layout.solveAndApply([...symbols.getAll(), diagram])
 
     expect(diagram.bounds.x).toBeCloseTo(0)
