@@ -1945,6 +1945,137 @@ guide.followRight(a) // a.right 再利用（生成済み）
 
 ---
 
+## LayoutBound Injection とシンボル固有制約
+
+### 概要
+
+SymbolBase および ContainerSymbolBase は、LayoutBound をコンストラクタで注入し、immutable として保持します。
+これにより、layoutContext への直接依存を排除し、シンボル側で固有の制約を builder 経由で追加できるようになります。
+
+### 設計
+
+#### SymbolBase の構造
+
+```typescript
+export abstract class SymbolBase {
+  readonly id: SymbolId
+  readonly label: string
+  protected readonly layoutBounds: LayoutBound
+
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
+    this.id = id
+    this.label = label
+    this.layoutBounds = layoutBounds
+  }
+
+  getLayoutBounds(): LayoutBound {
+    return this.layoutBounds
+  }
+
+  ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
+    if (builder) {
+      this.buildLayoutConstraints(builder)
+    }
+    return this.layoutBounds
+  }
+
+  protected buildLayoutConstraints(_builder: LayoutConstraintBuilder): void {
+    // noop; サブクラスでオーバーライド
+  }
+}
+```
+
+#### LayoutConstraints.withSymbol の統合
+
+`withSymbol` メソッドは、シンボルオブジェクトが渡された場合に `ensureLayoutBounds(builder)` を自動的に呼び出します：
+
+```typescript
+withSymbol(
+  symbol: SymbolBase | LayoutSymbolId,
+  type: LayoutConstraintType,
+  build: (builder: LayoutConstraintBuilder) => void
+) {
+  const builder = new LayoutConstraintBuilder(this.solver)
+  build(builder)
+  // シンボルオブジェクトが渡された場合、シンボル側で制約を追加
+  if (typeof symbol !== "string") {
+    symbol.ensureLayoutBounds(builder)
+  }
+  const targetId = typeof symbol === "string" ? symbol : symbol.id
+  this.record(type, builder.getRawConstraints(), targetId)
+}
+```
+
+### 使用例
+
+#### 基本的な使用
+
+```typescript
+// Plugin でのシンボル生成
+circle(label: string): SymbolId {
+  const symbol = symbols.register(plugin, 'circle', (symbolId) => {
+    const bound = layout.variables.createBound(symbolId)
+    const circle = new CircleSymbol(symbolId, label, bound)
+    return circle
+  })
+  return symbol.id
+}
+```
+
+#### カスタム制約の追加
+
+サブクラスで `buildLayoutConstraints` をオーバーライドすることで、シンボル固有の制約を追加できます：
+
+```typescript
+export class CustomSymbol extends SymbolBase {
+  protected override buildLayoutConstraints(builder: LayoutConstraintBuilder): void {
+    const bounds = this.layoutBounds
+    
+    // 最小サイズ制約
+    builder.ge(bounds.width, 50, LayoutConstraintStrength.Strong)
+    builder.ge(bounds.height, 50, LayoutConstraintStrength.Strong)
+    
+    // アスペクト比制約（正方形）
+    builder.eq(bounds.width, bounds.height, LayoutConstraintStrength.Medium)
+  }
+}
+```
+
+#### 自動的な呼び出し
+
+`LayoutContext` の以下のメソッドで自動的に `ensureLayoutBounds` が呼ばれます：
+
+```typescript
+// 最小サイズ制約
+layout.applyMinSize(symbol, { width: 100, height: 60 })
+// → withSymbol を経由して symbol.ensureLayoutBounds(builder) が呼ばれる
+
+// 原点固定
+layout.anchorToOrigin(symbol)
+// → withSymbol を経由して symbol.ensureLayoutBounds(builder) が呼ばれる
+```
+
+### メリット
+
+1. **依存性の逆転**
+   - シンボルは layoutContext に依存しない
+   - LayoutBound は immutable で注入される
+
+2. **責任の分離**
+   - レイアウト変数の生成: `LayoutVariables.createBound`
+   - 制約の定義: サブクラスの `buildLayoutConstraints`
+   - 制約の適用: `LayoutConstraints.withSymbol`
+
+3. **拡張性**
+   - サブクラスで簡単にカスタム制約を追加
+   - builder 経由で他の制約と統合される
+
+4. **型安全性**
+   - `LayoutConstraintBuilder` は type-only import
+   - コンパイル時に型チェック
+
+---
+
 ## まとめ（更新）
 
 ### 完了した機能
@@ -1955,6 +2086,8 @@ guide.followRight(a) // a.right 再利用（生成済み）
 - ✅ **ContainerSymbolBase**: コンテナの共通基底クラス
 - ✅ **Guide API**: 水平・垂直ガイドラインによる配置
 - ✅ **派生変数**: right/bottom/centerX/centerY の自動計算
+- ✅ **LayoutBound Injection**: シンボルへの immutable な LayoutBound 注入
+- ✅ **ConstraintBuilder 統合**: withSymbol で ensureLayoutBounds を自動呼び出し
 
 ### 今後の拡張
 
