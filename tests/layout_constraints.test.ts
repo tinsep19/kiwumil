@@ -14,7 +14,7 @@ describe("LayoutConstraints metadata", () => {
 
   beforeEach(() => {
     symbols = new Symbols()
-    layout = new LayoutContext(DefaultTheme, id => symbols.findById(id))
+    layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
     hint = new HintFactory(layout, symbols)
   })
 
@@ -29,7 +29,8 @@ describe("LayoutConstraints metadata", () => {
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
-      return new SystemBoundarySymbol(containerId, id, layout)
+      const bound = layout.variables.createBound(containerId)
+      return new SystemBoundarySymbol(containerId, id, bound, layout)
     })
   }
 
@@ -40,10 +41,9 @@ describe("LayoutConstraints metadata", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
 
-    const entries = layout
-      .constraints
+    const entries = layout.constraints
       .list()
-      .filter(constraint => constraint.type === "arrangeHorizontal")
+      .filter((constraint) => constraint.type === "arrangeHorizontal")
 
     expect(entries).toHaveLength(1)
     expect(entries[0].rawConstraints).toHaveLength(2) // three symbols -> two sibling constraints
@@ -56,10 +56,7 @@ describe("LayoutConstraints metadata", () => {
 
     hint.enclose(boundary.id, [first.id, second.id])
 
-    const entry = layout
-      .constraints
-      .list()
-      .find(constraint => constraint.type === "enclose")
+    const entry = layout.constraints.list().find((constraint) => constraint.type === "enclose")
 
     expect(entry).toBeDefined()
     expect(entry?.rawConstraints).toHaveLength(8) // four required constraints per child

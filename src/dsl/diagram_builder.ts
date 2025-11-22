@@ -20,7 +20,7 @@ import { Relationships } from "./relationships"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
- * 
+ *
  * el (element), rel (relationship), hint の3つのパラメータを受け取り、
  * 型安全に図の要素を定義できる。
  */
@@ -32,7 +32,7 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
- * 
+ *
  * ユーザーには公開されないが、TypeDiagram 関数から返される。
  * メソッドチェーンで流暢な API を提供する。
  */
@@ -66,7 +66,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
   /**
    * ダイアグラムを構築
-   * 
+   *
    * @param callback - IntelliSense が有効な DSL ブロック
    * @returns レンダリング可能な図オブジェクト
    */
@@ -75,15 +75,12 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const relationships = new Relationships()
     let diagramSymbol: DiagramSymbol | undefined
     const diagramSymbolId = toContainerSymbolId("__diagram__")
-    const layoutContext = new LayoutContext(
-      this.currentTheme,
-      (id: SymbolId) => {
-        if (diagramSymbol && diagramSymbol.id === id) {
-          return diagramSymbol
-        }
-        return symbols.findById(id)
+    const layoutContext = new LayoutContext(this.currentTheme, (id: SymbolId) => {
+      if (diagramSymbol && diagramSymbol.id === id) {
+        return diagramSymbol
       }
-    )
+      return symbols.findById(id)
+    })
 
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
@@ -96,7 +93,13 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
-    diagramSymbol = new DiagramSymbol(diagramSymbolId, this.titleOrInfo, layoutContext)
+    const diagramBound = layoutContext.variables.createBound(diagramSymbolId)
+    diagramSymbol = new DiagramSymbol(
+      diagramSymbolId,
+      this.titleOrInfo,
+      diagramBound,
+      layoutContext
+    )
     diagramSymbol.setTheme(this.currentTheme)
 
     // すべての Symbol を含む配列
@@ -114,7 +117,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (symbolList.length > 0) {
-      hint.enclose(diagramSymbolId, symbolList.map(s => s.id))
+      hint.enclose(
+        diagramSymbolId,
+        symbolList.map((s) => s.id)
+      )
     }
 
     // レイアウト計算
@@ -125,7 +131,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
         const renderer = new SvgRenderer(allSymbols, [...relationshipList], this.currentTheme)
-        
+
         if (typeof target === "string") {
           // ケース1: 文字列パス → ファイル保存
           renderer.saveToFile(target)
@@ -137,33 +143,33 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
           // ケース3: HTMLElement → DOM レンダリング
           renderer.renderToElement(target)
         }
-      }
+      },
     }
   }
 }
 
 /**
  * TypeDiagram - Kiwumil の型安全な図作成エントリポイント
- * 
+ *
  * IntelliSense による強力な型推論をサポートし、
  * 宣言的で読みやすい図の定義を可能にします。
- * 
+ *
  * **Note**: CorePlugin がデフォルトで適用されるため、
  * 基本図形（circle, rectangle, ellipse 等）がすぐに利用可能です。
- * 
+ *
  * @param titleOrInfo - 図のタイトル、または DiagramInfo オブジェクト
  * @returns チェーン可能なビルダーオブジェクト
- * 
+ *
  * @example 基本的な使い方
  * ```typescript
  * import { TypeDiagram, UMLPlugin } from "kiwumil"
- * 
+ *
  * TypeDiagram("My Diagram")
  *   .use(UMLPlugin)
  *   .build((el, rel, hint) => {
  *     // CorePlugin の図形（デフォルトで利用可能）
  *     const circle = el.core.circle("Circle")
- *     
+ *
  *     // UMLPlugin の図形
  *     const user = el.uml.actor("User")
  *     const login = el.uml.usecase("Login")
@@ -172,7 +178,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   })
  *   .render("output.svg")
  * ```
- * 
+ *
  * @example DiagramInfo を使用
  * ```typescript
  * TypeDiagram({
@@ -186,7 +192,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   })
  *   .render("output.svg")
  * ```
- * 
+ *
  * @example 複数プラグインとテーマ
  * ```typescript
  * TypeDiagram("Mixed Diagram")
@@ -199,6 +205,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   .render("output.svg")
  * ```
  */
-export function TypeDiagram(titleOrInfo: string | DiagramInfo): DiagramBuilder<[typeof CorePlugin]> {
+export function TypeDiagram(
+  titleOrInfo: string | DiagramInfo
+): DiagramBuilder<[typeof CorePlugin]> {
   return new DiagramBuilder(titleOrInfo).use(CorePlugin)
 }

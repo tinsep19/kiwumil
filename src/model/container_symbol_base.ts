@@ -4,6 +4,7 @@ import { LayoutBound } from "../layout/layout_bound"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
+import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 
 export interface ContainerPadding {
   top: number
@@ -20,19 +21,22 @@ interface ContainerContentProvider {
   getContentLayoutBounds(): LayoutBound
 }
 
-export function isContainerContentProvider(symbol: SymbolBase): symbol is SymbolBase & ContainerContentProvider {
+export function isContainerContentProvider(
+  symbol: SymbolBase
+): symbol is SymbolBase & ContainerContentProvider {
   return typeof (symbol as Partial<ContainerContentProvider>).getContentLayoutBounds === "function"
 }
 
-export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = ContainerSymbolId> extends SymbolBase {
+export abstract class ContainerSymbolBase<
+  TId extends ContainerSymbolId = ContainerSymbolId,
+> extends SymbolBase {
   override readonly id: TId
   protected readonly layout: LayoutContext
   private contentBounds?: LayoutBound
   private containerConstraintsApplied = false
   protected readonly childIds = new Set<SymbolId | ContainerSymbolId>()
 
-  protected constructor(id: TId, label: string, layout: LayoutContext) {
-    const layoutBounds = layout.variables.createBound(id)
+  protected constructor(id: TId, label: string, layoutBounds: LayoutBound, layout: LayoutContext) {
     super(id, label, layoutBounds)
     this.id = id
     this.layout = layout
@@ -50,6 +54,17 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
     return this.ensureContentBounds()
   }
 
+  override ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
+    if (builder) {
+      this.buildLayoutConstraints(builder)
+    }
+    return this.layoutBounds
+  }
+
+  protected override buildLayoutConstraints(_builder: LayoutConstraintBuilder): void {
+    // noop; サブクラスでオーバーライド可能
+  }
+
   protected ensureContentBounds(): LayoutBound {
     if (!this.contentBounds) {
       const vars = this.layout.variables
@@ -64,7 +79,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
 
   protected abstract getContainerPadding(theme: Theme): ContainerPadding
 
-  protected getHeaderHeight(theme: Theme): number {
+  protected getHeaderHeight(_theme: Theme): number {
     return 0
   }
 
@@ -77,7 +92,7 @@ export abstract class ContainerSymbolBase<TId extends ContainerSymbolId = Contai
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    this.layout.constraints.withSymbol(this, "containerInbounds", builder => {
+    this.layout.constraints.withSymbol(this, "containerInbounds", (builder) => {
       builder.eq(
         content.x,
         this.layout.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),

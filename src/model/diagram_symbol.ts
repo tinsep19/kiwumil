@@ -5,7 +5,6 @@ import type { Theme } from "../theme"
 import type { Point, ContainerSymbolId } from "./types"
 import type { DiagramInfo } from "./diagram_info"
 import type { LayoutBound } from "../layout/layout_bound"
-import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
 import { getBoundsValues } from "../layout/layout_bound"
@@ -14,23 +13,20 @@ export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo
   private constraintsApplied = false
 
-  constructor(id: ContainerSymbolId, titleOrInfo: string | DiagramInfo, layout: LayoutContext) {
-    const info = typeof titleOrInfo === "string"
-      ? { title: titleOrInfo }
-      : titleOrInfo
-    super(id, info.title, layout)
+  constructor(
+    id: ContainerSymbolId,
+    titleOrInfo: string | DiagramInfo,
+    layoutBounds: LayoutBound,
+    layout: LayoutContext
+  ) {
+    const info = typeof titleOrInfo === "string" ? { title: titleOrInfo } : titleOrInfo
+    super(id, info.title, layoutBounds, layout)
     this.diagramInfo = info
     this.applyDiagramConstraints()
   }
 
   getDefaultSize() {
     return { width: 200, height: 150 }
-  }
-
-  override ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
-    const bounds = super.ensureLayoutBounds(builder)
-    this.applyDiagramConstraints()
-    return bounds
   }
 
   protected getContainerPadding(theme: Theme): ContainerPadding {
@@ -40,7 +36,7 @@ export class DiagramSymbol extends ContainerSymbolBase {
       top: vertical,
       right: horizontal,
       bottom: vertical,
-      left: horizontal
+      left: horizontal,
     }
   }
 
@@ -80,7 +76,7 @@ export class DiagramSymbol extends ContainerSymbolBase {
 
     return {
       x: cx + dx * t,
-      y: cy + dy * t
+      y: cy + dy * t,
     }
   }
 
@@ -89,17 +85,19 @@ export class DiagramSymbol extends ContainerSymbolBase {
 
     const cx = x + width / 2
 
-    const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : {
-      strokeColor: "#e0e0e0",
-      strokeWidth: 1,
-      fillColor: "white",
-      textColor: "black",
-      fontSize: 12,
-      fontFamily: "Arial",
-      backgroundColor: "white",
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "rectangle")
+      : {
+          strokeColor: "#e0e0e0",
+          strokeWidth: 1,
+          fillColor: "white",
+          textColor: "black",
+          fontSize: 12,
+          fontFamily: "Arial",
+          backgroundColor: "white",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     const titleFontSize = style.fontSize * 1.5
     const metaFontSize = style.fontSize * 0.75
@@ -124,7 +122,9 @@ export class DiagramSymbol extends ContainerSymbolBase {
               fill="${style.textColor}">
           ${this.diagramInfo.title}
         </text>
-        ${metaText ? `
+        ${
+          metaText
+            ? `
         <!-- Metadata -->
         <text x="${x + width - 10}" y="${y + height - 10}" 
               text-anchor="end" 
@@ -133,7 +133,9 @@ export class DiagramSymbol extends ContainerSymbolBase {
               fill="${style.textColor}"
               opacity="0.5">
           ${metaText}
-        </text>` : ""}
+        </text>`
+            : ""
+        }
       </g>
     `
   }
