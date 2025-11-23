@@ -4,10 +4,14 @@ import { DIAGRAM_CONTAINER_ID } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutContext } from "../layout/layout_context"
 import { ContainerSymbolBase } from "../model/container_symbol_base"
-import { GridBuilder } from "./grid_builder"
-import { FigureBuilder } from "./figure_builder"
+import { GridBuilder } from "../layout/hint/grid_builder"
+import { FigureBuilder } from "../layout/hint/figure_builder"
 import { Symbols } from "./symbols"
-import { GuideBuilderImpl, type GuideBuilderX, type GuideBuilderY } from "./guide_builder"
+import {
+  GuideBuilderImpl,
+  type GuideBuilderX,
+  type GuideBuilderY,
+} from "../layout/hint/guide_builder"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 

@@ -1,18 +1,17 @@
-// src/dsl/grid_builder.ts
+// src/layout/hint/figure_builder.ts
 
-import type { ContainerSymbolId, SymbolId } from "../model/types"
-import type { HintFactory } from "./hint_factory"
-import { isRectMatrix } from "./matrix_utils"
+import type { ContainerSymbolId, SymbolId } from "../../model/types"
+import type { HintFactory } from "../../dsl/hint_factory"
 
 /**
- * Grid レイアウト用の Builder
- * 矩形行列（N×M）の配置をサポート
+ * Figure レイアウト用の Builder
+ * 非矩形配置（行ごとに異なる要素数）をサポート
  */
-export class GridBuilder {
-  private matrix?: SymbolId[][]
+export class FigureBuilder {
+  private rows?: SymbolId[][]
   private options: {
     rowGap?: number
-    colGap?: number
+    align?: "left" | "center" | "right"
     padding?: number | { top?: number; right?: number; bottom?: number; left?: number }
   } = {}
 
@@ -22,32 +21,29 @@ export class GridBuilder {
   ) {}
 
   /**
-   * 配置するシンボルを指定（矩形行列）
-   * @param matrix - N×M の矩形行列
-   * @throws 矩形でない場合はエラー
+   * 配置するシンボルを指定（行配列）
+   * @param rows - 行ごとの配列（各行の要素数は異なってもOK）
    */
-  enclose(matrix: SymbolId[][]): this {
-    if (!isRectMatrix(matrix)) {
-      throw new Error(
-        "GridBuilder.enclose() requires a rectangular matrix. Use FigureBuilder for non-rectangular layouts."
-      )
-    }
-    this.matrix = matrix
+  enclose(rows: SymbolId[][]): this {
+    this.rows = rows
     return this
   }
 
   /**
-   * gap を設定
-   * @param gap - 数値の場合は行・列共通、オブジェクトの場合は個別指定
+   * gap を設定（行間のみ）
+   * @param gap - 行間の間隔
    */
-  gap(gap: number | { row?: number; col?: number }): this {
-    if (typeof gap === "number") {
-      this.options.rowGap = gap
-      this.options.colGap = gap
-    } else {
-      this.options.rowGap = gap.row
-      this.options.colGap = gap.col
-    }
+  gap(gap: number): this {
+    this.options.rowGap = gap
+    return this
+  }
+
+  /**
+   * 水平方向の揃え位置を設定
+   * @param align - 'left' | 'center' | 'right'
+   */
+  align(align: "left" | "center" | "right"): this {
+    this.options.align = align
     return this
   }
 
@@ -67,17 +63,17 @@ export class GridBuilder {
    * @throws enclose() が呼ばれていない場合はエラー
    */
   layout(): void {
-    if (!this.matrix) {
+    if (!this.rows) {
       throw new Error("enclose() must be called before layout()")
     }
 
-    const children = this.matrix.flat()
+    const children = this.rows.flat()
 
     // metadata 設定（nestLevel, containerId, registerChild）
     this.applyContainerMetadata(children)
 
     // 制約を適用
-    this.hint.getLayoutContext().constraints.encloseGrid(this.container, this.matrix, this.options)
+    this.hint.getLayoutContext().constraints.encloseFigure(this.container, this.rows, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {

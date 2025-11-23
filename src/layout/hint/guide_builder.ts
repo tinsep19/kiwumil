@@ -1,12 +1,12 @@
-// src/dsl/guide_builder.ts
-import type { ContainerSymbolId, SymbolId } from "../model/types"
-import type { SymbolBase } from "../model/symbol_base"
+// src/layout/hint/guide_builder.ts
+import type { ContainerSymbolId, SymbolId } from "../../model/types"
+import type { SymbolBase } from "../../model/symbol_base"
 import {
   LayoutConstraintOperator,
   LayoutConstraintStrength,
   type LayoutVar,
-} from "../layout/layout_variables"
-import type { LayoutContext } from "../layout/layout_context"
+} from "../layout_variables"
+import type { LayoutContext } from "../layout_context"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 
