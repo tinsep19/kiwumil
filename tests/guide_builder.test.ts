@@ -206,12 +206,16 @@ describe("GuideBuilder (refactored common implementation)", () => {
     test("GuideBuilderX has x property", () => {
       const guide = hint.createGuideX(100)
       expect(guide.x).toBeDefined()
+
+      layout.solveAndApply(symbols.getAll())
       expect(layout.valueOf(guide.x)).toBeCloseTo(100)
     })
 
     test("GuideBuilderY has y property", () => {
       const guide = hint.createGuideY(50)
       expect(guide.y).toBeDefined()
+
+      layout.solveAndApply(symbols.getAll())
       expect(layout.valueOf(guide.y)).toBeCloseTo(50)
     })
 
