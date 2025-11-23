@@ -299,7 +299,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const builderType = this.axis === "x" ? "GuideBuilderX" : "GuideBuilderY"
       const expectedType = expectedAxis === "x" ? "GuideBuilderX" : "GuideBuilderY"
       throw new Error(
-        `${builderType}.${method}(): This method is only available for ${expectedType}. Current axis is '${this.axis}'.`
+        `${builderType}.${method}(): This method is only available for ${expectedType}`
       )
     }
   }
