@@ -45,6 +45,15 @@ export type ContainerBounds = TypeBounds<"container">
 export type ItemBounds = TypeBounds<"item">
 
 /**
+ * LayoutType から対応する Bounds 型へのマッピング
+ */
+export type BoundsMap = {
+  layout: LayoutBounds
+  container: ContainerBounds
+  item: ItemBounds
+}
+
+/**
  * LayoutBound から現在の座標値を取得するヘルパー関数
  */
 export function getBoundsValues(bounds: LayoutBound): {

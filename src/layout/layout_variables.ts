@@ -15,6 +15,7 @@ import type {
   LayoutBounds,
   ContainerBounds,
   ItemBounds,
+  BoundsMap,
 } from "./layout_bound"
 
 // 互換性のため既存の export を維持
@@ -117,14 +118,14 @@ export class LayoutVariables {
    * @param set キーと LayoutType のマップ
    * @returns キーと対応する型付き LayoutBound のマップ
    */
-  createBoundsSet(
-    set: Record<string, LayoutType>
-  ): Record<string, LayoutBounds | ItemBounds | ContainerBounds> {
+  createBoundsSet<T extends Record<string, LayoutType>>(
+    set: T
+  ): { [K in keyof T]: BoundsMap[T[K]] } {
     const result: Record<string, LayoutBound> = {}
     for (const [key, type] of Object.entries(set)) {
       result[key] = this.createBound(key, type)
     }
-    return result
+    return result as { [K in keyof T]: BoundsMap[T[K]] }
   }
 
   valueOf(variable: LayoutVar): number {

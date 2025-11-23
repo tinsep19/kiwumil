@@ -51,4 +51,21 @@ describe("LayoutVariables", () => {
     expect(boundsSet.icon1).toBeDefined()
     expect(boundsSet.icon1.type).toBe("item")
   })
+
+  test("createBoundsSet provides correct type inference", () => {
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+
+    const boundsSet = vars.createBoundsSet({
+      myLayout: "layout" as const,
+      myContainer: "container" as const,
+      myItem: "item" as const,
+    })
+
+    // TypeScript should infer the exact types based on BoundsMap
+    // myLayout should be LayoutBounds, myContainer should be ContainerBounds, myItem should be ItemBounds
+    expect(boundsSet.myLayout.type).toBe("layout")
+    expect(boundsSet.myContainer.type).toBe("container")
+    expect(boundsSet.myItem.type).toBe("item")
+  })
 })
