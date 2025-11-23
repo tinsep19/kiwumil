@@ -70,7 +70,7 @@ TypeDiagram("First Milestone")
 
 プラグインは Symbol/Relationship を提供するだけでなく、Namespace DSL と直結します。`TypeDiagram().use(MyPlugin)` と書くだけで `el.myplugin.*` / `rel.myplugin.*` が補完され、独自の図形や関係線をコアの API と同じ手触りで扱えるため、ドメイン特化の作図体験をシームレスに拡張できます。
 
-詳細は [docs/design/layout-system.md](docs/design/layout-system.md) を参照してください。
+詳細は [docs/design/layout-hints.md](docs/design/layout-hints.md) を参照してください。
 
 ---
 
@@ -78,7 +78,10 @@ TypeDiagram("First Milestone")
 
 - **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計とAPI使い方
 - **[Plugin System](docs/design/plugin-system.md)** - プラグイン作成ガイド
-- **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの設計
+- **[Layout Hints API](docs/design/layout-hints.md)** - レイアウトヒントAPIの使い方（ユーザー向け）
+- **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの内部実装（開発者向け）
+- **[Theme System](docs/design/theme-system.md)** - テーマシステムの設計
+- **[Web Rendering](docs/design/web-rendering.md)** - ブラウザ環境でのレンダリング
 - **[Git Workflow](docs/design/git-workflow.md)** - 開発ワークフロー
 
 ---
@@ -232,9 +235,12 @@ kiwumil/
 ├── docs/
 │   ├── design/
 │   │   ├── git-workflow.md
+│   │   ├── layout-hints.md
 │   │   ├── layout-system.md
 │   │   ├── namespace-dsl.md
-│   │   └── plugin-system.md
+│   │   ├── plugin-system.md
+│   │   ├── theme-system.md
+│   │   └── web-rendering.md
 │   └── devlog/
 ├── scripts/
 ├── package.json
