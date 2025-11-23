@@ -25,19 +25,24 @@ export interface LayoutBound {
 }
 
 /**
+ * 型付き LayoutBound のジェネリック型
+ */
+export type TypeBounds<T extends LayoutType> = LayoutBound & { readonly type: T }
+
+/**
  * 型エイリアス: Symbol の外矩形を表す LayoutBound
  */
-export type LayoutBounds = LayoutBound & { readonly type: "layout" }
+export type LayoutBounds = TypeBounds<"layout">
 
 /**
  * 型エイリアス: Symbol を内包できる矩形を表す LayoutBound
  */
-export type ContainerBounds = LayoutBound & { readonly type: "container" }
+export type ContainerBounds = TypeBounds<"container">
 
 /**
  * 型エイリアス: 個別の描画領域を表す LayoutBound
  */
-export type ItemBounds = LayoutBound & { readonly type: "item" }
+export type ItemBounds = TypeBounds<"item">
 
 /**
  * LayoutBound から現在の座標値を取得するヘルパー関数
