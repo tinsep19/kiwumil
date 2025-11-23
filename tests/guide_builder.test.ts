@@ -4,6 +4,7 @@ import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
+import { getBoundsValues } from "../src/layout/layout_bound"
 
 describe("GuideBuilder (refactored common implementation)", () => {
   let symbols: Symbols
@@ -34,8 +35,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.x).toBeCloseTo(100)
-      expect(b.bounds.x).toBeCloseTo(100)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.x).toBeCloseTo(100)
+      expect(bBounds.x).toBeCloseTo(100)
     })
 
     test("alignRight aligns symbols to the right edge", () => {
@@ -47,8 +50,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.x + a.bounds.width).toBeCloseTo(200)
-      expect(b.bounds.x + b.bounds.width).toBeCloseTo(200)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.x + aBounds.width).toBeCloseTo(200)
+      expect(bBounds.x + bBounds.width).toBeCloseTo(200)
     })
 
     test("alignCenter aligns symbols to the center", () => {
@@ -60,8 +65,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.x + a.bounds.width / 2).toBeCloseTo(150)
-      expect(b.bounds.x + b.bounds.width / 2).toBeCloseTo(150)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.x + aBounds.width / 2).toBeCloseTo(150)
+      expect(bBounds.x + bBounds.width / 2).toBeCloseTo(150)
     })
 
     test("followLeft makes guide follow symbol's left edge", () => {
@@ -74,7 +81,9 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.x).toBeCloseTo(b.bounds.x)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.x).toBeCloseTo(bBounds.x)
     })
 
     test("arrange arranges symbols vertically for X-axis guide", () => {
@@ -86,9 +95,11 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
       // Should be arranged vertically
-      expect(b.bounds.y).toBeCloseTo(
-        a.bounds.y + a.bounds.height + DefaultTheme.defaultStyleSet.verticalGap
+      expect(bBounds.y).toBeCloseTo(
+        aBounds.y + aBounds.height + DefaultTheme.defaultStyleSet.verticalGap
       )
     })
 
@@ -123,8 +134,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.y).toBeCloseTo(50)
-      expect(b.bounds.y).toBeCloseTo(50)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.y).toBeCloseTo(50)
+      expect(bBounds.y).toBeCloseTo(50)
     })
 
     test("alignBottom aligns symbols to the bottom edge", () => {
@@ -136,8 +149,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.y + a.bounds.height).toBeCloseTo(200)
-      expect(b.bounds.y + b.bounds.height).toBeCloseTo(200)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.y + aBounds.height).toBeCloseTo(200)
+      expect(bBounds.y + bBounds.height).toBeCloseTo(200)
     })
 
     test("alignCenter aligns symbols to the center", () => {
@@ -149,8 +164,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.y + a.bounds.height / 2).toBeCloseTo(100)
-      expect(b.bounds.y + b.bounds.height / 2).toBeCloseTo(100)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.y + aBounds.height / 2).toBeCloseTo(100)
+      expect(bBounds.y + bBounds.height / 2).toBeCloseTo(100)
     })
 
     test("followTop makes guide follow symbol's top edge", () => {
@@ -163,7 +180,9 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
-      expect(a.bounds.y).toBeCloseTo(b.bounds.y)
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
+      expect(aBounds.y).toBeCloseTo(bBounds.y)
     })
 
     test("arrange arranges symbols horizontally for Y-axis guide", () => {
@@ -175,9 +194,11 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
       // Should be arranged horizontally
-      expect(b.bounds.x).toBeCloseTo(
-        a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap
+      expect(bBounds.x).toBeCloseTo(
+        aBounds.x + aBounds.width + DefaultTheme.defaultStyleSet.horizontalGap
       )
     })
 
@@ -227,11 +248,13 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       layout.solveAndApply(symbols.getAll())
 
+      const aBounds = getBoundsValues(a.getLayoutBounds())
+      const bBounds = getBoundsValues(b.getLayoutBounds())
       const guideValue = layout.valueOf(guide.y)
-      expect(a.bounds.y).toBeCloseTo(guideValue)
-      expect(b.bounds.y + b.bounds.height).toBeCloseTo(guideValue)
-      expect(b.bounds.x).toBeCloseTo(
-        a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap
+      expect(aBounds.y).toBeCloseTo(guideValue)
+      expect(bBounds.y + bBounds.height).toBeCloseTo(guideValue)
+      expect(bBounds.x).toBeCloseTo(
+        aBounds.x + aBounds.width + DefaultTheme.defaultStyleSet.horizontalGap
       )
     })
   })

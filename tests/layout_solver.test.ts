@@ -8,6 +8,7 @@ import { HintFactory } from "../src/dsl/hint_factory"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
 import { toContainerSymbolId } from "../src/model/container_symbol_base"
+import { getBoundsValues } from "../src/layout/layout_bound"
 
 describe("Layout pipeline", () => {
   let symbols: Symbols
@@ -50,10 +51,11 @@ describe("Layout pipeline", () => {
     const diagram = new DiagramSymbol(diagramId, "Test", diagramBound, layout)
     layout.solveAndApply([...symbols.getAll(), diagram])
 
-    expect(diagram.bounds.x).toBeCloseTo(0)
-    expect(diagram.bounds.y).toBeCloseTo(0)
-    expect(diagram.bounds.width).toBeGreaterThanOrEqual(200)
-    expect(diagram.bounds.height).toBeGreaterThanOrEqual(150)
+    const bounds = getBoundsValues(diagram.getLayoutBounds())
+    expect(bounds.x).toBeCloseTo(0)
+    expect(bounds.y).toBeCloseTo(0)
+    expect(bounds.width).toBeGreaterThanOrEqual(200)
+    expect(bounds.height).toBeGreaterThanOrEqual(150)
   })
 
   test("arrangeHorizontal positions elements with default gap", () => {
@@ -63,8 +65,10 @@ describe("Layout pipeline", () => {
     hint.arrangeHorizontal(a.id, b.id)
     layout.solveAndApply(symbols.getAll())
 
-    expect(b.bounds.x).toBeCloseTo(
-      a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap
+    const aBounds = getBoundsValues(a.getLayoutBounds())
+    const bBounds = getBoundsValues(b.getLayoutBounds())
+    expect(bBounds.x).toBeCloseTo(
+      aBounds.x + aBounds.width + DefaultTheme.defaultStyleSet.horizontalGap
     )
   })
 
@@ -77,8 +81,11 @@ describe("Layout pipeline", () => {
     hint.alignCenterY(a.id, b.id, c.id)
     layout.solveAndApply(symbols.getAll())
 
-    expect(a.bounds.y + a.bounds.height / 2).toBeCloseTo(b.bounds.y + b.bounds.height / 2)
-    expect(b.bounds.y + b.bounds.height / 2).toBeCloseTo(c.bounds.y + c.bounds.height / 2)
+    const aBounds = getBoundsValues(a.getLayoutBounds())
+    const bBounds = getBoundsValues(b.getLayoutBounds())
+    const cBounds = getBoundsValues(c.getLayoutBounds())
+    expect(aBounds.y + aBounds.height / 2).toBeCloseTo(bBounds.y + bBounds.height / 2)
+    expect(bBounds.y + bBounds.height / 2).toBeCloseTo(cBounds.y + cBounds.height / 2)
   })
 
   test("enclose keeps children inside container", () => {
@@ -90,9 +97,12 @@ describe("Layout pipeline", () => {
     hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
     layout.solveAndApply(symbols.getAll())
 
-    expect(a.bounds.x).toBeGreaterThanOrEqual(boundary.bounds.x)
-    expect(b.bounds.y + b.bounds.height).toBeLessThanOrEqual(
-      boundary.bounds.y + boundary.bounds.height
+    const aBounds = getBoundsValues(a.getLayoutBounds())
+    const bBounds = getBoundsValues(b.getLayoutBounds())
+    const boundaryBounds = getBoundsValues(boundary.getLayoutBounds())
+    expect(aBounds.x).toBeGreaterThanOrEqual(boundaryBounds.x)
+    expect(bBounds.y + bBounds.height).toBeLessThanOrEqual(
+      boundaryBounds.y + boundaryBounds.height
     )
   })
 
@@ -104,11 +114,13 @@ describe("Layout pipeline", () => {
 
     layout.solveAndApply(symbols.getAll())
 
+    const aBounds = getBoundsValues(a.getLayoutBounds())
+    const bBounds = getBoundsValues(b.getLayoutBounds())
     const guideValue = layout.valueOf(guide.y)
-    expect(a.bounds.y).toBeCloseTo(guideValue)
-    expect(b.bounds.y + b.bounds.height).toBeCloseTo(guideValue)
-    expect(b.bounds.x).toBeCloseTo(
-      a.bounds.x + a.bounds.width + DefaultTheme.defaultStyleSet.horizontalGap
+    expect(aBounds.y).toBeCloseTo(guideValue)
+    expect(bBounds.y + bBounds.height).toBeCloseTo(guideValue)
+    expect(bBounds.x).toBeCloseTo(
+      aBounds.x + aBounds.width + DefaultTheme.defaultStyleSet.horizontalGap
     )
   })
 })
