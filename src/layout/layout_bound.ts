@@ -1,10 +1,19 @@
 import type { LayoutVar } from "./kiwi"
 
 /**
+ * LayoutType: レイアウトの種類を表す型
+ * - "layout": Symbol の外矩形（Symbol は必ず1つだけ持つ）
+ * - "container": Symbol を内包できる矩形
+ * - "item": テキストやアイコンなど描画に必要な個別領域
+ */
+export type LayoutType = "layout" | "container" | "item"
+
+/**
  * LayoutBound は Layout オブジェクトの境界を表す変数のグループ
  * すべての computed properties (right, bottom, centerX, centerY) も事前に作成され制約が設定される
  */
 export interface LayoutBound {
+  readonly type: LayoutType
   readonly x: LayoutVar
   readonly y: LayoutVar
   readonly width: LayoutVar
@@ -14,6 +23,21 @@ export interface LayoutBound {
   readonly centerX: LayoutVar
   readonly centerY: LayoutVar
 }
+
+/**
+ * 型エイリアス: Symbol の外矩形を表す LayoutBound
+ */
+export type LayoutBounds = LayoutBound & { readonly type: "layout" }
+
+/**
+ * 型エイリアス: Symbol を内包できる矩形を表す LayoutBound
+ */
+export type ContainerBounds = LayoutBound & { readonly type: "container" }
+
+/**
+ * 型エイリアス: 個別の描画領域を表す LayoutBound
+ */
+export type ItemBounds = LayoutBound & { readonly type: "item" }
 
 /**
  * LayoutBound から現在の座標値を取得するヘルパー関数

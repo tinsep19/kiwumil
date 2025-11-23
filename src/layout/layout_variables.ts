@@ -39,8 +39,10 @@ export class LayoutVariables {
   /**
    * LayoutBound を生成する factory メソッド
    * すべての computed properties (right, bottom, centerX, centerY) も作成し、制約を設定する
+   * @param prefix 変数名のプレフィックス
+   * @param type レイアウトの種類 (デフォルト: "layout")
    */
-  createBound(prefix: string): LayoutBound {
+  createBound(prefix: string, type: import("./layout_bound").LayoutType = "layout"): LayoutBound {
     const solver = this.getSolver()
     if (!solver) {
       throw new Error(
@@ -89,6 +91,7 @@ export class LayoutVariables {
     )
 
     return {
+      type,
       x,
       y,
       width,
