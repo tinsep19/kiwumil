@@ -22,11 +22,11 @@ export abstract class RelationshipBase {
   calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
-    
+
     const fromLevel = fromSymbol?.nestLevel ?? 0
     const toLevel = toSymbol?.nestLevel ?? 0
     const maxLevel = Math.max(fromLevel, toLevel)
-    
+
     return maxLevel * 100 + 10
   }
 

@@ -26,7 +26,7 @@ export class CircleSymbol extends SymbolBase {
 
     return {
       x: cx + (dx / distance) * r,
-      y: cy + (dy / distance) * r
+      y: cy + (dy / distance) * r,
     }
   }
 
@@ -37,17 +37,19 @@ export class CircleSymbol extends SymbolBase {
     const cy = y + height / 2
     const r = Math.min(width, height) / 2
 
-    const style = this.theme ? getStyleForSymbol(this.theme, 'circle') : {
-      strokeColor: 'black',
-      strokeWidth: 2,
-      fillColor: 'white',
-      textColor: 'black',
-      fontSize: 12,
-      fontFamily: 'Arial',
-      backgroundColor: 'white',
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "circle")
+      : {
+          strokeColor: "black",
+          strokeWidth: 2,
+          fillColor: "white",
+          textColor: "black",
+          fontSize: 12,
+          fontFamily: "Arial",
+          backgroundColor: "white",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     return `
       <g id="${this.id}">

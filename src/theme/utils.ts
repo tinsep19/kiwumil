@@ -1,6 +1,6 @@
 // src/theme/utils.ts
 
-import { StyleSet, Theme, SymbolName } from './types'
+import { StyleSet, Theme, SymbolName } from "./types"
 
 // ヘルパー関数: シンボル用のスタイルを取得
 export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSet {
@@ -14,6 +14,6 @@ export function getStyleForSymbol(theme: Theme, symbolName: SymbolName): StyleSe
     fillColor: symbolStyle.fillColor ?? theme.defaultStyleSet.fillColor,
     backgroundColor: symbolStyle.backgroundColor ?? theme.defaultStyleSet.backgroundColor,
     horizontalGap: symbolStyle.horizontalGap ?? theme.defaultStyleSet.horizontalGap,
-    verticalGap: symbolStyle.verticalGap ?? theme.defaultStyleSet.verticalGap
+    verticalGap: symbolStyle.verticalGap ?? theme.defaultStyleSet.verticalGap,
   }
 }

@@ -9,7 +9,7 @@ export function isRectMatrix<T>(matrix: readonly (readonly T[])[]): boolean {
   if (matrix.length === 0) return false
   const width = matrix[0]?.length
   if (width === undefined || width === 0) return false
-  return matrix.every(row => row.length === width)
+  return matrix.every((row) => row.length === width)
 }
 
 /**
@@ -17,13 +17,24 @@ export function isRectMatrix<T>(matrix: readonly (readonly T[])[]): boolean {
  */
 export type Matrix<T = unknown> = readonly (readonly T[])[]
 
-type FirstRow<T extends Matrix> =
-  T extends readonly [infer F extends readonly unknown[], ...unknown[]] ? F : readonly unknown[]
+type FirstRow<T extends Matrix> = T extends readonly [
+  infer F extends readonly unknown[],
+  ...unknown[],
+]
+  ? F
+  : readonly unknown[]
 
-type AllRowsSameLen<T extends Matrix, L extends number> =
-  T extends readonly [infer R extends readonly unknown[], ...infer Rest extends Matrix]
-    ? (R['length'] extends L ? (L extends R['length'] ? AllRowsSameLen<Rest, L> : false) : false)
-    : true
+type AllRowsSameLen<T extends Matrix, L extends number> = T extends readonly [
+  infer R extends readonly unknown[],
+  ...infer Rest extends Matrix,
+]
+  ? R["length"] extends L
+    ? L extends R["length"]
+      ? AllRowsSameLen<Rest, L>
+      : false
+    : false
+  : true
 
-export type IsRectMatrix<T extends Matrix> =
-  T extends readonly [] ? false : AllRowsSameLen<T, FirstRow<T>['length']>
+export type IsRectMatrix<T extends Matrix> = T extends readonly []
+  ? false
+  : AllRowsSameLen<T, FirstRow<T>["length"]>

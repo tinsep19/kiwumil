@@ -123,11 +123,12 @@ export class TextSymbol extends SymbolBase {
     const lines = this.getLines()
     const anchor = this.getAnchor()
     const lineHeightFactor = this.getLineHeightFactor()
-    const baseX = anchor === "start"
-      ? x + DEFAULT_PADDING_X
-      : anchor === "end"
-        ? x + width - DEFAULT_PADDING_X
-        : x + width / 2
+    const baseX =
+      anchor === "start"
+        ? x + DEFAULT_PADDING_X
+        : anchor === "end"
+          ? x + width - DEFAULT_PADDING_X
+          : x + width / 2
 
     const startY = y + DEFAULT_PADDING_Y + style.fontSize
     const lineHeight = style.fontSize * lineHeightFactor

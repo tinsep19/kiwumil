@@ -18,11 +18,11 @@ export class Association extends RelationshipBase {
 
     const fromCenter = {
       x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
-      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2,
     }
     const toCenter = {
       x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
-      y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+      y: toSymbol.bounds.y + toSymbol.bounds.height / 2,
     }
 
     const fromPoint = fromSymbol.getConnectionPoint(toCenter)

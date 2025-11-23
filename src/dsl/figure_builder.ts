@@ -11,7 +11,7 @@ export class FigureBuilder {
   private rows?: SymbolId[][]
   private options: {
     rowGap?: number
-    align?: 'left' | 'center' | 'right'
+    align?: "left" | "center" | "right"
     padding?: number | { top?: number; right?: number; bottom?: number; left?: number }
   } = {}
 
@@ -42,7 +42,7 @@ export class FigureBuilder {
    * 水平方向の揃え位置を設定
    * @param align - 'left' | 'center' | 'right'
    */
-  align(align: 'left' | 'center' | 'right'): this {
+  align(align: "left" | "center" | "right"): this {
     this.options.align = align
     return this
   }
@@ -51,7 +51,9 @@ export class FigureBuilder {
    * padding を設定
    * @param padding - 数値の場合は全方向共通、オブジェクトの場合は個別指定
    */
-  padding(padding: number | { top?: number; right?: number; bottom?: number; left?: number }): this {
+  padding(
+    padding: number | { top?: number; right?: number; bottom?: number; left?: number }
+  ): this {
     this.options.padding = padding
     return this
   }
@@ -62,7 +64,7 @@ export class FigureBuilder {
    */
   layout(): void {
     if (!this.rows) {
-      throw new Error('enclose() must be called before layout()')
+      throw new Error("enclose() must be called before layout()")
     }
 
     const children = this.rows.flat()
@@ -75,19 +77,19 @@ export class FigureBuilder {
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {
-    const container = this.hint.getSymbols().find(s => s.id === this.container)
+    const container = this.hint.getSymbols().find((s) => s.id === this.container)
     if (!container) return
 
     const containerNestLevel = container.nestLevel
 
     for (const childId of children) {
-      const child = this.hint.getSymbols().find(s => s.id === childId)
+      const child = this.hint.getSymbols().find((s) => s.id === childId)
       if (child) {
         child.nestLevel = containerNestLevel + 1
         child.containerId = this.container
 
         // ContainerSymbolBase の場合は registerChild
-        if ('registerChild' in container && typeof container.registerChild === 'function') {
+        if ("registerChild" in container && typeof container.registerChild === "function") {
           container.registerChild(childId)
         }
       }

@@ -2,12 +2,12 @@
 import type { ContainerSymbolId, SymbolId } from "../model/types"
 import { DIAGRAM_CONTAINER_ID } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
-import { LayoutConstraintOperator, LayoutConstraintStrength, type LayoutVar } from "../layout/layout_variables"
 import type { LayoutContext } from "../layout/layout_context"
 import { ContainerSymbolBase } from "../model/container_symbol_base"
 import { GridBuilder } from "./grid_builder"
 import { FigureBuilder } from "./figure_builder"
 import { Symbols } from "./symbols"
+import { GuideBuilderImpl, type GuideBuilderX, type GuideBuilderY } from "./guide_builder"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 
@@ -122,19 +122,21 @@ export class HintFactory {
     this.layout.constraints.enclose(containerId, childIds)
   }
 
-  createGuideX(value?: number) {
-    return new GuideBuilderX(
+  createGuideX(value?: number): GuideBuilderX {
+    return new GuideBuilderImpl(
       this.layout,
       (id: LayoutTargetId) => this.findSymbolById(id),
+      "x",
       `guideX-${this.guideCounter++}`,
       value
     )
   }
 
-  createGuideY(value?: number) {
-    return new GuideBuilderY(
+  createGuideY(value?: number): GuideBuilderY {
+    return new GuideBuilderImpl(
       this.layout,
       (id: LayoutTargetId) => this.findSymbolById(id),
+      "y",
       `guideY-${this.guideCounter++}`,
       value
     )
@@ -142,269 +144,5 @@ export class HintFactory {
 
   private findSymbolById(id: LayoutTargetId) {
     return this.symbols.findById(id)
-  }
-}
-
-export class GuideBuilderX {
-  readonly x: LayoutVar
-  private readonly alignedSymbols = new Set<LayoutTargetId>()
-  private hasFollowConstraint = false
-
-  constructor(
-    private readonly layout: LayoutContext,
-    private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
-    variableName: string,
-    initialValue?: number
-  ) {
-    this.x = this.layout.variables.createVar(variableName)
-    if (typeof initialValue === "number") {
-      this.layout.getSolver().addConstraint(this.x, LayoutConstraintOperator.Eq, initialValue)
-    }
-  }
-
-  alignLeft(...symbolIds: LayoutTargetId[]) {
-    this.collect(symbolIds)
-    for (const id of symbolIds) {
-      const symbol = this.resolveSymbol(id)
-      if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
-      this.layout.getSolver().addConstraint(
-        bounds.x,
-        LayoutConstraintOperator.Eq,
-        this.x,
-        LayoutConstraintStrength.Strong
-      )
-    }
-    return this
-  }
-
-  alignRight(...symbolIds: LayoutTargetId[]) {
-    this.collect(symbolIds)
-    for (const id of symbolIds) {
-      const symbol = this.resolveSymbol(id)
-      if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
-      this.layout.getSolver().addConstraint(
-        bounds.right,
-        LayoutConstraintOperator.Eq,
-        this.x,
-        LayoutConstraintStrength.Strong
-      )
-    }
-    return this
-  }
-
-  alignCenter(...symbolIds: LayoutTargetId[]) {
-    this.collect(symbolIds)
-    for (const id of symbolIds) {
-      const symbol = this.resolveSymbol(id)
-      if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
-      this.layout.getSolver().addConstraint(
-        bounds.centerX,
-        LayoutConstraintOperator.Eq,
-        this.x,
-        LayoutConstraintStrength.Strong
-      )
-    }
-    return this
-  }
-
-  followLeft(symbolId: LayoutTargetId) {
-    this.ensureFollowAvailable("followLeft")
-    const symbol = this.resolveSymbol(symbolId)
-    if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
-    this.layout.getSolver().addConstraint(
-      this.x,
-      LayoutConstraintOperator.Eq,
-      bounds.x,
-      LayoutConstraintStrength.Strong
-    )
-    return this
-  }
-
-  followRight(symbolId: LayoutTargetId) {
-    this.ensureFollowAvailable("followRight")
-    const symbol = this.resolveSymbol(symbolId)
-    if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
-    this.layout.getSolver().addConstraint(
-      this.x,
-      LayoutConstraintOperator.Eq,
-      bounds.right,
-      LayoutConstraintStrength.Strong
-    )
-    return this
-  }
-
-  followCenter(symbolId: LayoutTargetId) {
-    this.ensureFollowAvailable("followCenter")
-    const symbol = this.resolveSymbol(symbolId)
-    if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
-    this.layout.getSolver().addConstraint(
-      this.x,
-      LayoutConstraintOperator.Eq,
-      bounds.centerX,
-      LayoutConstraintStrength.Strong
-    )
-    return this
-  }
-
-  arrange(gap?: number) {
-    if (this.alignedSymbols.size === 0) return this
-    this.layout.constraints.arrangeVertical(
-      Array.from(this.alignedSymbols),
-      gap ?? this.layout.theme.defaultStyleSet.verticalGap
-    )
-    return this
-  }
-
-  private collect(symbolIds: LayoutTargetId[]) {
-    for (const id of symbolIds) {
-      this.alignedSymbols.add(id)
-    }
-  }
-
-  private ensureFollowAvailable(method: string) {
-    if (this.hasFollowConstraint) {
-      throw new Error(
-        `GuideBuilderX.${method}(): guide already follows another symbol. Create a new guide for multiple follow constraints.`
-      )
-    }
-    this.hasFollowConstraint = true
-  }
-}
-
-export class GuideBuilderY {
-  readonly y: LayoutVar
-  private readonly alignedSymbols = new Set<LayoutTargetId>()
-  private hasFollowConstraint = false
-
-  constructor(
-    private readonly layout: LayoutContext,
-    private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
-    variableName: string,
-    initialValue?: number
-  ) {
-    this.y = this.layout.variables.createVar(variableName)
-    if (typeof initialValue === "number") {
-      this.layout.getSolver().addConstraint(this.y, LayoutConstraintOperator.Eq, initialValue)
-    }
-  }
-
-  alignTop(...symbolIds: LayoutTargetId[]) {
-    this.collect(symbolIds)
-    for (const id of symbolIds) {
-      const symbol = this.resolveSymbol(id)
-      if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
-      this.layout.getSolver().addConstraint(
-        bounds.y,
-        LayoutConstraintOperator.Eq,
-        this.y,
-        LayoutConstraintStrength.Strong
-      )
-    }
-    return this
-  }
-
-  alignBottom(...symbolIds: LayoutTargetId[]) {
-    this.collect(symbolIds)
-    for (const id of symbolIds) {
-      const symbol = this.resolveSymbol(id)
-      if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
-      this.layout.getSolver().addConstraint(
-        bounds.bottom,
-        LayoutConstraintOperator.Eq,
-        this.y,
-        LayoutConstraintStrength.Strong
-      )
-    }
-    return this
-  }
-
-  alignCenter(...symbolIds: LayoutTargetId[]) {
-    this.collect(symbolIds)
-    for (const id of symbolIds) {
-      const symbol = this.resolveSymbol(id)
-      if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
-      this.layout.getSolver().addConstraint(
-        bounds.centerY,
-        LayoutConstraintOperator.Eq,
-        this.y,
-        LayoutConstraintStrength.Strong
-      )
-    }
-    return this
-  }
-
-  followTop(symbolId: LayoutTargetId) {
-    this.ensureFollowAvailable("followTop")
-    const symbol = this.resolveSymbol(symbolId)
-    if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
-    this.layout.getSolver().addConstraint(
-      this.y,
-      LayoutConstraintOperator.Eq,
-      bounds.y,
-      LayoutConstraintStrength.Strong
-    )
-    return this
-  }
-
-  followBottom(symbolId: LayoutTargetId) {
-    this.ensureFollowAvailable("followBottom")
-    const symbol = this.resolveSymbol(symbolId)
-    if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
-    this.layout.getSolver().addConstraint(
-      this.y,
-      LayoutConstraintOperator.Eq,
-      bounds.bottom,
-      LayoutConstraintStrength.Strong
-    )
-    return this
-  }
-
-  followCenter(symbolId: LayoutTargetId) {
-    this.ensureFollowAvailable("followCenter")
-    const symbol = this.resolveSymbol(symbolId)
-    if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
-    this.layout.getSolver().addConstraint(
-      this.y,
-      LayoutConstraintOperator.Eq,
-      bounds.centerY,
-      LayoutConstraintStrength.Strong
-    )
-    return this
-  }
-
-  arrange(gap?: number) {
-    if (this.alignedSymbols.size === 0) return this
-    this.layout.constraints.arrangeHorizontal(
-      Array.from(this.alignedSymbols),
-      gap ?? this.layout.theme.defaultStyleSet.horizontalGap
-    )
-    return this
-  }
-
-  private collect(symbolIds: LayoutTargetId[]) {
-    for (const id of symbolIds) {
-      this.alignedSymbols.add(id)
-    }
-  }
-
-  private ensureFollowAvailable(method: string) {
-    if (this.hasFollowConstraint) {
-      throw new Error(
-        `GuideBuilderY.${method}(): guide already follows another symbol. Create a new guide for multiple follow constraints.`
-      )
-    }
-    this.hasFollowConstraint = true
   }
 }

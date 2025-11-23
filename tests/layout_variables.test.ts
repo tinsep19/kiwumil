@@ -20,16 +20,7 @@ describe("LayoutVariables", () => {
     const b = vars.createVar("b")
 
     solver.addConstraint(a, Operator.Eq, 10)
-    solver.addConstraint(
-      b,
-      Operator.Eq,
-      solver.expression(
-        [
-          { variable: a, coefficient: 1 }
-        ],
-        20
-      )
-    )
+    solver.addConstraint(b, Operator.Eq, solver.expression([{ variable: a, coefficient: 1 }], 20))
 
     solver.updateVariables()
 

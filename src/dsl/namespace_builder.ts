@@ -9,7 +9,7 @@ import type { Relationships } from "./relationships"
 
 /**
  * Namespace Builder
- * 
+ *
  * プラグイン一覧から ElementNamespace と RelationshipNamespace を構築する
  */
 export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
@@ -21,20 +21,17 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
   /**
    * Element Namespace を構築
-   * 
+   *
    * @param symbols - Symbol を管理するインスタンス
    * @returns プラグイン名をキーとした Symbol ファクトリのオブジェクト
-   * 
+   *
    * @example
    * ```typescript
    * const el = builder.buildElementNamespace(symbols)
    * const userId = el.uml.actor("User")
    * ```
    */
-  buildElementNamespace(
-    symbols: Symbols,
-    layout: LayoutContext
-  ): BuildElementNamespace<TPlugins> {
+  buildElementNamespace(symbols: Symbols, layout: LayoutContext): BuildElementNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
@@ -48,10 +45,10 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
   /**
    * Relationship Namespace を構築
-   * 
+   *
    * @param relationships - Relationship を管理するインスタンス
    * @returns プラグイン名をキーとした Relationship ファクトリのオブジェクト
-   * 
+   *
    * @example
    * ```typescript
    * const rel = builder.buildRelationshipNamespace(relationships)

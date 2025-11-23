@@ -32,7 +32,7 @@ export class RectangleSymbol extends SymbolBase {
 
     return {
       x: cx + dx * t,
-      y: cy + dy * t
+      y: cy + dy * t,
     }
   }
 
@@ -42,17 +42,19 @@ export class RectangleSymbol extends SymbolBase {
     const cx = x + width / 2
     const cy = y + height / 2
 
-    const style = this.theme ? getStyleForSymbol(this.theme, 'rectangle') : {
-      strokeColor: 'black',
-      strokeWidth: 2,
-      fillColor: 'white',
-      textColor: 'black',
-      fontSize: 12,
-      fontFamily: 'Arial',
-      backgroundColor: 'white',
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "rectangle")
+      : {
+          strokeColor: "black",
+          strokeWidth: 2,
+          fillColor: "white",
+          textColor: "black",
+          fontSize: 12,
+          fontFamily: "Arial",
+          backgroundColor: "white",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     return `
       <g id="${this.id}">

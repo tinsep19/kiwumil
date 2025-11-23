@@ -45,7 +45,7 @@ export class LayoutContext {
         x: lb.x.value(),
         y: lb.y.value(),
         width: lb.width.value(),
-        height: lb.height.value()
+        height: lb.height.value(),
       }
     }
   }
@@ -62,15 +62,11 @@ export class LayoutContext {
     return this.solver
   }
 
-  expressionFromBounds(
-    bounds: LayoutBound,
-    terms: BoundsTerm[],
-    constant = 0
-  ) {
+  expressionFromBounds(bounds: LayoutBound, terms: BoundsTerm[], constant = 0) {
     return this.constraints.expression(
-      terms.map(term => ({
+      terms.map((term) => ({
         variable: bounds[term.axis],
-        coefficient: term.coefficient
+        coefficient: term.coefficient,
       })),
       constant
     )
@@ -82,7 +78,7 @@ export class LayoutContext {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
   ) {
     const bounds = symbol.getLayoutBounds()
-    this.constraints.withSymbol(symbol, "symbolBounds", builder => {
+    this.constraints.withSymbol(symbol, "symbolBounds", (builder) => {
       builder.ge(bounds.width, size.width, strength)
       builder.ge(bounds.height, size.height, strength)
     })
@@ -93,7 +89,7 @@ export class LayoutContext {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Strong
   ) {
     const bounds = symbol.getLayoutBounds()
-    this.constraints.withSymbol(symbol, "symbolBounds", builder => {
+    this.constraints.withSymbol(symbol, "symbolBounds", (builder) => {
       builder.eq(bounds.x, 0, strength)
       builder.eq(bounds.y, 0, strength)
     })

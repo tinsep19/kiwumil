@@ -18,11 +18,11 @@ export class Generalize extends RelationshipBase {
 
     const fromCenter = {
       x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
-      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2
+      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2,
     }
     const toCenter = {
       x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
-      y: toSymbol.bounds.y + toSymbol.bounds.height / 2
+      y: toSymbol.bounds.y + toSymbol.bounds.height / 2,
     }
 
     const fromEdge = fromSymbol.getConnectionPoint(toCenter)
@@ -35,7 +35,7 @@ export class Generalize extends RelationshipBase {
     const dx = toEdge.x - fromEdge.x
     const dy = toEdge.y - fromEdge.y
     const angle = Math.atan2(dy, dx)
-    
+
     const arrowSize = 12
     const arrowX1 = toEdge.x - arrowSize * Math.cos(angle - Math.PI / 6)
     const arrowY1 = toEdge.y - arrowSize * Math.sin(angle - Math.PI / 6)

@@ -18,11 +18,16 @@ export interface LayoutBound {
 /**
  * LayoutBound から現在の座標値を取得するヘルパー関数
  */
-export function getBoundsValues(bounds: LayoutBound): { x: number; y: number; width: number; height: number } {
+export function getBoundsValues(bounds: LayoutBound): {
+  x: number
+  y: number
+  width: number
+  height: number
+} {
   return {
     x: bounds.x.value(),
     y: bounds.y.value(),
     width: bounds.width.value(),
-    height: bounds.height.value()
+    height: bounds.height.value(),
   }
 }

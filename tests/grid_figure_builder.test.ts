@@ -8,15 +8,36 @@ import { UMLPlugin } from "../src/plugin/uml/plugin"
 
 describe("Matrix Utils", () => {
   test("isRectMatrix returns true for rectangular matrix", () => {
-    expect(isRectMatrix([[1, 2], [3, 4]])).toBe(true)
-    expect(isRectMatrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).toBe(true)
-    expect(isRectMatrix([['a', 'b'], ['c', 'd']])).toBe(true)
+    expect(
+      isRectMatrix([
+        [1, 2],
+        [3, 4],
+      ])
+    ).toBe(true)
+    expect(
+      isRectMatrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+      ])
+    ).toBe(true)
+    expect(
+      isRectMatrix([
+        ["a", "b"],
+        ["c", "d"],
+      ])
+    ).toBe(true)
   })
 
   test("isRectMatrix returns false for non-rectangular matrix", () => {
     expect(isRectMatrix([[1, 2], [3]])).toBe(false)
     expect(isRectMatrix([[1], [2, 3]])).toBe(false)
-    expect(isRectMatrix([[1, 2, 3], [4, 5]])).toBe(false)
+    expect(
+      isRectMatrix([
+        [1, 2, 3],
+        [4, 5],
+      ])
+    ).toBe(false)
   })
 
   test("isRectMatrix returns false for empty matrix", () => {
@@ -42,22 +63,26 @@ describe("Grid Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
         const d = el.core.rectangle("D")
-        
+
         symbolIds = [a, b, c, d]
 
-        hint.grid(boundaryId)
-          .enclose([[a, b], [c, d]] as const)
+        hint
+          .grid(boundaryId)
+          .enclose([
+            [a, b],
+            [c, d],
+          ] as const)
           .layout()
       })
 
     expect(result.symbols.length).toBeGreaterThan(4)
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
-    expect(result.symbols.find(s => s.label === "A")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "A")).toBeDefined()
   })
 
   test("should create grid layout with custom gap", () => {
@@ -67,19 +92,23 @@ describe("Grid Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
         const d = el.core.rectangle("D")
 
-        hint.grid(boundaryId)
-          .enclose([[a, b], [c, d]] as const)
+        hint
+          .grid(boundaryId)
+          .enclose([
+            [a, b],
+            [c, d],
+          ] as const)
           .gap(20)
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
   })
 
   test("should create grid layout with row/col gap", () => {
@@ -89,19 +118,23 @@ describe("Grid Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
         const d = el.core.rectangle("D")
 
-        hint.grid(boundaryId)
-          .enclose([[a, b], [c, d]] as const)
+        hint
+          .grid(boundaryId)
+          .enclose([
+            [a, b],
+            [c, d],
+          ] as const)
           .gap({ row: 30, col: 60 })
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
   })
 
   test("should throw error for non-rectangular matrix", () => {
@@ -110,12 +143,13 @@ describe("Grid Builder", () => {
         .use(UMLPlugin)
         .build((el, rel, hint) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
-          
+
           const a = el.core.rectangle("A")
           const b = el.core.rectangle("B")
           const c = el.core.rectangle("C")
 
-          hint.grid(boundaryId)
+          hint
+            .grid(boundaryId)
             .enclose([[a, b], [c]] as const)
             .layout()
         })
@@ -128,7 +162,7 @@ describe("Grid Builder", () => {
         .use(UMLPlugin)
         .build((el, rel, hint) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
-          
+
           hint.grid(boundaryId).layout()
         })
     }).toThrow(/enclose.*must be called/)
@@ -143,18 +177,19 @@ describe("Figure Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
 
-        hint.figure(boundaryId)
+        hint
+          .figure(boundaryId)
           .enclose([[a, b], [c]] as const)
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
-    expect(result.symbols.find(s => s.label === "A")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "A")).toBeDefined()
   })
 
   test("should create figure layout with custom gap", () => {
@@ -164,18 +199,19 @@ describe("Figure Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
 
-        hint.figure(boundaryId)
+        hint
+          .figure(boundaryId)
           .enclose([[a, b], [c]] as const)
           .gap(15)
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
   })
 
   test("should create figure layout with center alignment", () => {
@@ -185,18 +221,19 @@ describe("Figure Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
 
-        hint.figure(boundaryId)
+        hint
+          .figure(boundaryId)
           .enclose([[a, b], [c]] as const)
-          .align('center')
+          .align("center")
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
   })
 
   test("should create figure layout with right alignment", () => {
@@ -206,18 +243,19 @@ describe("Figure Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
 
-        hint.figure(boundaryId)
+        hint
+          .figure(boundaryId)
           .enclose([[a, b], [c]] as const)
-          .align('right')
+          .align("right")
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
   })
 
   test("should throw error when enclose not called", () => {
@@ -226,7 +264,7 @@ describe("Figure Builder", () => {
         .use(UMLPlugin)
         .build((el, rel, hint) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
-          
+
           hint.figure(boundaryId).layout()
         })
     }).toThrow(/enclose.*must be called/)
@@ -239,20 +277,21 @@ describe("Figure Builder", () => {
       .use(UMLPlugin)
       .build((el, rel, hint) => {
         boundaryId = el.uml.systemBoundary("Boundary")
-        
+
         const a = el.core.rectangle("A")
         const b = el.core.rectangle("B")
         const c = el.core.rectangle("C")
         const d = el.core.rectangle("D")
         const e = el.core.rectangle("E")
 
-        hint.figure(boundaryId)
+        hint
+          .figure(boundaryId)
           .enclose([[a], [b, c, d], [e]] as const)
           .layout()
       })
 
-    expect(result.symbols.find(s => s.label === "Boundary")).toBeDefined()
-    expect(result.symbols.find(s => s.label === "A")).toBeDefined()
-    expect(result.symbols.find(s => s.label === "E")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "A")).toBeDefined()
+    expect(result.symbols.find((s) => s.label === "E")).toBeDefined()
   })
 })

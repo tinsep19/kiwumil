@@ -7,7 +7,7 @@ import {
   type LayoutVar,
   type LayoutTerm,
   type LayoutExpression,
-  type LayoutExpressionInput
+  type LayoutExpressionInput,
 } from "./kiwi"
 import type { LayoutBound } from "./layout_bound"
 
@@ -43,7 +43,9 @@ export class LayoutVariables {
   createBound(prefix: string): LayoutBound {
     const solver = this.getSolver()
     if (!solver) {
-      throw new Error("LayoutVariables: solver is not injected. Cannot create bound with constraints.")
+      throw new Error(
+        "LayoutVariables: solver is not injected. Cannot create bound with constraints."
+      )
     }
 
     // 基本的な 4 つの変数を作成
@@ -94,7 +96,7 @@ export class LayoutVariables {
       right,
       bottom,
       centerX,
-      centerY
+      centerY,
     }
   }
 
