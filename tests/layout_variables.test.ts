@@ -27,4 +27,28 @@ describe("LayoutVariables", () => {
     expect(vars.valueOf(a)).toBeCloseTo(10)
     expect(vars.valueOf(b)).toBeCloseTo(30)
   })
+
+  test("createBoundsSet creates multiple bounds with different types", () => {
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+
+    const boundsSet = vars.createBoundsSet({
+      symbol1: "layout",
+      content1: "container",
+      icon1: "item",
+    })
+
+    expect(boundsSet.symbol1).toBeDefined()
+    expect(boundsSet.symbol1.type).toBe("layout")
+    expect(boundsSet.symbol1.x).toBeDefined()
+    expect(boundsSet.symbol1.y).toBeDefined()
+    expect(boundsSet.symbol1.width).toBeDefined()
+    expect(boundsSet.symbol1.height).toBeDefined()
+
+    expect(boundsSet.content1).toBeDefined()
+    expect(boundsSet.content1.type).toBe("container")
+
+    expect(boundsSet.icon1).toBeDefined()
+    expect(boundsSet.icon1.type).toBe("item")
+  })
 })

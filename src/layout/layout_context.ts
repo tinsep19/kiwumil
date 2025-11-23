@@ -6,7 +6,7 @@ import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
 import { LayoutSolver } from "./kiwi"
 
-type BoundsAxis = keyof LayoutBound
+type BoundsAxis = Exclude<keyof LayoutBound, "type">
 
 interface BoundsTerm {
   axis: BoundsAxis
