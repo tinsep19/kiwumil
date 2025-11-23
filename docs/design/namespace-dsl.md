@@ -141,15 +141,15 @@ Symbol と Relationship はそれぞれ一意な ID で識別されます：
 ```typescript
 /**
  * Symbol の一意識別子
- * 形式: `${namespace}:${symbolName}-${serial}`
- * 例: "uml:actor-0", "uml:usecase-1", "core:rectangle-0"
+ * 形式: `${namespace}:${symbolName}/${index}`
+ * 例: "uml:actor/0", "uml:usecase/1", "core:rectangle/0"
  */
 type SymbolId = string & { readonly __brand: 'SymbolId' }
 
 /**
  * Relationship の一意識別子
- * 形式: `${namespace}:${relationshipName}-${serial}`
- * 例: "uml:association-0", "uml:include-1", "core:arrow-0"
+ * 形式: `${namespace}:${relationshipName}/${index}`
+ * 例: "uml:association/0", "uml:include/1", "core:arrow/0"
  */
 type RelationshipId = string & { readonly __brand: 'RelationshipId' }
 ```
@@ -159,6 +159,7 @@ type RelationshipId = string & { readonly __brand: 'RelationshipId' }
 - Symbol/Relationship の種類が明確
 - プラグイン間で ID が衝突しない
 - ログやエラーメッセージでの可読性が向上
+- インデックスベースの採番により、生成順序が追跡可能
 
 ### SymbolBase と RelationshipBase
 
@@ -171,15 +172,17 @@ type RelationshipId = string & { readonly __brand: 'RelationshipId' }
 abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
-  bounds?: Bounds
+  protected readonly layoutBounds: LayoutBound
   protected theme?: Theme
   nestLevel: number = 0
   containerId?: SymbolId
 
-  constructor(id: SymbolId, label: string)
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound)
   
   setTheme(theme: Theme): void
-  abstract getDefaultSize(): { width: number; height: number }
+  getLayoutBounds(): LayoutBound
+  ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound
+  protected buildLayoutConstraints(_builder: LayoutConstraintBuilder): void
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
@@ -209,13 +212,15 @@ Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提
 
 - 各プラグインは一意の `name` を持ち、`el.{name}` / `rel.{name}` の形で参照されます。
 - `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
-- 両ファクトリは `LayoutVariableContext` を受け取り、Symbol / Relationship がレイアウト用変数を登録できるようになっています。
+- 両ファクトリは `Symbols` / `Relationships` インスタンスと `LayoutContext` を受け取ります。
+- Symbol / Relationship の登録は `Symbols.register()` / `Relationships.register()` メソッドを使用します。
+- LayoutBound は `layout.variables.createBound(symbolId)` で生成し、コンストラクタに注入します。
 
 ### 参考資料
 
 - DiagramPlugin インターフェースの完全な型定義
 - UMLPlugin などの実装例
-- `createIdGenerator` を利用した ID 命名規則
+- Symbols / Relationships クラスによる集中管理パターン
 
 ➡ これらはすべて [Plugin System ドキュメント](./plugin-system.md) で詳しく説明しています。_namespace-dsl.md_ では、プラグインを追加した結果として el/rel 名前空間がどのように組み立てられるかに焦点を当てます。
 
@@ -239,21 +244,27 @@ class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   }
 
   buildElementNamespace(
-    userSymbols: SymbolBase[]
+    symbols: Symbols,
+    layout: LayoutContext
   ): BuildElementNamespace<TPlugins> {
     const namespace = {} as any
     for (const plugin of this.plugins) {
-      namespace[plugin.name] = plugin.createSymbolFactory(userSymbols)
+      if (plugin.createSymbolFactory) {
+        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout)
+      }
     }
     return namespace
   }
 
   buildRelationshipNamespace(
-    relationships: RelationshipBase[]
+    relationships: Relationships,
+    layout: LayoutContext
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace = {} as any
     for (const plugin of this.plugins) {
-      namespace[plugin.name] = plugin.createRelationshipFactory(relationships)
+      if (plugin.createRelationshipFactory) {
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout)
+      }
     }
     return namespace
   }
@@ -344,28 +355,34 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
    - カスタムテーマを設定
 
 4. **ビルド (`.build(callback)`)**
-   - Symbol、Relationship、Hint を格納する配列を作成
-   - レイアウト専用の `LayoutVariableContext` を生成
-   - DiagramSymbol（図全体を表す特別な Symbol）を作成
-   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `layoutContext` を渡す
-   - プラグインごとのファクトリが配列への参照を保持
+   - `Symbols` と `Relationships` インスタンスを作成
+   - レイアウト専用の `LayoutContext` を生成
+   - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成
+   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout` を渡す
+   - プラグインごとのファクトリが `Symbols` / `Relationships` を経由して要素を登録
    - ユーザーが提供したコールバック関数を実行
-   - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が配列に追加される
+   - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
+   - DiagramSymbol を実際に作成し、配列の先頭に追加
    - レンダリング可能なオブジェクトを返す
 
 5. **レンダリング (`.render()`)**
    - テーマの適用: すべての Symbol と Relationship にテーマを適用
-   - レイアウト計算: LayoutSolver が制約を解決して各 Symbol の位置とサイズを決定
+   - レイアウト計算: LayoutContext が制約を解決して各 Symbol の位置とサイズを決定
    - SVG 生成: すべての Symbol と Relationship を SVG として出力
-   - ファイル書き込み: 指定されたパスに SVG ファイルを保存
+   - 出力: 
+     - 文字列の場合: ファイルパスとして SVG を保存
+     - `import.meta` の場合: 自動的に対応する .svg パスへ保存
+     - DOM Element の場合: innerHTML に SVG を設定（ブラウザ環境）
 
 ## 拡張性
 
 Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意の `DiagramPlugin` を登録することで拡張されます。プラグインそのものの作り方（クラス構成、ID 設計、TypeScript パターンなど）は [Plugin System ドキュメント](./plugin-system.md) に詳しい手順がありますので、ここでは仕組みの要点だけをまとめます。
 
 - `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` として追加される
-- 各プラグインは独立した ID カウンターと名前空間を持つため、DSL 側は衝突を気にせず合成できる
-- レイアウト変数 (`LayoutVariableContext`) は共有されるので、プラグイン固有のヒントやサイズ調整も同じ枠組みに乗せられる
+- 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
+- ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
+- レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
+- プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
 
 **プラグインの実装方法（手順、コード例、TypeScript テクニック）は [plugin-system.md](./plugin-system.md) を参照してください。**
 
