@@ -23,14 +23,14 @@ describe("TextSymbol", () => {
     const bound = vars.createBound("core:text-1")
     const symbol = new TextSymbol("core:text-1", "Line A\n\nLine C", bound)
     symbol.setTheme(DefaultTheme)
-    
+
     // Set up layout bounds
     const lb = symbol.getLayoutBounds()
     solver.addEditVariable(lb.x, "strong")
     solver.addEditVariable(lb.y, "strong")
     solver.addEditVariable(lb.width, "strong")
     solver.addEditVariable(lb.height, "strong")
-    
+
     solver.suggestValue(lb.x, 0)
     solver.suggestValue(lb.y, 0)
     solver.suggestValue(lb.width, 200)
@@ -47,22 +47,26 @@ describe("TextSymbol", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBound("core:text-2")
-    const symbol = new TextSymbol("core:text-2", {
-      label: "Align start",
-      textAnchor: "start",
-      textColor: "#ff0000",
-      fontSize: 20,
-      fontFamily: "Courier New",
-    }, bound)
+    const symbol = new TextSymbol(
+      "core:text-2",
+      {
+        label: "Align start",
+        textAnchor: "start",
+        textColor: "#ff0000",
+        fontSize: 20,
+        fontFamily: "Courier New",
+      },
+      bound
+    )
     symbol.setTheme(DefaultTheme)
-    
+
     // Set up layout bounds
     const lb = symbol.getLayoutBounds()
     solver.addEditVariable(lb.x, "strong")
     solver.addEditVariable(lb.y, "strong")
     solver.addEditVariable(lb.width, "strong")
     solver.addEditVariable(lb.height, "strong")
-    
+
     solver.suggestValue(lb.x, 0)
     solver.suggestValue(lb.y, 0)
     solver.suggestValue(lb.width, 200)

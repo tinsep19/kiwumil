@@ -35,7 +35,7 @@ export class Symbols {
    * 指定した ID に一致する Symbol を返す
    */
   findById(id: SymbolId): SymbolBase | undefined {
-    return this.symbols.find(symbol => symbol.id === id)
+    return this.symbols.find((symbol) => symbol.id === id)
   }
 
   /**

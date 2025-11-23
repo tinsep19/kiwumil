@@ -32,7 +32,7 @@ export class ActorSymbol extends SymbolBase {
 
     return {
       x: cx + dx * t,
-      y: cy + dy * t
+      y: cy + dy * t,
     }
   }
 
@@ -47,17 +47,19 @@ export class ActorSymbol extends SymbolBase {
     const legBottom = y + height - 15
 
     // テーマからスタイルを取得
-    const style = this.theme ? getStyleForSymbol(this.theme, 'actor') : {
-      strokeColor: 'black',
-      strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 12,
-      fontFamily: 'Arial',
-      fillColor: 'white',
-      backgroundColor: 'white',
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "actor")
+      : {
+          strokeColor: "black",
+          strokeWidth: 2,
+          textColor: "black",
+          fontSize: 12,
+          fontFamily: "Arial",
+          fillColor: "white",
+          backgroundColor: "white",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     return `
       <g id="${this.id}">

@@ -8,7 +8,7 @@ import {
   type LayoutVar,
   type LayoutTerm,
   type LayoutExpression,
-  type LayoutExpressionInput
+  type LayoutExpressionInput,
 } from "../layout_types"
 
 // 型を再エクスポート（互換性のため）
@@ -25,7 +25,7 @@ export { isLayoutVar, isLayoutExpression }
 export const Operator = Object.freeze({
   Eq: kiwi.Operator.Eq,
   Ge: kiwi.Operator.Ge,
-  Le: kiwi.Operator.Le
+  Le: kiwi.Operator.Le,
 } as const)
 export type Operator = (typeof Operator)[keyof typeof Operator]
 
@@ -35,7 +35,7 @@ export type Operator = (typeof Operator)[keyof typeof Operator]
 export const Strength = Object.freeze({
   Required: kiwi.Strength.required,
   Strong: kiwi.Strength.strong,
-  Weak: kiwi.Strength.weak
+  Weak: kiwi.Strength.weak,
 } as const)
 export type Strength = (typeof Strength)[keyof typeof Strength]
 
@@ -45,7 +45,7 @@ export type Strength = (typeof Strength)[keyof typeof Strength]
 
 /**
  * LayoutExpressionInput を kiwi.Expression に変換
- * 
+ *
  * @param input - 変換元（数値、LayoutVar、LayoutExpression）
  * @returns kiwi.Expression
  */
@@ -54,12 +54,12 @@ export function toKiwiExpression(input: LayoutExpressionInput): kiwi.Expression 
   if (typeof input === "number") {
     return new kiwi.Expression(input)
   }
-  
+
   // LayoutVar の場合
   if (isLayoutVar(input)) {
     return new kiwi.Expression(input)
   }
-  
+
   // LayoutExpression の場合
   if (isLayoutExpression(input)) {
     let expr = new kiwi.Expression(input.constant ?? 0)
@@ -70,13 +70,13 @@ export function toKiwiExpression(input: LayoutExpressionInput): kiwi.Expression 
     }
     return expr
   }
-  
+
   throw new Error("Unsupported expression input")
 }
 
 /**
  * ブランド付き LayoutVar を作成
- * 
+ *
  * @param name - 変数名
  * @returns LayoutVar
  */
@@ -85,7 +85,7 @@ export function createLayoutVar(name: string): LayoutVar {
   Object.defineProperty(variable, LAYOUT_VAR_BRAND, {
     value: true,
     enumerable: false,
-    configurable: false
+    configurable: false,
   })
   return variable as LayoutVar
 }
@@ -107,7 +107,7 @@ export class LayoutSolver {
 
   /**
    * 式を作成（LayoutVariables から移動）
-   * 
+   *
    * @param terms - 式の項（変数と係数のペア）
    * @param constant - 定数項
    * @returns LayoutExpression
@@ -118,7 +118,7 @@ export class LayoutSolver {
 
   /**
    * 制約を追加
-   * 
+   *
    * @param left - 左辺の式
    * @param operator - 演算子
    * @param right - 右辺の式
@@ -140,7 +140,7 @@ export class LayoutSolver {
 
   /**
    * 制約を削除
-   * 
+   *
    * @param constraint - 削除する制約
    */
   removeConstraint(constraint: kiwi.Constraint): void {
@@ -149,7 +149,7 @@ export class LayoutSolver {
 
   /**
    * 変数の編集を開始
-   * 
+   *
    * @param variable - 編集する変数
    * @param strength - 編集の強度
    */
@@ -159,7 +159,7 @@ export class LayoutSolver {
 
   /**
    * 変数の編集を終了
-   * 
+   *
    * @param variable - 編集を終了する変数
    */
   removeEditVariable(variable: LayoutVar): void {
@@ -168,7 +168,7 @@ export class LayoutSolver {
 
   /**
    * 変数に値を提案（編集中の変数）
-   * 
+   *
    * @param variable - 値を提案する変数
    * @param value - 提案する値
    */
@@ -185,7 +185,7 @@ export class LayoutSolver {
 
   /**
    * 内部の kiwi.Solver にアクセス（必要に応じて）
-   * 
+   *
    * @returns kiwi.Solver
    */
   getInternalSolver(): kiwi.Solver {

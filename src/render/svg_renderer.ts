@@ -23,7 +23,7 @@ export class SvgRenderer {
 
   private calculateSymbolZIndex(symbol: SymbolBase): number {
     const nestLevel = symbol.nestLevel
-    
+
     if (symbol.constructor.name === "SystemBoundarySymbol") {
       // Boundary は背景（ネストレベルが深いほど上に）
       return nestLevel * 100 - 100
@@ -36,30 +36,30 @@ export class SvgRenderer {
   render(): string {
     // すべての描画要素を収集
     const renderElements: RenderElement[] = []
-    
+
     // Create symbol map for relationship rendering
     const symbolMap = new Map<SymbolId, SymbolBase>()
     for (const symbol of this.symbols) {
       symbolMap.set(symbol.id, symbol)
     }
-    
+
     // Symbols
     for (const symbol of this.symbols) {
       const zIndex = this.calculateSymbolZIndex(symbol)
       renderElements.push({ zIndex, svg: symbol.toSVG() })
     }
-    
+
     // Relationships
     for (const rel of this.relationships) {
       const zIndex = rel.calculateZIndex(symbolMap)
       renderElements.push({ zIndex, svg: rel.toSVG(symbolMap) })
     }
-    
+
     // zIndex でソート
     renderElements.sort((a, b) => a.zIndex - b.zIndex)
-    
-    const content = renderElements.map(e => e.svg).join("\n")
-    
+
+    const content = renderElements.map((e) => e.svg).join("\n")
+
     // Calculate viewport size based on DiagramSymbol bounds if available
     let diagramWidth: number | undefined
     let diagramHeight: number | undefined
@@ -103,7 +103,7 @@ export class SvgRenderer {
 
   saveToFile(filepath: string) {
     const svg = this.render()
-    
+
     if (typeof Bun !== "undefined" && Bun.write) {
       Bun.write(filepath, svg)
       console.log(`Saved to ${filepath}`)

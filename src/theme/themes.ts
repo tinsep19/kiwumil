@@ -1,191 +1,191 @@
 // src/theme/themes.ts
 
-import { StyleSet, Theme, SymbolName } from './types'
+import { StyleSet, Theme, SymbolName } from "./types"
 
 // Default Theme
 export const DefaultTheme: Theme = {
-  name: 'default',
+  name: "default",
   defaultStyleSet: {
-    textColor: 'black',
+    textColor: "black",
     fontSize: 12,
-    fontFamily: 'Arial',
+    fontFamily: "Arial",
     strokeWidth: 2,
-    strokeColor: 'black',
-    fillColor: 'white',
-    backgroundColor: 'white',
+    strokeColor: "black",
+    fillColor: "white",
+    backgroundColor: "white",
     horizontalGap: 80,
-    verticalGap: 50
+    verticalGap: 50,
   },
   symbols: {
     actor: {
       strokeWidth: 2,
-      strokeColor: 'black',
-      textColor: 'black',
-      fontSize: 12
+      strokeColor: "black",
+      textColor: "black",
+      fontSize: 12,
     },
     usecase: {
-      fillColor: 'white',
-      strokeColor: 'black',
+      fillColor: "white",
+      strokeColor: "black",
       strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 12
+      textColor: "black",
+      fontSize: 12,
     },
     systemBoundary: {
-      fillColor: '#f8f8f8',
-      strokeColor: '#999',
+      fillColor: "#f8f8f8",
+      strokeColor: "#999",
       strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 14
+      textColor: "black",
+      fontSize: 14,
     },
     // Basic shapes
     circle: {
-      fillColor: 'white',
-      strokeColor: 'black',
+      fillColor: "white",
+      strokeColor: "black",
       strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 12
+      textColor: "black",
+      fontSize: 12,
     },
     ellipse: {
-      fillColor: 'white',
-      strokeColor: 'black',
+      fillColor: "white",
+      strokeColor: "black",
       strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 12
+      textColor: "black",
+      fontSize: 12,
     },
     rectangle: {
-      fillColor: 'white',
-      strokeColor: 'black',
+      fillColor: "white",
+      strokeColor: "black",
       strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 12
+      textColor: "black",
+      fontSize: 12,
     },
     roundedRectangle: {
-      fillColor: 'white',
-      strokeColor: 'black',
+      fillColor: "white",
+      strokeColor: "black",
       strokeWidth: 2,
-      textColor: 'black',
-      fontSize: 12
+      textColor: "black",
+      fontSize: 12,
     },
     text: {
-      textColor: 'black',
+      textColor: "black",
       fontSize: 14,
-      fontFamily: 'Arial'
-    }
-  }
+      fontFamily: "Arial",
+    },
+  },
 }
 
 // Blue Theme
 export const BlueTheme: Theme = {
-  name: 'blue',
+  name: "blue",
   defaultStyleSet: {
-    textColor: '#003366',
+    textColor: "#003366",
     fontSize: 12,
-    fontFamily: 'Arial',
+    fontFamily: "Arial",
     strokeWidth: 2,
-    strokeColor: '#0066cc',
-    fillColor: '#e6f3ff',
-    backgroundColor: '#f0f8ff',
+    strokeColor: "#0066cc",
+    fillColor: "#e6f3ff",
+    backgroundColor: "#f0f8ff",
     horizontalGap: 80,
-    verticalGap: 50
+    verticalGap: 50,
   },
   symbols: {
     actor: {
-      strokeColor: '#003366',
-      textColor: '#003366'
+      strokeColor: "#003366",
+      textColor: "#003366",
     },
     usecase: {
-      fillColor: '#e6f3ff',
-      strokeColor: '#0066cc',
-      textColor: '#003366'
+      fillColor: "#e6f3ff",
+      strokeColor: "#0066cc",
+      textColor: "#003366",
     },
     systemBoundary: {
-      fillColor: '#e6f3ff',
-      strokeColor: '#0066cc',
-      textColor: '#003366'
+      fillColor: "#e6f3ff",
+      strokeColor: "#0066cc",
+      textColor: "#003366",
     },
     // Basic shapes
     circle: {
-      fillColor: '#e6f3ff',
-      strokeColor: '#0066cc',
-      textColor: '#003366'
+      fillColor: "#e6f3ff",
+      strokeColor: "#0066cc",
+      textColor: "#003366",
     },
     ellipse: {
-      fillColor: '#e6f3ff',
-      strokeColor: '#0066cc',
-      textColor: '#003366'
+      fillColor: "#e6f3ff",
+      strokeColor: "#0066cc",
+      textColor: "#003366",
     },
     rectangle: {
-      fillColor: '#e6f3ff',
-      strokeColor: '#0066cc',
-      textColor: '#003366'
+      fillColor: "#e6f3ff",
+      strokeColor: "#0066cc",
+      textColor: "#003366",
     },
     roundedRectangle: {
-      fillColor: '#e6f3ff',
-      strokeColor: '#0066cc',
-      textColor: '#003366'
+      fillColor: "#e6f3ff",
+      strokeColor: "#0066cc",
+      textColor: "#003366",
     },
     text: {
-      textColor: '#003366',
+      textColor: "#003366",
       fontSize: 14,
-      fontFamily: 'Arial'
-    }
-  }
+      fontFamily: "Arial",
+    },
+  },
 }
 
 // Dark Theme
 export const DarkTheme: Theme = {
-  name: 'dark',
+  name: "dark",
   defaultStyleSet: {
-    textColor: '#d4d4d4',
+    textColor: "#d4d4d4",
     fontSize: 12,
-    fontFamily: 'Arial',
+    fontFamily: "Arial",
     strokeWidth: 2,
-    strokeColor: '#569cd6',
-    fillColor: '#2d2d2d',
-    backgroundColor: '#1e1e1e',
+    strokeColor: "#569cd6",
+    fillColor: "#2d2d2d",
+    backgroundColor: "#1e1e1e",
     horizontalGap: 80,
-    verticalGap: 50
+    verticalGap: 50,
   },
   symbols: {
     actor: {
-      strokeColor: '#4ec9b0',
-      textColor: '#d4d4d4'
+      strokeColor: "#4ec9b0",
+      textColor: "#d4d4d4",
     },
     usecase: {
-      fillColor: '#2d2d2d',
-      strokeColor: '#569cd6',
-      textColor: '#d4d4d4'
+      fillColor: "#2d2d2d",
+      strokeColor: "#569cd6",
+      textColor: "#d4d4d4",
     },
     systemBoundary: {
-      fillColor: '#2d2d2d',
-      strokeColor: '#808080',
-      textColor: '#d4d4d4'
+      fillColor: "#2d2d2d",
+      strokeColor: "#808080",
+      textColor: "#d4d4d4",
     },
     // Basic shapes
     circle: {
-      fillColor: '#2d2d2d',
-      strokeColor: '#569cd6',
-      textColor: '#d4d4d4'
+      fillColor: "#2d2d2d",
+      strokeColor: "#569cd6",
+      textColor: "#d4d4d4",
     },
     ellipse: {
-      fillColor: '#2d2d2d',
-      strokeColor: '#569cd6',
-      textColor: '#d4d4d4'
+      fillColor: "#2d2d2d",
+      strokeColor: "#569cd6",
+      textColor: "#d4d4d4",
     },
     rectangle: {
-      fillColor: '#2d2d2d',
-      strokeColor: '#569cd6',
-      textColor: '#d4d4d4'
+      fillColor: "#2d2d2d",
+      strokeColor: "#569cd6",
+      textColor: "#d4d4d4",
     },
     roundedRectangle: {
-      fillColor: '#2d2d2d',
-      strokeColor: '#569cd6',
-      textColor: '#d4d4d4'
+      fillColor: "#2d2d2d",
+      strokeColor: "#569cd6",
+      textColor: "#d4d4d4",
     },
     text: {
-      textColor: '#d4d4d4',
+      textColor: "#d4d4d4",
       fontSize: 14,
-      fontFamily: 'Arial'
-    }
-  }
+      fontFamily: "Arial",
+    },
+  },
 }

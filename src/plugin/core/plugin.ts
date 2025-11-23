@@ -12,15 +12,15 @@ import type { Symbols } from "../../dsl/symbols"
 
 /**
  * Core Plugin (Namespace-based)
- * 
+ *
  * 基本的な図形 Symbol を提供する
  */
 export const CorePlugin = {
-  name: 'core',
-  
+  name: "core",
+
   createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
     const plugin = this.name
-    
+
     return {
       /**
        * Circle Symbol を作成
@@ -28,49 +28,49 @@ export const CorePlugin = {
        * @returns 生成された SymbolId
        */
       circle(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'circle', (symbolId) => {
+        const symbol = symbols.register(plugin, "circle", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const circle = new CircleSymbol(symbolId, label, bound)
           return circle
         })
         return symbol.id
       },
-      
+
       /**
        * Ellipse Symbol を作成
        * @param label - Ellipse のラベル
        * @returns 生成された SymbolId
        */
       ellipse(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'ellipse', (symbolId) => {
+        const symbol = symbols.register(plugin, "ellipse", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const ellipse = new EllipseSymbol(symbolId, label, bound)
           return ellipse
         })
         return symbol.id
       },
-      
+
       /**
        * Rectangle Symbol を作成
        * @param label - Rectangle のラベル
        * @returns 生成された SymbolId
        */
       rectangle(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'rectangle', (symbolId) => {
+        const symbol = symbols.register(plugin, "rectangle", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const rectangle = new RectangleSymbol(symbolId, label, bound)
           return rectangle
         })
         return symbol.id
       },
-      
+
       /**
        * Rounded Rectangle Symbol を作成
        * @param label - Rounded Rectangle のラベル
        * @returns 生成された SymbolId
        */
       roundedRectangle(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'roundedRectangle', (symbolId) => {
+        const symbol = symbols.register(plugin, "roundedRectangle", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const rounded = new RoundedRectangleSymbol(symbolId, label, bound)
           return rounded
@@ -83,13 +83,13 @@ export const CorePlugin = {
        * @param labelOrInfo - 改行やスタイルを含めたテキスト指定
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
-        const symbol = symbols.register(plugin, 'text', (symbolId) => {
+        const symbol = symbols.register(plugin, "text", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           const text = new TextSymbol(symbolId, labelOrInfo, bound)
           return text
         })
         return symbol.id
-      }
+      },
     }
-  }
+  },
 } as const satisfies DiagramPlugin

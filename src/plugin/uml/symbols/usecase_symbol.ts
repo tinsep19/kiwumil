@@ -21,10 +21,10 @@ export class UsecaseSymbol extends SymbolBase {
     const dy = from.y - cy
 
     const angle = Math.atan2(dy, dx)
-    
+
     return {
       x: cx + rx * Math.cos(angle),
-      y: cy + ry * Math.sin(angle)
+      y: cy + ry * Math.sin(angle),
     }
   }
 
@@ -37,17 +37,19 @@ export class UsecaseSymbol extends SymbolBase {
     const ry = height / 2
 
     // テーマからスタイルを取得
-    const style = this.theme ? getStyleForSymbol(this.theme, 'usecase') : {
-      strokeColor: 'black',
-      strokeWidth: 2,
-      fillColor: 'white',
-      textColor: 'black',
-      fontSize: 12,
-      fontFamily: 'Arial',
-      backgroundColor: 'white',
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "usecase")
+      : {
+          strokeColor: "black",
+          strokeWidth: 2,
+          fillColor: "white",
+          textColor: "black",
+          fontSize: 12,
+          fontFamily: "Arial",
+          backgroundColor: "white",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     return `
       <g id="${this.id}">

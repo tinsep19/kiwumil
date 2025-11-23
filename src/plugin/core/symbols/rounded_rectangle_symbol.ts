@@ -32,7 +32,7 @@ export class RoundedRectangleSymbol extends SymbolBase {
 
     return {
       x: cx + dx * t,
-      y: cy + dy * t
+      y: cy + dy * t,
     }
   }
 
@@ -44,17 +44,19 @@ export class RoundedRectangleSymbol extends SymbolBase {
     const rx = 10 // 角丸の半径
     const ry = 10
 
-    const style = this.theme ? getStyleForSymbol(this.theme, 'roundedRectangle') : {
-      strokeColor: 'black',
-      strokeWidth: 2,
-      fillColor: 'white',
-      textColor: 'black',
-      fontSize: 12,
-      fontFamily: 'Arial',
-      backgroundColor: 'white',
-      horizontalGap: 80,
-      verticalGap: 50
-    }
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "roundedRectangle")
+      : {
+          strokeColor: "black",
+          strokeWidth: 2,
+          fillColor: "white",
+          textColor: "black",
+          fontSize: 12,
+          fontFamily: "Arial",
+          backgroundColor: "white",
+          horizontalGap: 80,
+          verticalGap: 50,
+        }
 
     return `
       <g id="${this.id}">

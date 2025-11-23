@@ -9,17 +9,27 @@ import type { Relationships } from "./relationships"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createSymbolFactory: (symbols: Symbols, layout: LayoutContext) => Record<string, (...args: any[]) => SymbolId> }
+  {
+    createSymbolFactory: (
+      symbols: Symbols,
+      layout: LayoutContext
+    ) => Record<string, (...args: any[]) => SymbolId>
+  }
 >
 
 type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
-  { createRelationshipFactory: (relationships: Relationships, layout: LayoutContext) => Record<string, (...args: any[]) => RelationshipId> }
+  {
+    createRelationshipFactory: (
+      relationships: Relationships,
+      layout: LayoutContext
+    ) => Record<string, (...args: any[]) => RelationshipId>
+  }
 >
 
 /**
  * プラグイン配列から ElementNamespace 型を生成
- * 
+ *
  * @example
  * ```typescript
  * type Plugins = [typeof UMLPlugin, typeof SequencePlugin]
@@ -28,14 +38,14 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
  * ```
  */
 export type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
-  [K in SymbolEnabledPlugins<TPlugins>['name']]: ReturnType<
-    Extract<SymbolEnabledPlugins<TPlugins>, { name: K }>['createSymbolFactory']
+  [K in SymbolEnabledPlugins<TPlugins>["name"]]: ReturnType<
+    Extract<SymbolEnabledPlugins<TPlugins>, { name: K }>["createSymbolFactory"]
   >
 }
 
 /**
  * プラグイン配列から RelationshipNamespace 型を生成
- * 
+ *
  * @example
  * ```typescript
  * type Plugins = [typeof UMLPlugin, typeof SequencePlugin]
@@ -44,7 +54,7 @@ export type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
  * ```
  */
 export type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]> = {
-  [K in RelationshipEnabledPlugins<TPlugins>['name']]: ReturnType<
-    Extract<RelationshipEnabledPlugins<TPlugins>, { name: K }>['createRelationshipFactory']
+  [K in RelationshipEnabledPlugins<TPlugins>["name"]]: ReturnType<
+    Extract<RelationshipEnabledPlugins<TPlugins>, { name: K }>["createRelationshipFactory"]
   >
 }

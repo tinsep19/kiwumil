@@ -19,7 +19,7 @@ describe("Theme System", () => {
         fillColor: "white",
         backgroundColor: "white",
         horizontalGap: 80,
-        verticalGap: 50
+        verticalGap: 50,
       })
     })
 
@@ -74,7 +74,7 @@ describe("Theme System", () => {
   describe("getStyleForSymbol", () => {
     test("should return default style when symbol not defined", () => {
       const style = getStyleForSymbol(DefaultTheme, "unknownSymbol")
-      
+
       expect(style.textColor).toBe(DefaultTheme.defaultStyleSet.textColor)
       expect(style.fontSize).toBe(DefaultTheme.defaultStyleSet.fontSize)
       expect(style.strokeWidth).toBe(DefaultTheme.defaultStyleSet.strokeWidth)
@@ -85,11 +85,11 @@ describe("Theme System", () => {
 
     test("should merge symbol style with defaults", () => {
       const style = getStyleForSymbol(DefaultTheme, "systemBoundary")
-      
+
       // Override from symbol
       expect(style.fillColor).toBe("#f8f8f8")
       expect(style.strokeColor).toBe("#999")
-      
+
       // Fallback to default
       expect(style.textColor).toBe(DefaultTheme.defaultStyleSet.textColor)
       expect(style.fontSize).toBe(14) // systemBoundary has custom fontSize
@@ -103,17 +103,17 @@ describe("Theme System", () => {
           fontSize: 12,
           strokeWidth: 2,
           strokeColor: "black",
-          fillColor: "white"
+          fillColor: "white",
         },
         symbols: {
           actor: {
-            strokeColor: "red" // Only override strokeColor
-          }
-        }
+            strokeColor: "red", // Only override strokeColor
+          },
+        },
       }
 
       const style = getStyleForSymbol(customTheme, "actor")
-      
+
       expect(style.strokeColor).toBe("red")
       expect(style.textColor).toBe("black") // From default
       expect(style.fontSize).toBe(12) // From default
@@ -126,7 +126,7 @@ describe("Theme System", () => {
       for (const theme of themes) {
         for (const symbolName of symbolNames) {
           const style = getStyleForSymbol(theme, symbolName)
-          
+
           expect(style.textColor).toBeDefined()
           expect(style.fontSize).toBeDefined()
           expect(style.strokeWidth).toBeDefined()
@@ -148,14 +148,14 @@ describe("Theme System", () => {
           strokeWidth: 2.5,
           strokeColor: "#ff6600",
           fillColor: "#fff5e6",
-          backgroundColor: "#ffffff"
+          backgroundColor: "#ffffff",
         },
         symbols: {
           actor: {
             strokeColor: "#ff3300",
-            strokeWidth: 3
-          }
-        }
+            strokeWidth: 3,
+          },
+        },
       }
 
       expect(customTheme.name).toBe("custom")
@@ -170,17 +170,17 @@ describe("Theme System", () => {
           fontSize: 16,
           strokeWidth: 3,
           strokeColor: "purple",
-          fillColor: "lavender"
+          fillColor: "lavender",
         },
         symbols: {
           myCustomSymbol: {
-            fillColor: "pink"
-          }
-        }
+            fillColor: "pink",
+          },
+        },
       }
 
       const style = getStyleForSymbol(customTheme, "myCustomSymbol")
-      
+
       expect(style.fillColor).toBe("pink")
       expect(style.textColor).toBe("purple")
       expect(style.fontSize).toBe(16)
@@ -216,7 +216,7 @@ describe("Theme System", () => {
     test("theme names should be unique", () => {
       const names = [DefaultTheme.name, BlueTheme.name, DarkTheme.name]
       const uniqueNames = new Set(names)
-      
+
       expect(uniqueNames.size).toBe(names.length)
     })
   })
@@ -228,7 +228,7 @@ describe("Theme System", () => {
       const theme = BlueTheme
 
       const style = getStyleForSymbol(theme, symbolName)
-      
+
       // Check that we can construct SVG attributes from style
       expect(typeof style.strokeColor).toBe("string")
       expect(typeof style.fillColor).toBe("string")
@@ -239,7 +239,7 @@ describe("Theme System", () => {
 
     test("should handle missing symbol definition gracefully", () => {
       const style = getStyleForSymbol(BlueTheme, "nonExistentSymbol")
-      
+
       // Should fall back to default style
       expect(style.textColor).toBe(BlueTheme.defaultStyleSet.textColor)
       expect(style.fillColor).toBe(BlueTheme.defaultStyleSet.fillColor)
