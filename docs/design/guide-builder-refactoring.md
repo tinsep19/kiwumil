@@ -1,18 +1,47 @@
-# GuideBuilder 実装の共通化
+# GuideBuilder 実装の共通化とディレクトリ整理
 
 ## 概要
 
-`GuideBuilderX` と `GuideBuilderY` の重複実装を解消し、共通実装を `GuideBuilderImpl` として抽出しました。外部 API の互換性を完全に維持しながら、コードの重複を約260行削減しました。
+`GuideBuilderX` と `GuideBuilderY` の重複実装を解消し、共通実装を `GuideBuilderImpl` として抽出しました。さらに、レイアウト関連の Builder ファイルを `src/layout/hint` ディレクトリに移動し、コードの構造を改善しました。
 
 ## 目的
 
 1. **コードの重複削減**: `GuideBuilderX` と `GuideBuilderY` はほぼ同じ実装を持っていたため、共通化によりメンテナンス性を向上
 2. **型安全性の維持**: インターフェイスとして `GuideBuilderX` と `GuideBuilderY` を定義し、既存コードとの互換性を保証
 3. **実行時エラーチェック**: 軸に応じて使用できないメソッドを呼び出した場合、明確なエラーメッセージを表示
+4. **ディレクトリ構造の改善**: レイアウト関連の Builder を `src/layout/hint` に移動し、責務を明確化
+
+## ディレクトリ構造の変更
+
+### 変更前
+```
+src/dsl/
+  ├── hint_factory.ts
+  ├── grid_builder.ts
+  ├── figure_builder.ts
+  └── guide_builder.ts
+```
+
+### 変更後
+```
+src/dsl/
+  └── hint_factory.ts      # DSL エントリポイントのみ残す
+
+src/layout/hint/
+  ├── grid_builder.ts      # レイアウトヒントの実装
+  ├── figure_builder.ts    # レイアウトヒントの実装
+  └── guide_builder.ts     # レイアウトヒントの実装
+```
+
+### 設計意図
+
+- **src/dsl**: DSL の公開 API とエントリポイントを配置
+- **src/layout/hint**: レイアウトロジックの実装を配置
+- これにより、DSL 層とレイアウト層の責務が明確に分離されました
 
 ## アーキテクチャ
 
-### 新規ファイル: `src/dsl/guide_builder.ts`
+### 新規ファイル: `src/layout/hint/guide_builder.ts`
 
 ```
 GuideBuilderX (interface)
@@ -40,7 +69,9 @@ GuideBuilderImpl (class)
 
 ### 変更ファイル: `src/dsl/hint_factory.ts`
 
-- `GuideBuilderX` と `GuideBuilderY` のクラス実装を削除（約260行）
+- `GuideBuilderX` と `GuideBuilderY` のクラス実装を削除（約260行削減）
+- `src/layout/hint/guide_builder.ts` から GuideBuilderImpl と型をインポート
+- `src/layout/hint/grid_builder.ts` と `figure_builder.ts` のインポートパスを更新
 - `createGuideX()` と `createGuideY()` が `GuideBuilderImpl` を生成
 - 戻り値の型は `GuideBuilderX` / `GuideBuilderY` インターフェイス
 
@@ -106,6 +137,21 @@ vGuide.followTop(symbol).alignTop(otherSymbol)
 - `createGuideY()` の戻り値型: `GuideBuilderY`
 - 既存のコードで型注釈を使用している場合も互換性を維持
 
+### インポートの変更
+
+Builder の実装は `src/layout/hint` に移動しましたが、`HintFactory` を通じてアクセスするため、外部からの使用方法は変更ありません。
+
+```typescript
+// 既存コードはそのまま動作
+import { TypeDiagram } from "@tinsep19/kiwumil"
+
+TypeDiagram("Example")
+  .build((el, rel, hint) => {
+    // hint.createGuideX(), hint.grid(), hint.figure() など
+    // すべて変更なく使用可能
+  })
+```
+
 ## テスト
 
 `tests/guide_builder.test.ts` で以下をカバー：
@@ -123,6 +169,8 @@ vGuide.followTop(symbol).alignTop(otherSymbol)
 3. **既存コードへの影響なし**: API と動作は完全に互換
 4. **型安全性の向上**: インターフェイスによる明確な契約
 5. **実行時の安全性**: 軸に応じた適切なエラーメッセージ
+6. **ディレクトリ構造の改善**: 責務の明確な分離（DSL vs Layout）
+7. **拡張性の向上**: レイアウトロジックが独立し、将来の拡張が容易
 
 ## 今後の拡張可能性
 
