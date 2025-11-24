@@ -4,10 +4,10 @@ import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point, ContainerSymbolId } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import type { Bounds } from "../layout/layout_bound"
+import type { Bounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
-import { getBoundsValues } from "../layout/layout_bound"
+import { getBoundsValues } from "../layout/bounds"
 
 export class DiagramSymbol extends ContainerSymbolBase {
   private diagramInfo: DiagramInfo

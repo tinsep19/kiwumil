@@ -2,7 +2,7 @@
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
-import { getBoundsValues } from "../../../layout/layout_bound"
+import { getBoundsValues } from "../../../layout/bounds"
 
 export class RectangleSymbol extends SymbolBase {
   getDefaultSize() {

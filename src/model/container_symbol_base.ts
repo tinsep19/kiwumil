@@ -1,6 +1,6 @@
 import type { ContainerSymbolId, SymbolId } from "./types"
 import { SymbolBase } from "./symbol_base"
-import { Bounds } from "../layout/layout_bound"
+import { Bounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"

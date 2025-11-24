@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
-import type { Bounds } from "./layout_bound"
+import type { Bounds } from "./bounds"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import {
   Operator,

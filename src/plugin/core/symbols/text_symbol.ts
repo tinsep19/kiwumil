@@ -2,8 +2,8 @@
 import { SymbolBase } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
-import type { Bounds } from "../../../layout/layout_bound"
-import { getBoundsValues } from "../../../layout/layout_bound"
+import type { Bounds } from "../../../layout/bounds"
+import { getBoundsValues } from "../../../layout/bounds"
 
 const DEFAULT_PADDING_X = 12
 const DEFAULT_PADDING_Y = 8

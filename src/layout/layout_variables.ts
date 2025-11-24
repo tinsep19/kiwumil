@@ -16,7 +16,7 @@ import type {
   ContainerBounds,
   ItemBounds,
   BoundsMap,
-} from "./layout_bound"
+} from "./bounds"
 
 // 互換性のため既存の export を維持
 export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
@@ -25,7 +25,7 @@ export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
 
 // 後方互換性のため deprecated 型を再エクスポート
-export type { LayoutType, LayoutBound } from "./layout_bound"
+export type { LayoutType, LayoutBound } from "./bounds"
 
 // LayoutConstraints で定義されているが、互換性のためここでも再エクスポート
 export const LayoutConstraintOperator = Operator
