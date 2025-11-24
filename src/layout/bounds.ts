@@ -26,8 +26,9 @@ export interface Bounds {
 
 /**
  * 型付き Bounds のジェネリック型
+ * Bounds の type プロパティを特定のリテラル型に絞り込む
  */
-export type TypeBounds<T extends BoundsType> = Bounds & { readonly type: T }
+export type TypedBounds<T extends BoundsType> = Bounds & { readonly type: T }
 
 /**
  * @deprecated Use BoundsType instead
@@ -42,17 +43,17 @@ export type LayoutBound = Bounds
 /**
  * 型エイリアス: Symbol の外矩形を表す Bounds
  */
-export type LayoutBounds = TypeBounds<"layout">
+export type LayoutBounds = TypedBounds<"layout">
 
 /**
  * 型エイリアス: Symbol を内包できる矩形を表す Bounds
  */
-export type ContainerBounds = TypeBounds<"container">
+export type ContainerBounds = TypedBounds<"container">
 
 /**
  * 型エイリアス: 個別の描画領域を表す Bounds
  */
-export type ItemBounds = TypeBounds<"item">
+export type ItemBounds = TypedBounds<"item">
 
 /**
  * BoundsType から対応する Bounds 型へのマッピング
