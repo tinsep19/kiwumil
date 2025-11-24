@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="340" 
-     height="270" 
-     viewBox="0 0 340 270">
+     width="200" 
+     height="150" 
+     viewBox="0 0 200 150">
   <rect width="100%" height="100%" fill="#1e1e1e"/>
   
-      <line x1="100" y1="187.35294117647058" x2="188.28394709053384" y2="120.21060379690181"
+      <line x1="160" y1="100" x2="240" y2="100"
             stroke="#569cd6" stroke-width="2"/>
     
 
-      <line x1="100" y1="215" x2="43.07900211696917" y2="205.51316701949486"
+      <line x1="100" y1="125" x2="100" y2="175"
             stroke="#569cd6" stroke-width="2"/>
     
 
       <g id="__diagram__">
         <!-- Title -->
-        <text x="170" y="30" 
+        <text x="100" y="30" 
               text-anchor="middle" 
               font-size="18" 
               font-weight="bold"
@@ -29,25 +29,25 @@
 
       <g id="uml:actor/0">
         <!-- Head -->
-        <circle cx="70" cy="180" r="10" 
+        <circle cx="100" cy="100" r="20" 
                 fill="none" stroke="#4ec9b0" stroke-width="2"/>
         
         <!-- Body -->
-        <line x1="70" y1="190" x2="70" y2="213" 
+        <line x1="100" y1="120" x2="100" y2="105" 
               stroke="#4ec9b0" stroke-width="2"/>
         
         <!-- Arms -->
-        <line x1="45" y1="196.9" x2="95" y2="196.9" 
+        <line x1="45" y1="115.5" x2="155" y2="115.5" 
               stroke="#4ec9b0" stroke-width="2"/>
         
         <!-- Legs -->
-        <line x1="70" y1="213" x2="50" y2="230" 
+        <line x1="100" y1="105" x2="50" y2="110" 
               stroke="#4ec9b0" stroke-width="2"/>
-        <line x1="70" y1="213" x2="90" y2="230" 
+        <line x1="100" y1="105" x2="150" y2="110" 
               stroke="#4ec9b0" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="70" y="245" 
+        <text x="100" y="125" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#d4d4d4">
           User
@@ -57,11 +57,11 @@
 
       <g id="uml:usecase/1">
         <!-- Ellipse -->
-        <ellipse cx="240" cy="105" rx="60" ry="30" 
+        <ellipse cx="200" cy="100" rx="-40" ry="25" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="240" y="110" 
+        <text x="200" y="105" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#d4d4d4">
           Login
@@ -71,11 +71,11 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="100" cy="215" rx="60" ry="30" 
+        <ellipse cx="100" cy="150" rx="60" ry="-25" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="220" 
+        <text x="100" y="155" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#d4d4d4">
           Logout
