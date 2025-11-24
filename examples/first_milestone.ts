@@ -26,4 +26,4 @@ TypeDiagram("First Milestone")
     hint.enclose(system_boundary, [login, logout, manage_users])
     hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
   })
-  .render("example/first_milestone.svg")
+  .render(import.meta)
