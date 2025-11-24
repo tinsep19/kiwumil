@@ -1,6 +1,6 @@
 {
   "name": "@tinsep19/kiwumil",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "TypeScript library for automatic UML diagram layout using @lume/kiwi constraint solver",
   "type": "module",
   "main": "./dist/index.js",
