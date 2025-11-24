@@ -63,11 +63,14 @@ export class SvgRenderer {
 
     // 不正な bounds を持つシンボルを検出
     const minViewport = 100 // viewport の最小サイズ
+    const minBoundsSize = 0.1 // bounds の最小有効サイズ
+    const maxBoundsSize = 10000 // bounds の最大有効サイズ
+    
     for (const symbol of this.symbols) {
       const bounds = getBoundsValues(symbol.getLayoutBounds())
       // 極端に小さい、大きい、または不正な値をチェック
-      if (bounds.width < 0.1 || bounds.height < 0.1 || 
-          bounds.width > 10000 || bounds.height > 10000) {
+      if (bounds.width < minBoundsSize || bounds.height < minBoundsSize || 
+          bounds.width > maxBoundsSize || bounds.height > maxBoundsSize) {
         console.warn(
           `[SvgRenderer] Abnormal bounds detected for symbol:`,
           `id=${symbol.id}, label="${symbol.label}",`,
