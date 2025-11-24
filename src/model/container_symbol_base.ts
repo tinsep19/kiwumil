@@ -68,7 +68,7 @@ export abstract class ContainerSymbolBase<
   protected ensureContentBounds(): LayoutBound {
     if (!this.contentBounds) {
       const vars = this.layout.variables
-      this.contentBounds = vars.createBound(`${this.id}.content`)
+      this.contentBounds = vars.createBound(`${this.id}.content`, "container")
     }
     if (!this.containerConstraintsApplied) {
       this.applyContainerConstraints()

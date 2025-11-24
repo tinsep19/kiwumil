@@ -6,7 +6,7 @@ import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
 import { LayoutSolver } from "./kiwi"
 
-type BoundsAxis = keyof LayoutBound
+type BoundsAxis = Exclude<keyof LayoutBound, "type">
 
 interface BoundsTerm {
   axis: BoundsAxis
@@ -35,19 +35,8 @@ export class LayoutContext {
 
   solveAndApply(symbols: SymbolBase[]) {
     this.solve()
-
     // Symbols now use getLayoutBounds() directly in toSVG/getConnectionPoint
-    // so we don't need to apply bounds to this.bounds anymore
-    for (const symbol of symbols) {
-      // For backwards compatibility, still populate bounds
-      const lb = symbol.getLayoutBounds()
-      symbol.bounds = {
-        x: lb.x.value(),
-        y: lb.y.value(),
-        width: lb.width.value(),
-        height: lb.height.value(),
-      }
-    }
+    // No longer need to populate the deprecated bounds property
   }
 
   valueOf(variable: LayoutVar): number {

@@ -1,5 +1,5 @@
 // src/model/symbol_base.ts
-import type { SymbolId, Bounds, Point } from "./types"
+import type { SymbolId, Point } from "./types"
 import type { Theme } from "../theme"
 import type { LayoutBound } from "../layout/layout_bound"
 import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
@@ -7,7 +7,6 @@ import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 export abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
-  bounds?: Bounds
   protected theme?: Theme
   nestLevel: number = 0
   containerId?: SymbolId

@@ -4,6 +4,7 @@ import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId } from "../model/types"
 import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model/diagram_symbol"
+import { getBoundsValues } from "../layout/layout_bound"
 
 interface RenderElement {
   zIndex: number
@@ -64,9 +65,10 @@ export class SvgRenderer {
     let diagramWidth: number | undefined
     let diagramHeight: number | undefined
     for (const symbol of this.symbols) {
-      if (symbol instanceof DiagramSymbol && symbol.bounds) {
-        diagramWidth = symbol.bounds.width
-        diagramHeight = symbol.bounds.height
+      if (symbol instanceof DiagramSymbol) {
+        const bounds = getBoundsValues(symbol.getLayoutBounds())
+        diagramWidth = bounds.width
+        diagramHeight = bounds.height
         break
       }
     }
@@ -80,10 +82,9 @@ export class SvgRenderer {
       let maxX = 0
       let maxY = 0
       for (const symbol of this.symbols) {
-        if (symbol.bounds) {
-          maxX = Math.max(maxX, symbol.bounds.x + symbol.bounds.width)
-          maxY = Math.max(maxY, symbol.bounds.y + symbol.bounds.height)
-        }
+        const bounds = getBoundsValues(symbol.getLayoutBounds())
+        maxX = Math.max(maxX, bounds.x + bounds.width)
+        maxY = Math.max(maxY, bounds.y + bounds.height)
       }
       width = maxX + 50
       height = maxY + 50

@@ -9,10 +9,20 @@ import {
   type LayoutExpression,
   type LayoutExpressionInput,
 } from "./kiwi"
-import type { LayoutBound } from "./layout_bound"
+import type {
+  LayoutBound,
+  LayoutType,
+  LayoutBounds,
+  ContainerBounds,
+  ItemBounds,
+  BoundsMap,
+} from "./layout_bound"
 
 // 互換性のため既存の export を維持
 export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
+
+// 型エイリアスも再エクスポート
+export type { LayoutType, LayoutBounds, ContainerBounds, ItemBounds }
 
 // LayoutConstraints で定義されているが、互換性のためここでも再エクスポート
 export const LayoutConstraintOperator = Operator
@@ -39,8 +49,10 @@ export class LayoutVariables {
   /**
    * LayoutBound を生成する factory メソッド
    * すべての computed properties (right, bottom, centerX, centerY) も作成し、制約を設定する
+   * @param prefix 変数名のプレフィックス
+   * @param type レイアウトの種類 (デフォルト: "layout")
    */
-  createBound(prefix: string): LayoutBound {
+  createBound(prefix: string, type: LayoutType = "layout"): LayoutBound {
     const solver = this.getSolver()
     if (!solver) {
       throw new Error(
@@ -89,6 +101,7 @@ export class LayoutVariables {
     )
 
     return {
+      type,
       x,
       y,
       width,
@@ -98,6 +111,21 @@ export class LayoutVariables {
       centerX,
       centerY,
     }
+  }
+
+  /**
+   * 複数の LayoutBound を一括で生成する factory メソッド
+   * @param set キーと LayoutType のマップ
+   * @returns キーと対応する型付き LayoutBound のマップ
+   */
+  createBoundsSet<T extends Record<string, LayoutType>>(
+    set: T
+  ): { [K in keyof T]: BoundsMap[T[K]] } {
+    const result: Record<string, LayoutBound> = {}
+    for (const [key, type] of Object.entries(set)) {
+      result[key] = this.createBound(key, type)
+    }
+    return result as { [K in keyof T]: BoundsMap[T[K]] }
   }
 
   valueOf(variable: LayoutVar): number {

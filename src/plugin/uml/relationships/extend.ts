@@ -2,6 +2,7 @@
 import { RelationshipBase } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
 import type { SymbolId, RelationshipId } from "../../../model/types"
+import { getBoundsValues } from "../../../layout/layout_bound"
 
 export class Extend extends RelationshipBase {
   constructor(id: RelationshipId, from: SymbolId, to: SymbolId) {
@@ -12,17 +13,20 @@ export class Extend extends RelationshipBase {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
 
-    if (!fromSymbol?.bounds || !toSymbol?.bounds) {
+    if (!fromSymbol || !toSymbol) {
       throw new Error(`Extend endpoints not found or not positioned`)
     }
 
+    const fromBounds = getBoundsValues(fromSymbol.getLayoutBounds())
+    const toBounds = getBoundsValues(toSymbol.getLayoutBounds())
+
     const fromCenter = {
-      x: fromSymbol.bounds.x + fromSymbol.bounds.width / 2,
-      y: fromSymbol.bounds.y + fromSymbol.bounds.height / 2,
+      x: fromBounds.x + fromBounds.width / 2,
+      y: fromBounds.y + fromBounds.height / 2,
     }
     const toCenter = {
-      x: toSymbol.bounds.x + toSymbol.bounds.width / 2,
-      y: toSymbol.bounds.y + toSymbol.bounds.height / 2,
+      x: toBounds.x + toBounds.width / 2,
+      y: toBounds.y + toBounds.height / 2,
     }
 
     const fromEdge = fromSymbol.getConnectionPoint(toCenter)
