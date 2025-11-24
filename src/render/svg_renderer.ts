@@ -61,6 +61,24 @@ export class SvgRenderer {
 
     const content = renderElements.map((e) => e.svg).join("\n")
 
+    // 不正な bounds を持つシンボルを検出
+    const minViewport = 100 // viewport の最小サイズ
+    const minBoundsSize = 0.1 // bounds の最小有効サイズ
+    const maxBoundsSize = 10000 // bounds の最大有効サイズ
+    
+    for (const symbol of this.symbols) {
+      const bounds = getBoundsValues(symbol.getLayoutBounds())
+      // 極端に小さい、大きい、または不正な値をチェック
+      if (bounds.width < minBoundsSize || bounds.height < minBoundsSize || 
+          bounds.width > maxBoundsSize || bounds.height > maxBoundsSize) {
+        console.warn(
+          `[SvgRenderer] Abnormal bounds detected for symbol:`,
+          `id=${symbol.id}, label="${symbol.label}",`,
+          `bounds={x:${bounds.x}, y:${bounds.y}, width:${bounds.width}, height:${bounds.height}}`
+        )
+      }
+    }
+
     // Calculate viewport size based on DiagramSymbol bounds if available
     let diagramWidth: number | undefined
     let diagramHeight: number | undefined
@@ -75,10 +93,28 @@ export class SvgRenderer {
 
     let width: number
     let height: number
-    if (typeof diagramWidth === "number" && typeof diagramHeight === "number") {
-      width = diagramWidth
-      height = diagramHeight
+    // DiagramSymbol の bounds が有効かチェック
+    const isDiagramBoundsValid = 
+      typeof diagramWidth === "number" && 
+      typeof diagramHeight === "number" &&
+      Number.isFinite(diagramWidth) &&
+      Number.isFinite(diagramHeight) &&
+      diagramWidth >= minViewport &&
+      diagramHeight >= minViewport
+      
+    if (isDiagramBoundsValid) {
+      width = diagramWidth!
+      height = diagramHeight!
     } else {
+      // DiagramSymbol の bounds が不正な場合はフォールバック
+      if (typeof diagramWidth === "number" && typeof diagramHeight === "number") {
+        console.warn(
+          `[SvgRenderer] Invalid DiagramSymbol bounds detected:`,
+          `width=${diagramWidth}, height=${diagramHeight},`,
+          `falling back to maxX/maxY calculation`
+        )
+      }
+      
       let maxX = 0
       let maxY = 0
       for (const symbol of this.symbols) {
@@ -86,8 +122,8 @@ export class SvgRenderer {
         maxX = Math.max(maxX, bounds.x + bounds.width)
         maxY = Math.max(maxY, bounds.y + bounds.height)
       }
-      width = maxX + 50
-      height = maxY + 50
+      width = Math.max(minViewport, maxX + 50)
+      height = Math.max(minViewport, maxY + 50)
     }
 
     const bgColor = this.theme?.defaultStyleSet.backgroundColor || "white"

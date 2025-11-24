@@ -31,10 +31,15 @@ export class UsecaseSymbol extends SymbolBase {
   toSVG(): string {
     const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const cx = x + width / 2
-    const cy = y + height / 2
-    const rx = width / 2
-    const ry = height / 2
+    // 負の値や極端に小さい値を安全な値にクランプ（二次防御）
+    const safeWidth = Math.max(10, Math.abs(width))
+    const safeHeight = Math.max(10, Math.abs(height))
+
+    const cx = x + safeWidth / 2
+    const cy = y + safeHeight / 2
+    // rx, ry を計算し、最小値でクランプ
+    const rx = Math.max(2, safeWidth / 2)
+    const ry = Math.max(2, safeHeight / 2)
 
     // テーマからスタイルを取得
     const style = this.theme

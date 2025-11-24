@@ -66,6 +66,7 @@ export type BoundsMap = {
 
 /**
  * Bounds から現在の座標値を取得するヘルパー関数
+ * 不正な値（NaN、Infinity）を検出して警告を出す
  */
 export function getBoundsValues(bounds: Bounds): {
   x: number
@@ -73,10 +74,39 @@ export function getBoundsValues(bounds: Bounds): {
   width: number
   height: number
 } {
+  const rawX = bounds.x.value()
+  const rawY = bounds.y.value()
+  const rawWidth = bounds.width.value()
+  const rawHeight = bounds.height.value()
+  
+  // NaN や Infinity を検出してログ出力
+  const hasInvalidValues = 
+    !Number.isFinite(rawX) || 
+    !Number.isFinite(rawY) || 
+    !Number.isFinite(rawWidth) || 
+    !Number.isFinite(rawHeight)
+  
+  if (hasInvalidValues) {
+    console.warn(
+      `[getBoundsValues] Invalid bounds detected:`,
+      `x=${rawX}, y=${rawY}, width=${rawWidth}, height=${rawHeight}`
+    )
+  }
+  
+  // 負の値を検出して警告（レイアウトソルバの問題を示唆）
+  if (rawWidth < 0) {
+    console.warn(`[getBoundsValues] Negative width detected: ${rawWidth}`)
+  }
+  if (rawHeight < 0) {
+    console.warn(`[getBoundsValues] Negative height detected: ${rawHeight}`)
+  }
+  
+  // 値はそのまま返す（レイアウト計算への影響を最小化）
+  // 描画時に各シンボルで安全な値にクランプする
   return {
-    x: bounds.x.value(),
-    y: bounds.y.value(),
-    width: bounds.width.value(),
-    height: bounds.height.value(),
+    x: rawX,
+    y: rawY,
+    width: rawWidth,
+    height: rawHeight,
   }
 }
