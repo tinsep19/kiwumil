@@ -21,10 +21,10 @@ import type {
 // 互換性のため既存の export を維持
 export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
 
-// 型エイリアスも再エクスポート
+// 新しい型エイリアス
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
 
-// 後方互換性のため deprecated 型を再エクスポート
+// 後方互換性のため deprecated 型を再エクスポート（将来的に削除予定）
 export type { LayoutType, LayoutBound } from "./bounds"
 
 // LayoutConstraints で定義されているが、互換性のためここでも再エクスポート
