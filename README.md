@@ -33,20 +33,20 @@ TypeDiagram("First Milestone")
     // 1. シンボルを定義（名前空間ベースの DSL）
     const user = el.uml.actor("User")
     const admin = el.uml.actor("Admin")
-    
+
     const login = el.uml.usecase("Login")
     const logout = el.uml.usecase("Logout")
     const manage_users = el.uml.usecase("Manage Users")
-    
+
     const system_boundary = el.uml.systemBoundary("システム化範囲")
-    
+
     // 2. 関係を定義
     rel.uml.associate(user, login)
     rel.uml.associate(user, logout)
     rel.uml.associate(admin, login)
     rel.uml.associate(admin, logout)
     rel.uml.associate(admin, manage_users)
-    
+
     // 3. レイアウトヒントを設定
     hint.arrangeVertical(user, admin)
     hint.arrangeHorizontal(user, system_boundary)
@@ -61,6 +61,7 @@ TypeDiagram("First Milestone")
 ![First Milestone](examples/first_milestone.svg)
 
 **特徴:**
+
 - 🔧 **制約 + レイアウトヒント** - Cassowary 制約ソルバーをベースに、`hint.arrange*` / `hint.enclose` で意図した整列を記述
 - 📦 **自動サイズ調整コンテナ** - SystemBoundary などが子要素に合わせてスケールし、ラベルで囲みを作成
 - 🔌 **名前空間プラグイン** - `el.uml.actor()` のようにプラグインごとに DSL が分離され、カスタム図形も拡張可能
@@ -119,15 +120,14 @@ bun install @tinsep19/kiwumil
 
 ## 🧠 技術スタック
 
-| 要素       | 内容                                                        |
-| -------    | ----------------------------------------------------------- |
-| 言語       | TypeScript                                                  |
-| 実行環境   | [Bun](https://bun.sh)                                       |
+| 要素       | 内容                                                                |
+| ---------- | ------------------------------------------------------------------- |
+| 言語       | TypeScript                                                          |
+| 実行環境   | [Bun](https://bun.sh)                                               |
 | 制約ソルバ | [@lume/kiwi](https://github.com/lume/kiwi)（Cassowaryアルゴリズム） |
-| 目的       | テキスト定義 + 制約ヒントで整える図レイアウトエンジン        |
+| 目的       | テキスト定義 + 制約ヒントで整える図レイアウトエンジン               |
 
 ---
-
 
 ```mermaid
 
@@ -160,11 +160,11 @@ flowchart TD
 
 ```
 
-* DSL: actor, usecase の呼び出しを SymbolRegistry から解決
-* Model: SymbolBase / RelationshipBase のインスタンスを構築
-* Layout: Cassowary 制約で位置を自動計算
-* Render: SvgRenderer により描画（矢印は折れ線）
-* Plugin: ユーザ追加のシンボル・関係も透過的に統合
+- DSL: actor, usecase の呼び出しを SymbolRegistry から解決
+- Model: SymbolBase / RelationshipBase のインスタンスを構築
+- Layout: Cassowary 制約で位置を自動計算
+- Render: SvgRenderer により描画（矢印は折れ線）
+- Plugin: ユーザ追加のシンボル・関係も透過的に統合
 
 ---
 
@@ -260,19 +260,19 @@ bun add @lume/kiwi
 
 ## 🚧 今後の予定
 
-* [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal()`, `hint.vertical()`)
-* [x] SVG レンダラー
-* [x] テーマシステム (default, blue, dark)
-* [x] `SystemBoundary` によるコンテナ制約 (`hint.enclose()`)
-* [x] Z-Index ベースのレンダリング（ネスト構造対応）
-* [x] Include / Extend 関係（ユースケース図）
-* [x] Generalization 関係（継承矢印）
-* [ ] Note シンボル（注釈）
-* [ ] 矢印・関係線の自動ルーティング
-* [ ] クラス図対応（Class, Interface, Package）
-* [ ] Canvas レンダラー
-* [ ] PlantUML / Mermaid.js 風 DSL の追加
-* [ ] Webアプリデモ
+- [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal()`, `hint.vertical()`)
+- [x] SVG レンダラー
+- [x] テーマシステム (default, blue, dark)
+- [x] `SystemBoundary` によるコンテナ制約 (`hint.enclose()`)
+- [x] Z-Index ベースのレンダリング（ネスト構造対応）
+- [x] Include / Extend 関係（ユースケース図）
+- [x] Generalization 関係（継承矢印）
+- [ ] Note シンボル（注釈）
+- [ ] 矢印・関係線の自動ルーティング
+- [ ] クラス図対応（Class, Interface, Package）
+- [ ] Canvas レンダラー
+- [ ] PlantUML / Mermaid.js 風 DSL の追加
+- [ ] Webアプリデモ
 
 ---
 
@@ -282,11 +282,19 @@ bun add @lume/kiwi
 > “KiwiでUMLを書く” → “Kiw(um)i(l)”
 > という語呂合わせから生まれた名前です 🍃
 
-
-
 英語的には “キューミル” /ˈkɪ.wu.mɪl/ に近い発音になります。
 Kiwi（制約ソルバ）と UML（構造表現）を融合した、
 軽量で宣言的なレイアウトエンジンを目指します。
+
+---
+
+## 🤝 貢献について (CONTRIBUTION)
+
+現在のところ外部からの貢献は受け付けていません。プロジェクトの API はまだ不安定で、1.0.0 に到達するまでは破壊的な変更や流動的な改定を行う予定です。そのため、バージョン 1.0.0 をリリースするまではコントリビューションの受付を控えます。
+
+1.0.0 リリース時には CONTRIBUTING.md を追加し、ブランチ/PR の運用ルール、コードスタイル、テスト要件などを明記した上で外部からの貢献を受け入れる予定です。
+
+バグ報告や要望、アイデアがある場合は Issue を立ててください。今後の改善の参考とさせていただきますが、初期段階のため対応に時間がかかることがあります。
 
 ---
 
