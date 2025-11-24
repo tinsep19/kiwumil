@@ -4,7 +4,7 @@ import { getStyleForSymbol } from "../../../theme"
 import type { Point, ContainerSymbolId } from "../../../model/types"
 import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../theme"
-import { getBoundsValues, type LayoutBound } from "../../../layout/layout_bound"
+import { getBoundsValues, type Bounds } from "../../../layout/layout_bound"
 
 export class SystemBoundarySymbol extends ContainerSymbolBase {
   defaultWidth = 300
@@ -13,7 +13,7 @@ export class SystemBoundarySymbol extends ContainerSymbolBase {
   constructor(
     id: ContainerSymbolId,
     label: string,
-    layoutBounds: LayoutBound,
+    layoutBounds: Bounds,
     layout: LayoutContext
   ) {
     super(id, label, layoutBounds, layout)

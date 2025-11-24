@@ -1,19 +1,19 @@
 import type { LayoutVar } from "./kiwi"
 
 /**
- * LayoutType: レイアウトの種類を表す型
+ * BoundsType: レイアウトの種類を表す型
  * - "layout": Symbol の外矩形（Symbol は必ず1つだけ持つ）
  * - "container": Symbol を内包できる矩形
  * - "item": テキストやアイコンなど描画に必要な個別領域
  */
-export type LayoutType = "layout" | "container" | "item"
+export type BoundsType = "layout" | "container" | "item"
 
 /**
- * LayoutBound は Layout オブジェクトの境界を表す変数のグループ
+ * Bounds は Layout オブジェクトの境界を表す変数のグループ
  * すべての computed properties (right, bottom, centerX, centerY) も事前に作成され制約が設定される
  */
-export interface LayoutBound {
-  readonly type: LayoutType
+export interface Bounds {
+  readonly type: BoundsType
   readonly x: LayoutVar
   readonly y: LayoutVar
   readonly width: LayoutVar
@@ -25,27 +25,37 @@ export interface LayoutBound {
 }
 
 /**
- * 型付き LayoutBound のジェネリック型
+ * 型付き Bounds のジェネリック型
  */
-export type TypeBounds<T extends LayoutType> = LayoutBound & { readonly type: T }
+export type TypeBounds<T extends BoundsType> = Bounds & { readonly type: T }
 
 /**
- * 型エイリアス: Symbol の外矩形を表す LayoutBound
+ * @deprecated Use BoundsType instead
+ */
+export type LayoutType = BoundsType
+
+/**
+ * @deprecated Use Bounds instead
+ */
+export type LayoutBound = Bounds
+
+/**
+ * 型エイリアス: Symbol の外矩形を表す Bounds
  */
 export type LayoutBounds = TypeBounds<"layout">
 
 /**
- * 型エイリアス: Symbol を内包できる矩形を表す LayoutBound
+ * 型エイリアス: Symbol を内包できる矩形を表す Bounds
  */
 export type ContainerBounds = TypeBounds<"container">
 
 /**
- * 型エイリアス: 個別の描画領域を表す LayoutBound
+ * 型エイリアス: 個別の描画領域を表す Bounds
  */
 export type ItemBounds = TypeBounds<"item">
 
 /**
- * LayoutType から対応する Bounds 型へのマッピング
+ * BoundsType から対応する Bounds 型へのマッピング
  */
 export type BoundsMap = {
   layout: LayoutBounds
@@ -54,9 +64,9 @@ export type BoundsMap = {
 }
 
 /**
- * LayoutBound から現在の座標値を取得するヘルパー関数
+ * Bounds から現在の座標値を取得するヘルパー関数
  */
-export function getBoundsValues(bounds: LayoutBound): {
+export function getBoundsValues(bounds: Bounds): {
   x: number
   y: number
   width: number

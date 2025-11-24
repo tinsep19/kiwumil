@@ -4,7 +4,7 @@ import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point, ContainerSymbolId } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import type { LayoutBound } from "../layout/layout_bound"
+import type { Bounds } from "../layout/layout_bound"
 import type { LayoutContext } from "../layout/layout_context"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
 import { getBoundsValues } from "../layout/layout_bound"
@@ -16,7 +16,7 @@ export class DiagramSymbol extends ContainerSymbolBase {
   constructor(
     id: ContainerSymbolId,
     titleOrInfo: string | DiagramInfo,
-    layoutBounds: LayoutBound,
+    layoutBounds: Bounds,
     layout: LayoutContext
   ) {
     const info = typeof titleOrInfo === "string" ? { title: titleOrInfo } : titleOrInfo
