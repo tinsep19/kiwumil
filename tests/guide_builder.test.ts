@@ -4,7 +4,7 @@ import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
-import { getBoundsValues } from "../src/layout/layout_bound"
+import { getBoundsValues } from "../src/layout/bounds"
 
 describe("GuideBuilder (refactored common implementation)", () => {
   let symbols: Symbols

@@ -22,5 +22,19 @@ export type { LayoutContext } from "./layout/layout_context"
 export type { LayoutConstraintType } from "./layout/layout_constraints"
 export { LayoutConstraintStrength } from "./layout/layout_variables"
 
+// 新しい型名
+export type { Bounds, BoundsType } from "./layout/bounds"
+
+// 後方互換性のための deprecated 型エイリアス
+/**
+ * @deprecated Use Bounds instead
+ */
+export type { LayoutBound } from "./layout/bounds"
+
+/**
+ * @deprecated Use BoundsType instead
+ */
+export type { LayoutType } from "./layout/bounds"
+
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"

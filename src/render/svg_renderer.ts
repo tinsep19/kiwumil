@@ -4,7 +4,7 @@ import type { RelationshipBase } from "../model/relationship_base"
 import type { SymbolId } from "../model/types"
 import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model/diagram_symbol"
-import { getBoundsValues } from "../layout/layout_bound"
+import { getBoundsValues } from "../layout/bounds"
 
 interface RenderElement {
   zIndex: number

@@ -8,7 +8,7 @@ import { HintFactory } from "../src/dsl/hint_factory"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
 import { toContainerSymbolId } from "../src/model/container_symbol_base"
-import { getBoundsValues } from "../src/layout/layout_bound"
+import { getBoundsValues } from "../src/layout/bounds"
 
 describe("Layout pipeline", () => {
   let symbols: Symbols

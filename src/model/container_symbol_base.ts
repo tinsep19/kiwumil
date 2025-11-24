@@ -1,6 +1,6 @@
 import type { ContainerSymbolId, SymbolId } from "./types"
 import { SymbolBase } from "./symbol_base"
-import { LayoutBound } from "../layout/layout_bound"
+import { Bounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Theme } from "../theme"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
@@ -18,7 +18,7 @@ export function toContainerSymbolId(id: SymbolId): ContainerSymbolId {
 }
 
 interface ContainerContentProvider {
-  getContentLayoutBounds(): LayoutBound
+  getContentLayoutBounds(): Bounds
 }
 
 export function isContainerContentProvider(
@@ -32,11 +32,11 @@ export abstract class ContainerSymbolBase<
 > extends SymbolBase {
   override readonly id: TId
   protected readonly layout: LayoutContext
-  private contentBounds?: LayoutBound
+  private contentBounds?: Bounds
   private containerConstraintsApplied = false
   protected readonly childIds = new Set<SymbolId | ContainerSymbolId>()
 
-  protected constructor(id: TId, label: string, layoutBounds: LayoutBound, layout: LayoutContext) {
+  protected constructor(id: TId, label: string, layoutBounds: Bounds, layout: LayoutContext) {
     super(id, label, layoutBounds)
     this.id = id
     this.layout = layout
@@ -50,11 +50,11 @@ export abstract class ContainerSymbolBase<
     this.childIds.clear()
   }
 
-  getContentLayoutBounds(): LayoutBound {
+  getContentLayoutBounds(): Bounds {
     return this.ensureContentBounds()
   }
 
-  override ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound {
+  override ensureLayoutBounds(builder?: LayoutConstraintBuilder): Bounds {
     if (builder) {
       this.buildLayoutConstraints(builder)
     }
@@ -65,7 +65,7 @@ export abstract class ContainerSymbolBase<
     // noop; サブクラスでオーバーライド可能
   }
 
-  protected ensureContentBounds(): LayoutBound {
+  protected ensureContentBounds(): Bounds {
     if (!this.contentBounds) {
       const vars = this.layout.variables
       this.contentBounds = vars.createBound(`${this.id}.content`, "container")

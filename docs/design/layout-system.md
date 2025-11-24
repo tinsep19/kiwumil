@@ -66,7 +66,7 @@ kiwi の Variable/Constraint 生成を担う薄い層。
 ```typescript
 export class LayoutVariables {
   createVar(name: string): LayoutVar
-  createBound(id: SymbolId | ContainerSymbolId): LayoutBound
+  createBound(id: SymbolId | ContainerSymbolId): Bounds
   expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
   addConstraint(
     lhs: LayoutExpressionInput,
@@ -101,14 +101,15 @@ export class LayoutConstraints {
 
 ---
 
-## LayoutBound とレイアウト変数
+## Bounds とレイアウト変数
 
-### LayoutBound の定義
+### Bounds の定義
 
-LayoutBound はインターフェースとして定義され、すべてのプロパティが事前に作成されます。
+Bounds はインターフェースとして定義され、すべてのプロパティが事前に作成されます。
 
 ```typescript
-export interface LayoutBound {
+export interface Bounds {
+  readonly type: BoundsType  // "layout" | "container" | "item"
   readonly x: LayoutVar
   readonly y: LayoutVar
   readonly width: LayoutVar
@@ -126,7 +127,7 @@ export interface LayoutBound {
 
 ```typescript
 // LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
-createBound(id: SymbolId | ContainerSymbolId): LayoutBound {
+createBound(id: SymbolId | ContainerSymbolId): Bounds {
   const x = this.createVar(\`\${id}.x\`)
   const y = this.createVar(\`\${id}.y\`)
   const width = this.createVar(\`\${id}.width\`)
@@ -177,12 +178,12 @@ Symbol は図の要素（ノード）を表現する基底クラスです。
 export abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
-  protected readonly layoutBounds: LayoutBound
+  protected readonly layoutBounds: Bounds
   bounds?: { x: number; y: number; width: number; height: number }
 
-  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound)
+  constructor(id: SymbolId, label: string, layoutBounds: Bounds)
   
-  getLayoutBounds(): LayoutBound
+  getLayoutBounds(): Bounds
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
@@ -191,7 +192,7 @@ export abstract class SymbolBase {
 **主な責務:**
 1. **形状の定義と描画**: SVG での描画
 2. **接続点の計算**: 関係線の接続点を計算
-3. **LayoutBound の保持**: レイアウト変数への参照
+3. **Bounds の保持**: レイアウト変数への参照
 
 ### Relationship の責務
 

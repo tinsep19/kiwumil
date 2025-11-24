@@ -2,7 +2,7 @@
 import { RelationshipBase } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
 import type { SymbolId, RelationshipId } from "../../../model/types"
-import { getBoundsValues } from "../../../layout/layout_bound"
+import { getBoundsValues } from "../../../layout/bounds"
 
 export class Include extends RelationshipBase {
   constructor(id: RelationshipId, from: SymbolId, to: SymbolId) {

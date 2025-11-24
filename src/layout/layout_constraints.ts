@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
-import type { LayoutBound } from "./layout_bound"
+import type { Bounds } from "./bounds"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import {
   Operator,
@@ -50,7 +50,7 @@ export interface LayoutConstraint {
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
 type ContainerContentBoundsProvider = SymbolBase & {
-  getContentLayoutBounds: () => LayoutBound
+  getContentLayoutBounds: () => Bounds
 }
 
 function hasContentLayoutBounds(symbol: SymbolBase): symbol is ContainerContentBoundsProvider {

@@ -1,12 +1,12 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
-import type { LayoutBound } from "./layout_bound"
+import type { Bounds } from "./bounds"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
 import { LayoutSolver } from "./kiwi"
 
-type BoundsAxis = Exclude<keyof LayoutBound, "type">
+type BoundsAxis = Exclude<keyof Bounds, "type">
 
 interface BoundsTerm {
   axis: BoundsAxis
@@ -51,7 +51,7 @@ export class LayoutContext {
     return this.solver
   }
 
-  expressionFromBounds(bounds: LayoutBound, terms: BoundsTerm[], constant = 0) {
+  expressionFromBounds(bounds: Bounds, terms: BoundsTerm[], constant = 0) {
     return this.constraints.expression(
       terms.map((term) => ({
         variable: bounds[term.axis],
