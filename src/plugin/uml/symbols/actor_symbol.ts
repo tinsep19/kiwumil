@@ -39,12 +39,17 @@ export class ActorSymbol extends SymbolBase {
   toSVG(): string {
     const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
 
-    const cx = x + width / 2
-    const headRadius = width / 6
+    // 負の値や極端に小さい値を安全な値にクランプ（二次防御）
+    const safeWidth = Math.max(10, Math.abs(width))
+    const safeHeight = Math.max(20, Math.abs(height))
+
+    const cx = x + safeWidth / 2
+    // 半径を計算し、最小値でクランプ
+    const headRadius = Math.max(2, safeWidth / 6)
     const bodyTop = y + headRadius * 2 + 5
-    const bodyBottom = y + height * 0.6
+    const bodyBottom = y + safeHeight * 0.6
     const armY = bodyTop + (bodyBottom - bodyTop) * 0.3
-    const legBottom = y + height - 15
+    const legBottom = y + safeHeight - 15
 
     // テーマからスタイルを取得
     const style = this.theme
@@ -72,17 +77,17 @@ export class ActorSymbol extends SymbolBase {
               stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
         
         <!-- Arms -->
-        <line x1="${x + 5}" y1="${armY}" x2="${x + width - 5}" y2="${armY}" 
+        <line x1="${x + 5}" y1="${armY}" x2="${x + safeWidth - 5}" y2="${armY}" 
               stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
         
         <!-- Legs -->
         <line x1="${cx}" y1="${bodyBottom}" x2="${x + 10}" y2="${legBottom}" 
               stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        <line x1="${cx}" y1="${bodyBottom}" x2="${x + width - 10}" y2="${legBottom}" 
+        <line x1="${cx}" y1="${bodyBottom}" x2="${x + safeWidth - 10}" y2="${legBottom}" 
               stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
         
         <!-- Label -->
-        <text x="${cx}" y="${y + height}" 
+        <text x="${cx}" y="${y + safeHeight}" 
               text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
           ${this.label}
