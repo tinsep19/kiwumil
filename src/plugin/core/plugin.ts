@@ -6,7 +6,6 @@ import { RoundedRectangleSymbol } from "./symbols/rounded_rectangle_symbol"
 import { TextSymbol } from "./symbols/text_symbol"
 import type { TextInfo } from "./symbols/text_symbol"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolId } from "../../model/types"
 import type { LayoutContext } from "../../layout/layout_context"
 import type { Symbols } from "../../dsl/symbols"
 import type { Theme } from "../../theme"
@@ -26,9 +25,9 @@ export const CorePlugin = {
       /**
        * Circle Symbol を作成
        * @param label - Circle のラベル
-       * @returns 生成された SymbolId
+       * @returns 生成された CircleSymbol
        */
-      circle(label: string): SymbolId {
+      circle(label: string): CircleSymbol {
         const symbol = symbols.register(plugin, "circle", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const circle = new CircleSymbol({
@@ -41,16 +40,16 @@ export const CorePlugin = {
             circle.ensureLayoutBounds(builder)
           })
           return circle
-        })
-        return symbol.id
+        }) as CircleSymbol
+        return symbol
       },
 
       /**
        * Ellipse Symbol を作成
        * @param label - Ellipse のラベル
-       * @returns 生成された SymbolId
+       * @returns 生成された EllipseSymbol
        */
-      ellipse(label: string): SymbolId {
+      ellipse(label: string): EllipseSymbol {
         const symbol = symbols.register(plugin, "ellipse", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const ellipse = new EllipseSymbol({
@@ -63,16 +62,16 @@ export const CorePlugin = {
             ellipse.ensureLayoutBounds(builder)
           })
           return ellipse
-        })
-        return symbol.id
+        }) as EllipseSymbol
+        return symbol
       },
 
       /**
        * Rectangle Symbol を作成
        * @param label - Rectangle のラベル
-       * @returns 生成された SymbolId
+       * @returns 生成された RectangleSymbol
        */
-      rectangle(label: string): SymbolId {
+      rectangle(label: string): RectangleSymbol {
         const symbol = symbols.register(plugin, "rectangle", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const rectangle = new RectangleSymbol({
@@ -85,16 +84,16 @@ export const CorePlugin = {
             rectangle.ensureLayoutBounds(builder)
           })
           return rectangle
-        })
-        return symbol.id
+        }) as RectangleSymbol
+        return symbol
       },
 
       /**
        * Rounded Rectangle Symbol を作成
        * @param label - Rounded Rectangle のラベル
-       * @returns 生成された SymbolId
+       * @returns 生成された RoundedRectangleSymbol
        */
-      roundedRectangle(label: string): SymbolId {
+      roundedRectangle(label: string): RoundedRectangleSymbol {
         const symbol = symbols.register(plugin, "roundedRectangle", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const rounded = new RoundedRectangleSymbol({
@@ -107,15 +106,16 @@ export const CorePlugin = {
             rounded.ensureLayoutBounds(builder)
           })
           return rounded
-        })
-        return symbol.id
+        }) as RoundedRectangleSymbol
+        return symbol
       },
 
       /**
        * Text Symbol を作成
        * @param labelOrInfo - 改行やスタイルを含めたテキスト指定
+       * @returns 生成された TextSymbol
        */
-      text(labelOrInfo: string | TextInfo): SymbolId {
+      text(labelOrInfo: string | TextInfo): TextSymbol {
         const symbol = symbols.register(plugin, "text", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const text = new TextSymbol({
@@ -128,8 +128,8 @@ export const CorePlugin = {
             text.ensureLayoutBounds(builder)
           })
           return text
-        })
-        return symbol.id
+        }) as TextSymbol
+        return symbol
       },
     }
   },

@@ -5,7 +5,6 @@ import {
   type DiagramPlugin,
   type SymbolId,
   type RelationshipId,
-  type ContainerSymbolId,
 } from "../dist"
 import { SymbolBase } from "../dist/model/symbol_base"
 import {
@@ -16,6 +15,14 @@ import type { LayoutBounds } from "../dist/layout/bounds"
 import type { LayoutConstraintBuilder } from "../dist/layout/layout_constraints"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
+import {
+  toSymbolId,
+  type SymbolOrId,
+} from "../dist/dsl/symbol_helpers"
+import { CircleSymbol } from "../dist/plugin/core/symbols/circle_symbol"
+import { TextSymbol } from "../dist/plugin/core/symbols/text_symbol"
+import { ActorSymbol } from "../dist/plugin/uml/symbols/actor_symbol"
+import { SystemBoundarySymbol } from "../dist/plugin/uml/symbols/system_boundary_symbol"
 
 class TestSymbol extends SymbolBase {
   readonly label: string
@@ -58,13 +65,13 @@ const CustomPlugin = {
     const plugin = this.name
 
     return {
-      node(label: string): SymbolId {
+      node(label: string): TestSymbol {
         const symbol = symbols.register(plugin, "node", (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
           return new TestSymbol(symbolId, label, bound)
-        })
-        return symbol.id
-      }
+        }) as TestSymbol
+        return symbol
+      },
     }
   },
   createRelationshipFactory(relationships, layout, _theme: Theme) {
@@ -72,15 +79,15 @@ const CustomPlugin = {
     const plugin = this.name
 
     return {
-      link(from: SymbolId, to: SymbolId): RelationshipId {
+      link(from: SymbolOrId, to: SymbolOrId): RelationshipId {
         const relationship = relationships.register(
           plugin,
           "link",
           (id) =>
             new TestRelationship({
               id,
-              from,
-              to,
+              from: toSymbolId(from),
+              to: toSymbolId(to),
               theme: _theme,
             })
         )
@@ -93,9 +100,9 @@ const CustomPlugin = {
 TypeDiagram("Default Core").build((el, rel) => {
   const _core = el.core
   expectAssignable<object>(_core)
-  expectType<SymbolId>(el.core.circle("Circle"))
-  expectType<SymbolId>(el.core.text("Multi\nLine"))
-  expectType<SymbolId>(el.core.text({ label: "Info object", textAnchor: "start" }))
+  expectType<CircleSymbol>(el.core.circle("Circle"))
+  expectType<TextSymbol>(el.core.text("Multi\nLine"))
+  expectType<TextSymbol>(el.core.text({ label: "Info object", textAnchor: "start" }))
 
   // @ts-expect-error - UMLPlugin not registered yet
   const _uml = el.uml
@@ -114,9 +121,9 @@ TypeDiagram("UML Plugin")
     expectAssignable<object>(_uml)
 
     const user = el.uml.actor("User")
-    expectType<SymbolId>(user)
+    expectType<ActorSymbol>(user)
     const boundary = el.uml.systemBoundary("System")
-    expectType<ContainerSymbolId>(boundary)
+    expectType<SystemBoundarySymbol>(boundary)
 
     const _relUml = rel.uml
     expectAssignable<object>(_relUml)
@@ -136,8 +143,8 @@ TypeDiagram("Multiple Plugins")
 
     const user = el.uml.actor("User")
     const node = el.custom.node("Node")
-    expectType<SymbolId>(user)
-    expectType<SymbolId>(node)
+    expectType<ActorSymbol>(user)
+    expectType<TestSymbol>(node)
 
     const link = rel.custom.link(user, node)
     expectType<RelationshipId>(link)

@@ -2,13 +2,14 @@
 
 import type { ContainerSymbolId, SymbolId } from "../../model/types"
 import type { HintFactory } from "../../dsl/hint_factory"
+import { toSymbolId, type SymbolOrId } from "../../dsl/symbol_helpers"
 
 /**
  * Figure レイアウト用の Builder
  * 非矩形配置（行ごとに異なる要素数）をサポート
  */
 export class FigureBuilder {
-  private rows?: SymbolId[][]
+  private rows?: SymbolOrId[][]
   private options: {
     rowGap?: number
     align?: "left" | "center" | "right"
@@ -24,7 +25,7 @@ export class FigureBuilder {
    * 配置するシンボルを指定（行配列）
    * @param rows - 行ごとの配列（各行の要素数は異なってもOK）
    */
-  enclose(rows: SymbolId[][]): this {
+  enclose(rows: SymbolOrId[][]): this {
     this.rows = rows
     return this
   }
@@ -67,13 +68,16 @@ export class FigureBuilder {
       throw new Error("enclose() must be called before layout()")
     }
 
-    const children = this.rows.flat()
+    const resolvedRows = this.rows.map((row) => row.map(toSymbolId))
+    const children = resolvedRows.flat()
 
     // metadata 設定（nestLevel）
     this.applyContainerMetadata(children)
 
     // 制約を適用
-    this.hint.getLayoutContext().constraints.encloseFigure(this.container, this.rows, this.options)
+    this.hint
+      .getLayoutContext()
+      .constraints.encloseFigure(this.container, resolvedRows, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {

@@ -3,13 +3,14 @@
 import type { ContainerSymbolId, SymbolId } from "../../model/types"
 import type { HintFactory } from "../../dsl/hint_factory"
 import { isRectMatrix } from "../../dsl/matrix_utils"
+import { toSymbolId, type SymbolOrId } from "../../dsl/symbol_helpers"
 
 /**
  * Grid レイアウト用の Builder
  * 矩形行列（N×M）の配置をサポート
  */
 export class GridBuilder {
-  private matrix?: SymbolId[][]
+  private matrix?: SymbolOrId[][]
   private options: {
     rowGap?: number
     colGap?: number
@@ -26,7 +27,7 @@ export class GridBuilder {
    * @param matrix - N×M の矩形行列
    * @throws 矩形でない場合はエラー
    */
-  enclose(matrix: SymbolId[][]): this {
+  enclose(matrix: SymbolOrId[][]): this {
     if (!isRectMatrix(matrix)) {
       throw new Error(
         "GridBuilder.enclose() requires a rectangular matrix. Use FigureBuilder for non-rectangular layouts."
@@ -71,13 +72,16 @@ export class GridBuilder {
       throw new Error("enclose() must be called before layout()")
     }
 
-    const children = this.matrix.flat()
+    const resolvedMatrix = this.matrix.map((row) => row.map(toSymbolId))
+    const children = resolvedMatrix.flat()
 
     // metadata 設定（nestLevel）
     this.applyContainerMetadata(children)
 
     // 制約を適用
-    this.hint.getLayoutContext().constraints.encloseGrid(this.container, this.matrix, this.options)
+    this.hint
+      .getLayoutContext()
+      .constraints.encloseGrid(this.container, resolvedMatrix, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {
