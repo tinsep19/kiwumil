@@ -1,6 +1,6 @@
 // src/theme/themes.ts
 
-import { StyleSet, Theme, SymbolName } from "./types"
+import { Theme } from "./types"
 
 // Default Theme
 export const DefaultTheme: Theme = {

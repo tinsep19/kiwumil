@@ -33,7 +33,7 @@ export class LayoutContext {
     this.solver.updateVariables()
   }
 
-  solveAndApply(symbols: SymbolBase[]) {
+  solveAndApply(_symbols: SymbolBase[]) {
     this.solve()
     // Symbols now use getLayoutBounds() directly in toSVG/getConnectionPoint
     // No longer need to populate the deprecated bounds property

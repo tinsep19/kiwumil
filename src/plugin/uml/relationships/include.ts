@@ -4,7 +4,7 @@ import {
   type RelationshipBaseOptions,
 } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
-import type { SymbolId, RelationshipId } from "../../../model/types"
+import type { SymbolId } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
 
 export class Include extends RelationshipBase {
