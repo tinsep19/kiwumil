@@ -9,22 +9,22 @@ import { Operator } from "../src/layout/kiwi"
 
 describe("Bounds Validation", () => {
   describe("getBoundsValues", () => {
-    let layout: LayoutContext
+    let context: LayoutContext
     let symbols: Symbols
 
     beforeEach(() => {
       symbols = new Symbols()
-      layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+      context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
     })
 
     test("should return finite values for valid bounds", () => {
-      const bounds = layout.variables.createBound("test")
+      const bounds = context.variables.createBound("test")
 
-      layout.solver.addConstraint(bounds.x, Operator.Eq, 10)
-      layout.solver.addConstraint(bounds.y, Operator.Eq, 20)
-      layout.solver.addConstraint(bounds.width, Operator.Eq, 100)
-      layout.solver.addConstraint(bounds.height, Operator.Eq, 50)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.x, Operator.Eq, 10)
+      context.solver.addConstraint(bounds.y, Operator.Eq, 20)
+      context.solver.addConstraint(bounds.width, Operator.Eq, 100)
+      context.solver.addConstraint(bounds.height, Operator.Eq, 50)
+      context.solver.updateVariables()
 
       const values = getBoundsValues(bounds)
 
@@ -35,12 +35,12 @@ describe("Bounds Validation", () => {
     })
 
     test("should detect and warn about negative width", () => {
-      const bounds = layout.variables.createBound("test")
+      const bounds = context.variables.createBound("test")
 
       // Create a scenario with negative width (right < left)
-      layout.solver.addConstraint(bounds.x, Operator.Eq, 100)
-      layout.solver.addConstraint(bounds.width, Operator.Eq, -50)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.x, Operator.Eq, 100)
+      context.solver.addConstraint(bounds.width, Operator.Eq, -50)
+      context.solver.updateVariables()
 
       // Should still return the negative value but log warning
       const values = getBoundsValues(bounds)
@@ -48,12 +48,12 @@ describe("Bounds Validation", () => {
     })
 
     test("should detect and warn about negative height", () => {
-      const bounds = layout.variables.createBound("test")
+      const bounds = context.variables.createBound("test")
 
       // Create a scenario with negative height (bottom < top)
-      layout.solver.addConstraint(bounds.y, Operator.Eq, 100)
-      layout.solver.addConstraint(bounds.height, Operator.Eq, -30)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.y, Operator.Eq, 100)
+      context.solver.addConstraint(bounds.height, Operator.Eq, -30)
+      context.solver.updateVariables()
 
       // Should still return the negative value but log warning
       const values = getBoundsValues(bounds)
@@ -62,25 +62,30 @@ describe("Bounds Validation", () => {
   })
 
   describe("ActorSymbol rendering guards", () => {
-    let layout: LayoutContext
+    let context: LayoutContext
     let symbols: Symbols
 
     beforeEach(() => {
       symbols = new Symbols()
-      layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+      context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
     })
 
     test("should clamp negative width to safe value in SVG output", () => {
-      const bounds = layout.variables.createBound("actor")
+      const bounds = context.variables.createBound("actor")
 
       // Set negative width
-      layout.solver.addConstraint(bounds.x, Operator.Eq, 0)
-      layout.solver.addConstraint(bounds.y, Operator.Eq, 0)
-      layout.solver.addConstraint(bounds.width, Operator.Eq, -80)
-      layout.solver.addConstraint(bounds.height, Operator.Eq, 100)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.x, Operator.Eq, 0)
+      context.solver.addConstraint(bounds.y, Operator.Eq, 0)
+      context.solver.addConstraint(bounds.width, Operator.Eq, -80)
+      context.solver.addConstraint(bounds.height, Operator.Eq, 100)
+      context.solver.updateVariables()
 
-      const actor = new ActorSymbol("test-actor", "TestActor", bounds)
+      const actor = new ActorSymbol({
+        id: "test-actor",
+        layoutBounds: bounds,
+        label: "TestActor",
+        theme: DefaultTheme,
+      })
       const svg = actor.toSVG()
 
       // Check that SVG doesn't contain negative radius
@@ -94,15 +99,20 @@ describe("Bounds Validation", () => {
     })
 
     test("should render with valid positive dimensions for normal bounds", () => {
-      const bounds = layout.variables.createBound("actor")
+      const bounds = context.variables.createBound("actor")
 
-      layout.solver.addConstraint(bounds.x, Operator.Eq, 10)
-      layout.solver.addConstraint(bounds.y, Operator.Eq, 10)
-      layout.solver.addConstraint(bounds.width, Operator.Eq, 60)
-      layout.solver.addConstraint(bounds.height, Operator.Eq, 80)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.x, Operator.Eq, 10)
+      context.solver.addConstraint(bounds.y, Operator.Eq, 10)
+      context.solver.addConstraint(bounds.width, Operator.Eq, 60)
+      context.solver.addConstraint(bounds.height, Operator.Eq, 80)
+      context.solver.updateVariables()
 
-      const actor = new ActorSymbol("test-actor", "TestActor", bounds)
+      const actor = new ActorSymbol({
+        id: "test-actor",
+        layoutBounds: bounds,
+        label: "TestActor",
+        theme: DefaultTheme,
+      })
       const svg = actor.toSVG()
 
       // Check for valid circle element with positive radius
@@ -116,25 +126,30 @@ describe("Bounds Validation", () => {
   })
 
   describe("UsecaseSymbol rendering guards", () => {
-    let layout: LayoutContext
+    let context: LayoutContext
     let symbols: Symbols
 
     beforeEach(() => {
       symbols = new Symbols()
-      layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+      context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
     })
 
     test("should clamp negative height to safe value in SVG output", () => {
-      const bounds = layout.variables.createBound("usecase")
+      const bounds = context.variables.createBound("usecase")
 
       // Set negative height
-      layout.solver.addConstraint(bounds.x, Operator.Eq, 0)
-      layout.solver.addConstraint(bounds.y, Operator.Eq, 0)
-      layout.solver.addConstraint(bounds.width, Operator.Eq, 120)
-      layout.solver.addConstraint(bounds.height, Operator.Eq, -50)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.x, Operator.Eq, 0)
+      context.solver.addConstraint(bounds.y, Operator.Eq, 0)
+      context.solver.addConstraint(bounds.width, Operator.Eq, 120)
+      context.solver.addConstraint(bounds.height, Operator.Eq, -50)
+      context.solver.updateVariables()
 
-      const usecase = new UsecaseSymbol("test-usecase", "TestUsecase", bounds)
+      const usecase = new UsecaseSymbol({
+        id: "test-usecase",
+        layoutBounds: bounds,
+        label: "TestUsecase",
+        theme: DefaultTheme,
+      })
       const svg = usecase.toSVG()
 
       // Check that SVG doesn't contain negative ry
@@ -151,15 +166,20 @@ describe("Bounds Validation", () => {
     })
 
     test("should render with valid positive dimensions for normal bounds", () => {
-      const bounds = layout.variables.createBound("usecase")
+      const bounds = context.variables.createBound("usecase")
 
-      layout.solver.addConstraint(bounds.x, Operator.Eq, 10)
-      layout.solver.addConstraint(bounds.y, Operator.Eq, 10)
-      layout.solver.addConstraint(bounds.width, Operator.Eq, 120)
-      layout.solver.addConstraint(bounds.height, Operator.Eq, 60)
-      layout.solver.updateVariables()
+      context.solver.addConstraint(bounds.x, Operator.Eq, 10)
+      context.solver.addConstraint(bounds.y, Operator.Eq, 10)
+      context.solver.addConstraint(bounds.width, Operator.Eq, 120)
+      context.solver.addConstraint(bounds.height, Operator.Eq, 60)
+      context.solver.updateVariables()
 
-      const usecase = new UsecaseSymbol("test-usecase", "TestUsecase", bounds)
+      const usecase = new UsecaseSymbol({
+        id: "test-usecase",
+        layoutBounds: bounds,
+        label: "TestUsecase",
+        theme: DefaultTheme,
+      })
       const svg = usecase.toSVG()
 
       // Check for valid ellipse element with positive rx and ry

@@ -33,7 +33,7 @@ export class LayoutContext {
     this.solver.updateVariables()
   }
 
-  solveAndApply(symbols: SymbolBase[]) {
+  solveAndApply(_symbols: SymbolBase[]) {
     this.solve()
     // Symbols now use getLayoutBounds() directly in toSVG/getConnectionPoint
     // No longer need to populate the deprecated bounds property
@@ -67,7 +67,8 @@ export class LayoutContext {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
   ) {
     const bounds = symbol.getLayoutBounds()
-    this.constraints.withSymbol(symbol, "symbolBounds", (builder) => {
+    this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
+      symbol.ensureLayoutBounds(builder)
       builder.ge(bounds.width, size.width, strength)
       builder.ge(bounds.height, size.height, strength)
     })
@@ -78,7 +79,8 @@ export class LayoutContext {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Strong
   ) {
     const bounds = symbol.getLayoutBounds()
-    this.constraints.withSymbol(symbol, "symbolBounds", (builder) => {
+    this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
+      symbol.ensureLayoutBounds(builder)
       builder.eq(bounds.x, 0, strength)
       builder.eq(bounds.y, 0, strength)
     })

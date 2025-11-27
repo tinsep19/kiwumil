@@ -1,12 +1,15 @@
 // src/plugin/uml/relationships/generalize.ts
-import { RelationshipBase } from "../../../model/relationship_base"
+import {
+  RelationshipBase,
+  type RelationshipBaseOptions,
+} from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
-import type { SymbolId, RelationshipId } from "../../../model/types"
+import type { SymbolId } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
 
 export class Generalize extends RelationshipBase {
-  constructor(id: RelationshipId, from: SymbolId, to: SymbolId) {
-    super(id, from, to)
+  constructor(options: RelationshipBaseOptions) {
+    super(options)
   }
 
   toSVG(symbols: Map<SymbolId, SymbolBase>): string {

@@ -5,23 +5,28 @@ import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
 import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
-import { toContainerSymbolId } from "../src/model/container_symbol_base"
+import { toContainerSymbolId } from "../src/model/container_symbol"
 
 describe("LayoutConstraints metadata", () => {
-  let layout: LayoutContext
+  let context: LayoutContext
   let hint: HintFactory
   let symbols: Symbols
 
   beforeEach(() => {
     symbols = new Symbols()
-    layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
-    hint = new HintFactory(layout, symbols)
+    context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+    hint = new HintFactory(context, symbols)
   })
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const bound = layout.variables.createBound(symbolId)
-      const actor = new ActorSymbol(symbolId, id, bound)
+      const bound = context.variables.createBound(symbolId)
+      const actor = new ActorSymbol({
+        id: symbolId,
+        layoutBounds: bound,
+        label: id,
+        theme: DefaultTheme,
+      })
       return actor
     })
   }
@@ -29,8 +34,16 @@ describe("LayoutConstraints metadata", () => {
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
-      const bound = layout.variables.createBound(containerId)
-      return new SystemBoundarySymbol(containerId, id, bound, layout)
+      const bound = context.variables.createBound(containerId)
+      return new SystemBoundarySymbol(
+        {
+          id: containerId,
+          layoutBounds: bound,
+          label: id,
+          theme: DefaultTheme,
+        },
+        context
+      )
     })
   }
 
@@ -41,7 +54,7 @@ describe("LayoutConstraints metadata", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
 
-    const entries = layout.constraints
+    const entries = context.constraints
       .list()
       .filter((constraint) => constraint.type === "arrangeHorizontal")
 
@@ -56,7 +69,7 @@ describe("LayoutConstraints metadata", () => {
 
     hint.enclose(boundary.id, [first.id, second.id])
 
-    const entry = layout.constraints.list().find((constraint) => constraint.type === "enclose")
+    const entry = context.constraints.list().find((constraint) => constraint.type === "enclose")
 
     expect(entry).toBeDefined()
     expect(entry?.rawConstraints).toHaveLength(8) // four required constraints per child

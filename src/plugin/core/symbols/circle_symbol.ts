@@ -1,10 +1,21 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import { SymbolBase } from "../../../model/symbol_base"
+import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
 
+export interface CircleSymbolOptions extends SymbolBaseOptions {
+  label: string
+}
+
 export class CircleSymbol extends SymbolBase {
+  readonly label: string
+
+  constructor(options: CircleSymbolOptions) {
+    super(options)
+    this.label = options.label
+  }
+
   getDefaultSize() {
     return { width: 60, height: 60 }
   }

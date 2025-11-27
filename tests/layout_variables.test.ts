@@ -3,36 +3,36 @@ import { LayoutSolver, Operator } from "../src/layout/kiwi"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
-    const vars = new LayoutVariables()
+    const variables = new LayoutVariables()
     const solver = new LayoutSolver()
-    const x = vars.createVar("x")
+    const x = variables.createVar("x")
 
     solver.addConstraint(x, Operator.Eq, 42)
     solver.updateVariables()
 
-    expect(vars.valueOf(x)).toBeCloseTo(42)
+    expect(variables.valueOf(x)).toBeCloseTo(42)
   })
 
   test("supports expressions combining variables and constants", () => {
-    const vars = new LayoutVariables()
+    const variables = new LayoutVariables()
     const solver = new LayoutSolver()
-    const a = vars.createVar("a")
-    const b = vars.createVar("b")
+    const a = variables.createVar("a")
+    const b = variables.createVar("b")
 
     solver.addConstraint(a, Operator.Eq, 10)
     solver.addConstraint(b, Operator.Eq, solver.expression([{ variable: a, coefficient: 1 }], 20))
 
     solver.updateVariables()
 
-    expect(vars.valueOf(a)).toBeCloseTo(10)
-    expect(vars.valueOf(b)).toBeCloseTo(30)
+    expect(variables.valueOf(a)).toBeCloseTo(10)
+    expect(variables.valueOf(b)).toBeCloseTo(30)
   })
 
   test("createBoundsSet creates multiple bounds with different types", () => {
     const solver = new LayoutSolver()
-    const vars = new LayoutVariables(solver)
+    const variables = new LayoutVariables(solver)
 
-    const boundsSet = vars.createBoundsSet({
+    const boundsSet = variables.createBoundsSet({
       symbol1: "layout",
       content1: "container",
       icon1: "item",
@@ -54,9 +54,9 @@ describe("LayoutVariables", () => {
 
   test("createBoundsSet provides correct type inference", () => {
     const solver = new LayoutSolver()
-    const vars = new LayoutVariables(solver)
+    const variables = new LayoutVariables(solver)
 
-    const boundsSet = vars.createBoundsSet({
+    const boundsSet = variables.createBoundsSet({
       myLayout: "layout" as const,
       myContainer: "container" as const,
       myItem: "item" as const,

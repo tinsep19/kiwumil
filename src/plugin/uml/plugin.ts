@@ -8,10 +8,11 @@ import { Extend } from "./relationships/extend"
 import { Generalize } from "./relationships/generalize"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
-import { toContainerSymbolId } from "../../model/container_symbol_base"
+import { toContainerSymbolId } from "../../model/container_symbol"
 import type { LayoutContext } from "../../layout/layout_context"
 import type { Symbols } from "../../dsl/symbols"
 import type { Relationships } from "../../dsl/relationships"
+import type { Theme } from "../../theme"
 
 /**
  * UML Plugin (Namespace-based)
@@ -21,7 +22,7 @@ import type { Relationships } from "../../dsl/relationships"
 export const UMLPlugin = {
   name: "uml",
 
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme) {
     const plugin = this.name
 
     return {
@@ -32,9 +33,14 @@ export const UMLPlugin = {
        */
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, "actor", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const actor = new ActorSymbol(symbolId, label, bound)
-          return actor
+        const bound = context.variables.createBound(symbolId)
+        const actor = new ActorSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          label,
+          theme,
+        })
+        return actor
         })
         return symbol.id
       },
@@ -46,9 +52,14 @@ export const UMLPlugin = {
        */
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const usecase = new UsecaseSymbol(symbolId, label, bound)
-          return usecase
+        const bound = context.variables.createBound(symbolId)
+        const usecase = new UsecaseSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          label,
+          theme,
+        })
+        return usecase
         })
         return symbol.id
       },
@@ -61,15 +72,27 @@ export const UMLPlugin = {
       systemBoundary(label: string): ContainerSymbolId {
         const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
-          const bound = layout.variables.createBound(id)
-          return new SystemBoundarySymbol(id, label, bound, layout)
+          const bound = context.variables.createBound(id)
+          return new SystemBoundarySymbol(
+            {
+              id,
+              layoutBounds: bound,
+              label,
+              theme,
+            },
+            context
+          )
         })
         return symbol.id as ContainerSymbolId
       },
     }
   },
 
-  createRelationshipFactory(relationships: Relationships, _layout: LayoutContext) {
+  createRelationshipFactory(
+    relationships: Relationships,
+    _context: LayoutContext,
+    theme: Theme
+  ) {
     const plugin = this.name
 
     return {
@@ -83,7 +106,13 @@ export const UMLPlugin = {
         const relationship = relationships.register(
           plugin,
           "association",
-          (id) => new Association(id, from, to)
+          (id) =>
+            new Association({
+              id,
+              from,
+              to,
+              theme,
+            })
         )
         return relationship.id
       },
@@ -98,7 +127,13 @@ export const UMLPlugin = {
         const relationship = relationships.register(
           plugin,
           "include",
-          (id) => new Include(id, from, to)
+          (id) =>
+            new Include({
+              id,
+              from,
+              to,
+              theme,
+            })
         )
         return relationship.id
       },
@@ -113,7 +148,13 @@ export const UMLPlugin = {
         const relationship = relationships.register(
           plugin,
           "extend",
-          (id) => new Extend(id, from, to)
+          (id) =>
+            new Extend({
+              id,
+              from,
+              to,
+              theme,
+            })
         )
         return relationship.id
       },
@@ -128,7 +169,13 @@ export const UMLPlugin = {
         const relationship = relationships.register(
           plugin,
           "generalize",
-          (id) => new Generalize(id, from, to)
+          (id) =>
+            new Generalize({
+              id,
+              from,
+              to,
+              theme,
+            })
         )
         return relationship.id
       },

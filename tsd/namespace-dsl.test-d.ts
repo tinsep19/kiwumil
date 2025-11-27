@@ -5,15 +5,23 @@ import {
   type DiagramPlugin,
   type SymbolId,
   type RelationshipId,
-  type ContainerSymbolId
+  type ContainerSymbolId,
 } from "../dist"
 import { SymbolBase } from "../dist/model/symbol_base"
-import { RelationshipBase } from "../dist/model/relationship_base"
-import type { LayoutBound } from "../dist/layout/layout_bound"
+import {
+  RelationshipBase,
+  type RelationshipBaseOptions,
+} from "../dist/model/relationship_base"
+import type { Bounds } from "../dist/layout/bounds"
+import { DefaultTheme } from "../dist/theme"
+import type { Theme } from "../dist/theme"
 
 class TestSymbol extends SymbolBase {
-  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
-    super(id, label, layoutBounds)
+  readonly label: string
+
+  constructor(id: SymbolId, label: string, layoutBounds: Bounds) {
+    super({ id, layoutBounds, theme: DefaultTheme })
+    this.label = label
   }
 
   getDefaultSize() {
@@ -30,6 +38,10 @@ class TestSymbol extends SymbolBase {
 }
 
 class TestRelationship extends RelationshipBase {
+  constructor(options: RelationshipBaseOptions) {
+    super(options)
+  }
+
   toSVG() {
     return ""
   }
@@ -37,7 +49,7 @@ class TestRelationship extends RelationshipBase {
 
 const CustomPlugin = {
   name: "custom",
-  createSymbolFactory(symbols, layout) {
+  createSymbolFactory(symbols, layout, _theme: Theme) {
     const plugin = this.name
 
     return {
@@ -50,13 +62,23 @@ const CustomPlugin = {
       }
     }
   },
-  createRelationshipFactory(relationships, layout) {
+  createRelationshipFactory(relationships, layout, _theme: Theme) {
     void layout
     const plugin = this.name
 
     return {
       link(from: SymbolId, to: SymbolId): RelationshipId {
-        const relationship = relationships.register(plugin, "link", (id) => new TestRelationship(id, from, to))
+        const relationship = relationships.register(
+          plugin,
+          "link",
+          (id) =>
+            new TestRelationship({
+              id,
+              from,
+              to,
+              theme: _theme,
+            })
+        )
         return relationship.id
       }
     }

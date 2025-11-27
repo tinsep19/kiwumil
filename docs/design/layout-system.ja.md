@@ -578,6 +578,14 @@ circle(label: string): SymbolId {
 
 ---
 
+---
+
+## 命名規則
+
+* `LayoutContext` インスタンスは `context` と呼ぶ
+* `LayoutConstraints` は `constraints`
+* `LayoutVariables` は `variables`
+
 ## LayoutBound Injection
 
 ### 概要
@@ -662,7 +670,7 @@ layoutContext.constraints.remove("constraints/user/0")
 - ✅ **LayoutContext**: Variables/Constraints のファサード化
 - ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
 - ✅ **LayoutBound**: インターフェース化、派生変数の事前作成
-- ✅ **ContainerSymbolBase**: コンテナの共通基底クラス
+- ✅ **Container Symbol Interface**: `container: Bounds` を保持し `containerInbounds` 制約を登録するシンプルなインターフェース
 - ✅ **DiagramSymbol**: 図全体の統一的な管理
 - ✅ **制約の追跡**: 制約IDによる管理
 

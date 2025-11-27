@@ -9,6 +9,7 @@ import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolId } from "../../model/types"
 import type { LayoutContext } from "../../layout/layout_context"
 import type { Symbols } from "../../dsl/symbols"
+import type { Theme } from "../../theme"
 
 /**
  * Core Plugin (Namespace-based)
@@ -18,7 +19,7 @@ import type { Symbols } from "../../dsl/symbols"
 export const CorePlugin = {
   name: "core",
 
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme) {
     const plugin = this.name
 
     return {
@@ -29,8 +30,13 @@ export const CorePlugin = {
        */
       circle(label: string): SymbolId {
         const symbol = symbols.register(plugin, "circle", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const circle = new CircleSymbol(symbolId, label, bound)
+        const bound = context.variables.createBound(symbolId)
+        const circle = new CircleSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          label,
+          theme,
+        })
           return circle
         })
         return symbol.id
@@ -43,8 +49,13 @@ export const CorePlugin = {
        */
       ellipse(label: string): SymbolId {
         const symbol = symbols.register(plugin, "ellipse", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const ellipse = new EllipseSymbol(symbolId, label, bound)
+        const bound = context.variables.createBound(symbolId)
+        const ellipse = new EllipseSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          label,
+          theme,
+        })
           return ellipse
         })
         return symbol.id
@@ -57,8 +68,13 @@ export const CorePlugin = {
        */
       rectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, "rectangle", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const rectangle = new RectangleSymbol(symbolId, label, bound)
+        const bound = context.variables.createBound(symbolId)
+        const rectangle = new RectangleSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          label,
+          theme,
+        })
           return rectangle
         })
         return symbol.id
@@ -71,8 +87,13 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, "roundedRectangle", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const rounded = new RoundedRectangleSymbol(symbolId, label, bound)
+        const bound = context.variables.createBound(symbolId)
+        const rounded = new RoundedRectangleSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          label,
+          theme,
+        })
           return rounded
         })
         return symbol.id
@@ -84,8 +105,13 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
         const symbol = symbols.register(plugin, "text", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const text = new TextSymbol(symbolId, labelOrInfo, bound)
+        const bound = context.variables.createBound(symbolId)
+        const text = new TextSymbol({
+          id: symbolId,
+          layoutBounds: bound,
+          info: labelOrInfo,
+          theme,
+        })
           return text
         })
         return symbol.id

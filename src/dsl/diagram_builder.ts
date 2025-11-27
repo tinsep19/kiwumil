@@ -14,7 +14,7 @@ import type { Theme } from "../theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import type { SymbolId } from "../model/types"
-import { toContainerSymbolId } from "../model/container_symbol_base"
+import { toContainerSymbolId } from "../model/container_symbol"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
 
@@ -75,7 +75,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const relationships = new Relationships()
     let diagramSymbol: DiagramSymbol | undefined
     const diagramSymbolId = toContainerSymbolId("__diagram__")
-    const layoutContext = new LayoutContext(this.currentTheme, (id: SymbolId) => {
+    const context = new LayoutContext(this.currentTheme, (id: SymbolId) => {
       if (diagramSymbol && diagramSymbol.id === id) {
         return diagramSymbol
       }
@@ -84,36 +84,42 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
-    const el = namespaceBuilder.buildElementNamespace(symbols, layoutContext)
-    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, layoutContext)
-    const hint = new HintFactory(layoutContext, symbols)
+    const el = namespaceBuilder.buildElementNamespace(
+      symbols,
+      context,
+      this.currentTheme
+    )
+    const rel = namespaceBuilder.buildRelationshipNamespace(
+      relationships,
+      context,
+      this.currentTheme
+    )
+    const hint = new HintFactory(context, symbols)
 
     // ユーザーのコールバックを実行
     // この中で el.uml.actor() などが呼ばれ、Symbols / Relationships に追加される
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
-    const diagramBound = layoutContext.variables.createBound(diagramSymbolId)
-    diagramSymbol = new DiagramSymbol(
-      diagramSymbolId,
-      this.titleOrInfo,
-      diagramBound,
-      layoutContext
-    )
-    diagramSymbol.setTheme(this.currentTheme)
+    const diagramBound = context.variables.createBound(diagramSymbolId)
+    const diagramInfo =
+      typeof this.titleOrInfo === "string"
+        ? { title: this.titleOrInfo }
+        : this.titleOrInfo
 
+    diagramSymbol = new DiagramSymbol(
+      {
+        id: diagramSymbolId,
+        layoutBounds: diagramBound,
+        info: diagramInfo,
+        theme: this.currentTheme,
+      },
+      context
+    )
     // すべての Symbol を含む配列
     const symbolList = symbols.getAll()
     const relationshipList = relationships.getAll()
     const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
-
-    // テーマを適用
-    for (const symbol of symbolList) {
-      symbol.setTheme(this.currentTheme)
-    }
-    for (const relationship of relationshipList) {
-      relationship.setTheme(this.currentTheme)
-    }
 
     // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (symbolList.length > 0) {
@@ -124,7 +130,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     // レイアウト計算
-    layoutContext.solveAndApply(allSymbols)
+    context.solveAndApply(allSymbols)
 
     return {
       symbols: allSymbols,

@@ -3,20 +3,24 @@ import type { SymbolBase } from "./symbol_base"
 import type { SymbolId, RelationshipId } from "./types"
 import type { Theme } from "../theme"
 
+export interface RelationshipBaseOptions {
+  id: RelationshipId
+  from: SymbolId
+  to: SymbolId
+  theme: Theme
+}
+
 export abstract class RelationshipBase {
   readonly id: RelationshipId
-  protected theme?: Theme
+  readonly from: SymbolId
+  readonly to: SymbolId
+  protected readonly theme: Theme
 
-  constructor(
-    id: RelationshipId,
-    public from: SymbolId,
-    public to: SymbolId
-  ) {
-    this.id = id
-  }
-
-  setTheme(theme: Theme) {
-    this.theme = theme
+  constructor(options: RelationshipBaseOptions) {
+    this.id = options.id
+    this.from = options.from
+    this.to = options.to
+    this.theme = options.theme
   }
 
   calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {

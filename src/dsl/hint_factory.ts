@@ -3,7 +3,6 @@ import type { ContainerSymbolId, SymbolId } from "../model/types"
 import { DIAGRAM_CONTAINER_ID } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutContext } from "../layout/layout_context"
-import { ContainerSymbolBase } from "../model/container_symbol_base"
 import { GridBuilder } from "../layout/hint/grid_builder"
 import { FigureBuilder } from "../layout/hint/figure_builder"
 import { Symbols } from "./symbols"
@@ -19,7 +18,7 @@ export class HintFactory {
   private guideCounter = 0
 
   constructor(
-    private readonly layout: LayoutContext,
+    private readonly context: LayoutContext,
     private readonly symbols: Symbols
   ) {}
 
@@ -45,7 +44,7 @@ export class HintFactory {
    * LayoutContext を取得（Builder から参照）
    */
   getLayoutContext(): LayoutContext {
-    return this.layout
+    return this.context
   }
 
   /**
@@ -64,47 +63,47 @@ export class HintFactory {
   }
 
   arrangeHorizontal(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.arrangeHorizontal(symbolIds)
+    this.context.constraints.arrangeHorizontal(symbolIds)
   }
 
   arrangeVertical(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.arrangeVertical(symbolIds)
+    this.context.constraints.arrangeVertical(symbolIds)
   }
 
   alignLeft(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignLeft(symbolIds)
+    this.context.constraints.alignLeft(symbolIds)
   }
 
   alignRight(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignRight(symbolIds)
+    this.context.constraints.alignRight(symbolIds)
   }
 
   alignTop(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignTop(symbolIds)
+    this.context.constraints.alignTop(symbolIds)
   }
 
   alignBottom(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignBottom(symbolIds)
+    this.context.constraints.alignBottom(symbolIds)
   }
 
   alignCenterX(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignCenterX(symbolIds)
+    this.context.constraints.alignCenterX(symbolIds)
   }
 
   alignCenterY(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignCenterY(symbolIds)
+    this.context.constraints.alignCenterY(symbolIds)
   }
 
   alignWidth(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignWidth(symbolIds)
+    this.context.constraints.alignWidth(symbolIds)
   }
 
   alignHeight(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignHeight(symbolIds)
+    this.context.constraints.alignHeight(symbolIds)
   }
 
   alignSize(...symbolIds: LayoutTargetId[]) {
-    this.layout.constraints.alignSize(symbolIds)
+    this.context.constraints.alignSize(symbolIds)
   }
 
   enclose(containerId: ContainerSymbolId, childIds: LayoutTargetId[]) {
@@ -113,22 +112,18 @@ export class HintFactory {
       const containerNestLevel = container.nestLevel
       for (const childId of childIds) {
         const child = this.symbols.findById(childId)
-        if (child) {
-          child.nestLevel = containerNestLevel + 1
-          child.containerId = containerId
-          if (container instanceof ContainerSymbolBase) {
-            container.registerChild(childId)
-          }
-        }
+      if (child) {
+        child.nestLevel = containerNestLevel + 1
+      }
       }
     }
 
-    this.layout.constraints.enclose(containerId, childIds)
+    this.context.constraints.enclose(containerId, childIds)
   }
 
   createGuideX(value?: number): GuideBuilderX {
     return new GuideBuilderImpl(
-      this.layout,
+      this.context,
       (id: LayoutTargetId) => this.findSymbolById(id),
       "x",
       `guideX-${this.guideCounter++}`,
@@ -138,7 +133,7 @@ export class HintFactory {
 
   createGuideY(value?: number): GuideBuilderY {
     return new GuideBuilderImpl(
-      this.layout,
+      this.context,
       (id: LayoutTargetId) => this.findSymbolById(id),
       "y",
       `guideY-${this.guideCounter++}`,

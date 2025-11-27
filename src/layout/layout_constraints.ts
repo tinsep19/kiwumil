@@ -49,12 +49,12 @@ export interface LayoutConstraint {
 
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
-type ContainerContentBoundsProvider = SymbolBase & {
-  getContentLayoutBounds: () => Bounds
+type ContainerBoundsProvider = SymbolBase & {
+  readonly container: Bounds
 }
 
-function hasContentLayoutBounds(symbol: SymbolBase): symbol is ContainerContentBoundsProvider {
-  return typeof (symbol as ContainerContentBoundsProvider).getContentLayoutBounds === "function"
+function hasContainerBounds(symbol: SymbolBase): symbol is ContainerBoundsProvider {
+  return typeof (symbol as Partial<ContainerBoundsProvider>).container === "object"
 }
 
 export class LayoutConstraintBuilder {
@@ -106,20 +106,14 @@ export class LayoutConstraints {
   }
 
   withSymbol(
-    symbol: SymbolBase | LayoutSymbolId,
+    symbolId: LayoutSymbolId,
     type: LayoutConstraintType,
     build: (builder: LayoutConstraintBuilder) => void
   ) {
     const builder = new LayoutConstraintBuilder(this.solver)
 
-    // If symbol is a SymbolBase instance, call ensureLayoutBounds to let it add constraints
-    if (typeof symbol !== "string") {
-      symbol.ensureLayoutBounds(builder)
-    }
-
     build(builder)
-    const targetId = typeof symbol === "string" ? symbol : symbol.id
-    this.record(type, builder.getRawConstraints(), targetId)
+    this.record(type, builder.getRawConstraints(), symbolId)
   }
 
   expression(terms?: LayoutTerm[], constant = 0) {
@@ -384,8 +378,8 @@ export class LayoutConstraints {
   enclose(containerId: ContainerSymbolId, childIds: LayoutSymbolId[]) {
     const container = this.resolveSymbolById(containerId)
     if (!container) return
-    const containerBounds = hasContentLayoutBounds(container)
-      ? container.getContentLayoutBounds()
+    const containerBounds = hasContainerBounds(container)
+      ? container.container
       : container.getLayoutBounds()
     const raws: kiwi.Constraint[] = []
 

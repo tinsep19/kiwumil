@@ -8,9 +8,12 @@ describe("TextSymbol", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBound("core:text-0")
-    const symbol = new TextSymbol("core:text-0", "First line\nSecond line is longer", bound)
-    symbol.setTheme(DefaultTheme)
-
+    const symbol = new TextSymbol({
+      id: "core:text-0",
+      layoutBounds: bound,
+      info: "First line\nSecond line is longer",
+      theme: DefaultTheme,
+    })
     const size = symbol.getDefaultSize()
 
     expect(size.width).toBeGreaterThan(150)
@@ -21,9 +24,12 @@ describe("TextSymbol", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBound("core:text-1")
-    const symbol = new TextSymbol("core:text-1", "Line A\n\nLine C", bound)
-    symbol.setTheme(DefaultTheme)
-
+    const symbol = new TextSymbol({
+      id: "core:text-1",
+      layoutBounds: bound,
+      info: "Line A\n\nLine C",
+      theme: DefaultTheme,
+    })
     // Set up layout bounds
     const lb = symbol.getLayoutBounds()
     solver.addEditVariable(lb.x, "strong")
@@ -47,19 +53,18 @@ describe("TextSymbol", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBound("core:text-2")
-    const symbol = new TextSymbol(
-      "core:text-2",
-      {
+    const symbol = new TextSymbol({
+      id: "core:text-2",
+      layoutBounds: bound,
+      info: {
         label: "Align start",
         textAnchor: "start",
         textColor: "#ff0000",
         fontSize: 20,
         fontFamily: "Courier New",
       },
-      bound
-    )
-    symbol.setTheme(DefaultTheme)
-
+      theme: DefaultTheme,
+    })
     // Set up layout bounds
     const lb = symbol.getLayoutBounds()
     solver.addEditVariable(lb.x, "strong")
