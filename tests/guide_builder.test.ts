@@ -14,7 +14,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
   beforeEach(() => {
     symbols = new Symbols()
     context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
-    hint = new HintFactory(context, symbols)
+    hint = new HintFactory({ context, symbols })
   })
 
   function createActor(id: string) {

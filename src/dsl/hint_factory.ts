@@ -16,15 +16,23 @@ type LayoutTargetId = SymbolId | ContainerSymbolId
 
 export class HintFactory {
   private guideCounter = 0
-  private diagramContainer: ContainerSymbolId = DIAGRAM_CONTAINER_ID
+  private diagramContainer: ContainerSymbolId
 
-  constructor(
-    private readonly context: LayoutContext,
-    private readonly symbols: Symbols
-  ) {}
+  private readonly context: LayoutContext
+  private readonly symbols: Symbols
 
-  setDefaultContainer(container: ContainerSymbolId) {
-    this.diagramContainer = container
+  constructor({
+    context,
+    symbols,
+    diagramContainer = DIAGRAM_CONTAINER_ID,
+  }: {
+    context: LayoutContext
+    symbols: Symbols
+    diagramContainer?: ContainerSymbolId
+  }) {
+    this.context = context
+    this.symbols = symbols
+    this.diagramContainer = diagramContainer
   }
 
   /**

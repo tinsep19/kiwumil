@@ -107,8 +107,11 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       context,
       this.currentTheme
     )
-    const hint = new HintFactory(context, symbols)
-    hint.setDefaultContainer(diagramSymbol.id as ContainerSymbolId)
+    const hint = new HintFactory({
+      context,
+      symbols,
+      diagramContainer: diagramSymbol.id as ContainerSymbolId,
+    })
 
     callback(el, rel, hint)
 
