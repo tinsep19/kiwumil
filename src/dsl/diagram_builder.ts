@@ -76,9 +76,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const context = new LayoutContext(this.currentTheme, (id: SymbolId) => symbols.findById(id))
 
     const diagramInfo =
-      typeof this.titleOrInfo === "string"
-        ? { title: this.titleOrInfo }
-        : this.titleOrInfo
+      typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
     const diagramSymbol = symbols.register("__builtin__", "diagram", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
@@ -97,11 +95,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }) as DiagramSymbol
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
-    const el = namespaceBuilder.buildElementNamespace(
-      symbols,
-      context,
-      this.currentTheme
-    )
+    const el = namespaceBuilder.buildElementNamespace(symbols, context, this.currentTheme)
     const rel = namespaceBuilder.buildRelationshipNamespace(
       relationships,
       context,

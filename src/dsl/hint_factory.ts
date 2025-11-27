@@ -125,9 +125,9 @@ export class HintFactory {
       const containerNestLevel = container.nestLevel
       for (const childId of childIds) {
         const child = this.symbols.findById(childId)
-      if (child) {
-        child.nestLevel = containerNestLevel + 1
-      }
+        if (child) {
+          child.nestLevel = containerNestLevel + 1
+        }
       }
     }
 

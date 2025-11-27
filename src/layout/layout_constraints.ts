@@ -378,9 +378,7 @@ export class LayoutConstraints {
   enclose(containerId: ContainerSymbolId, childIds: LayoutSymbolId[]) {
     const container = this.resolveSymbolById(containerId)
     if (!container) return
-    const containerBounds = hasContainerBounds(container)
-      ? container.container
-      : container.layout
+    const containerBounds = hasContainerBounds(container) ? container.container : container.layout
     const raws: kiwi.Constraint[] = []
 
     for (const childId of childIds) {

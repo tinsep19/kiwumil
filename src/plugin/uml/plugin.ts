@@ -33,14 +33,14 @@ export const UMLPlugin = {
        */
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, "actor", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const actor = new ActorSymbol({
-          id: symbolId,
-          layout: bound,
-          label,
-          theme,
-        })
-        return actor
+          const bound = context.variables.createBound(symbolId)
+          const actor = new ActorSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          return actor
         })
         return symbol.id
       },
@@ -52,14 +52,14 @@ export const UMLPlugin = {
        */
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const usecase = new UsecaseSymbol({
-          id: symbolId,
-          layout: bound,
-          label,
-          theme,
-        })
-        return usecase
+          const bound = context.variables.createBound(symbolId)
+          const usecase = new UsecaseSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          return usecase
         })
         return symbol.id
       },
@@ -91,11 +91,7 @@ export const UMLPlugin = {
     }
   },
 
-  createRelationshipFactory(
-    relationships: Relationships,
-    _context: LayoutContext,
-    theme: Theme
-  ) {
+  createRelationshipFactory(relationships: Relationships, _context: LayoutContext, theme: Theme) {
     const plugin = this.name
 
     return {

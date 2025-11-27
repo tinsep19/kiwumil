@@ -55,7 +55,10 @@ export class LayoutVariables {
    * @param prefix 変数名のプレフィックス
    * @param type レイアウトの種類 (デフォルト: "layout")
    */
-  createBound<Type extends BoundsType = "layout">(prefix: string, type: Type = "layout" as Type): BoundsMap[Type] {
+  createBound<Type extends BoundsType = "layout">(
+    prefix: string,
+    type: Type = "layout" as Type
+  ): BoundsMap[Type] {
     const solver = this.getSolver()
     if (!solver) {
       throw new Error(

@@ -132,9 +132,7 @@ describe("Layout pipeline", () => {
     const bBounds = getBoundsValues(b.layout)
     const boundaryBounds = getBoundsValues(boundary.layout)
     expect(aBounds.x).toBeGreaterThanOrEqual(boundaryBounds.x)
-    expect(bBounds.y + bBounds.height).toBeLessThanOrEqual(
-      boundaryBounds.y + boundaryBounds.height
-    )
+    expect(bBounds.y + bBounds.height).toBeLessThanOrEqual(boundaryBounds.y + boundaryBounds.height)
   })
 
   test("guide builder aligns to shared variable and arranges symbols", () => {
