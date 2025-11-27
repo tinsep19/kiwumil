@@ -2,7 +2,7 @@
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
-import type { ContainerBounds } from "../../../layout/bounds"
+import type { ContainerBounds, LayoutBounds } from "../../../layout/bounds"
 import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../theme"
 import { LayoutConstraintStrength } from "../../../layout/layout_variables"
@@ -14,22 +14,21 @@ export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
   label: string
 }
 
+type BoundsAxis = "x" | "y" | "width" | "height"
+
 export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol {
   readonly label: string
   readonly container: ContainerBounds
 
-  private readonly context: LayoutContext
   private readonly defaultWidth = 300
   private readonly defaultHeight = 200
   private constraintsApplied = false
 
   constructor(options: SystemBoundarySymbolOptions, layout: LayoutContext) {
     super(options)
-    this.context = layout
     this.container = layout.variables.createBound(`${this.id}.container`, "container")
     this.label = options.label
-    this.registerContainerConstraints()
-    this.applyMinSize()
+    this.registerContainerConstraints(layout)
   }
 
   getDefaultSize() {
@@ -51,16 +50,15 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     return theme.defaultStyleSet.verticalGap / 2
   }
 
-  private registerContainerConstraints() {
-    this.context.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
+  private registerContainerConstraints(context: LayoutContext) {
+    context.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
       this.ensureLayoutBounds(builder)
-      this.buildContainerConstraints(builder)
     })
   }
 
   private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
     const bounds = this.layout
-    const theme = this.theme ?? this.context.theme
+    const theme = this.theme
     const padding = this.getContainerPadding(theme)
     const header = this.getHeaderHeight(theme)
     const horizontalPadding = padding.left + padding.right
@@ -68,32 +66,32 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
 
     builder.eq(
       this.container.x,
-      this.context.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
+      this.expressionFromBounds(builder, bounds, "x", padding.left),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.y,
-      this.context.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
+      this.expressionFromBounds(builder, bounds, "y", padding.top + header),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.width,
-      this.context.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
+      this.expressionFromBounds(builder, bounds, "width", -horizontalPadding),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.height,
-      this.context.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
+      this.expressionFromBounds(builder, bounds, "height", -verticalPadding),
       LayoutConstraintStrength.Strong
     )
   }
-
-  private applyMinSize() {
-    if (this.constraintsApplied) {
-      return
-    }
-    this.context.applyMinSize(this, this.getDefaultSize())
-    this.constraintsApplied = true
+  private expressionFromBounds(
+    builder: LayoutConstraintBuilder,
+    bounds: LayoutBounds,
+    axis: BoundsAxis,
+    constant = 0
+  ) {
+    return builder.expression([{ variable: bounds[axis] }], constant)
   }
 
   getConnectionPoint(from: Point): Point {
@@ -123,8 +121,15 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     }
   }
 
-  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
-    // Custom constraints are applied via registerContainerConstraints()
+  ensureLayoutBounds(builder: LayoutConstraintBuilder): void {
+    this.buildContainerConstraints(builder)
+    if (this.constraintsApplied) {
+      return
+    }
+    const bounds = this.layout
+    builder.ge(bounds.width, this.defaultWidth, LayoutConstraintStrength.Weak)
+    builder.ge(bounds.height, this.defaultHeight, LayoutConstraintStrength.Weak)
+    this.constraintsApplied = true
   }
 
   toSVG(): string {
