@@ -30,13 +30,16 @@ export const CorePlugin = {
        */
       circle(label: string): SymbolId {
         const symbol = symbols.register(plugin, "circle", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const circle = new CircleSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          label,
-          theme,
-        })
+          const bound = context.variables.createBound(symbolId)
+          const circle = new CircleSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            circle.ensureLayoutBounds(builder)
+          })
           return circle
         })
         return symbol.id
@@ -49,13 +52,16 @@ export const CorePlugin = {
        */
       ellipse(label: string): SymbolId {
         const symbol = symbols.register(plugin, "ellipse", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const ellipse = new EllipseSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          label,
-          theme,
-        })
+          const bound = context.variables.createBound(symbolId)
+          const ellipse = new EllipseSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            ellipse.ensureLayoutBounds(builder)
+          })
           return ellipse
         })
         return symbol.id
@@ -68,13 +74,16 @@ export const CorePlugin = {
        */
       rectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, "rectangle", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const rectangle = new RectangleSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          label,
-          theme,
-        })
+          const bound = context.variables.createBound(symbolId)
+          const rectangle = new RectangleSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            rectangle.ensureLayoutBounds(builder)
+          })
           return rectangle
         })
         return symbol.id
@@ -87,13 +96,16 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string): SymbolId {
         const symbol = symbols.register(plugin, "roundedRectangle", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const rounded = new RoundedRectangleSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          label,
-          theme,
-        })
+          const bound = context.variables.createBound(symbolId)
+          const rounded = new RoundedRectangleSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            rounded.ensureLayoutBounds(builder)
+          })
           return rounded
         })
         return symbol.id
@@ -105,13 +117,16 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo): SymbolId {
         const symbol = symbols.register(plugin, "text", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const text = new TextSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          info: labelOrInfo,
-          theme,
-        })
+          const bound = context.variables.createBound(symbolId)
+          const text = new TextSymbol({
+            id: symbolId,
+            layout: bound,
+            info: labelOrInfo,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            text.ensureLayoutBounds(builder)
+          })
           return text
         })
         return symbol.id

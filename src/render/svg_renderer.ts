@@ -76,9 +76,9 @@ export class SvgRenderer {
     const minViewport = 100 // viewport の最小サイズ
     const minBoundsSize = 0.1 // bounds の最小有効サイズ
     const maxBoundsSize = 10000 // bounds の最大有効サイズ
-    
+
     for (const symbol of this.symbols) {
-      const bounds = getBoundsValues(symbol.getLayoutBounds())
+      const bounds = getBoundsValues(symbol.layout)
       // 極端に小さい、大きい、または不正な値をチェック
       if (
         bounds.width < minBoundsSize ||
@@ -100,7 +100,7 @@ export class SvgRenderer {
     let diagramHeight: number | undefined
     for (const symbol of this.symbols) {
       if (symbol instanceof DiagramSymbol) {
-        const bounds = getBoundsValues(symbol.getLayoutBounds())
+        const bounds = getBoundsValues(symbol.layout)
         diagramWidth = bounds.width
         diagramHeight = bounds.height
         break
@@ -110,14 +110,14 @@ export class SvgRenderer {
     let width: number
     let height: number
     // DiagramSymbol の bounds が有効かチェック
-    const isDiagramBoundsValid = 
-      typeof diagramWidth === "number" && 
+    const isDiagramBoundsValid =
+      typeof diagramWidth === "number" &&
       typeof diagramHeight === "number" &&
       Number.isFinite(diagramWidth) &&
       Number.isFinite(diagramHeight) &&
       diagramWidth >= minViewport &&
       diagramHeight >= minViewport
-      
+
     if (isDiagramBoundsValid) {
       width = diagramWidth!
       height = diagramHeight!
@@ -130,11 +130,11 @@ export class SvgRenderer {
           `falling back to maxX/maxY calculation`
         )
       }
-      
+
       let maxX = 0
       let maxY = 0
       for (const symbol of this.symbols) {
-        const bounds = getBoundsValues(symbol.getLayoutBounds())
+        const bounds = getBoundsValues(symbol.layout)
         maxX = Math.max(maxX, bounds.x + bounds.width)
         maxY = Math.max(maxY, bounds.y + bounds.height)
       }

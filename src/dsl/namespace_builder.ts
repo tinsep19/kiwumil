@@ -67,11 +67,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createRelationshipFactory === "function") {
-        namespace[plugin.name] = plugin.createRelationshipFactory(
-          relationships,
-          layout,
-          theme
-        )
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout, theme)
       }
     }
 

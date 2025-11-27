@@ -12,15 +12,16 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { Bounds } from "../dist/layout/bounds"
+import type { LayoutBounds } from "../dist/layout/bounds"
+import type { LayoutConstraintBuilder } from "../dist/layout/layout_constraints"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 
 class TestSymbol extends SymbolBase {
   readonly label: string
 
-  constructor(id: SymbolId, label: string, layoutBounds: Bounds) {
-    super({ id, layoutBounds, theme: DefaultTheme })
+  constructor(id: SymbolId, label: string, layout: LayoutBounds) {
+    super({ id, layout, theme: DefaultTheme })
     this.label = label
   }
 
@@ -34,6 +35,10 @@ class TestSymbol extends SymbolBase {
 
   getConnectionPoint() {
     return { x: 0, y: 0 }
+  }
+
+  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+    // no-op for testing
   }
 }
 

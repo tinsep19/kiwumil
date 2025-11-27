@@ -33,14 +33,17 @@ export const UMLPlugin = {
        */
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, "actor", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const actor = new ActorSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          label,
-          theme,
-        })
-        return actor
+          const bound = context.variables.createBound(symbolId)
+          const actor = new ActorSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            actor.ensureLayoutBounds(builder)
+          })
+          return actor
         })
         return symbol.id
       },
@@ -52,14 +55,17 @@ export const UMLPlugin = {
        */
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-        const bound = context.variables.createBound(symbolId)
-        const usecase = new UsecaseSymbol({
-          id: symbolId,
-          layoutBounds: bound,
-          label,
-          theme,
-        })
-        return usecase
+          const bound = context.variables.createBound(symbolId)
+          const usecase = new UsecaseSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            usecase.ensureLayoutBounds(builder)
+          })
+          return usecase
         })
         return symbol.id
       },
@@ -73,26 +79,25 @@ export const UMLPlugin = {
         const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
           const bound = context.variables.createBound(id)
-          return new SystemBoundarySymbol(
-            {
-              id,
-              layoutBounds: bound,
-              label,
-              theme,
-            },
-            context
-          )
+          const container = context.variables.createBound(`${id}.container`, "container")
+          const boundary = new SystemBoundarySymbol({
+            id,
+            layout: bound,
+            container,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(id, "containerInbounds", (builder) => {
+            boundary.ensureLayoutBounds(builder)
+          })
+          return boundary
         })
         return symbol.id as ContainerSymbolId
       },
     }
   },
 
-  createRelationshipFactory(
-    relationships: Relationships,
-    _context: LayoutContext,
-    theme: Theme
-  ) {
+  createRelationshipFactory(relationships: Relationships, _context: LayoutContext, theme: Theme) {
     const plugin = this.name
 
     return {

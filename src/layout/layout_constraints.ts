@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
-import type { Bounds } from "./bounds"
+import type { ContainerBounds } from "./bounds"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import {
   Operator,
@@ -50,7 +50,7 @@ export interface LayoutConstraint {
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
 type ContainerBoundsProvider = SymbolBase & {
-  readonly container: Bounds
+  readonly container: ContainerBounds
 }
 
 function hasContainerBounds(symbol: SymbolBase): symbol is ContainerBoundsProvider {
@@ -127,8 +127,8 @@ export class LayoutConstraints {
       const a = this.resolveSymbolById(symbolIds[i])
       const b = this.resolveSymbolById(symbolIds[i + 1])
       if (!a || !b) continue
-      const aBounds = a.getLayoutBounds()
-      const bBounds = b.getLayoutBounds()
+      const aBounds = a.layout
+      const bBounds = b.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -150,8 +150,8 @@ export class LayoutConstraints {
       const a = this.resolveSymbolById(symbolIds[i])
       const b = this.resolveSymbolById(symbolIds[i + 1])
       if (!a || !b) continue
-      const aBounds = a.getLayoutBounds()
-      const bBounds = b.getLayoutBounds()
+      const aBounds = a.layout
+      const bBounds = b.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -171,12 +171,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           bounds.x,
@@ -195,12 +195,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([{ variable: bounds.x }, { variable: bounds.width }]),
@@ -219,12 +219,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           bounds.y,
@@ -243,12 +243,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([{ variable: bounds.y }, { variable: bounds.height }]),
@@ -267,12 +267,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([
@@ -297,12 +297,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([
@@ -327,12 +327,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           bounds.width,
@@ -351,12 +351,12 @@ export class LayoutConstraints {
     if (symbolIds.length === 0) return
     const reference = this.resolveSymbolById(symbolIds[0])
     if (!reference) return
-    const refBounds = reference.getLayoutBounds()
+    const refBounds = reference.layout
 
     for (const id of symbolIds.slice(1)) {
       const symbol = this.resolveSymbolById(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       raws.push(
         this.solver.addConstraint(
           bounds.height,
@@ -378,15 +378,13 @@ export class LayoutConstraints {
   enclose(containerId: ContainerSymbolId, childIds: LayoutSymbolId[]) {
     const container = this.resolveSymbolById(containerId)
     if (!container) return
-    const containerBounds = hasContainerBounds(container)
-      ? container.container
-      : container.getLayoutBounds()
+    const containerBounds = hasContainerBounds(container) ? container.container : container.layout
     const raws: kiwi.Constraint[] = []
 
     for (const childId of childIds) {
       const child = this.resolveSymbolById(childId)
       if (!child) continue
-      const childBounds = child.getLayoutBounds()
+      const childBounds = child.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -539,8 +537,8 @@ export class LayoutConstraints {
       const next = this.resolveSymbolById(symbolIds[i + 1])
       if (!current || !next) continue
 
-      const currentBounds = current.getLayoutBounds()
-      const nextBounds = next.getLayoutBounds()
+      const currentBounds = current.layout
+      const nextBounds = next.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -570,8 +568,8 @@ export class LayoutConstraints {
       const next = this.resolveSymbolById(symbolIds[i + 1])
       if (!current || !next) continue
 
-      const currentBounds = current.getLayoutBounds()
-      const nextBounds = next.getLayoutBounds()
+      const currentBounds = current.layout
+      const nextBounds = next.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -595,12 +593,12 @@ export class LayoutConstraints {
 
     const first = this.resolveSymbolById(symbolIds[0])
     if (!first) return raws
-    const firstBounds = first.getLayoutBounds()
+    const firstBounds = first.layout
 
     for (let i = 1; i < symbolIds.length; i++) {
       const current = this.resolveSymbolById(symbolIds[i])
       if (!current) continue
-      const currentBounds = current.getLayoutBounds()
+      const currentBounds = current.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -627,12 +625,12 @@ export class LayoutConstraints {
 
     const first = this.resolveSymbolById(symbolIds[0])
     if (!first) return raws
-    const firstBounds = first.getLayoutBounds()
+    const firstBounds = first.layout
 
     for (let i = 1; i < symbolIds.length; i++) {
       const current = this.resolveSymbolById(symbolIds[i])
       if (!current) continue
-      const currentBounds = current.getLayoutBounds()
+      const currentBounds = current.layout
 
       raws.push(
         this.solver.addConstraint(

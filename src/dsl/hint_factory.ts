@@ -16,18 +16,31 @@ type LayoutTargetId = SymbolId | ContainerSymbolId
 
 export class HintFactory {
   private guideCounter = 0
+  private diagramContainer: ContainerSymbolId
 
-  constructor(
-    private readonly context: LayoutContext,
-    private readonly symbols: Symbols
-  ) {}
+  private readonly context: LayoutContext
+  private readonly symbols: Symbols
+
+  constructor({
+    context,
+    symbols,
+    diagramContainer = DIAGRAM_CONTAINER_ID,
+  }: {
+    context: LayoutContext
+    symbols: Symbols
+    diagramContainer?: ContainerSymbolId
+  }) {
+    this.context = context
+    this.symbols = symbols
+    this.diagramContainer = diagramContainer
+  }
 
   /**
    * Grid Builder を返す（矩形行列レイアウト用）
    * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
   grid(container?: ContainerSymbolId): GridBuilder {
-    const targetContainer = container ?? DIAGRAM_CONTAINER_ID
+    const targetContainer = container ?? this.diagramContainer
     return new GridBuilder(this, targetContainer)
   }
 
@@ -36,7 +49,7 @@ export class HintFactory {
    * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
   figure(container?: ContainerSymbolId): FigureBuilder {
-    const targetContainer = container ?? DIAGRAM_CONTAINER_ID
+    const targetContainer = container ?? this.diagramContainer
     return new FigureBuilder(this, targetContainer)
   }
 
@@ -112,9 +125,9 @@ export class HintFactory {
       const containerNestLevel = container.nestLevel
       for (const childId of childIds) {
         const child = this.symbols.findById(childId)
-      if (child) {
-        child.nestLevel = containerNestLevel + 1
-      }
+        if (child) {
+          child.nestLevel = containerNestLevel + 1
+        }
       }
     }
 

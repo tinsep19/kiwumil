@@ -13,7 +13,7 @@ import type { DiagramInfo } from "../model/diagram_info"
 import type { Theme } from "../theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import type { SymbolId } from "../model/types"
+import type { SymbolId, ContainerSymbolId } from "../model/types"
 import { toContainerSymbolId } from "../model/container_symbol"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
@@ -73,58 +73,49 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   build(callback: IntelliSenseBlock<TPlugins>) {
     const symbols = new Symbols()
     const relationships = new Relationships()
-    let diagramSymbol: DiagramSymbol | undefined
-    const diagramSymbolId = toContainerSymbolId("__diagram__")
-    const context = new LayoutContext(this.currentTheme, (id: SymbolId) => {
-      if (diagramSymbol && diagramSymbol.id === id) {
-        return diagramSymbol
-      }
-      return symbols.findById(id)
-    })
+    const context = new LayoutContext(this.currentTheme, (id: SymbolId) => symbols.findById(id))
 
-    // Namespace Builder を使って el と rel を構築
+    const diagramInfo =
+      typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
+
+    const diagramSymbol = symbols.register("__builtin__", "diagram", (symbolId) => {
+      const containerId = toContainerSymbolId(symbolId)
+      const diagramBound = context.variables.createBound(containerId)
+      const containerBound = context.variables.createBound(`${containerId}.container`, "container")
+      return new DiagramSymbol(
+        {
+          id: containerId,
+          layout: diagramBound,
+          container: containerBound,
+          info: diagramInfo,
+          theme: this.currentTheme,
+        },
+        context
+      )
+    }) as DiagramSymbol
+
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
-    const el = namespaceBuilder.buildElementNamespace(
-      symbols,
-      context,
-      this.currentTheme
-    )
+    const el = namespaceBuilder.buildElementNamespace(symbols, context, this.currentTheme)
     const rel = namespaceBuilder.buildRelationshipNamespace(
       relationships,
       context,
       this.currentTheme
     )
-    const hint = new HintFactory(context, symbols)
+    const hint = new HintFactory({
+      context,
+      symbols,
+      diagramContainer: diagramSymbol.id as ContainerSymbolId,
+    })
 
-    // ユーザーのコールバックを実行
-    // この中で el.uml.actor() などが呼ばれ、Symbols / Relationships に追加される
     callback(el, rel, hint)
 
-    // DiagramSymbol を作成
-    const diagramBound = context.variables.createBound(diagramSymbolId)
-    const diagramInfo =
-      typeof this.titleOrInfo === "string"
-        ? { title: this.titleOrInfo }
-        : this.titleOrInfo
-
-    diagramSymbol = new DiagramSymbol(
-      {
-        id: diagramSymbolId,
-        layoutBounds: diagramBound,
-        info: diagramInfo,
-        theme: this.currentTheme,
-      },
-      context
-    )
-    // すべての Symbol を含む配列
-    const symbolList = symbols.getAll()
     const relationshipList = relationships.getAll()
+    const symbolList = symbols.getAll().filter((symbol) => symbol.id !== diagramSymbol.id)
     const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
 
-    // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (symbolList.length > 0) {
       hint.enclose(
-        diagramSymbolId,
+        diagramSymbol.id as ContainerSymbolId,
         symbolList.map((s) => s.id)
       )
     }
@@ -139,14 +130,11 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
         const renderer = new SvgRenderer(allSymbols, [...relationshipList], this.currentTheme)
 
         if (typeof target === "string") {
-          // ケース1: 文字列パス → ファイル保存
           renderer.saveToFile(target)
         } else if ("url" in target) {
-          // ケース2: import.meta → 自動ファイル名生成
           const filepath = convertMetaUrlToSvgPath(target.url)
           renderer.saveToFile(filepath)
         } else {
-          // ケース3: HTMLElement → DOM レンダリング
           renderer.renderToElement(target)
         }
       },

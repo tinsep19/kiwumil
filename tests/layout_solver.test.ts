@@ -18,7 +18,7 @@ describe("Layout pipeline", () => {
   beforeEach(() => {
     symbols = new Symbols()
     context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
-    hint = new HintFactory(context, symbols)
+    hint = new HintFactory({ context, symbols })
   })
 
   function createActor(id: string) {
@@ -26,7 +26,7 @@ describe("Layout pipeline", () => {
       const bound = context.variables.createBound(symbolId)
       const actor = new ActorSymbol({
         id: symbolId,
-        layoutBounds: bound,
+        layout: bound,
         label: id,
         theme: DefaultTheme,
       })
@@ -39,7 +39,7 @@ describe("Layout pipeline", () => {
       const bound = context.variables.createBound(symbolId)
       const usecase = new UsecaseSymbol({
         id: symbolId,
-        layoutBounds: bound,
+        layout: bound,
         label: id,
         theme: DefaultTheme,
       })
@@ -51,25 +51,30 @@ describe("Layout pipeline", () => {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
       const bound = context.variables.createBound(containerId)
-      return new SystemBoundarySymbol(
-        {
-          id: containerId,
-          layoutBounds: bound,
-          label: id,
-          theme: DefaultTheme,
-        },
-        context
-      )
+      const container = context.variables.createBound(`${containerId}.container`, "container")
+      const boundary = new SystemBoundarySymbol({
+        id: containerId,
+        layout: bound,
+        container,
+        label: id,
+        theme: DefaultTheme,
+      })
+      context.constraints.withSymbol(containerId, "containerInbounds", (builder) => {
+        boundary.ensureLayoutBounds(builder)
+      })
+      return boundary
     })
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
     const diagramId = toContainerSymbolId("__diagram__")
     const diagramBound = context.variables.createBound(diagramId)
+    const diagramContainer = context.variables.createBound(`${diagramId}.container`, "container")
     const diagram = new DiagramSymbol(
       {
         id: diagramId,
-        layoutBounds: diagramBound,
+        layout: diagramBound,
+        container: diagramContainer,
         info: { title: "Test" },
         theme: DefaultTheme,
       },
@@ -77,7 +82,7 @@ describe("Layout pipeline", () => {
     )
     context.solveAndApply([...symbols.getAll(), diagram])
 
-    const bounds = getBoundsValues(diagram.getLayoutBounds())
+    const bounds = getBoundsValues(diagram.layout)
     expect(bounds.x).toBeCloseTo(0)
     expect(bounds.y).toBeCloseTo(0)
     expect(bounds.width).toBeGreaterThanOrEqual(200)
@@ -91,8 +96,8 @@ describe("Layout pipeline", () => {
     hint.arrangeHorizontal(a.id, b.id)
     context.solveAndApply(symbols.getAll())
 
-    const aBounds = getBoundsValues(a.getLayoutBounds())
-    const bBounds = getBoundsValues(b.getLayoutBounds())
+    const aBounds = getBoundsValues(a.layout)
+    const bBounds = getBoundsValues(b.layout)
     expect(bBounds.x).toBeCloseTo(
       aBounds.x + aBounds.width + DefaultTheme.defaultStyleSet.horizontalGap
     )
@@ -107,9 +112,9 @@ describe("Layout pipeline", () => {
     hint.alignCenterY(a.id, b.id, c.id)
     context.solveAndApply(symbols.getAll())
 
-    const aBounds = getBoundsValues(a.getLayoutBounds())
-    const bBounds = getBoundsValues(b.getLayoutBounds())
-    const cBounds = getBoundsValues(c.getLayoutBounds())
+    const aBounds = getBoundsValues(a.layout)
+    const bBounds = getBoundsValues(b.layout)
+    const cBounds = getBoundsValues(c.layout)
     expect(aBounds.y + aBounds.height / 2).toBeCloseTo(bBounds.y + bBounds.height / 2)
     expect(bBounds.y + bBounds.height / 2).toBeCloseTo(cBounds.y + cBounds.height / 2)
   })
@@ -123,13 +128,11 @@ describe("Layout pipeline", () => {
     hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
     context.solveAndApply(symbols.getAll())
 
-    const aBounds = getBoundsValues(a.getLayoutBounds())
-    const bBounds = getBoundsValues(b.getLayoutBounds())
-    const boundaryBounds = getBoundsValues(boundary.getLayoutBounds())
+    const aBounds = getBoundsValues(a.layout)
+    const bBounds = getBoundsValues(b.layout)
+    const boundaryBounds = getBoundsValues(boundary.layout)
     expect(aBounds.x).toBeGreaterThanOrEqual(boundaryBounds.x)
-    expect(bBounds.y + bBounds.height).toBeLessThanOrEqual(
-      boundaryBounds.y + boundaryBounds.height
-    )
+    expect(bBounds.y + bBounds.height).toBeLessThanOrEqual(boundaryBounds.y + boundaryBounds.height)
   })
 
   test("guide builder aligns to shared variable and arranges symbols", () => {
@@ -140,8 +143,8 @@ describe("Layout pipeline", () => {
 
     context.solveAndApply(symbols.getAll())
 
-    const aBounds = getBoundsValues(a.getLayoutBounds())
-    const bBounds = getBoundsValues(b.getLayoutBounds())
+    const aBounds = getBoundsValues(a.layout)
+    const bBounds = getBoundsValues(b.layout)
     const guideValue = context.valueOf(guide.y)
     expect(aBounds.y).toBeCloseTo(guideValue)
     expect(bBounds.y + bBounds.height).toBeCloseTo(guideValue)

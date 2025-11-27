@@ -590,7 +590,7 @@ circle(label: string): SymbolId {
 
 ### 概要
 
-SymbolBase は `{ id, layoutBounds, theme }` をまとめたオプションオブジェクトを受け取り、immutable に保持します。コンテナシンボルは自前で `container: Bounds` を生成し、`LayoutConstraints.withSymbol(symbolId, …)` 内の builder で `containerInbounds` 制約を登録します。これにより `setTheme` や `ContainerSymbolBase` のような手続きが不要になり、インスタンス生成時にすべての依存を明示できます。
+SymbolBase は `{ id, layoutBounds, theme }` をまとめたオプションオブジェクトを受け取り、immutable に保持します。コンテナシンボルは自前で `container: ContainerBounds` を生成し、`LayoutConstraints.withSymbol(symbolId, …)` 内の builder で `containerInbounds` 制約を登録します。これにより `setTheme` や `ContainerSymbolBase` のような手続きが不要になり、インスタンス生成時にすべての依存を明示できます。
 
 ### SymbolBase の構造
 
@@ -614,7 +614,7 @@ abstract class SymbolBase {
 
 ```typescript
 interface ContainerSymbol extends SymbolBase {
-  readonly container: Bounds
+  readonly container: ContainerBounds
 }
 
 class DiagramSymbol extends SymbolBase implements ContainerSymbol {
@@ -657,7 +657,7 @@ layoutContext.constraints.remove("constraints/user/0")
 - ✅ **LayoutContext**: Variables/Constraints のファサード化
 - ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
 - ✅ **LayoutBound**: インターフェース化、派生変数の事前作成
-- ✅ **Container Symbol Interface**: Container symbols expose `container: Bounds` and register `containerInbounds` constraints without a shared base
+- ✅ **Container Symbol Interface**: Container symbols expose `container: ContainerBounds` and register `containerInbounds` constraints without a shared base
 - ✅ **DiagramSymbol**: 図全体の統一的な管理
 - ✅ **制約の追跡**: 制約IDによる管理
 

@@ -1,8 +1,5 @@
 // src/plugin/uml/relationships/include.ts
-import {
-  RelationshipBase,
-  type RelationshipBaseOptions,
-} from "../../../model/relationship_base"
+import { RelationshipBase, type RelationshipBaseOptions } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
 import type { SymbolId } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
@@ -20,8 +17,8 @@ export class Include extends RelationshipBase {
       throw new Error(`Include endpoints not found or not positioned`)
     }
 
-    const fromBounds = getBoundsValues(fromSymbol.getLayoutBounds())
-    const toBounds = getBoundsValues(toSymbol.getLayoutBounds())
+    const fromBounds = getBoundsValues(fromSymbol.layout)
+    const toBounds = getBoundsValues(toSymbol.layout)
 
     const fromCenter = {
       x: fromBounds.x + fromBounds.width / 2,

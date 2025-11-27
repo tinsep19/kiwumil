@@ -83,7 +83,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       this.context
         .getSolver()
         .addConstraint(
@@ -102,7 +102,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       this.context
         .getSolver()
         .addConstraint(
@@ -120,7 +120,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followLeft")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
+    const bounds = symbol.layout
     this.context
       .getSolver()
       .addConstraint(
@@ -137,7 +137,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followRight")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
+    const bounds = symbol.layout
     this.context
       .getSolver()
       .addConstraint(
@@ -156,7 +156,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       this.context
         .getSolver()
         .addConstraint(
@@ -175,7 +175,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       this.context
         .getSolver()
         .addConstraint(
@@ -193,7 +193,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followTop")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
+    const bounds = symbol.layout
     this.context
       .getSolver()
       .addConstraint(
@@ -210,7 +210,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followBottom")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
+    const bounds = symbol.layout
     this.context
       .getSolver()
       .addConstraint(
@@ -228,7 +228,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.getLayoutBounds()
+      const bounds = symbol.layout
       const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
       this.context
         .getSolver()
@@ -246,7 +246,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.getLayoutBounds()
+    const bounds = symbol.layout
     const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
     this.context
       .getSolver()

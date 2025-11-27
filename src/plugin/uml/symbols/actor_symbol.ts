@@ -1,4 +1,5 @@
 // src/plugin/uml/symbols/actor_symbol.ts
+import type { LayoutConstraintBuilder } from "../../../layout/layout_constraints"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
@@ -21,7 +22,7 @@ export class ActorSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -48,7 +49,7 @@ export class ActorSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     // 負の値や極端に小さい値を安全な値にクランプ（二次防御）
     const safeWidth = Math.max(10, Math.abs(width))
@@ -105,5 +106,9 @@ export class ActorSymbol extends SymbolBase {
         </text>
       </g>
     `
+  }
+
+  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+    // Controller constraints handled elsewhere
   }
 }

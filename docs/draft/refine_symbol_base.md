@@ -22,11 +22,11 @@ abstract class SymbolBase {
 }
 ```
 
-Container系のシンボルは `ContainerSymbol` インターフェースを実装し、`container: Bounds` を自前で保持します。
+Container系のシンボルは `ContainerSymbol` インターフェースを実装し、`container: ContainerBounds` を自前で保持します。
 
 ```ts
 interface ContainerSymbol extends SymbolBase {
-  readonly container: Bounds
+  readonly container: ContainerBounds
 }
 
 interface DiagramSymbolOptions extends SymbolBaseOptions {
