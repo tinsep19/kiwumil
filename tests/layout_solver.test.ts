@@ -51,15 +51,18 @@ describe("Layout pipeline", () => {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
       const bound = context.variables.createBound(containerId)
-      return new SystemBoundarySymbol(
-        {
-          id: containerId,
-          layout: bound,
-          label: id,
-          theme: DefaultTheme,
-        },
-        context
-      )
+      const container = context.variables.createBound(`${containerId}.container`, "container")
+      const boundary = new SystemBoundarySymbol({
+        id: containerId,
+        layout: bound,
+        container,
+        label: id,
+        theme: DefaultTheme,
+      })
+      context.constraints.withSymbol(containerId, "containerInbounds", (builder) => {
+        boundary.ensureLayoutBounds(builder)
+      })
+      return boundary
     })
   }
 

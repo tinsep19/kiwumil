@@ -3,7 +3,6 @@ import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
 import type { ContainerBounds, LayoutBounds } from "../../../layout/bounds"
-import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../theme"
 import { LayoutConstraintStrength } from "../../../layout/layout_variables"
 import type { LayoutConstraintBuilder } from "../../../layout/layout_constraints"
@@ -12,6 +11,7 @@ import { ContainerSymbol, type ContainerPadding } from "../../../model/container
 
 export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
   label: string
+  container: ContainerBounds
 }
 
 type BoundsAxis = "x" | "y" | "width" | "height"
@@ -24,11 +24,10 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
   private readonly defaultHeight = 200
   private constraintsApplied = false
 
-  constructor(options: SystemBoundarySymbolOptions, layout: LayoutContext) {
+  constructor(options: SystemBoundarySymbolOptions) {
     super(options)
-    this.container = layout.variables.createBound(`${this.id}.container`, "container")
+    this.container = options.container
     this.label = options.label
-    this.registerContainerConstraints(layout)
   }
 
   getDefaultSize() {
@@ -48,12 +47,6 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
 
   protected getHeaderHeight(theme: Theme): number {
     return theme.defaultStyleSet.verticalGap / 2
-  }
-
-  private registerContainerConstraints(context: LayoutContext) {
-    context.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
-      this.ensureLayoutBounds(builder)
-    })
   }
 
   private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
