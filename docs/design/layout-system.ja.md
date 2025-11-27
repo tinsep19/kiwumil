@@ -670,7 +670,7 @@ layoutContext.constraints.remove("constraints/user/0")
 - ✅ **LayoutContext**: Variables/Constraints のファサード化
 - ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
 - ✅ **LayoutBound**: インターフェース化、派生変数の事前作成
-- ✅ **Container Symbol Interface**: `container: Bounds` を保持し `containerInbounds` 制約を登録するシンプルなインターフェース
+- ✅ **Container Symbol Interface**: `container: ContainerBounds` を保持し `containerInbounds` 制約を登録するシンプルなインターフェース
 - ✅ **DiagramSymbol**: 図全体の統一的な管理
 - ✅ **制約の追跡**: 制約IDによる管理
 

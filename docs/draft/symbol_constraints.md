@@ -51,7 +51,7 @@ class MySymbol extends SymbolBase {
 
 この方針により、カスタムシンボルへの引数は `options` に一元化されて扱いやすくなり、
 `ensureLayoutBounds(builder)` での制約追加と `LayoutConstraints.withSymbol(symbolId, ...)` の連携を整理できます。
-コンテナシンボルは `ContainerSymbol` を実装し、`container: Bounds` を保持した上で `containerInbounds`
+コンテナシンボルは `ContainerSymbol` を実装し、`container: ContainerBounds` を保持した上で `containerInbounds`
 の制約を `LayoutContext.constraints.withSymbol(symbolId, ...)` 内部で登録し、同じ builder 内で
 `ensureLayoutBounds(builder)` を呼び出すことを忘れないでください。
 新しい `withSymbol` は `symbolId` を受け取り、ビルダ内で `symbol.ensureLayoutBounds(builder)` を呼び出すことで制約を追加することを想定しています。

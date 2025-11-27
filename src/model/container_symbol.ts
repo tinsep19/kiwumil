@@ -1,4 +1,4 @@
-import type { Bounds } from "../layout/bounds"
+import type { ContainerBounds } from "../layout/bounds"
 import type { SymbolBase } from "./symbol_base"
 import type { ContainerSymbolId, SymbolId } from "./types"
 
@@ -14,5 +14,5 @@ export function toContainerSymbolId(id: SymbolId): ContainerSymbolId {
 }
 
 export interface ContainerSymbol extends SymbolBase {
-  readonly container: Bounds
+  readonly container: ContainerBounds
 }
