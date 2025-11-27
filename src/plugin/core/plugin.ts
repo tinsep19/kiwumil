@@ -37,6 +37,9 @@ export const CorePlugin = {
             label,
             theme,
           })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            circle.ensureLayoutBounds(builder)
+          })
           return circle
         })
         return symbol.id
@@ -55,6 +58,9 @@ export const CorePlugin = {
             layout: bound,
             label,
             theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            ellipse.ensureLayoutBounds(builder)
           })
           return ellipse
         })
@@ -75,6 +81,9 @@ export const CorePlugin = {
             label,
             theme,
           })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            rectangle.ensureLayoutBounds(builder)
+          })
           return rectangle
         })
         return symbol.id
@@ -94,6 +103,9 @@ export const CorePlugin = {
             label,
             theme,
           })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            rounded.ensureLayoutBounds(builder)
+          })
           return rounded
         })
         return symbol.id
@@ -111,6 +123,9 @@ export const CorePlugin = {
             layout: bound,
             info: labelOrInfo,
             theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            text.ensureLayoutBounds(builder)
           })
           return text
         })
