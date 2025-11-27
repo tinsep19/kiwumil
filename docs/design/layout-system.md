@@ -578,67 +578,62 @@ circle(label: string): SymbolId {
 
 ---
 
+---
+
+## Naming Conventions
+
+* Use `context` to name LayoutContext instances.
+* Use `constraints` for LayoutConstraints.
+* Use `variables` for LayoutVariables.
+
 ## LayoutBound Injection
 
 ### 概要
 
-SymbolBase および ContainerSymbolBase は、LayoutBound をコンストラクタで注入し、immutable として保持します。
-これにより、layoutContext への直接依存を排除し、シンボル側で固有の制約を追加できるようになります。
+SymbolBase は `{ id, layoutBounds, theme }` をまとめたオプションオブジェクトを受け取り、immutable に保持します。コンテナシンボルは自前で `container: Bounds` を生成し、`LayoutConstraints.withSymbol(symbolId, …)` 内の builder で `containerInbounds` 制約を登録します。これにより `setTheme` や `ContainerSymbolBase` のような手続きが不要になり、インスタンス生成時にすべての依存を明示できます。
 
 ### SymbolBase の構造
 
 ```typescript
-export abstract class SymbolBase {
-  readonly id: SymbolId
-  readonly label: string
-  protected readonly layoutBounds: LayoutBound
-  // 後方互換性のため残されているが、layoutBounds を使用することを推奨
-  bounds?: { x: number; y: number; width: number; height: number }
+interface SymbolBaseOptions {
+  id: SymbolId
+  layoutBounds: LayoutBound
+  theme: Theme
+}
 
-  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
-    this.id = id
-    this.label = label
-    this.layoutBounds = layoutBounds
-  }
+abstract class SymbolBase {
+  constructor(options: SymbolBaseOptions) { ... }
 
-  getLayoutBounds(): LayoutBound {
-    return this.layoutBounds
-  }
-
-  // toSVG や getConnectionPoint 内で layoutBounds を使用
+  getLayoutBounds(): LayoutBound
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
 ```
 
-### LayoutBound の使用例
+### Containerシンボル
 
 ```typescript
-export class CircleSymbol extends SymbolBase {
-  toSVG(): string {
-    const bounds = this.getLayoutBounds()
-    const x = bounds.x.value()
-    const y = bounds.y.value()
-    const width = bounds.width.value()
-    const height = bounds.height.value()
-    
-    const cx = x + width / 2
-    const cy = y + height / 2
-    const r = Math.min(width, height) / 2
-    
-    return \`<circle cx="\${cx}" cy="\${cy}" r="\${r}" ... />\`
+interface ContainerSymbol extends SymbolBase {
+  readonly container: Bounds
+}
+
+class DiagramSymbol extends SymbolBase implements ContainerSymbol {
+  readonly container = layout.variables.createBound(`${this.id}.container`, "container")
+
+  constructor(options: DiagramSymbolOptions, layout: LayoutContext) {
+    super(options)
+    this.registerContainerConstraints()
   }
 }
 ```
 
 ### メリット
 
-1. **依存性の逆転**: シンボルは layoutContext に依存しない
-2. **責任の分離**: レイアウト変数の生成と制約の定義が分離
-3. **拡張性**: 将来的なカスタム制約の追加が容易
-4. **型安全性**: コンパイル時に型チェック
+1. **依存性の逆転**: Symbol/Relationship は `layoutContext` を直接参照せず options に依存
+2. **責任の分離**: レイアウト変数と制約登録のロジックが明確に分離
+3. **拡張性**: padding/header などの container 固有制約を symbol 内で完結
+4. **型安全性**: construction-time にテーマを含めることで描画スタイルも型チェック
 
----
 
 ## 制約の追跡
 
@@ -662,7 +657,7 @@ layoutContext.constraints.remove("constraints/user/0")
 - ✅ **LayoutContext**: Variables/Constraints のファサード化
 - ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
 - ✅ **LayoutBound**: インターフェース化、派生変数の事前作成
-- ✅ **ContainerSymbolBase**: コンテナの共通基底クラス
+- ✅ **Container Symbol Interface**: Container symbols expose `container: Bounds` and register `containerInbounds` constraints without a shared base
 - ✅ **DiagramSymbol**: 図全体の統一的な管理
 - ✅ **制約の追跡**: 制約IDによる管理
 

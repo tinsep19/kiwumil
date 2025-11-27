@@ -4,22 +4,22 @@ import type { Theme } from "../theme"
 import type { Bounds } from "../layout/bounds"
 import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 
+export interface SymbolBaseOptions {
+  id: SymbolId
+  layoutBounds: Bounds
+  theme: Theme
+}
+
 export abstract class SymbolBase {
   readonly id: SymbolId
-  readonly label: string
-  protected theme?: Theme
+  protected readonly theme: Theme
   nestLevel: number = 0
-  containerId?: SymbolId
   protected readonly layoutBounds: Bounds
 
-  constructor(id: SymbolId, label: string, layoutBounds: Bounds) {
-    this.id = id
-    this.label = label
-    this.layoutBounds = layoutBounds
-  }
-
-  setTheme(theme: Theme) {
-    this.theme = theme
+  constructor(options: SymbolBaseOptions) {
+    this.id = options.id
+    this.layoutBounds = options.layoutBounds
+    this.theme = options.theme
   }
 
   abstract toSVG(): string

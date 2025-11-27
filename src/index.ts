@@ -14,7 +14,7 @@ export type { DiagramInfo } from "./model/diagram_info"
 export type { Theme } from "./theme"
 export type { SymbolBase } from "./model/symbol_base"
 export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model/types"
-export { toContainerSymbolId } from "./model/container_symbol_base"
+export { toContainerSymbolId } from "./model/container_symbol"
 export { DIAGRAM_CONTAINER_ID } from "./model/types"
 
 // Layout 型定義

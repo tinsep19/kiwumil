@@ -4,10 +4,11 @@ import { LayoutSolver, Operator } from "../src/layout/kiwi"
 import { LayoutConstraintBuilder } from "../src/layout/layout_constraints"
 import type { Point } from "../src/model/types"
 import type { LayoutBound } from "../src/layout/layout_bound"
+import { DefaultTheme } from "../src/theme"
 
 class DummySymbol extends SymbolBase {
   constructor(id: string, layoutBounds: LayoutBound) {
-    super(id, "Dummy", layoutBounds)
+    super({ id, layoutBounds, theme: DefaultTheme })
   }
 
   getDefaultSize() {
@@ -25,7 +26,7 @@ class DummySymbol extends SymbolBase {
 
 class DummySymbolWithConstraints extends SymbolBase {
   constructor(id: string, layoutBounds: LayoutBound) {
-    super(id, "DummyWithConstraints", layoutBounds)
+    super({ id, layoutBounds, theme: DefaultTheme })
   }
 
   getDefaultSize() {

@@ -1,27 +1,33 @@
 // src/model/diagram_symbol.ts
-import { ContainerSymbolBase, type ContainerPadding } from "./container_symbol_base"
 import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
-import type { Point, ContainerSymbolId } from "./types"
+import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
 import type { Bounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
+import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
 import { getBoundsValues } from "../layout/bounds"
+import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
+import { ContainerPadding, ContainerSymbol } from "./container_symbol"
 
-export class DiagramSymbol extends ContainerSymbolBase {
-  private diagramInfo: DiagramInfo
+export interface DiagramSymbolOptions extends SymbolBaseOptions {
+  info: DiagramInfo
+}
+
+export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
+  readonly container: Bounds
+
+  private readonly layout: LayoutContext
+  private readonly diagramInfo: DiagramInfo
   private constraintsApplied = false
 
-  constructor(
-    id: ContainerSymbolId,
-    titleOrInfo: string | DiagramInfo,
-    layoutBounds: Bounds,
-    layout: LayoutContext
-  ) {
-    const info = typeof titleOrInfo === "string" ? { title: titleOrInfo } : titleOrInfo
-    super(id, info.title, layoutBounds, layout)
-    this.diagramInfo = info
+  constructor(options: DiagramSymbolOptions, layout: LayoutContext) {
+    super(options)
+    this.layout = layout
+    this.container = layout.variables.createBound(`${this.id}.container`, "container")
+    this.diagramInfo = options.info
+    this.registerContainerConstraints()
     this.applyDiagramConstraints()
   }
 
@@ -40,8 +46,45 @@ export class DiagramSymbol extends ContainerSymbolBase {
     }
   }
 
-  protected override getHeaderHeight(theme: Theme): number {
+  protected getHeaderHeight(theme: Theme): number {
     return theme.defaultStyleSet.verticalGap
+  }
+
+  private registerContainerConstraints() {
+    this.layout.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
+      this.ensureLayoutBounds(builder)
+      this.buildContainerConstraints(builder)
+    })
+  }
+
+  private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
+    const bounds = this.getLayoutBounds()
+    const theme = this.theme ?? this.layout.theme
+    const padding = this.getContainerPadding(theme)
+    const header = this.getHeaderHeight(theme)
+    const horizontalPadding = padding.left + padding.right
+    const verticalPadding = padding.top + padding.bottom + header
+
+    builder.eq(
+      this.container.x,
+      this.layout.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
+      LayoutConstraintStrength.Strong
+    )
+    builder.eq(
+      this.container.y,
+      this.layout.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
+      LayoutConstraintStrength.Strong
+    )
+    builder.eq(
+      this.container.width,
+      this.layout.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
+      LayoutConstraintStrength.Strong
+    )
+    builder.eq(
+      this.container.height,
+      this.layout.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
+      LayoutConstraintStrength.Strong
+    )
   }
 
   private applyDiagramConstraints() {

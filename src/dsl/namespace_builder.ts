@@ -6,6 +6,7 @@ import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namesp
 import type { LayoutContext } from "../layout/layout_context"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
+import type { Theme } from "../theme"
 
 /**
  * Namespace Builder
@@ -31,12 +32,16 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * const userId = el.uml.actor("User")
    * ```
    */
-  buildElementNamespace(symbols: Symbols, layout: LayoutContext): BuildElementNamespace<TPlugins> {
+  buildElementNamespace(
+    symbols: Symbols,
+    layout: LayoutContext,
+    theme: Theme
+  ): BuildElementNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createSymbolFactory === "function") {
-        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout)
+        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout, theme)
       }
     }
 
@@ -57,13 +62,18 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    */
   buildRelationshipNamespace(
     relationships: Relationships,
-    layout: LayoutContext
+    layout: LayoutContext,
+    theme: Theme
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createRelationshipFactory === "function") {
-        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout)
+        namespace[plugin.name] = plugin.createRelationshipFactory(
+          relationships,
+          layout,
+          theme
+        )
       }
     }
 

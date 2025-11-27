@@ -163,44 +163,33 @@ type RelationshipId = string & { readonly __brand: 'RelationshipId' }
 
 ### SymbolBase と RelationshipBase
 
-すべての Symbol と Relationship は基底クラスを継承します：
+Symbol / Relationship はそれぞれオプションオブジェクトを受け取る構造になっています：
 
 ```typescript
-/**
- * Symbol の基底クラス
- */
-abstract class SymbolBase {
-  readonly id: SymbolId
-  readonly label: string
-  protected readonly layoutBounds: LayoutBound
-  protected theme?: Theme
-  nestLevel: number = 0
-  containerId?: SymbolId
+interface SymbolBaseOptions {
+  id: SymbolId
+  layoutBounds: LayoutBound
+  theme: Theme
+}
 
-  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound)
-  
-  setTheme(theme: Theme): void
+abstract class SymbolBase {
+  constructor(options: SymbolBaseOptions) { ... }
+
   getLayoutBounds(): LayoutBound
-  ensureLayoutBounds(builder?: LayoutConstraintBuilder): LayoutBound
-  protected buildLayoutConstraints(_builder: LayoutConstraintBuilder): void
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
 
-/**
- * Relationship の基底クラス
- */
-abstract class RelationshipBase {
-  readonly id: RelationshipId
-  protected theme?: Theme
+interface RelationshipBaseOptions {
+  id: RelationshipId
+  from: SymbolId
+  to: SymbolId
+  theme: Theme
+}
 
-  constructor(
-    id: RelationshipId,
-    public from: SymbolId,
-    public to: SymbolId
-  )
-  
-  setTheme(theme: Theme): void
+abstract class RelationshipBase {
+  constructor(options: RelationshipBaseOptions) { ... }
+
   calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number
   abstract toSVG(symbols: Map<SymbolId, SymbolBase>): string
 }

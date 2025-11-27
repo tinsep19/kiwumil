@@ -69,7 +69,7 @@ export class FigureBuilder {
 
     const children = this.rows.flat()
 
-    // metadata 設定（nestLevel, containerId, registerChild）
+    // metadata 設定（nestLevel）
     this.applyContainerMetadata(children)
 
     // 制約を適用
@@ -86,12 +86,6 @@ export class FigureBuilder {
       const child = this.hint.getSymbols().find((s) => s.id === childId)
       if (child) {
         child.nestLevel = containerNestLevel + 1
-        child.containerId = this.container
-
-        // ContainerSymbolBase の場合は registerChild
-        if ("registerChild" in container && typeof container.registerChild === "function") {
-          container.registerChild(childId)
-        }
       }
     }
   }

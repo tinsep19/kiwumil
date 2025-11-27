@@ -8,19 +8,24 @@ import { getBoundsValues } from "../src/layout/bounds"
 
 describe("GuideBuilder (refactored common implementation)", () => {
   let symbols: Symbols
-  let layout: LayoutContext
+  let context: LayoutContext
   let hint: HintFactory
 
   beforeEach(() => {
     symbols = new Symbols()
-    layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
-    hint = new HintFactory(layout, symbols)
+    context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+    hint = new HintFactory(context, symbols)
   })
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const bound = layout.variables.createBound(symbolId)
-      const actor = new ActorSymbol(symbolId, id, bound)
+      const bound = context.variables.createBound(symbolId)
+      const actor = new ActorSymbol({
+        id: symbolId,
+        layoutBounds: bound,
+        label: id,
+        theme: DefaultTheme,
+      })
       return actor
     })
   }
@@ -33,7 +38,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideX(100)
       guide.alignLeft(a.id, b.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -48,7 +53,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideX(200)
       guide.alignRight(a.id, b.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -63,7 +68,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideX(150)
       guide.alignCenter(a.id, b.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -79,7 +84,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideX()
       guide.followLeft(b.id).alignLeft(a.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -93,7 +98,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideX(100)
       guide.alignCenter(a.id, b.id).arrange()
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -132,7 +137,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideY(50)
       guide.alignTop(a.id, b.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -147,7 +152,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideY(200)
       guide.alignBottom(a.id, b.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -162,7 +167,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideY(100)
       guide.alignCenter(a.id, b.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -178,7 +183,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideY()
       guide.followTop(b.id).alignTop(a.id)
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -192,7 +197,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideY(100)
       guide.alignCenter(a.id, b.id).arrange()
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -228,16 +233,16 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const guide = hint.createGuideX(100)
       expect(guide.x).toBeDefined()
 
-      layout.solveAndApply(symbols.getAll())
-      expect(layout.valueOf(guide.x)).toBeCloseTo(100)
+      context.solveAndApply(symbols.getAll())
+      expect(context.valueOf(guide.x)).toBeCloseTo(100)
     })
 
     test("GuideBuilderY has y property", () => {
       const guide = hint.createGuideY(50)
       expect(guide.y).toBeDefined()
 
-      layout.solveAndApply(symbols.getAll())
-      expect(layout.valueOf(guide.y)).toBeCloseTo(50)
+      context.solveAndApply(symbols.getAll())
+      expect(context.valueOf(guide.y)).toBeCloseTo(50)
     })
 
     test("maintains original behavior from layout_solver.test.ts", () => {
@@ -246,11 +251,11 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
 
-      layout.solveAndApply(symbols.getAll())
+      context.solveAndApply(symbols.getAll())
 
       const aBounds = getBoundsValues(a.getLayoutBounds())
       const bBounds = getBoundsValues(b.getLayoutBounds())
-      const guideValue = layout.valueOf(guide.y)
+      const guideValue = context.valueOf(guide.y)
       expect(aBounds.y).toBeCloseTo(guideValue)
       expect(bBounds.y + bBounds.height).toBeCloseTo(guideValue)
       expect(bBounds.x).toBeCloseTo(

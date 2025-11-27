@@ -1,10 +1,21 @@
 // src/plugin/core/symbols/rectangle_symbol.ts
-import { SymbolBase } from "../../../model/symbol_base"
+import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
 
+export interface RectangleSymbolOptions extends SymbolBaseOptions {
+  label: string
+}
+
 export class RectangleSymbol extends SymbolBase {
+  readonly label: string
+
+  constructor(options: RectangleSymbolOptions) {
+    super(options)
+    this.label = options.label
+  }
+
   getDefaultSize() {
     return { width: 120, height: 60 }
   }

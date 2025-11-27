@@ -1,5 +1,5 @@
 // src/plugin/core/symbols/text_symbol.ts
-import { SymbolBase } from "../../../model/symbol_base"
+import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import type { Bounds } from "../../../layout/bounds"
@@ -21,6 +21,10 @@ export interface TextInfo {
   lineHeightFactor?: number
 }
 
+export interface TextSymbolOptions extends SymbolBaseOptions {
+  info: string | TextInfo
+}
+
 type TextOverrides = Omit<TextInfo, "label">
 
 function fallbackStyle() {
@@ -40,15 +44,19 @@ function fallbackStyle() {
 export class TextSymbol extends SymbolBase {
   private overrides: TextOverrides
 
-  constructor(id: string, info: string | TextInfo, layoutBounds: Bounds) {
-    if (typeof info === "string") {
-      super(id, info, layoutBounds)
+  readonly label: string
+
+  constructor(options: TextSymbolOptions) {
+    super(options)
+
+    if (typeof options.info === "string") {
+      this.label = options.info
       this.overrides = {}
       return
     }
 
-    const { label, ...overrides } = info
-    super(id, label, layoutBounds)
+    const { label, ...overrides } = options.info
+    this.label = label
     this.overrides = overrides
   }
 

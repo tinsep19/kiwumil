@@ -6,13 +6,15 @@ import type { SymbolId, RelationshipId } from "../model/types"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
+import type { Theme } from "../theme"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
   {
     createSymbolFactory: (
       symbols: Symbols,
-      layout: LayoutContext
+      context: LayoutContext,
+      theme: Theme
     ) => Record<string, (...args: any[]) => SymbolId>
   }
 >
@@ -22,7 +24,8 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
   {
     createRelationshipFactory: (
       relationships: Relationships,
-      layout: LayoutContext
+      context: LayoutContext,
+      theme: Theme
     ) => Record<string, (...args: any[]) => RelationshipId>
   }
 >

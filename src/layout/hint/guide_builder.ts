@@ -54,13 +54,13 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   private hasFollowConstraint = false
 
   constructor(
-    private readonly layout: LayoutContext,
+    private readonly context: LayoutContext,
     private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
     private readonly axis: Axis,
     variableName: string,
     initialValue?: number
   ) {
-    this.guideVar = this.layout.variables.createVar(variableName)
+    this.guideVar = this.context.variables.createVar(variableName)
 
     // axis に応じて x または y プロパティを設定
     if (axis === "x") {
@@ -70,7 +70,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     }
 
     if (typeof initialValue === "number") {
-      this.layout
+      this.context
         .getSolver()
         .addConstraint(this.guideVar, LayoutConstraintOperator.Eq, initialValue)
     }
@@ -84,7 +84,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.getLayoutBounds()
-      this.layout
+      this.context
         .getSolver()
         .addConstraint(
           bounds.x,
@@ -103,7 +103,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.getLayoutBounds()
-      this.layout
+      this.context
         .getSolver()
         .addConstraint(
           bounds.right,
@@ -121,7 +121,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.getLayoutBounds()
-    this.layout
+    this.context
       .getSolver()
       .addConstraint(
         this.guideVar,
@@ -138,7 +138,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.getLayoutBounds()
-    this.layout
+    this.context
       .getSolver()
       .addConstraint(
         this.guideVar,
@@ -157,7 +157,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.getLayoutBounds()
-      this.layout
+      this.context
         .getSolver()
         .addConstraint(
           bounds.y,
@@ -176,7 +176,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.getLayoutBounds()
-      this.layout
+      this.context
         .getSolver()
         .addConstraint(
           bounds.bottom,
@@ -194,7 +194,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.getLayoutBounds()
-    this.layout
+    this.context
       .getSolver()
       .addConstraint(
         this.guideVar,
@@ -211,7 +211,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.getLayoutBounds()
-    this.layout
+    this.context
       .getSolver()
       .addConstraint(
         this.guideVar,
@@ -230,7 +230,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       if (!symbol) continue
       const bounds = symbol.getLayoutBounds()
       const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
-      this.layout
+      this.context
         .getSolver()
         .addConstraint(
           targetVar,
@@ -248,7 +248,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     if (!symbol) return this
     const bounds = symbol.getLayoutBounds()
     const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
-    this.layout
+    this.context
       .getSolver()
       .addConstraint(
         this.guideVar,
@@ -264,15 +264,15 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
 
     if (this.axis === "x") {
       // X軸ガイドの場合は垂直方向に並べる
-      this.layout.constraints.arrangeVertical(
+      this.context.constraints.arrangeVertical(
         Array.from(this.alignedSymbols),
-        gap ?? this.layout.theme.defaultStyleSet.verticalGap
+        gap ?? this.context.theme.defaultStyleSet.verticalGap
       )
     } else {
       // Y軸ガイドの場合は水平方向に並べる
-      this.layout.constraints.arrangeHorizontal(
+      this.context.constraints.arrangeHorizontal(
         Array.from(this.alignedSymbols),
-        gap ?? this.layout.theme.defaultStyleSet.horizontalGap
+        gap ?? this.context.theme.defaultStyleSet.horizontalGap
       )
     }
     return this

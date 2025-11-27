@@ -11,6 +11,17 @@ interface RenderElement {
   svg: string
 }
 
+function hasLabel(symbol: SymbolBase): symbol is SymbolBase & { label: string } {
+  return typeof (symbol as { label?: unknown }).label === "string"
+}
+
+function getSymbolLabel(symbol: SymbolBase): string {
+  if (hasLabel(symbol)) {
+    return symbol.label
+  }
+  return "unknown"
+}
+
 export class SvgRenderer {
   private symbols: SymbolBase[]
   private relationships: RelationshipBase[]
@@ -69,11 +80,16 @@ export class SvgRenderer {
     for (const symbol of this.symbols) {
       const bounds = getBoundsValues(symbol.getLayoutBounds())
       // 極端に小さい、大きい、または不正な値をチェック
-      if (bounds.width < minBoundsSize || bounds.height < minBoundsSize || 
-          bounds.width > maxBoundsSize || bounds.height > maxBoundsSize) {
+      if (
+        bounds.width < minBoundsSize ||
+        bounds.height < minBoundsSize ||
+        bounds.width > maxBoundsSize ||
+        bounds.height > maxBoundsSize
+      ) {
+        const label = getSymbolLabel(symbol)
         console.warn(
           `[SvgRenderer] Abnormal bounds detected for symbol:`,
-          `id=${symbol.id}, label="${symbol.label}",`,
+          `id=${symbol.id}, label="${label}",`,
           `bounds={x:${bounds.x}, y:${bounds.y}, width:${bounds.width}, height:${bounds.height}}`
         )
       }

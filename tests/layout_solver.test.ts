@@ -7,32 +7,42 @@ import { DiagramSymbol } from "../src/model/diagram_symbol"
 import { HintFactory } from "../src/dsl/hint_factory"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
-import { toContainerSymbolId } from "../src/model/container_symbol_base"
+import { toContainerSymbolId } from "../src/model/container_symbol"
 import { getBoundsValues } from "../src/layout/bounds"
 
 describe("Layout pipeline", () => {
   let symbols: Symbols
-  let layout: LayoutContext
+  let context: LayoutContext
   let hint: HintFactory
 
   beforeEach(() => {
     symbols = new Symbols()
-    layout = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
-    hint = new HintFactory(layout, symbols)
+    context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+    hint = new HintFactory(context, symbols)
   })
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const bound = layout.variables.createBound(symbolId)
-      const actor = new ActorSymbol(symbolId, id, bound)
+      const bound = context.variables.createBound(symbolId)
+      const actor = new ActorSymbol({
+        id: symbolId,
+        layoutBounds: bound,
+        label: id,
+        theme: DefaultTheme,
+      })
       return actor
     })
   }
 
   function createUsecase(id: string) {
     return symbols.register("test", "usecase", (symbolId) => {
-      const bound = layout.variables.createBound(symbolId)
-      const usecase = new UsecaseSymbol(symbolId, id, bound)
+      const bound = context.variables.createBound(symbolId)
+      const usecase = new UsecaseSymbol({
+        id: symbolId,
+        layoutBounds: bound,
+        label: id,
+        theme: DefaultTheme,
+      })
       return usecase
     })
   }
@@ -40,16 +50,32 @@ describe("Layout pipeline", () => {
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
-      const bound = layout.variables.createBound(containerId)
-      return new SystemBoundarySymbol(containerId, id, bound, layout)
+      const bound = context.variables.createBound(containerId)
+      return new SystemBoundarySymbol(
+        {
+          id: containerId,
+          layoutBounds: bound,
+          label: id,
+          theme: DefaultTheme,
+        },
+        context
+      )
     })
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
     const diagramId = toContainerSymbolId("__diagram__")
-    const diagramBound = layout.variables.createBound(diagramId)
-    const diagram = new DiagramSymbol(diagramId, "Test", diagramBound, layout)
-    layout.solveAndApply([...symbols.getAll(), diagram])
+    const diagramBound = context.variables.createBound(diagramId)
+    const diagram = new DiagramSymbol(
+      {
+        id: diagramId,
+        layoutBounds: diagramBound,
+        info: { title: "Test" },
+        theme: DefaultTheme,
+      },
+      context
+    )
+    context.solveAndApply([...symbols.getAll(), diagram])
 
     const bounds = getBoundsValues(diagram.getLayoutBounds())
     expect(bounds.x).toBeCloseTo(0)
@@ -63,7 +89,7 @@ describe("Layout pipeline", () => {
     const b = createActor("b")
 
     hint.arrangeHorizontal(a.id, b.id)
-    layout.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAll())
 
     const aBounds = getBoundsValues(a.getLayoutBounds())
     const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -79,7 +105,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
     hint.alignCenterY(a.id, b.id, c.id)
-    layout.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAll())
 
     const aBounds = getBoundsValues(a.getLayoutBounds())
     const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -95,7 +121,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeVertical(a.id, b.id)
     hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
-    layout.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAll())
 
     const aBounds = getBoundsValues(a.getLayoutBounds())
     const bBounds = getBoundsValues(b.getLayoutBounds())
@@ -112,11 +138,11 @@ describe("Layout pipeline", () => {
 
     const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
 
-    layout.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAll())
 
     const aBounds = getBoundsValues(a.getLayoutBounds())
     const bBounds = getBoundsValues(b.getLayoutBounds())
-    const guideValue = layout.valueOf(guide.y)
+    const guideValue = context.valueOf(guide.y)
     expect(aBounds.y).toBeCloseTo(guideValue)
     expect(bBounds.y + bBounds.height).toBeCloseTo(guideValue)
     expect(bBounds.x).toBeCloseTo(
