@@ -1,4 +1,5 @@
 // src/plugin/core/symbols/text_symbol.ts
+import type { LayoutConstraintBuilder } from "../../../layout/layout_constraints"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
@@ -75,6 +76,10 @@ export class TextSymbol extends SymbolBase {
     }
   }
 
+  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+    // text symbols currently do not contribute additional constraints
+  }
+
   private getLineHeightFactor() {
     return this.overrides.lineHeightFactor ?? LINE_HEIGHT_FACTOR
   }
@@ -100,7 +105,7 @@ export class TextSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -124,7 +129,7 @@ export class TextSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width } = getBoundsValues(this.layout)
 
     const style = this.getStyle()
     const lines = this.getLines()

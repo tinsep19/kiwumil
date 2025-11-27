@@ -23,7 +23,7 @@ describe("LayoutConstraints metadata", () => {
       const bound = context.variables.createBound(symbolId)
       const actor = new ActorSymbol({
         id: symbolId,
-        layoutBounds: bound,
+        layout: bound,
         label: id,
         theme: DefaultTheme,
       })
@@ -38,7 +38,7 @@ describe("LayoutConstraints metadata", () => {
       return new SystemBoundarySymbol(
         {
           id: containerId,
-          layoutBounds: bound,
+          layout: bound,
           label: id,
           theme: DefaultTheme,
         },

@@ -33,7 +33,7 @@ export const CorePlugin = {
         const bound = context.variables.createBound(symbolId)
         const circle = new CircleSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           label,
           theme,
         })
@@ -52,7 +52,7 @@ export const CorePlugin = {
         const bound = context.variables.createBound(symbolId)
         const ellipse = new EllipseSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           label,
           theme,
         })
@@ -71,7 +71,7 @@ export const CorePlugin = {
         const bound = context.variables.createBound(symbolId)
         const rectangle = new RectangleSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           label,
           theme,
         })
@@ -90,7 +90,7 @@ export const CorePlugin = {
         const bound = context.variables.createBound(symbolId)
         const rounded = new RoundedRectangleSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           label,
           theme,
         })
@@ -108,7 +108,7 @@ export const CorePlugin = {
         const bound = context.variables.createBound(symbolId)
         const text = new TextSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           info: labelOrInfo,
           theme,
         })

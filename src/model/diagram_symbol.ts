@@ -3,7 +3,7 @@ import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import type { Bounds } from "../layout/bounds"
+import type { ContainerBounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
 import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
@@ -16,15 +16,15 @@ export interface DiagramSymbolOptions extends SymbolBaseOptions {
 }
 
 export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
-  readonly container: Bounds
+  readonly container: ContainerBounds
 
-  private readonly layout: LayoutContext
+  private readonly context: LayoutContext
   private readonly diagramInfo: DiagramInfo
   private constraintsApplied = false
 
   constructor(options: DiagramSymbolOptions, layout: LayoutContext) {
     super(options)
-    this.layout = layout
+    this.context = layout
     this.container = layout.variables.createBound(`${this.id}.container`, "container")
     this.diagramInfo = options.info
     this.registerContainerConstraints()
@@ -51,15 +51,15 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   private registerContainerConstraints() {
-    this.layout.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
+    this.context.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
       this.ensureLayoutBounds(builder)
       this.buildContainerConstraints(builder)
     })
   }
 
   private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
-    const bounds = this.getLayoutBounds()
-    const theme = this.theme ?? this.layout.theme
+    const bounds = this.layout
+    const theme = this.theme ?? this.context.theme
     const padding = this.getContainerPadding(theme)
     const header = this.getHeaderHeight(theme)
     const horizontalPadding = padding.left + padding.right
@@ -67,37 +67,41 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
 
     builder.eq(
       this.container.x,
-      this.layout.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
+      this.context.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.y,
-      this.layout.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
+      this.context.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.width,
-      this.layout.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
+      this.context.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.height,
-      this.layout.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
+      this.context.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
       LayoutConstraintStrength.Strong
     )
+  }
+
+  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+    // コンストラクタ側で固有の制約を追加済みなのでここでは no-op
   }
 
   private applyDiagramConstraints() {
     if (this.constraintsApplied) {
       return
     }
-    this.layout.anchorToOrigin(this, LayoutConstraintStrength.Strong)
-    this.layout.applyMinSize(this, { width: 200, height: 150 }, LayoutConstraintStrength.Weak)
+    this.context.anchorToOrigin(this, LayoutConstraintStrength.Strong)
+    this.context.applyMinSize(this, { width: 200, height: 150 }, LayoutConstraintStrength.Weak)
     this.constraintsApplied = true
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -124,7 +128,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     const cx = x + width / 2
 

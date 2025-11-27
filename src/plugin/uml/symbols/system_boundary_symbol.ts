@@ -2,7 +2,7 @@
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
-import type { Bounds } from "../../../layout/bounds"
+import type { ContainerBounds } from "../../../layout/bounds"
 import type { LayoutContext } from "../../../layout/layout_context"
 import type { Theme } from "../../../theme"
 import { LayoutConstraintStrength } from "../../../layout/layout_variables"
@@ -16,16 +16,16 @@ export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
 
 export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol {
   readonly label: string
-  readonly container: Bounds
+  readonly container: ContainerBounds
 
-  private readonly layout: LayoutContext
+  private readonly context: LayoutContext
   private readonly defaultWidth = 300
   private readonly defaultHeight = 200
   private constraintsApplied = false
 
   constructor(options: SystemBoundarySymbolOptions, layout: LayoutContext) {
     super(options)
-    this.layout = layout
+    this.context = layout
     this.container = layout.variables.createBound(`${this.id}.container`, "container")
     this.label = options.label
     this.registerContainerConstraints()
@@ -52,15 +52,15 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
   }
 
   private registerContainerConstraints() {
-    this.layout.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
+    this.context.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
       this.ensureLayoutBounds(builder)
       this.buildContainerConstraints(builder)
     })
   }
 
   private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
-    const bounds = this.getLayoutBounds()
-    const theme = this.theme ?? this.layout.theme
+    const bounds = this.layout
+    const theme = this.theme ?? this.context.theme
     const padding = this.getContainerPadding(theme)
     const header = this.getHeaderHeight(theme)
     const horizontalPadding = padding.left + padding.right
@@ -68,22 +68,22 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
 
     builder.eq(
       this.container.x,
-      this.layout.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
+      this.context.expressionFromBounds(bounds, [{ axis: "x" }], padding.left),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.y,
-      this.layout.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
+      this.context.expressionFromBounds(bounds, [{ axis: "y" }], padding.top + header),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.width,
-      this.layout.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
+      this.context.expressionFromBounds(bounds, [{ axis: "width" }], -horizontalPadding),
       LayoutConstraintStrength.Strong
     )
     builder.eq(
       this.container.height,
-      this.layout.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
+      this.context.expressionFromBounds(bounds, [{ axis: "height" }], -verticalPadding),
       LayoutConstraintStrength.Strong
     )
   }
@@ -92,12 +92,12 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     if (this.constraintsApplied) {
       return
     }
-    this.layout.applyMinSize(this, this.getDefaultSize())
+    this.context.applyMinSize(this, this.getDefaultSize())
     this.constraintsApplied = true
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -123,8 +123,12 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     }
   }
 
+  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+    // Custom constraints are applied via registerContainerConstraints()
+  }
+
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.getLayoutBounds())
+    const { x, y, width, height } = getBoundsValues(this.layout)
 
     const style = this.theme
       ? getStyleForSymbol(this.theme, "systemBoundary")

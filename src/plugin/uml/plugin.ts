@@ -36,7 +36,7 @@ export const UMLPlugin = {
         const bound = context.variables.createBound(symbolId)
         const actor = new ActorSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           label,
           theme,
         })
@@ -55,7 +55,7 @@ export const UMLPlugin = {
         const bound = context.variables.createBound(symbolId)
         const usecase = new UsecaseSymbol({
           id: symbolId,
-          layoutBounds: bound,
+          layout: bound,
           label,
           theme,
         })
@@ -76,7 +76,7 @@ export const UMLPlugin = {
           return new SystemBoundarySymbol(
             {
               id,
-              layoutBounds: bound,
+              layout: bound,
               label,
               theme,
             },

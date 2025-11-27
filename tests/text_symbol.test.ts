@@ -10,7 +10,7 @@ describe("TextSymbol", () => {
     const bound = vars.createBound("core:text-0")
     const symbol = new TextSymbol({
       id: "core:text-0",
-      layoutBounds: bound,
+      layout: bound,
       info: "First line\nSecond line is longer",
       theme: DefaultTheme,
     })
@@ -26,12 +26,12 @@ describe("TextSymbol", () => {
     const bound = vars.createBound("core:text-1")
     const symbol = new TextSymbol({
       id: "core:text-1",
-      layoutBounds: bound,
+      layout: bound,
       info: "Line A\n\nLine C",
       theme: DefaultTheme,
     })
     // Set up layout bounds
-    const lb = symbol.getLayoutBounds()
+    const lb = symbol.layout
     solver.addEditVariable(lb.x, "strong")
     solver.addEditVariable(lb.y, "strong")
     solver.addEditVariable(lb.width, "strong")
@@ -55,7 +55,7 @@ describe("TextSymbol", () => {
     const bound = vars.createBound("core:text-2")
     const symbol = new TextSymbol({
       id: "core:text-2",
-      layoutBounds: bound,
+      layout: bound,
       info: {
         label: "Align start",
         textAnchor: "start",
@@ -66,7 +66,7 @@ describe("TextSymbol", () => {
       theme: DefaultTheme,
     })
     // Set up layout bounds
-    const lb = symbol.getLayoutBounds()
+    const lb = symbol.layout
     solver.addEditVariable(lb.x, "strong")
     solver.addEditVariable(lb.y, "strong")
     solver.addEditVariable(lb.width, "strong")

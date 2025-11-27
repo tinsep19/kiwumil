@@ -110,7 +110,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     diagramSymbol = new DiagramSymbol(
       {
         id: diagramSymbolId,
-        layoutBounds: diagramBound,
+        layout: diagramBound,
         info: diagramInfo,
         theme: this.currentTheme,
       },
