@@ -16,18 +16,23 @@ type LayoutTargetId = SymbolId | ContainerSymbolId
 
 export class HintFactory {
   private guideCounter = 0
+  private diagramContainer: ContainerSymbolId = DIAGRAM_CONTAINER_ID
 
   constructor(
     private readonly context: LayoutContext,
     private readonly symbols: Symbols
   ) {}
 
+  setDefaultContainer(container: ContainerSymbolId) {
+    this.diagramContainer = container
+  }
+
   /**
    * Grid Builder を返す（矩形行列レイアウト用）
    * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
   grid(container?: ContainerSymbolId): GridBuilder {
-    const targetContainer = container ?? DIAGRAM_CONTAINER_ID
+    const targetContainer = container ?? this.diagramContainer
     return new GridBuilder(this, targetContainer)
   }
 
@@ -36,7 +41,7 @@ export class HintFactory {
    * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
   figure(container?: ContainerSymbolId): FigureBuilder {
-    const targetContainer = container ?? DIAGRAM_CONTAINER_ID
+    const targetContainer = container ?? this.diagramContainer
     return new FigureBuilder(this, targetContainer)
   }
 
