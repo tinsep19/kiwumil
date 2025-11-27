@@ -1,5 +1,5 @@
 // src/dsl/hint_factory.ts
-import type { ContainerSymbolId, SymbolId } from "../model/types"
+import type { ContainerSymbolId } from "../model/types"
 import { DIAGRAM_CONTAINER_ID } from "../model/types"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutContext } from "../layout/layout_context"
@@ -11,8 +11,15 @@ import {
   type GuideBuilderX,
   type GuideBuilderY,
 } from "../layout/hint/guide_builder"
+import {
+  ContainerSymbolOrId,
+  toContainerSymbolId,
+  toSymbolId,
+  type SymbolOrId,
+} from "./symbol_helpers"
 
-type LayoutTargetId = SymbolId | ContainerSymbolId
+type LayoutTargetId = SymbolOrId | ContainerSymbolId
+type LayoutContainerTarget = ContainerSymbolOrId
 
 export class HintFactory {
   private guideCounter = 0
@@ -39,8 +46,8 @@ export class HintFactory {
    * Grid Builder を返す（矩形行列レイアウト用）
    * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
-  grid(container?: ContainerSymbolId): GridBuilder {
-    const targetContainer = container ?? this.diagramContainer
+  grid(container?: LayoutContainerTarget): GridBuilder {
+    const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
     return new GridBuilder(this, targetContainer)
   }
 
@@ -48,8 +55,8 @@ export class HintFactory {
    * Figure Builder を返す（非矩形レイアウト用）
    * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
    */
-  figure(container?: ContainerSymbolId): FigureBuilder {
-    const targetContainer = container ?? this.diagramContainer
+  figure(container?: LayoutContainerTarget): FigureBuilder {
+    const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
     return new FigureBuilder(this, targetContainer)
   }
 
@@ -76,62 +83,63 @@ export class HintFactory {
   }
 
   arrangeHorizontal(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.arrangeHorizontal(symbolIds)
+    this.context.constraints.arrangeHorizontal(this.normalizeTargets(symbolIds))
   }
 
   arrangeVertical(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.arrangeVertical(symbolIds)
+    this.context.constraints.arrangeVertical(this.normalizeTargets(symbolIds))
   }
 
   alignLeft(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignLeft(symbolIds)
+    this.context.constraints.alignLeft(this.normalizeTargets(symbolIds))
   }
 
   alignRight(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignRight(symbolIds)
+    this.context.constraints.alignRight(this.normalizeTargets(symbolIds))
   }
 
   alignTop(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignTop(symbolIds)
+    this.context.constraints.alignTop(this.normalizeTargets(symbolIds))
   }
 
   alignBottom(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignBottom(symbolIds)
+    this.context.constraints.alignBottom(this.normalizeTargets(symbolIds))
   }
 
   alignCenterX(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignCenterX(symbolIds)
+    this.context.constraints.alignCenterX(this.normalizeTargets(symbolIds))
   }
 
   alignCenterY(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignCenterY(symbolIds)
+    this.context.constraints.alignCenterY(this.normalizeTargets(symbolIds))
   }
 
   alignWidth(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignWidth(symbolIds)
+    this.context.constraints.alignWidth(this.normalizeTargets(symbolIds))
   }
 
   alignHeight(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignHeight(symbolIds)
+    this.context.constraints.alignHeight(this.normalizeTargets(symbolIds))
   }
 
   alignSize(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignSize(symbolIds)
+    this.context.constraints.alignSize(this.normalizeTargets(symbolIds))
   }
 
-  enclose(containerId: ContainerSymbolId, childIds: LayoutTargetId[]) {
-    const container = this.symbols.findById(containerId)
-    if (container) {
-      const containerNestLevel = container.nestLevel
+  enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
+    const containerId = toContainerSymbolId(container)
+    const containerSymbol = this.symbols.findById(containerId)
+    if (containerSymbol) {
+      const containerNestLevel = containerSymbol.nestLevel
       for (const childId of childIds) {
-        const child = this.symbols.findById(childId)
-        if (child) {
-          child.nestLevel = containerNestLevel + 1
+        const childSymbol = this.symbols.findById(toSymbolId(childId))
+        if (childSymbol) {
+          childSymbol.nestLevel = containerNestLevel + 1
         }
       }
     }
 
-    this.context.constraints.enclose(containerId, childIds)
+    this.context.constraints.enclose(containerId, this.normalizeTargets(childIds))
   }
 
   createGuideX(value?: number): GuideBuilderX {
@@ -154,7 +162,11 @@ export class HintFactory {
     )
   }
 
+  private normalizeTargets(targets: LayoutTargetId[]) {
+    return targets.map((target) => toSymbolId(target))
+  }
+
   private findSymbolById(id: LayoutTargetId) {
-    return this.symbols.findById(id)
+    return this.symbols.findById(toSymbolId(id))
   }
 }

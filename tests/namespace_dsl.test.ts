@@ -17,9 +17,9 @@ describe("Namespace-based DSL", () => {
         const system = el.uml.systemBoundary("System")
 
         // Check ID format: namespace:symbolName/serial
-        expect(user).toMatch(/^uml:actor\/\d+$/)
-        expect(login).toMatch(/^uml:usecase\/\d+$/)
-        expect(system).toMatch(/^uml:systemBoundary\/\d+$/)
+        expect(user.id).toMatch(/^uml:actor\/\d+$/)
+        expect(login.id).toMatch(/^uml:usecase\/\d+$/)
+        expect(system.id).toMatch(/^uml:systemBoundary\/\d+$/)
 
         // Create relationships
         const rel1 = rel.uml.associate(user, login)
@@ -52,10 +52,10 @@ describe("Namespace-based DSL", () => {
         })
 
         // Check ID format
-        expect(circle).toMatch(/^core:circle\/\d+$/)
-        expect(rect).toMatch(/^core:rectangle\/\d+$/)
-        expect(text).toMatch(/^core:text\/\d+$/)
-        expect(styledText).toMatch(/^core:text\/\d+$/)
+        expect(circle.id).toMatch(/^core:circle\/\d+$/)
+        expect(rect.id).toMatch(/^core:rectangle\/\d+$/)
+        expect(text.id).toMatch(/^core:text\/\d+$/)
+        expect(styledText.id).toMatch(/^core:text\/\d+$/)
       })
 
     expect(diagram.symbols.length).toBeGreaterThan(0)
@@ -74,8 +74,8 @@ describe("Namespace-based DSL", () => {
         const circle = el.core.circle("Circle")
 
         // IDs should have different namespaces
-        expect(actor).toMatch(/^uml:/)
-        expect(circle).toMatch(/^core:/)
+        expect(actor.id).toMatch(/^uml:/)
+        expect(circle.id).toMatch(/^core:/)
       })
 
     expect(diagram.symbols.length).toBeGreaterThan(0)
@@ -90,7 +90,7 @@ describe("Namespace-based DSL", () => {
           el.uml.actor("User2"),
           el.uml.usecase("UC1"),
           el.uml.usecase("UC2"),
-        ]
+        ].map((symbol) => symbol.id)
 
         // All IDs should be unique
         const uniqueIds = new Set(ids)

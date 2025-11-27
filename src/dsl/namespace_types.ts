@@ -1,10 +1,11 @@
 // src/dsl/namespace_types.ts
 import type { DiagramPlugin } from "./diagram_plugin"
-import type { SymbolId, RelationshipId } from "../model/types"
+import type { RelationshipId } from "../model/types"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
+import type { SymbolBase } from "../model/symbol_base"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
@@ -13,7 +14,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
       symbols: Symbols,
       context: LayoutContext,
       theme: Theme
-    ) => Record<string, (...args: any[]) => SymbolId>
+    ) => Record<string, (...args: any[]) => SymbolBase>
   }
 >
 

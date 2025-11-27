@@ -1,12 +1,13 @@
 // src/dsl/diagram_plugin.ts
-import type { SymbolId, RelationshipId } from "../model/types"
+import type { RelationshipId } from "../model/types"
 import type { LayoutContext } from "../layout/layout_context"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
+import type { SymbolBase } from "../model/symbol_base"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolId>
+type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolBase>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -25,7 +26,7 @@ export interface DiagramPlugin {
    * Symbol 用の DSL ファクトリを生成
    *
    * @param symbols - 生成した Symbol を登録するインスタンス
-   * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
+   * @returns Symbol 作成関数のオブジェクト（各関数は `SymbolBase` を返す）
    */
   createSymbolFactory?(symbols: Symbols, context: LayoutContext, theme: Theme): SymbolFactoryMap
 
