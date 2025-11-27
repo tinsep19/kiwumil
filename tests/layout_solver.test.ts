@@ -66,10 +66,12 @@ describe("Layout pipeline", () => {
   test("diagram symbol is anchored at the origin with minimum size", () => {
     const diagramId = toContainerSymbolId("__diagram__")
     const diagramBound = context.variables.createBound(diagramId)
+    const diagramContainer = context.variables.createBound(`${diagramId}.container`, "container")
     const diagram = new DiagramSymbol(
       {
         id: diagramId,
         layout: diagramBound,
+        container: diagramContainer,
         info: { title: "Test" },
         theme: DefaultTheme,
       },

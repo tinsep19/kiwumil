@@ -13,7 +13,7 @@ import type { DiagramInfo } from "../model/diagram_info"
 import type { Theme } from "../theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import type { SymbolId } from "../model/types"
+import type { SymbolId, ContainerSymbolId } from "../model/types"
 import { toContainerSymbolId } from "../model/container_symbol"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
@@ -73,14 +73,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   build(callback: IntelliSenseBlock<TPlugins>) {
     const symbols = new Symbols()
     const relationships = new Relationships()
-    let diagramSymbol: DiagramSymbol | undefined
-    const diagramSymbolId = toContainerSymbolId("__diagram__")
-    const context = new LayoutContext(this.currentTheme, (id: SymbolId) => {
-      if (diagramSymbol && diagramSymbol.id === id) {
-        return diagramSymbol
-      }
-      return symbols.findById(id)
-    })
+    let diagramSymbol: DiagramSymbol
+    const context = new LayoutContext(this.currentTheme, (id: SymbolId) => symbols.findById(id))
 
     // Namespace Builder を使って el と rel を構築
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
@@ -101,30 +95,34 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     callback(el, rel, hint)
 
     // DiagramSymbol を作成
-    const diagramBound = context.variables.createBound(diagramSymbolId)
     const diagramInfo =
       typeof this.titleOrInfo === "string"
         ? { title: this.titleOrInfo }
         : this.titleOrInfo
 
-    diagramSymbol = new DiagramSymbol(
-      {
-        id: diagramSymbolId,
-        layout: diagramBound,
-        info: diagramInfo,
-        theme: this.currentTheme,
-      },
-      context
-    )
-    // すべての Symbol を含む配列
-    const symbolList = symbols.getAll()
+    diagramSymbol = symbols.register("diagram", "diagram", (symbolId) => {
+      const containerId = toContainerSymbolId(symbolId)
+      const diagramBound = context.variables.createBound(containerId)
+      const containerBound = context.variables.createBound(`${containerId}.container`, "container")
+      return new DiagramSymbol(
+        {
+          id: containerId,
+          layout: diagramBound,
+          container: containerBound,
+          info: diagramInfo,
+          theme: this.currentTheme,
+        },
+        context
+      )
+    }) as DiagramSymbol
     const relationshipList = relationships.getAll()
+    const symbolList = symbols.getAll().filter((symbol) => symbol.id !== diagramSymbol.id)
     const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
 
     // DiagramSymbol がすべてのユーザー Symbol を enclose する hint を追加
     if (symbolList.length > 0) {
       hint.enclose(
-        diagramSymbolId,
+        diagramSymbol.id as ContainerSymbolId,
         symbolList.map((s) => s.id)
       )
     }
