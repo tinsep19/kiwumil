@@ -56,7 +56,16 @@ export class LayoutContext {
   solveAndApply(symbols: SymbolBase[]): void
   valueOf(variable: LayoutVar): number
   getSolver(): LayoutSolver
+  expressionFromBounds(bounds: Bounds, terms: BoundsTerm[], constant?: number): kiwi.Expression
+  applyMinSize(
+    symbol: SymbolBase,
+    size: { width: number; height: number },
+    strength?: LayoutConstraintStrength
+  ): void
+  anchorToOrigin(symbol: SymbolBase, strength?: LayoutConstraintStrength): void
 }
+
+`LayoutContext` は `expressionFromBounds` による Bounds からの式生成や、`applyMinSize` / `anchorToOrigin` のような頻出制約をラップするヘルパーも公開しており、プラグインや DiagramSymbol が共通の制約パターンを簡単に組み立てられるようになっています。
 ```
 
 #### LayoutVariables（変数管理）
@@ -65,16 +74,14 @@ kiwi の Variable/Constraint 生成を担う薄い層。
 
 ```typescript
 export class LayoutVariables {
+  constructor(solver?: LayoutSolver)
   createVar(name: string): LayoutVar
-  createBound(id: SymbolId | ContainerSymbolId): Bounds
-  expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
-  addConstraint(
-    lhs: LayoutExpressionInput,
-    op: LayoutConstraintOperator,
-    rhs: LayoutExpressionInput,
-    strength: LayoutConstraintStrength
-  ): kiwi.Constraint
+  createBound(prefix: string, type?: BoundsType): Bounds
+  createBoundsSet<T extends Record<string, BoundsType>>(
+    set: T
+  ): { [K in keyof T]: BoundsMap[T[K]] }
   valueOf(variable: LayoutVar): number
+  getSolver(): LayoutSolver | undefined
 }
 ```
 
@@ -123,41 +130,69 @@ export interface Bounds {
 
 ### 派生変数の実装
 
-派生変数は `createBound()` 呼び出し時に事前生成され、制約も同時に設定されます。
+`LayoutVariables.createBound()` は solver を使って派生変数を生成し、派生変数の定義式をまとめて登録します。
 
 ```typescript
-// LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
-createBound(id: SymbolId | ContainerSymbolId): Bounds {
-  const x = this.createVar(\`\${id}.x\`)
-  const y = this.createVar(\`\${id}.y\`)
-  const width = this.createVar(\`\${id}.width\`)
-  const height = this.createVar(\`\${id}.height\`)
+createBound<Type extends BoundsType = "layout">(
+  prefix: string,
+  type: Type = "layout" as Type
+): BoundsMap[Type] {
+  const solver = this.getSolver()
+  if (!solver) {
+    throw new Error("LayoutVariables: solver is not injected. Cannot create bound with constraints.")
+  }
 
-  // 派生変数を作成し、制約を設定
-  const right = this.createVar(\`\${id}.right\`)
-  this.addConstraint(right, LayoutConstraintOperator.Eq, 
-    this.expression([{ variable: x }, { variable: width }]))
+  const x = this.createVar(`${prefix}.x`)
+  const y = this.createVar(`${prefix}.y`)
+  const width = this.createVar(`${prefix}.width`)
+  const height = this.createVar(`${prefix}.height`)
 
-  const bottom = this.createVar(\`\${id}.bottom\`)
-  this.addConstraint(bottom, LayoutConstraintOperator.Eq,
-    this.expression([{ variable: y }, { variable: height }]))
+  const right = this.createVar(`${prefix}.right`)
+  solver.addConstraint(
+    right,
+    Operator.Eq,
+    solver.expression([{ variable: x }, { variable: width }])
+  )
 
-  const centerX = this.createVar(\`\${id}.centerX\`)
-  this.addConstraint(centerX, LayoutConstraintOperator.Eq,
-    this.expression([{ variable: x }, { variable: width, coefficient: 0.5 }]))
+  const bottom = this.createVar(`${prefix}.bottom`)
+  solver.addConstraint(
+    bottom,
+    Operator.Eq,
+    solver.expression([{ variable: y }, { variable: height }])
+  )
 
-  const centerY = this.createVar(\`\${id}.centerY\`)
-  this.addConstraint(centerY, LayoutConstraintOperator.Eq,
-    this.expression([{ variable: y }, { variable: height, coefficient: 0.5 }]))
+  const centerX = this.createVar(`${prefix}.centerX`)
+  solver.addConstraint(
+    centerX,
+    Operator.Eq,
+    solver.expression([{ variable: x }, { variable: width, coefficient: 0.5 }])
+  )
 
-  return { x, y, width, height, right, bottom, centerX, centerY }
+  const centerY = this.createVar(`${prefix}.centerY`)
+  solver.addConstraint(
+    centerY,
+    Operator.Eq,
+    solver.expression([{ variable: y }, { variable: height, coefficient: 0.5 }])
+  )
+
+  return {
+    type,
+    x,
+    y,
+    width,
+    height,
+    right,
+    bottom,
+    centerX,
+    centerY,
+  } as BoundsMap[Type]
 }
 ```
 
 **設計ポイント:**
-- **事前生成**: すべての派生変数は createBound() 呼び出し時に生成される
-- **一貫性**: 派生変数は常に存在し、nullable でない
-- **自動制約登録**: 派生変数の定義式は制約として自動登録される
+- **Solver 依存**: `LayoutVariables.createBound` は注入された solver にアクセスして制約を登録するため LayoutContext 経由で solver を渡す。
+- **派生変数の一貫性**: 計算済み変数は常に生成され、`solver.addConstraint` で定義される。
+- **型付き Bounds**: `BoundsMap` を使うことで `type` に応じた Bounds 型を返す。
 
 ### パフォーマンス
 
@@ -263,43 +298,78 @@ DiagramSymbol の導入により：
 
 ### レイアウト制約
 
-#### DiagramSymbol の位置固定
+DiagramSymbol は構築時に `LayoutContext.constraints.withSymbol` を呼び出し、`LayoutConstraintBuilder` を通じて制約を登録します。たとえば `containerInbounds` 制約の登録は次のようになります。
 
 ```typescript
-// DiagramSymbol の LayoutBound を (0, 0) に固定
-const diagram = diagramSymbol.getLayoutBounds()
-
-layout.constraints.addConstraint(diagram.x, LayoutConstraintOperator.Eq, 0)
-layout.constraints.addConstraint(diagram.y, LayoutConstraintOperator.Eq, 0)
+context.constraints.withSymbol(this.id, 'containerInbounds', (builder) => {
+  this.ensureLayoutBounds(builder)
+})
 ```
 
-#### DiagramSymbol のサイズ制約
-
-DiagramSymbol はコンテナとして扱われるため、最小サイズのみ指定されます（WEAK 制約）。
+`ensureLayoutBounds` は `buildContainerConstraints` と最小サイズ制約の両方を追加し、以下のような制約を `LayoutConstraintStrength.Strong` / `Weak` で登録します。
 
 ```typescript
-// 最小サイズのみ指定
-layout.constraints.addConstraint(
-  diagram.width,
-  LayoutConstraintOperator.Ge,
-  200,
-  LayoutConstraintStrength.Weak
+builder.eq(
+  this.container.x,
+  this.expressionFromBounds(builder, bounds, 'x', padding.left),
+  LayoutConstraintStrength.Strong
 )
-layout.constraints.addConstraint(
-  diagram.height,
-  LayoutConstraintOperator.Ge,
-  150,
-  LayoutConstraintStrength.Weak
+builder.eq(
+  this.container.y,
+  this.expressionFromBounds(builder, bounds, 'y', padding.top + header),
+  LayoutConstraintStrength.Strong
+)
+builder.eq(
+  this.container.width,
+  this.expressionFromBounds(builder, bounds, 'width', -horizontalPadding),
+  LayoutConstraintStrength.Strong
+)
+builder.eq(
+  this.container.height,
+  this.expressionFromBounds(builder, bounds, 'height', -verticalPadding),
+  LayoutConstraintStrength.Strong
 )
 ```
 
-#### ユーザーシンボルの配置制約
+さらに `ensureLayoutBounds` は初回呼び出し時に図そのものの `bounds.x` / `bounds.y` を 0 に固定し（`Strong`）、`bounds.width` / `bounds.height` に `200` / `150` の `Weak` 制約を与えて最小サイズを保証します。これにより DiagramSymbol は原点に固定されたコンテナとして機能します。
 
-自動的に追加される enclose 制約により、すべてのユーザーシンボルが DiagramSymbol 内に配置され、DiagramSymbol が自動的に拡大します。
+ユーザシンボルの追加時には `enclose` 系制約が図全体に自動適用されるため、すべてのシンボルが DiagramSymbol 内の領域に収まり、図全体のサイズも自動的に追従します。
 
 ---
 
 ## 制約の実装詳細
+
+### LayoutConstraintBuilder
+
+`LayoutConstraints.withSymbol` は `LayoutConstraintBuilder` を生成し、`eq` / `ge` / `expression` で `kiwi.Constraint` を蓄積します。
+
+```typescript
+class LayoutConstraintBuilder {
+  private readonly raws: kiwi.Constraint[] = []
+
+  constructor(private readonly solver: LayoutSolver) {}
+
+  expression(terms?: LayoutTerm[], constant = 0) {
+    return this.solver.expression(terms, constant)
+  }
+
+  eq(left: LayoutExpressionInput, right: LayoutExpressionInput, strength = LayoutConstraintStrength.Strong) {
+    this.raws.push(this.solver.addConstraint(left, LayoutConstraintOperator.Eq, right, strength))
+    return this
+  }
+
+  ge(left: LayoutExpressionInput, right: LayoutExpressionInput, strength = LayoutConstraintStrength.Weak) {
+    this.raws.push(this.solver.addConstraint(left, LayoutConstraintOperator.Ge, right, strength))
+    return this
+  }
+
+  getRawConstraints() {
+    return this.raws
+  }
+}
+```
+
+`LayoutConstraints.record` は生成された `kiwi.Constraint` を `LayoutConstraint` オブジェクトと ID で管理します。
 
 ### 制約の優先順位
 
@@ -318,203 +388,89 @@ layout.constraints.addConstraint(
 
 ### Arrange（配置）の実装
 
-#### arrangeHorizontal の実装
-
-要素を水平方向に等間隔で並べます。
+`LayoutConstraints.arrangeHorizontal` / `arrangeVertical` は各シンボルペアに対して `LayoutSolver.addConstraint` を直接呼び出し、Gap を加えた等間隔の制約を構築します。実際の制約生成は `createArrangeHorizontalConstraints` / `createArrangeVerticalConstraints` に委譲され、最終的に `record` されます。
 
 ```typescript
-// 概念的な例（実際は LayoutConstraints が制約を管理）
-private addHorizontalConstraints(symbolIds: string[], gap: number) {
-  for (let i = 0; i < symbolIds.length - 1; i++) {
-    const a = this.boundsMap.get(symbolIds[i])
-    const b = this.boundsMap.get(symbolIds[i + 1])
-    if (!a || !b) continue
+private createArrangeHorizontalConstraints(
+  symbolIds: LayoutSymbolId[],
+  gap?: number
+): kiwi.Constraint[] {
+  const actualGap = gap ?? this.theme.defaultStyleSet.horizontalGap
+  const raws: kiwi.Constraint[] = []
 
-    // b.x = a.x + a.width + gap (STRONG strength)
-    this.layoutContext.constraints.addConstraint(
-      b.x,
-      LayoutConstraintOperator.Eq,
-      this.layoutContext.constraints.expression(
-        [
-          { variable: a.x },
-          { variable: a.width }
-        ],
-        gap
-      ),
-      LayoutConstraintStrength.Strong
+  for (let i = 0; i < symbolIds.length - 1; i++) {
+    const current = this.resolveSymbolById(symbolIds[i])
+    const next = this.resolveSymbolById(symbolIds[i + 1])
+    if (!current || !next) continue
+
+    const currentBounds = current.layout
+    const nextBounds = next.layout
+
+    raws.push(
+      this.solver.addConstraint(
+        nextBounds.x,
+        LayoutConstraintOperator.Eq,
+        this.solver.expression([{ variable: currentBounds.x }, { variable: currentBounds.width }], actualGap),
+        LayoutConstraintStrength.Strong
+      )
     )
   }
+
+  return raws
 }
 ```
 
-**制約:**
-- 要素間の距離が等しい
-- 左から右の順序で配置
-- デフォルト間隔: 80px
-- 制約強度: STRONG
-
-#### arrangeVertical の実装
-
-要素を垂直方向に等間隔で並べます。
-
-```typescript
-// 概念的な例（実際は LayoutConstraints が制約を管理）
-private addVerticalConstraints(symbolIds: string[], gap: number) {
-  for (let i = 0; i < symbolIds.length - 1; i++) {
-    const a = this.boundsMap.get(symbolIds[i])
-    const b = this.boundsMap.get(symbolIds[i + 1])
-    if (!a || !b) continue
-
-    // b.y = a.y + a.height + gap (STRONG strength)
-    this.layoutContext.constraints.addConstraint(
-      b.y,
-      LayoutConstraintOperator.Eq,
-      this.layoutContext.constraints.expression(
-        [
-          { variable: a.y },
-          { variable: a.height }
-        ],
-        gap
-      ),
-      LayoutConstraintStrength.Strong
-    )
-  }
-}
-```
-
-**制約:**
-- 要素間の距離が等しい
-- 上から下の順序で配置
-- デフォルト間隔: 50px
-- 制約強度: STRONG
+`arrangeVertical` は同様に `y` / `height` を使って縦方向の等間隔制約を生成します。
 
 ### Align（整列）の実装
 
-Align 系のメソッドは、派生変数を利用して効率的に制約を追加します。
+整列系のヒントは `createAlignCenterXConstraints` や `createAlignRightConstraints` などのヘルパーを使い、参照シンボルとの `right` / `bottom` / `centerX` / `centerY` の派生変数を利用して制約を追加します。
 
 ```typescript
-// alignRight の例（派生変数 right を利用）
-private addAlignRightConstraints(symbolIds: string[]) {
-  if (symbolIds.length < 2) return
-  const firstId = symbolIds[0]
-  if (!firstId) return
-  const first = this.boundsMap.get(firstId)
-  if (!first) return
+private createAlignCenterXConstraints(symbolIds: LayoutSymbolId[]): kiwi.Constraint[] {
+  const raws: kiwi.Constraint[] = []
+  if (symbolIds.length < 2) return raws
+
+  const first = this.resolveSymbolById(symbolIds[0])
+  if (!first) return raws
+  const firstBounds = first.layout
 
   for (let i = 1; i < symbolIds.length; i++) {
-    const symbolId = symbolIds[i]
-    if (!symbolId) continue
-    const symbol = this.boundsMap.get(symbolId)
-    if (!symbol) continue
-    
-    // curr.right = first.right (派生変数を利用)
-    this.layoutContext.constraints.addConstraint(
-      symbol.right,
-      LayoutConstraintOperator.Eq,
-      first.right,
-      LayoutConstraintStrength.Strong
+    const current = this.resolveSymbolById(symbolIds[i])
+    if (!current) continue
+    const currentBounds = current.layout
+
+    raws.push(
+      this.solver.addConstraint(
+        this.solver.expression([
+          { variable: currentBounds.x },
+          { variable: currentBounds.width, coefficient: 0.5 },
+        ]),
+        LayoutConstraintOperator.Eq,
+        this.solver.expression([
+          { variable: firstBounds.x },
+          { variable: firstBounds.width, coefficient: 0.5 },
+        ]),
+        LayoutConstraintStrength.Strong
+      )
     )
   }
+
+  return raws
 }
 ```
 
-同様に、\`alignCenterX\`, \`alignCenterY\`, \`alignBottom\` でも派生変数を利用します。
+`alignWidth` / `alignHeight` は派生変数を使わず単純に幅・高さを等しくする制約を加えます。
 
 ### Enclose（包含）の実装
 
-#### コンテナのサイズ制約
+`enclose` 系のメソッドは、`resolveSymbolById` でコンテナと子を取得し、`LayoutSolver.addConstraint` で `Ge` 制約を追加します。
 
-```typescript
-// コンテナは最小サイズのみ指定（WEAK）
-if (isContainer) {
-  this.layoutContext.constraints.addConstraint(
-    layoutBounds.width,
-    LayoutConstraintOperator.Ge,
-    100,
-    LayoutConstraintStrength.Weak
-  )
-  this.layoutContext.constraints.addConstraint(
-    layoutBounds.height,
-    LayoutConstraintOperator.Ge,
-    100,
-    LayoutConstraintStrength.Weak
-  )
-}
-```
+- `enclose` は各子の `x`/`y` をコンテナの `x`/`y` 以上にし、コンテナの右/下を子の右/下以上にする。
+- `encloseGrid` / `encloseFigure` は `enclose` の上に `createArrangeHorizontalConstraints` / `createArrangeVerticalConstraints` を組み合わせ、行列・行ごとの配置制約を追加する。
 
-#### enclose 制約（子要素の配置とコンテナの拡大）
+各メソッドは `record` を呼んで `LayoutConstraint` を記録するため、デバッグ時には制約 ID で追跡できます。
 
-```typescript
-private addEncloseConstraints(containerId: string, childIds: string[] = []) {
-  const container = this.boundsMap.get(containerId)
-  if (!container) return
-  const padding = 20
-
-  for (const childId of childIds) {
-    const child = this.boundsMap.get(childId)
-    if (!child) continue
-
-    // 子要素の最小位置制約（コンテナ内に配置）
-    // child.x >= container.x + padding
-    this.layoutContext.constraints.addConstraint(
-      child.x,
-      LayoutConstraintOperator.Ge,
-      this.layoutContext.constraints.expression([{ variable: container.x }], padding),
-      LayoutConstraintStrength.Required
-    )
-
-    // child.y >= container.y + 50 (タイトルスペース考慮)
-    this.layoutContext.constraints.addConstraint(
-      child.y,
-      LayoutConstraintOperator.Ge,
-      this.layoutContext.constraints.expression([{ variable: container.y }], 50),
-      LayoutConstraintStrength.Required
-    )
-
-    // コンテナを子要素に合わせて拡大（重要！）
-    // container.width + container.x >= child.x + child.width + padding
-    this.layoutContext.constraints.addConstraint(
-      this.layoutContext.constraints.expression([
-        { variable: container.width },
-        { variable: container.x }
-      ]),
-      LayoutConstraintOperator.Ge,
-      this.layoutContext.constraints.expression(
-        [
-          { variable: child.x },
-          { variable: child.width }
-        ],
-        padding
-      ),
-      LayoutConstraintStrength.Required
-    )
-
-    // container.height + container.y >= child.y + child.height + padding
-    this.layoutContext.constraints.addConstraint(
-      this.layoutContext.constraints.expression([
-        { variable: container.height },
-        { variable: container.y }
-      ]),
-      LayoutConstraintOperator.Ge,
-      this.layoutContext.constraints.expression(
-        [
-          { variable: child.y },
-          { variable: child.height }
-        ],
-        padding
-      ),
-      LayoutConstraintStrength.Required
-    )
-  }
-}
-```
-
-**キーポイント:**
-- コンテナのサイズは固定せず、最小サイズのみ指定（WEAK 制約）
-- 子要素の位置に応じてコンテナが自動的に拡大（REQUIRED 制約）
-- \`arrange\` 制約（STRONG）と \`enclose\` 制約（REQUIRED）は競合しない
-
----
 
 ## オンライン制約適用
 
@@ -534,7 +490,7 @@ solver.solve(symbols, hints)     // → hints をループして制約追加
 
 ```typescript
 // ✅ 新: 即座に制約追加
-hint.arrangeHorizontal(a, b, c)  // → layoutContext.constraints.arrangeHorizontal([a,b,c])
+hint.arrangeHorizontal(a, b, c)  // → context.constraints.arrangeHorizontal([a,b,c])
                                   // → solver.addConstraint(...) が即座に実行
 ```
 
@@ -553,30 +509,18 @@ Symbol生成時に \`LayoutContext\` を注入し、初期制約を登録しま�
 // プラグインでのシンボル生成
 circle(label: string): SymbolId {
   const symbol = symbols.register(plugin, 'circle', (symbolId) => {
-    const bound = layout.variables.createBound(symbolId)
+    const bound = context.variables.createBound(symbolId)
     const circle = new CircleSymbol(symbolId, label, bound)
-    
-    // 必要に応じて制約を追加（例: 固定サイズ）
-    layout.constraints.addConstraint(
-      bound.width,
-      LayoutConstraintOperator.Eq,
-      80,
-      LayoutConstraintStrength.Required
-    )
-    layout.constraints.addConstraint(
-      bound.height,
-      LayoutConstraintOperator.Eq,
-      80,
-      LayoutConstraintStrength.Required
-    )
-    
+
+    context.constraints.withSymbol(symbolId, 'symbolBounds', (builder) => {
+      circle.ensureLayoutBounds(builder)
+    })
+
     return circle
   })
   return symbol.id
 }
 ```
-
----
 
 ---
 
@@ -654,12 +598,11 @@ export class CircleSymbol extends SymbolBase {
 
 ```typescript
 // 制約ID形式
-"constraints/\${serial}"                    // 通常の制約
-"constraints/\${symbolId}/\${serial}"        // Symbol固有の制約
-
-// 制約の削除（将来実装予定）
-layoutContext.constraints.remove("constraints/user/0")
+"constraints/${serial}"                    // 通常の制約
+"constraints/${symbolId}/${serial}"        // Symbol固有の制約
 ```
+
+現在は制約の削除 API を公開していませんが、`LayoutConstraints.list()` で記録済みの制約と ID を確認できます。将来的には `LayoutContext.constraints.remove()` のような API で ID を指定して削除できる設計も検討しています。
 
 ---
 

@@ -122,14 +122,17 @@ import type { Symbols, Relationships } from "kiwumil"
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, context: LayoutContext) {
     const plugin = this.name
     
     return {
       mySymbol(label: string): SymbolId {
         const symbol = symbols.register(plugin, "mySymbol", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
+          const bound = context.variables.createBound(symbolId)
           const instance = new MySymbol(symbolId, label, bound)
+          context.constraints.withSymbol(symbolId, 'symbolBounds', (builder) => {
+            instance.ensureLayoutBounds(builder)
+          })
           return instance
         })
         return symbol.id
@@ -172,14 +175,22 @@ import { Relationships } from "../../dsl/relationships"
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, context: LayoutContext) {
     const plugin = this.name
     
     return {
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, "actor", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const actor = new ActorSymbol(symbolId, label, bound)
+          const bound = context.variables.createBound(symbolId)
+          const actor = new ActorSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            actor.ensureLayoutBounds(builder)
+          })
           return actor
         })
         return symbol.id
@@ -187,8 +198,16 @@ export const UMLPlugin = {
       
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const usecase = new UsecaseSymbol(symbolId, label, bound)
+          const bound = context.variables.createBound(symbolId)
+          const usecase = new UsecaseSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+            usecase.ensureLayoutBounds(builder)
+          })
           return usecase
         })
         return symbol.id
@@ -197,8 +216,19 @@ export const UMLPlugin = {
       systemBoundary(label: string): ContainerSymbolId {
         const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
-          const bound = layout.variables.createBound(id)
-          return new SystemBoundarySymbol(id, label, bound, layout)
+          const bound = context.variables.createBound(id)
+          const container = context.variables.createBound(`${id}.container`, "container")
+          const boundary = new SystemBoundarySymbol({
+            id,
+            layout: bound,
+            container,
+            label,
+            theme,
+          })
+          context.constraints.withSymbol(id, "containerInbounds", (builder) => {
+            boundary.ensureLayoutBounds(builder)
+          })
+          return boundary
         })
         return symbol.id as ContainerSymbolId
       }
@@ -401,7 +431,11 @@ export const MyDiagramPlugin: DiagramPlugin = {
       mySymbol(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
           const bound = layout.variables.createBound(symbolId)
-          return new MySymbol(symbolId, label, bound)
+          const instance = new MySymbol(symbolId, label, bound)
+          layout.constraints.withSymbol(symbolId, 'symbolBounds', (builder) => {
+            instance.ensureLayoutBounds(builder)
+          })
+          return instance
         })
         return symbol.id
       }
@@ -490,7 +524,11 @@ mySymbol(label: string): SymbolId {
 mySymbol(label: string): SymbolId {
   const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
     const bound = layout.variables.createBound(symbolId)
-    return new MySymbol(symbolId, label, bound)
+    const instance = new MySymbol(symbolId, label, bound)
+    layout.constraints.withSymbol(symbolId, 'symbolBounds', (builder) => {
+      instance.ensureLayoutBounds(builder)
+    })
+    return instance
   })
   return symbol.id
 }
