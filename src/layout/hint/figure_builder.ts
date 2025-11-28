@@ -70,6 +70,9 @@ export class FigureBuilder {
 
     const resolvedRows = this.rows.map((row) => row.map(toSymbolId))
     const children = resolvedRows.flat()
+    const rowTargets = resolvedRows.map((row) => this.hint.resolveConstraintTargets(row))
+    const containerTarget = this.hint.getConstraintTarget(this.container)
+    if (!containerTarget) return
 
     // metadata 設定（nestLevel）
     this.applyContainerMetadata(children)
@@ -77,7 +80,7 @@ export class FigureBuilder {
     // 制約を適用
     this.hint
       .getLayoutContext()
-      .constraints.encloseFigure(this.container, resolvedRows, this.options)
+      .constraints.encloseFigure(containerTarget, rowTargets, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {

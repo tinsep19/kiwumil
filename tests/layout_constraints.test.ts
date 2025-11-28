@@ -14,7 +14,7 @@ describe("LayoutConstraints metadata", () => {
 
   beforeEach(() => {
     symbols = new Symbols()
-    context = new LayoutContext(DefaultTheme, (id) => symbols.findById(id))
+    context = new LayoutContext(DefaultTheme)
     hint = new HintFactory({ context, symbols })
   })
 

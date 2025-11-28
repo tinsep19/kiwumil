@@ -1,6 +1,7 @@
 // src/dsl/hint_factory.ts
 import type { ContainerSymbolId } from "../model/types"
 import { DIAGRAM_CONTAINER_ID } from "../model/types"
+import type { ContainerSymbol } from "../model/container_symbol"
 import type { SymbolBase } from "../model/symbol_base"
 import type { LayoutContext } from "../layout/layout_context"
 import { GridBuilder } from "../layout/hint/grid_builder"
@@ -17,6 +18,7 @@ import {
   toSymbolId,
   type SymbolOrId,
 } from "./symbol_helpers"
+import type { LayoutConstraintTarget } from "../layout/layout_constraint_target"
 
 type LayoutTargetId = SymbolOrId | ContainerSymbolId
 type LayoutContainerTarget = ContainerSymbolOrId
@@ -83,47 +85,47 @@ export class HintFactory {
   }
 
   arrangeHorizontal(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.arrangeHorizontal(this.normalizeTargets(symbolIds))
+    this.context.constraints.arrangeHorizontal(this.resolveConstraintTargets(symbolIds))
   }
 
   arrangeVertical(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.arrangeVertical(this.normalizeTargets(symbolIds))
+    this.context.constraints.arrangeVertical(this.resolveConstraintTargets(symbolIds))
   }
 
   alignLeft(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignLeft(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignLeft(this.resolveConstraintTargets(symbolIds))
   }
 
   alignRight(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignRight(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignRight(this.resolveConstraintTargets(symbolIds))
   }
 
   alignTop(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignTop(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignTop(this.resolveConstraintTargets(symbolIds))
   }
 
   alignBottom(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignBottom(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignBottom(this.resolveConstraintTargets(symbolIds))
   }
 
   alignCenterX(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignCenterX(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignCenterX(this.resolveConstraintTargets(symbolIds))
   }
 
   alignCenterY(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignCenterY(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignCenterY(this.resolveConstraintTargets(symbolIds))
   }
 
   alignWidth(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignWidth(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignWidth(this.resolveConstraintTargets(symbolIds))
   }
 
   alignHeight(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignHeight(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignHeight(this.resolveConstraintTargets(symbolIds))
   }
 
   alignSize(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignSize(this.normalizeTargets(symbolIds))
+    this.context.constraints.alignSize(this.resolveConstraintTargets(symbolIds))
   }
 
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
@@ -139,13 +141,18 @@ export class HintFactory {
       }
     }
 
-    this.context.constraints.enclose(containerId, this.normalizeTargets(childIds))
+    const containerTarget = this.resolveConstraintTarget(containerId)
+    if (!containerTarget) return
+    const childTargets = this.resolveConstraintTargets(childIds)
+
+    this.context.constraints.enclose(containerTarget, childTargets)
   }
 
   createGuideX(value?: number): GuideBuilderX {
     return new GuideBuilderImpl(
       this.context,
       (id: LayoutTargetId) => this.findSymbolById(id),
+      (id: LayoutTargetId) => this.resolveConstraintTarget(id),
       "x",
       `guideX-${this.guideCounter++}`,
       value
@@ -156,14 +163,36 @@ export class HintFactory {
     return new GuideBuilderImpl(
       this.context,
       (id: LayoutTargetId) => this.findSymbolById(id),
+      (id: LayoutTargetId) => this.resolveConstraintTarget(id),
       "y",
       `guideY-${this.guideCounter++}`,
       value
     )
   }
 
-  private normalizeTargets(targets: LayoutTargetId[]) {
-    return targets.map((target) => toSymbolId(target))
+  resolveConstraintTargets(targets: LayoutTargetId[]): LayoutConstraintTarget[] {
+    return targets
+      .map((target) => this.resolveConstraintTarget(target))
+      .filter((target): target is LayoutConstraintTarget => Boolean(target))
+  }
+
+  getConstraintTarget(target: LayoutTargetId): LayoutConstraintTarget | undefined {
+    return this.resolveConstraintTarget(target)
+  }
+
+  private resolveConstraintTarget(target: LayoutTargetId): LayoutConstraintTarget | undefined {
+    const symbol = this.findSymbolById(target)
+    if (!symbol) return undefined
+    const container = this.isContainerSymbol(symbol) ? symbol.container : undefined
+    return {
+      boundId: symbol.layout.boundId,
+      layout: symbol.layout,
+      container,
+    }
+  }
+
+  private isContainerSymbol(symbol: SymbolBase): symbol is ContainerSymbol {
+    return typeof (symbol as ContainerSymbol).container === "object"
   }
 
   private findSymbolById(id: LayoutTargetId) {

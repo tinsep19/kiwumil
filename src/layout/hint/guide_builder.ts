@@ -7,6 +7,7 @@ import {
   type LayoutVar,
 } from "../layout_variables"
 import type { LayoutContext } from "../layout_context"
+import type { LayoutConstraintTarget } from "../layout_constraint_target"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 
@@ -56,6 +57,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   constructor(
     private readonly context: LayoutContext,
     private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
+    private readonly resolveTarget: (id: LayoutTargetId) => LayoutConstraintTarget | undefined,
     private readonly axis: Axis,
     variableName: string,
     initialValue?: number
@@ -260,18 +262,19 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   }
 
   arrange(gap?: number): this {
-    if (this.alignedSymbols.size === 0) return this
+    const targets = this.getAlignedTargets()
+    if (targets.length === 0) return this
 
     if (this.axis === "x") {
       // X軸ガイドの場合は垂直方向に並べる
       this.context.constraints.arrangeVertical(
-        Array.from(this.alignedSymbols),
+        targets,
         gap ?? this.context.theme.defaultStyleSet.verticalGap
       )
     } else {
       // Y軸ガイドの場合は水平方向に並べる
       this.context.constraints.arrangeHorizontal(
-        Array.from(this.alignedSymbols),
+        targets,
         gap ?? this.context.theme.defaultStyleSet.horizontalGap
       )
     }
@@ -282,6 +285,12 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       this.alignedSymbols.add(id)
     }
+  }
+
+  private getAlignedTargets(): LayoutConstraintTarget[] {
+    return Array.from(this.alignedSymbols)
+      .map((id) => this.resolveTarget(id))
+      .filter((target): target is LayoutConstraintTarget => Boolean(target))
   }
 
   private ensureFollowAvailable(method: string) {
