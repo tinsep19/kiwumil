@@ -8,7 +8,6 @@ import {
   type LayoutExpressionInput,
   type LayoutTerm,
 } from "./kiwi"
-import { LayoutVariables } from "./layout_variables"
 import type { LayoutConstraintTarget } from "./layout_constraint_target"
 
 // 互換性のため既存の export を維持
@@ -86,7 +85,6 @@ export class LayoutConstraints {
   private readonly symbolCounter = new Map<string, number>()
 
   constructor(
-    private readonly variables: LayoutVariables,
     private readonly solver: LayoutSolver,
     private readonly theme: Theme
   ) {}

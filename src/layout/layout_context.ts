@@ -22,7 +22,7 @@ export class LayoutContext {
     this.theme = theme
     this.solver = new LayoutSolver()
     this.variables = new LayoutVariables(this.solver)
-    this.constraints = new LayoutConstraints(this.variables, this.solver, theme)
+    this.constraints = new LayoutConstraints(this.solver, theme)
   }
 
   solve() {
