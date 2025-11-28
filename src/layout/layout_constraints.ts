@@ -108,7 +108,10 @@ export class LayoutConstraints {
     return this.solver.expression(terms, constant)
   }
 
-  arrangeHorizontal(targets: LayoutConstraintTarget[], gap = this.theme.defaultStyleSet.horizontalGap) {
+  arrangeHorizontal(
+    targets: LayoutConstraintTarget[],
+    gap = this.theme.defaultStyleSet.horizontalGap
+  ) {
     const raws: kiwi.Constraint[] = []
 
     for (let i = 0; i < targets.length - 1; i++) {
@@ -612,5 +615,4 @@ export class LayoutConstraints {
     this.symbolCounter.set(base, next + 1)
     return `constraints/${base}/${next}` as LayoutConstraintId
   }
-
 }
