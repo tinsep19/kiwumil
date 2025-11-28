@@ -9,13 +9,14 @@ import {
   type LayoutExpression,
   type LayoutExpressionInput,
 } from "./kiwi"
-import type {
-  Bounds,
-  BoundsType,
-  LayoutBounds,
-  ContainerBounds,
-  ItemBounds,
-  BoundsMap,
+import {
+  createBoundId,
+  type Bounds,
+  type BoundsType,
+  type LayoutBounds,
+  type ContainerBounds,
+  type ItemBounds,
+  type BoundsMap,
 } from "./bounds"
 
 // 互換性のため既存の export を維持
@@ -66,6 +67,8 @@ export class LayoutVariables {
       )
     }
 
+    const boundId = createBoundId(`${prefix}:${type}`)
+
     // 基本的な 4 つの変数を作成
     const x = this.createVar(`${prefix}.x`)
     const y = this.createVar(`${prefix}.y`)
@@ -107,6 +110,7 @@ export class LayoutVariables {
     )
 
     return {
+      boundId,
       type,
       x,
       y,

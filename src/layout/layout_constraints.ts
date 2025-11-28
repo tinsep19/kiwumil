@@ -1,7 +1,5 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
-import type { SymbolBase } from "../model/symbol_base"
-import type { ContainerBounds } from "./bounds"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
 import {
   Operator,
@@ -11,6 +9,7 @@ import {
   type LayoutTerm,
 } from "./kiwi"
 import { LayoutVariables } from "./layout_variables"
+import type { LayoutConstraintTarget } from "./layout_constraint_target"
 
 // 互換性のため既存の export を維持
 export const LayoutConstraintOperator = Operator
@@ -48,14 +47,6 @@ export interface LayoutConstraint {
 }
 
 type LayoutSymbolId = SymbolId | ContainerSymbolId
-
-type ContainerBoundsProvider = SymbolBase & {
-  readonly container: ContainerBounds
-}
-
-function hasContainerBounds(symbol: SymbolBase): symbol is ContainerBoundsProvider {
-  return typeof (symbol as Partial<ContainerBoundsProvider>).container === "object"
-}
 
 export class LayoutConstraintBuilder {
   private readonly raws: kiwi.Constraint[] = []
@@ -97,8 +88,7 @@ export class LayoutConstraints {
   constructor(
     private readonly variables: LayoutVariables,
     private readonly solver: LayoutSolver,
-    private readonly theme: Theme,
-    private readonly resolveSymbol: (id: LayoutSymbolId) => SymbolBase | undefined
+    private readonly theme: Theme
   ) {}
 
   list(): LayoutConstraint[] {
@@ -120,15 +110,14 @@ export class LayoutConstraints {
     return this.solver.expression(terms, constant)
   }
 
-  arrangeHorizontal(symbolIds: LayoutSymbolId[], gap = this.theme.defaultStyleSet.horizontalGap) {
+  arrangeHorizontal(targets: LayoutConstraintTarget[], gap = this.theme.defaultStyleSet.horizontalGap) {
     const raws: kiwi.Constraint[] = []
 
-    for (let i = 0; i < symbolIds.length - 1; i++) {
-      const a = this.resolveSymbolById(symbolIds[i])
-      const b = this.resolveSymbolById(symbolIds[i + 1])
-      if (!a || !b) continue
-      const aBounds = a.layout
-      const bBounds = b.layout
+    for (let i = 0; i < targets.length - 1; i++) {
+      const current = targets[i]!
+      const next = targets[i + 1]!
+      const aBounds = current.layout
+      const bBounds = next.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -143,15 +132,14 @@ export class LayoutConstraints {
     this.record("arrangeHorizontal", raws)
   }
 
-  arrangeVertical(symbolIds: LayoutSymbolId[], gap = this.theme.defaultStyleSet.verticalGap) {
+  arrangeVertical(targets: LayoutConstraintTarget[], gap = this.theme.defaultStyleSet.verticalGap) {
     const raws: kiwi.Constraint[] = []
 
-    for (let i = 0; i < symbolIds.length - 1; i++) {
-      const a = this.resolveSymbolById(symbolIds[i])
-      const b = this.resolveSymbolById(symbolIds[i + 1])
-      if (!a || !b) continue
-      const aBounds = a.layout
-      const bBounds = b.layout
+    for (let i = 0; i < targets.length - 1; i++) {
+      const current = targets[i]!
+      const next = targets[i + 1]!
+      const aBounds = current.layout
+      const bBounds = next.layout
 
       raws.push(
         this.solver.addConstraint(
@@ -166,17 +154,13 @@ export class LayoutConstraints {
     this.record("arrangeVertical", raws)
   }
 
-  alignLeft(symbolIds: LayoutSymbolId[]) {
+  alignLeft(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           bounds.x,
@@ -190,17 +174,13 @@ export class LayoutConstraints {
     this.record("alignLeft", raws)
   }
 
-  alignRight(symbolIds: LayoutSymbolId[]) {
+  alignRight(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([{ variable: bounds.x }, { variable: bounds.width }]),
@@ -214,17 +194,13 @@ export class LayoutConstraints {
     this.record("alignRight", raws)
   }
 
-  alignTop(symbolIds: LayoutSymbolId[]) {
+  alignTop(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           bounds.y,
@@ -238,17 +214,13 @@ export class LayoutConstraints {
     this.record("alignTop", raws)
   }
 
-  alignBottom(symbolIds: LayoutSymbolId[]) {
+  alignBottom(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([{ variable: bounds.y }, { variable: bounds.height }]),
@@ -262,17 +234,13 @@ export class LayoutConstraints {
     this.record("alignBottom", raws)
   }
 
-  alignCenterX(symbolIds: LayoutSymbolId[]) {
+  alignCenterX(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([
@@ -292,17 +260,13 @@ export class LayoutConstraints {
     this.record("alignCenterX", raws)
   }
 
-  alignCenterY(symbolIds: LayoutSymbolId[]) {
+  alignCenterY(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           this.solver.expression([
@@ -322,17 +286,13 @@ export class LayoutConstraints {
     this.record("alignCenterY", raws)
   }
 
-  alignWidth(symbolIds: LayoutSymbolId[]) {
+  alignWidth(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           bounds.width,
@@ -346,17 +306,13 @@ export class LayoutConstraints {
     this.record("alignWidth", raws)
   }
 
-  alignHeight(symbolIds: LayoutSymbolId[]) {
+  alignHeight(targets: LayoutConstraintTarget[]) {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length === 0) return
-    const reference = this.resolveSymbolById(symbolIds[0])
-    if (!reference) return
-    const refBounds = reference.layout
+    if (targets.length === 0) return
+    const refBounds = targets[0]!.layout
 
-    for (const id of symbolIds.slice(1)) {
-      const symbol = this.resolveSymbolById(id)
-      if (!symbol) continue
-      const bounds = symbol.layout
+    for (const target of targets.slice(1)) {
+      const bounds = target.layout
       raws.push(
         this.solver.addConstraint(
           bounds.height,
@@ -370,20 +326,16 @@ export class LayoutConstraints {
     this.record("alignHeight", raws)
   }
 
-  alignSize(symbolIds: LayoutSymbolId[]) {
-    this.alignWidth(symbolIds)
-    this.alignHeight(symbolIds)
+  alignSize(targets: LayoutConstraintTarget[]) {
+    this.alignWidth(targets)
+    this.alignHeight(targets)
   }
 
-  enclose(containerId: ContainerSymbolId, childIds: LayoutSymbolId[]) {
-    const container = this.resolveSymbolById(containerId)
-    if (!container) return
-    const containerBounds = hasContainerBounds(container) ? container.container : container.layout
+  enclose(container: LayoutConstraintTarget, childTargets: LayoutConstraintTarget[]) {
+    const containerBounds = container.container ?? container.layout
     const raws: kiwi.Constraint[] = []
 
-    for (const childId of childIds) {
-      const child = this.resolveSymbolById(childId)
-      if (!child) continue
+    for (const child of childTargets) {
       const childBounds = child.layout
 
       raws.push(
@@ -436,8 +388,8 @@ export class LayoutConstraints {
    * Grid レイアウト（N×M配置）
    */
   encloseGrid(
-    containerId: ContainerSymbolId,
-    matrix: SymbolId[][],
+    container: LayoutConstraintTarget,
+    matrix: LayoutConstraintTarget[][],
     options?: {
       rowGap?: number
       colGap?: number
@@ -447,7 +399,7 @@ export class LayoutConstraints {
     const children = matrix.flat()
 
     // 1. enclose 制約（Required）
-    this.enclose(containerId, children)
+    this.enclose(container, children)
 
     // 2. Grid 配置制約（Strong）
     const rowGap = options?.rowGap ?? this.theme.defaultStyleSet.verticalGap
@@ -464,26 +416,28 @@ export class LayoutConstraints {
     // 各列を垂直配置
     const numCols = matrix[0]?.length ?? 0
     if (numCols === 0) {
-      this.record("encloseGrid", raws, containerId)
+      this.record("encloseGrid", raws, container.boundId)
       return
     }
 
     for (let col = 0; col < numCols; col++) {
-      const column = matrix.map((row) => row[col]).filter((id): id is SymbolId => id !== undefined)
+      const column = matrix
+        .map((row) => row[col])
+        .filter((target): target is LayoutConstraintTarget => Boolean(target))
       if (column.length === 0) continue
       const colRaws = this.createArrangeVerticalConstraints(column, rowGap)
       raws.push(...colRaws)
     }
 
-    this.record("encloseGrid", raws, containerId)
+    this.record("encloseGrid", raws, container.boundId)
   }
 
   /**
    * Figure レイアウト（行ごとの配置）
    */
   encloseFigure(
-    containerId: ContainerSymbolId,
-    rows: SymbolId[][],
+    container: LayoutConstraintTarget,
+    rows: LayoutConstraintTarget[][],
     options?: {
       rowGap?: number
       align?: "left" | "center" | "right"
@@ -493,7 +447,7 @@ export class LayoutConstraints {
     const children = rows.flat()
 
     // 1. enclose 制約（Required）
-    this.enclose(containerId, children)
+    this.enclose(container, children)
 
     // 2. 行ごとの配置制約（Strong）
     const rowGap = options?.rowGap ?? this.theme.defaultStyleSet.verticalGap
@@ -507,7 +461,9 @@ export class LayoutConstraints {
     }
 
     // 各行の先頭（または中央/右）を縦配置
-    const anchors = rows.map((row) => row[0]).filter((id): id is SymbolId => id !== undefined)
+    const anchors = rows
+      .map((row) => row[0])
+      .filter((target): target is LayoutConstraintTarget => Boolean(target))
     if (anchors.length > 0) {
       const anchorRaws = this.createArrangeVerticalConstraints(anchors, rowGap)
       raws.push(...anchorRaws)
@@ -522,21 +478,19 @@ export class LayoutConstraints {
       raws.push(...alignRaws)
     }
 
-    this.record("encloseFigure", raws, containerId)
+    this.record("encloseFigure", raws, container.boundId)
   }
 
   private createArrangeHorizontalConstraints(
-    symbolIds: LayoutSymbolId[],
+    targets: LayoutConstraintTarget[],
     gap?: number
   ): kiwi.Constraint[] {
     const actualGap = gap ?? this.theme.defaultStyleSet.horizontalGap
     const raws: kiwi.Constraint[] = []
 
-    for (let i = 0; i < symbolIds.length - 1; i++) {
-      const current = this.resolveSymbolById(symbolIds[i])
-      const next = this.resolveSymbolById(symbolIds[i + 1])
-      if (!current || !next) continue
-
+    for (let i = 0; i < targets.length - 1; i++) {
+      const current = targets[i]!
+      const next = targets[i + 1]!
       const currentBounds = current.layout
       const nextBounds = next.layout
 
@@ -557,17 +511,15 @@ export class LayoutConstraints {
   }
 
   private createArrangeVerticalConstraints(
-    symbolIds: LayoutSymbolId[],
+    targets: LayoutConstraintTarget[],
     gap?: number
   ): kiwi.Constraint[] {
     const actualGap = gap ?? this.theme.defaultStyleSet.verticalGap
     const raws: kiwi.Constraint[] = []
 
-    for (let i = 0; i < symbolIds.length - 1; i++) {
-      const current = this.resolveSymbolById(symbolIds[i])
-      const next = this.resolveSymbolById(symbolIds[i + 1])
-      if (!current || !next) continue
-
+    for (let i = 0; i < targets.length - 1; i++) {
+      const current = targets[i]!
+      const next = targets[i + 1]!
       const currentBounds = current.layout
       const nextBounds = next.layout
 
@@ -587,17 +539,14 @@ export class LayoutConstraints {
     return raws
   }
 
-  private createAlignCenterXConstraints(symbolIds: LayoutSymbolId[]): kiwi.Constraint[] {
+  private createAlignCenterXConstraints(targets: LayoutConstraintTarget[]): kiwi.Constraint[] {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length < 2) return raws
-
-    const first = this.resolveSymbolById(symbolIds[0])
-    if (!first) return raws
+    if (targets.length < 2) return raws
+    const first = targets[0]!
     const firstBounds = first.layout
 
-    for (let i = 1; i < symbolIds.length; i++) {
-      const current = this.resolveSymbolById(symbolIds[i])
-      if (!current) continue
+    for (let i = 1; i < targets.length; i++) {
+      const current = targets[i]!
       const currentBounds = current.layout
 
       raws.push(
@@ -619,17 +568,14 @@ export class LayoutConstraints {
     return raws
   }
 
-  private createAlignRightConstraints(symbolIds: LayoutSymbolId[]): kiwi.Constraint[] {
+  private createAlignRightConstraints(targets: LayoutConstraintTarget[]): kiwi.Constraint[] {
     const raws: kiwi.Constraint[] = []
-    if (symbolIds.length < 2) return raws
+    if (targets.length < 2) return raws
 
-    const first = this.resolveSymbolById(symbolIds[0])
-    if (!first) return raws
-    const firstBounds = first.layout
+    const firstBounds = targets[0]!.layout
 
-    for (let i = 1; i < symbolIds.length; i++) {
-      const current = this.resolveSymbolById(symbolIds[i])
-      if (!current) continue
+    for (let i = 1; i < targets.length; i++) {
+      const current = targets[i]!
       const currentBounds = current.layout
 
       raws.push(
@@ -648,10 +594,10 @@ export class LayoutConstraints {
     return raws
   }
 
-  private record(type: LayoutConstraintType, raws: kiwi.Constraint[], targetId?: LayoutSymbolId) {
+  private record(type: LayoutConstraintType, raws: kiwi.Constraint[], ownerId?: string) {
     if (raws.length === 0) return
     const constraint: LayoutConstraint = {
-      id: targetId ? this.createSymbolScopedId(targetId) : this.createId(),
+      id: ownerId ? this.createSymbolScopedId(ownerId) : this.createId(),
       type,
       rawConstraints: raws,
     }
@@ -662,15 +608,11 @@ export class LayoutConstraints {
     return `constraints/${this.counter++}` as LayoutConstraintId
   }
 
-  private createSymbolScopedId(targetId: LayoutSymbolId): LayoutConstraintId {
-    const base = String(targetId)
+  private createSymbolScopedId(ownerId: string): LayoutConstraintId {
+    const base = String(ownerId)
     const next = this.symbolCounter.get(base) ?? 0
     this.symbolCounter.set(base, next + 1)
     return `constraints/${base}/${next}` as LayoutConstraintId
   }
 
-  private resolveSymbolById(id?: LayoutSymbolId) {
-    if (!id) return undefined
-    return this.resolveSymbol(id)
-  }
 }

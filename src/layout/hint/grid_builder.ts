@@ -74,6 +74,9 @@ export class GridBuilder {
 
     const resolvedMatrix = this.matrix.map((row) => row.map(toSymbolId))
     const children = resolvedMatrix.flat()
+    const matrixTargets = resolvedMatrix.map((row) => this.hint.resolveConstraintTargets(row))
+    const containerTarget = this.hint.getConstraintTarget(this.container)
+    if (!containerTarget) return
 
     // metadata 設定（nestLevel）
     this.applyContainerMetadata(children)
@@ -81,7 +84,7 @@ export class GridBuilder {
     // 制約を適用
     this.hint
       .getLayoutContext()
-      .constraints.encloseGrid(this.container, resolvedMatrix, this.options)
+      .constraints.encloseGrid(containerTarget, matrixTargets, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {

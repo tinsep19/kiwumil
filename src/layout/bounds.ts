@@ -1,5 +1,12 @@
 import type { LayoutVar } from "./kiwi"
 
+const BOUND_ID_BRAND = Symbol("BoundId")
+export type BoundId = string & { readonly [BOUND_ID_BRAND]: true }
+
+export function createBoundId(value: string): BoundId {
+  return value as BoundId
+}
+
 /**
  * BoundsType: レイアウトの種類を表す型
  * - "layout": Symbol の外矩形（Symbol は必ず1つだけ持つ）
@@ -13,6 +20,7 @@ export type BoundsType = "layout" | "container" | "item"
  * すべての computed properties (right, bottom, centerX, centerY) も事前に作成され制約が設定される
  */
 export interface Bounds {
+  readonly boundId: BoundId
   readonly type: BoundsType
   readonly x: LayoutVar
   readonly y: LayoutVar

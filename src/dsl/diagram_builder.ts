@@ -8,12 +8,11 @@ import { convertMetaUrlToSvgPath } from "../utils/path_helper"
 import { LayoutContext } from "../layout/layout_context"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { SymbolBase } from "../model/symbol_base"
-import type { RelationshipBase } from "../model/relationship_base"
 import type { DiagramInfo } from "../model/diagram_info"
 import type { Theme } from "../theme"
 import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import type { SymbolId, ContainerSymbolId } from "../model/types"
+import type { ContainerSymbolId } from "../model/types"
 import { toContainerSymbolId } from "../model/container_symbol"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
@@ -73,7 +72,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   build(callback: IntelliSenseBlock<TPlugins>) {
     const symbols = new Symbols()
     const relationships = new Relationships()
-    const context = new LayoutContext(this.currentTheme, (id: SymbolId) => symbols.findById(id))
+    const context = new LayoutContext(this.currentTheme)
 
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
