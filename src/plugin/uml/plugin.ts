@@ -33,7 +33,7 @@ export const UMLPlugin = {
        * @returns 生成された ActorSymbol
        */
       actor(label: string): ActorSymbol {
-        const symbol = symbols.register(plugin, "actor", (symbolId) => {
+        return symbols.register(plugin, "actor", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const actor = new ActorSymbol({
             id: symbolId,
@@ -45,8 +45,7 @@ export const UMLPlugin = {
             actor.ensureLayoutBounds(builder)
           })
           return actor
-        }) as ActorSymbol
-        return symbol
+        })
       },
 
       /**
@@ -55,7 +54,7 @@ export const UMLPlugin = {
        * @returns 生成された UsecaseSymbol
        */
       usecase(label: string): UsecaseSymbol {
-        const symbol = symbols.register(plugin, "usecase", (symbolId) => {
+        return symbols.register(plugin, "usecase", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const usecase = new UsecaseSymbol({
             id: symbolId,
@@ -67,8 +66,7 @@ export const UMLPlugin = {
             usecase.ensureLayoutBounds(builder)
           })
           return usecase
-        }) as UsecaseSymbol
-        return symbol
+        })
       },
 
       /**
@@ -77,7 +75,7 @@ export const UMLPlugin = {
        * @returns 生成された SystemBoundarySymbol
        */
       systemBoundary(label: string): SystemBoundarySymbol {
-        const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
+        return symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
           const bound = context.variables.createBound(id)
           const container = context.variables.createBound(`${id}.container`, "container")
@@ -92,8 +90,7 @@ export const UMLPlugin = {
             boundary.ensureLayoutBounds(builder)
           })
           return boundary
-        }) as SystemBoundarySymbol
-        return symbol
+        })
       },
     }
   },

@@ -28,7 +28,7 @@ export const CorePlugin = {
        * @returns 生成された CircleSymbol
        */
       circle(label: string): CircleSymbol {
-        const symbol = symbols.register(plugin, "circle", (symbolId) => {
+        return symbols.register(plugin, "circle", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const circle = new CircleSymbol({
             id: symbolId,
@@ -40,8 +40,7 @@ export const CorePlugin = {
             circle.ensureLayoutBounds(builder)
           })
           return circle
-        }) as CircleSymbol
-        return symbol
+        })
       },
 
       /**
@@ -50,7 +49,7 @@ export const CorePlugin = {
        * @returns 生成された EllipseSymbol
        */
       ellipse(label: string): EllipseSymbol {
-        const symbol = symbols.register(plugin, "ellipse", (symbolId) => {
+        return symbols.register(plugin, "ellipse", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const ellipse = new EllipseSymbol({
             id: symbolId,
@@ -62,8 +61,7 @@ export const CorePlugin = {
             ellipse.ensureLayoutBounds(builder)
           })
           return ellipse
-        }) as EllipseSymbol
-        return symbol
+        })
       },
 
       /**
@@ -72,7 +70,7 @@ export const CorePlugin = {
        * @returns 生成された RectangleSymbol
        */
       rectangle(label: string): RectangleSymbol {
-        const symbol = symbols.register(plugin, "rectangle", (symbolId) => {
+        return symbols.register(plugin, "rectangle", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const rectangle = new RectangleSymbol({
             id: symbolId,
@@ -84,8 +82,7 @@ export const CorePlugin = {
             rectangle.ensureLayoutBounds(builder)
           })
           return rectangle
-        }) as RectangleSymbol
-        return symbol
+        })
       },
 
       /**
@@ -94,7 +91,7 @@ export const CorePlugin = {
        * @returns 生成された RoundedRectangleSymbol
        */
       roundedRectangle(label: string): RoundedRectangleSymbol {
-        const symbol = symbols.register(plugin, "roundedRectangle", (symbolId) => {
+        return symbols.register(plugin, "roundedRectangle", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const rounded = new RoundedRectangleSymbol({
             id: symbolId,
@@ -106,8 +103,7 @@ export const CorePlugin = {
             rounded.ensureLayoutBounds(builder)
           })
           return rounded
-        }) as RoundedRectangleSymbol
-        return symbol
+        })
       },
 
       /**
@@ -116,7 +112,7 @@ export const CorePlugin = {
        * @returns 生成された TextSymbol
        */
       text(labelOrInfo: string | TextInfo): TextSymbol {
-        const symbol = symbols.register(plugin, "text", (symbolId) => {
+        return symbols.register(plugin, "text", (symbolId) => {
           const bound = context.variables.createBound(symbolId)
           const text = new TextSymbol({
             id: symbolId,
@@ -128,8 +124,7 @@ export const CorePlugin = {
             text.ensureLayoutBounds(builder)
           })
           return text
-        }) as TextSymbol
-        return symbol
+        })
       },
     }
   },
