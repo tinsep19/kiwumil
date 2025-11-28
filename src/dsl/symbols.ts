@@ -11,13 +11,13 @@ export class Symbols {
   private readonly symbols: SymbolBase[] = []
 
   /**
-   * 指定したプラグインによる Symbol を登録し、SymbolBase を返す。
+   * 指定したプラグインによる Symbol を登録し、factory が返す Symbol を返す。
    */
-  register(
+  register<T extends SymbolBase>(
     plugin: string,
     symbolName: string,
-    factory: (symbolId: SymbolId) => SymbolBase
-  ): SymbolBase {
+    factory: (symbolId: SymbolId) => T
+  ): T {
     const symbolId = this.createSymbolId(plugin, symbolName)
     const symbol = factory(symbolId)
     this.symbols.push(symbol)
