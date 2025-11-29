@@ -8,6 +8,7 @@ import {
   type LayoutExpressionInput,
   type LayoutTerm,
 } from "./layout_solver"
+import { ConstraintsBuilder } from "./constraints_builder"
 import type { LayoutConstraintTarget } from "./layout_constraint_target"
 
 // 互換性のため既存の export を維持
@@ -47,38 +48,6 @@ export interface LayoutConstraint {
 
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
-export class LayoutConstraintBuilder {
-  private readonly raws: kiwi.Constraint[] = []
-
-  constructor(private readonly solver: LayoutSolver) {}
-
-  expression(terms?: LayoutTerm[], constant = 0) {
-    return this.solver.expression(terms, constant)
-  }
-
-  eq(
-    left: LayoutExpressionInput,
-    right: LayoutExpressionInput,
-    strength: LayoutConstraintStrength = LayoutConstraintStrength.Strong
-  ) {
-    this.raws.push(this.solver.addConstraint(left, LayoutConstraintOperator.Eq, right, strength))
-    return this
-  }
-
-  ge(
-    left: LayoutExpressionInput,
-    right: LayoutExpressionInput,
-    strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
-  ) {
-    this.raws.push(this.solver.addConstraint(left, LayoutConstraintOperator.Ge, right, strength))
-    return this
-  }
-
-  getRawConstraints() {
-    return this.raws
-  }
-}
-
 export class LayoutConstraints {
   private readonly constraints: LayoutConstraint[] = []
   private counter = 0
@@ -96,9 +65,9 @@ export class LayoutConstraints {
   withSymbol(
     symbolId: LayoutSymbolId,
     type: LayoutConstraintType,
-    build: (builder: LayoutConstraintBuilder) => void
+    build: (builder: ConstraintsBuilder) => void
   ) {
-    const builder = new LayoutConstraintBuilder(this.solver)
+    const builder = this.solver.createConstraintsBuilder()
 
     build(builder)
     this.record(type, builder.getRawConstraints(), symbolId)
@@ -617,4 +586,4 @@ export class LayoutConstraints {
   }
 }
 
-export { ConstraintsBuilder } from "./constraints_builder"
+export { ConstraintsBuilder, ConstraintsBuilder as LayoutConstraintBuilder } from "./constraints_builder"

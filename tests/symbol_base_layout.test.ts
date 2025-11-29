@@ -47,8 +47,8 @@ class DummySymbolWithConstraints extends SymbolBase {
 
   ensureLayoutBounds(builder: LayoutConstraintBuilder): void {
     const bounds = this.layout
-    builder.ge(bounds.width, 20)
-    builder.ge(bounds.height, 20)
+    builder.expr([1, bounds.width]).ge([20, 1]).weak()
+    builder.expr([1, bounds.height]).ge([20, 1]).weak()
   }
 }
 
@@ -82,7 +82,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBound("dummy-3")
     const symbol = new DummySymbol("dummy-3", bounds)
-    const builder = new LayoutConstraintBuilder(solver)
+    const builder = solver.createConstraintsBuilder()
 
     symbol.ensureLayoutBounds(builder)
 
@@ -95,7 +95,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBound("dummy-4")
     const symbol = new DummySymbolWithConstraints("dummy-4", bounds)
-    const builder = new LayoutConstraintBuilder(solver)
+    const builder = solver.createConstraintsBuilder()
 
     symbol.ensureLayoutBounds(builder)
 

@@ -2,8 +2,12 @@ import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
 import type { Bounds } from "./bounds"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
-import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
+import {
+  LayoutConstraints,
+  LayoutConstraintStrength,
+} from "./layout_constraints"
 import { LayoutSolver } from "./layout_solver"
+import { finalizeConstraint } from "./constraint_helpers"
 
 type BoundsAxis = Exclude<keyof Bounds, "type" | "boundId">
 
@@ -65,8 +69,8 @@ export class LayoutContext {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
       symbol.ensureLayoutBounds(builder)
-      builder.ge(bounds.width, size.width, strength)
-      builder.ge(bounds.height, size.height, strength)
+      finalizeConstraint(builder.expr([1, bounds.width]).ge([size.width, 1]), strength)
+      finalizeConstraint(builder.expr([1, bounds.height]).ge([size.height, 1]), strength)
     })
   }
 
@@ -77,8 +81,9 @@ export class LayoutContext {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
       symbol.ensureLayoutBounds(builder)
-      builder.eq(bounds.x, 0, strength)
-      builder.eq(bounds.y, 0, strength)
+      finalizeConstraint(builder.expr([1, bounds.x]).eq([0, 1]), strength)
+      finalizeConstraint(builder.expr([1, bounds.y]).eq([0, 1]), strength)
     })
-  }
+}
+
 }
