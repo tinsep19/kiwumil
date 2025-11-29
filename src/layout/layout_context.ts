@@ -7,7 +7,7 @@ import {
   LayoutConstraintStrength,
 } from "./layout_constraints"
 import { LayoutSolver } from "./layout_solver"
-import { finalizeConstraint } from "./constraint_helpers"
+import { ConstraintsBuilder } from "./constraints_builder"
 
 type BoundsAxis = Exclude<keyof Bounds, "type" | "boundId">
 
@@ -69,8 +69,8 @@ export class LayoutContext {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
       symbol.ensureLayoutBounds(builder)
-      finalizeConstraint(builder.expr([1, bounds.width]).ge([size.width, 1]), strength)
-      finalizeConstraint(builder.expr([1, bounds.height]).ge([size.height, 1]), strength)
+      this.applyStrength(builder.expr([1, bounds.width]).ge([size.width, 1]), strength)
+      this.applyStrength(builder.expr([1, bounds.height]).ge([size.height, 1]), strength)
     })
   }
 
@@ -81,9 +81,21 @@ export class LayoutContext {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
       symbol.ensureLayoutBounds(builder)
-      finalizeConstraint(builder.expr([1, bounds.x]).eq([0, 1]), strength)
-      finalizeConstraint(builder.expr([1, bounds.y]).eq([0, 1]), strength)
+      this.applyStrength(builder.expr([1, bounds.x]).eq([0, 1]), strength)
+      this.applyStrength(builder.expr([1, bounds.y]).eq([0, 1]), strength)
     })
-}
+  }
 
+  private applyStrength(
+    builder: ConstraintsBuilder,
+    strength: LayoutConstraintStrength
+  ) {
+    if (strength === LayoutConstraintStrength.Required) {
+      return builder.required()
+    }
+    if (strength === LayoutConstraintStrength.Strong) {
+      return builder.strong()
+    }
+    return builder.weak()
+  }
 }

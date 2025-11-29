@@ -10,7 +10,6 @@ import { LayoutConstraintStrength } from "../layout/layout_variables"
 import { getBoundsValues } from "../layout/bounds"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
-import { finalizeConstraint } from "../layout/constraint_helpers"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
@@ -62,30 +61,22 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    finalizeConstraint(
-      builder
-        .expr([1, this.container.x])
-        .eq([1, bounds.x], [padding.left, 1]),
-      LayoutConstraintStrength.Strong
-    )
-    finalizeConstraint(
-      builder
-        .expr([1, this.container.y])
-        .eq([1, bounds.y], [padding.top + header, 1]),
-      LayoutConstraintStrength.Strong
-    )
-    finalizeConstraint(
-      builder
-        .expr([1, this.container.width])
-        .eq([1, bounds.width], [-horizontalPadding, 1]),
-      LayoutConstraintStrength.Strong
-    )
-    finalizeConstraint(
-      builder
-        .expr([1, this.container.height])
-        .eq([1, bounds.height], [-verticalPadding, 1]),
-      LayoutConstraintStrength.Strong
-    )
+    builder
+      .expr([1, this.container.x])
+      .eq([1, bounds.x], [padding.left, 1])
+      .strong()
+    builder
+      .expr([1, this.container.y])
+      .eq([1, bounds.y], [padding.top + header, 1])
+      .strong()
+    builder
+      .expr([1, this.container.width])
+      .eq([1, bounds.width], [-horizontalPadding, 1])
+      .strong()
+    builder
+      .expr([1, this.container.height])
+      .eq([1, bounds.height], [-verticalPadding, 1])
+      .strong()
   }
 
   ensureLayoutBounds(builder: ConstraintsBuilder): void {
@@ -94,22 +85,10 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       return
     }
     const bounds = this.layout
-    finalizeConstraint(
-      builder.expr([1, bounds.x]).eq([0, 1]),
-      LayoutConstraintStrength.Strong
-    )
-    finalizeConstraint(
-      builder.expr([1, bounds.y]).eq([0, 1]),
-      LayoutConstraintStrength.Strong
-    )
-    finalizeConstraint(
-      builder.expr([1, bounds.width]).ge([200, 1]),
-      LayoutConstraintStrength.Weak
-    )
-    finalizeConstraint(
-      builder.expr([1, bounds.height]).ge([150, 1]),
-      LayoutConstraintStrength.Weak
-    )
+    builder.expr([1, bounds.x]).eq([0, 1]).strong()
+    builder.expr([1, bounds.y]).eq([0, 1]).strong()
+    builder.expr([1, bounds.width]).ge([200, 1]).weak()
+    builder.expr([1, bounds.height]).ge([150, 1]).weak()
     this.constraintsApplied = true
   }
 
