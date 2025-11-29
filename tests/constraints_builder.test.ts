@@ -9,7 +9,7 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x")
     const y = vars.createVar("builder:y")
 
-    const builder = new ConstraintsBuilder(solver.getInternalSolver())
+    const builder = solver.createConstraintsBuilder()
     builder.expr([1, x]).eq([1, y]).strong()
 
     solver.addConstraint(y, Operator.Eq, 100)
@@ -29,7 +29,7 @@ describe("ConstraintsBuilder", () => {
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x-zero")
 
-    const builder = new ConstraintsBuilder(solver.getInternalSolver())
+    const builder = solver.createConstraintsBuilder()
     builder.expr([1, x]).eq0().strong()
 
     solver.updateVariables()
@@ -47,7 +47,7 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x-eq0")
     const y = vars.createVar("builder:y-eq0")
 
-    const builder = new ConstraintsBuilder(solver.getInternalSolver())
+    const builder = solver.createConstraintsBuilder()
     builder.expr([1, x], [-1, y]).eq0().strong()
 
     solver.addConstraint(x, Operator.Eq, 42)
@@ -63,7 +63,7 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x-linear")
     const y = vars.createVar("builder:y-linear")
 
-    const builder = new ConstraintsBuilder(solver.getInternalSolver())
+    const builder = solver.createConstraintsBuilder()
     builder.expr([2, x], [-3, y], [7, 1]).eq0().strong()
 
     solver.addConstraint(x, Operator.Eq, 10)

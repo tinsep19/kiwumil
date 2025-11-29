@@ -10,6 +10,7 @@ import {
   type LayoutExpression,
   type LayoutExpressionInput,
 } from "./layout_types"
+import { ConstraintsBuilder } from "./constraints_builder"
 
 // 型を再エクスポート（互換性のため）
 export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
@@ -184,11 +185,9 @@ export class LayoutSolver {
   }
 
   /**
-   * 内部の kiwi.Solver にアクセス（必要に応じて）
-   *
-   * @returns kiwi.Solver
+   * Fluent ConstraintBuilder を作成
    */
-  getInternalSolver(): kiwi.Solver {
-    return this.solver
+  createConstraintsBuilder(): ConstraintsBuilder {
+    return new ConstraintsBuilder(this.solver)
   }
 }
