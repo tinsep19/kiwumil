@@ -1,13 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { SymbolId, ContainerSymbolId } from "../model/types"
-import {
-  Operator,
-  Strength,
-  LayoutSolver,
-  type LayoutExpressionInput,
-  type LayoutTerm,
-} from "./layout_solver"
+import { Operator, Strength, LayoutSolver } from "./layout_solver"
 import { ConstraintsBuilder } from "./constraints_builder"
 import type { LayoutConstraintTarget } from "./layout_constraint_target"
 

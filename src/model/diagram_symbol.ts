@@ -3,7 +3,7 @@ import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import type { ContainerBounds, LayoutBounds } from "../layout/bounds"
+import type { ContainerBounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
 import type { ConstraintsBuilder } from "../layout/constraints_builder"
 import { LayoutConstraintStrength } from "../layout/layout_variables"
@@ -11,8 +11,6 @@ import { getBoundsValues } from "../layout/bounds"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
 import { finalizeConstraint } from "../layout/constraint_helpers"
-
-type BoundsAxis = "x" | "y" | "width" | "height"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo

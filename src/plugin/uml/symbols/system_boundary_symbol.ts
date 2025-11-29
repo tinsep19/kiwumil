@@ -2,7 +2,7 @@
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
-import type { ContainerBounds, LayoutBounds } from "../../../layout/bounds"
+import type { ContainerBounds } from "../../../layout/bounds"
 import type { Theme } from "../../../theme"
 import { LayoutConstraintStrength } from "../../../layout/layout_variables"
 import { finalizeConstraint } from "../../../layout/constraint_helpers"
@@ -14,8 +14,6 @@ export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
   label: string
   container: ContainerBounds
 }
-
-type BoundsAxis = "x" | "y" | "width" | "height"
 
 export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol {
   readonly label: string
