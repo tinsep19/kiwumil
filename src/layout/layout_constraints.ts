@@ -7,7 +7,7 @@ import {
   LayoutSolver,
   type LayoutExpressionInput,
   type LayoutTerm,
-} from "./kiwi"
+} from "./layout_solver"
 import type { LayoutConstraintTarget } from "./layout_constraint_target"
 
 // 互換性のため既存の export を維持

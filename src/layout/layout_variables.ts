@@ -8,7 +8,7 @@ import {
   type LayoutTerm,
   type LayoutExpression,
   type LayoutExpressionInput,
-} from "./kiwi"
+} from "./layout_solver"
 import {
   createBoundId,
   type Bounds,

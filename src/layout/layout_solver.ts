@@ -1,4 +1,4 @@
-// src/layout/kiwi/index.ts
+// src/layout/layout_solver.ts
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import {
@@ -9,7 +9,7 @@ import {
   type LayoutTerm,
   type LayoutExpression,
   type LayoutExpressionInput,
-} from "../layout_types"
+} from "./layout_types"
 
 // 型を再エクスポート（互換性のため）
 export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }

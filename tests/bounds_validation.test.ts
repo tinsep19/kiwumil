@@ -5,7 +5,7 @@ import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
-import { Operator } from "../src/layout/kiwi"
+import { Operator } from "../src/layout/layout_solver"
 
 describe("Bounds Validation", () => {
   describe("getBoundsValues", () => {

@@ -3,7 +3,7 @@ import type { SymbolBase } from "../model/symbol_base"
 import type { Bounds } from "./bounds"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
-import { LayoutSolver } from "./kiwi"
+import { LayoutSolver } from "./layout_solver"
 
 type BoundsAxis = Exclude<keyof Bounds, "type" | "boundId">
 

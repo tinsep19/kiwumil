@@ -1,5 +1,5 @@
 import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver, Operator } from "../src/layout/kiwi"
+import { LayoutSolver, Operator } from "../src/layout/layout_solver"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {

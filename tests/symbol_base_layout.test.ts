@@ -1,6 +1,6 @@
 import { SymbolBase } from "../src/model/symbol_base"
 import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver, Operator } from "../src/layout/kiwi"
+import { LayoutSolver, Operator } from "../src/layout/layout_solver"
 import { LayoutConstraintBuilder } from "../src/layout/layout_constraints"
 import type { Point } from "../src/model/types"
 import type { LayoutBounds } from "../src/layout/bounds"
