@@ -40,4 +40,20 @@ describe("ConstraintsBuilder", () => {
     expect(constraint.op()).toBe(Operator.Eq)
     expect(vars.valueOf(x)).toBeCloseTo(0)
   })
+
+  test("expr(...).eq0() asserts equality between variables", () => {
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+    const x = vars.createVar("builder:x-eq0")
+    const y = vars.createVar("builder:y-eq0")
+
+    const builder = new ConstraintsBuilder(solver.getInternalSolver())
+    builder.expr([1, x], [-1, y]).eq0().strong()
+
+    solver.addConstraint(x, Operator.Eq, 42)
+    solver.updateVariables()
+
+    expect(vars.valueOf(y)).toBeCloseTo(vars.valueOf(x))
+    expect(vars.valueOf(y)).toBeCloseTo(42)
+  })
 })
