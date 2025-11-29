@@ -1,6 +1,6 @@
 import { SymbolBase } from "../src/model/symbol_base"
 import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver, Operator } from "../src/layout/layout_solver"
+import { LayoutSolver } from "../src/layout/layout_solver"
 import { ConstraintsBuilder } from "../src/layout/constraints_builder"
 import type { Point } from "../src/model/types"
 import type { LayoutBounds } from "../src/layout/bounds"
@@ -60,8 +60,9 @@ describe("SymbolBase layout bounds", () => {
     const symbol = new DummySymbol("dummy-1", bounds)
     const symbolBounds = symbol.layout
 
-    solver.addConstraint(symbolBounds.x, Operator.Eq, 15)
-    solver.addConstraint(symbolBounds.y, Operator.Eq, 25)
+    const setter = solver.createConstraintsBuilder()
+    setter.expr([1, symbolBounds.x]).eq([15, 1]).strong()
+    setter.expr([1, symbolBounds.y]).eq([25, 1]).strong()
     solver.updateVariables()
 
     expect(vars.valueOf(symbolBounds.x)).toBeCloseTo(15)

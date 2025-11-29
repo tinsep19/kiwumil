@@ -82,6 +82,7 @@ export class LayoutConstraints {
     gap = this.theme.defaultStyleSet.horizontalGap
   ) {
     const raws: kiwi.Constraint[] = []
+    const builder = this.solver.createConstraintsBuilder()
 
     for (let i = 0; i < targets.length - 1; i++) {
       const current = targets[i]!
@@ -89,19 +90,19 @@ export class LayoutConstraints {
       const aBounds = current.layout
       const bBounds = next.layout
 
-      const builder = this.solver.createConstraintsBuilder()
       builder
         .expr([1, bBounds.x])
         .eq([1, aBounds.x], [1, aBounds.width], [gap, 1])
         .strong()
-      raws.push(...builder.getRawConstraints())
     }
 
+    raws.push(...builder.getRawConstraints())
     this.record("arrangeHorizontal", raws)
   }
 
   arrangeVertical(targets: LayoutConstraintTarget[], gap = this.theme.defaultStyleSet.verticalGap) {
     const raws: kiwi.Constraint[] = []
+    const builder = this.solver.createConstraintsBuilder()
 
     for (let i = 0; i < targets.length - 1; i++) {
       const current = targets[i]!
@@ -109,14 +110,13 @@ export class LayoutConstraints {
       const aBounds = current.layout
       const bBounds = next.layout
 
-      const builder = this.solver.createConstraintsBuilder()
       builder
         .expr([1, bBounds.y])
         .eq([1, aBounds.y], [1, aBounds.height], [gap, 1])
         .strong()
-      raws.push(...builder.getRawConstraints())
     }
 
+    raws.push(...builder.getRawConstraints())
     this.record("arrangeVertical", raws)
   }
 
@@ -124,19 +124,14 @@ export class LayoutConstraints {
     const raws: kiwi.Constraint[] = []
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
+    const builder = this.solver.createConstraintsBuilder()
 
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          bounds.x,
-          LayoutConstraintOperator.Eq,
-          refBounds.x,
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder.expr([1, bounds.x]).eq([1, refBounds.x]).strong()
     }
 
+    raws.push(...builder.getRawConstraints())
     this.record("alignLeft", raws)
   }
 
@@ -144,19 +139,17 @@ export class LayoutConstraints {
     const raws: kiwi.Constraint[] = []
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
+    const builder = this.solver.createConstraintsBuilder()
 
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([{ variable: bounds.x }, { variable: bounds.width }]),
-          LayoutConstraintOperator.Eq,
-          this.solver.expression([{ variable: refBounds.x }, { variable: refBounds.width }]),
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder
+        .expr([1, bounds.x], [1, bounds.width])
+        .eq([1, refBounds.x], [1, refBounds.width])
+        .strong()
     }
 
+    raws.push(...builder.getRawConstraints())
     this.record("alignRight", raws)
   }
 
@@ -165,17 +158,12 @@ export class LayoutConstraints {
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
 
+    const builder = this.solver.createConstraintsBuilder()
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          bounds.y,
-          LayoutConstraintOperator.Eq,
-          refBounds.y,
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder.expr([1, bounds.y]).eq([1, refBounds.y]).strong()
     }
+    raws.push(...builder.getRawConstraints())
 
     this.record("alignTop", raws)
   }
@@ -185,17 +173,15 @@ export class LayoutConstraints {
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
 
+    const builder = this.solver.createConstraintsBuilder()
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([{ variable: bounds.y }, { variable: bounds.height }]),
-          LayoutConstraintOperator.Eq,
-          this.solver.expression([{ variable: refBounds.y }, { variable: refBounds.height }]),
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder
+        .expr([1, bounds.y], [1, bounds.height])
+        .eq([1, refBounds.y], [1, refBounds.height])
+        .strong()
     }
+    raws.push(...builder.getRawConstraints())
 
     this.record("alignBottom", raws)
   }
@@ -205,23 +191,21 @@ export class LayoutConstraints {
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
 
+    const builder = this.solver.createConstraintsBuilder()
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([
-            { variable: bounds.x },
-            { variable: bounds.width, coefficient: 0.5 },
-          ]),
-          LayoutConstraintOperator.Eq,
-          this.solver.expression([
-            { variable: refBounds.x },
-            { variable: refBounds.width, coefficient: 0.5 },
-          ]),
-          LayoutConstraintStrength.Strong
+      builder
+        .expr(
+          [1, bounds.x],
+          [0.5, bounds.width]
         )
-      )
+        .eq(
+          [1, refBounds.x],
+          [0.5, refBounds.width]
+        )
+        .strong()
     }
+    raws.push(...builder.getRawConstraints())
 
     this.record("alignCenterX", raws)
   }
@@ -231,23 +215,21 @@ export class LayoutConstraints {
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
 
+    const builder = this.solver.createConstraintsBuilder()
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([
-            { variable: bounds.y },
-            { variable: bounds.height, coefficient: 0.5 },
-          ]),
-          LayoutConstraintOperator.Eq,
-          this.solver.expression([
-            { variable: refBounds.y },
-            { variable: refBounds.height, coefficient: 0.5 },
-          ]),
-          LayoutConstraintStrength.Strong
+      builder
+        .expr(
+          [1, bounds.y],
+          [0.5, bounds.height]
         )
-      )
+        .eq(
+          [1, refBounds.y],
+          [0.5, refBounds.height]
+        )
+        .strong()
     }
+    raws.push(...builder.getRawConstraints())
 
     this.record("alignCenterY", raws)
   }
@@ -257,17 +239,12 @@ export class LayoutConstraints {
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
 
+    const builder = this.solver.createConstraintsBuilder()
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          bounds.width,
-          LayoutConstraintOperator.Eq,
-          refBounds.width,
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder.expr([1, bounds.width]).eq([1, refBounds.width]).strong()
     }
+    raws.push(...builder.getRawConstraints())
 
     this.record("alignWidth", raws)
   }
@@ -277,17 +254,12 @@ export class LayoutConstraints {
     if (targets.length === 0) return
     const refBounds = targets[0]!.layout
 
+    const builder = this.solver.createConstraintsBuilder()
     for (const target of targets.slice(1)) {
       const bounds = target.layout
-      raws.push(
-        this.solver.addConstraint(
-          bounds.height,
-          LayoutConstraintOperator.Eq,
-          refBounds.height,
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder.expr([1, bounds.height]).eq([1, refBounds.height]).strong()
     }
+    raws.push(...builder.getRawConstraints())
 
     this.record("alignHeight", raws)
   }
@@ -300,53 +272,30 @@ export class LayoutConstraints {
   enclose(container: LayoutConstraintTarget, childTargets: LayoutConstraintTarget[]) {
     const containerBounds = container.container ?? container.layout
     const raws: kiwi.Constraint[] = []
+    const builder = this.solver.createConstraintsBuilder()
 
     for (const child of childTargets) {
       const childBounds = child.layout
 
-      raws.push(
-        this.solver.addConstraint(
-          childBounds.x,
-          LayoutConstraintOperator.Ge,
-          containerBounds.x,
-          LayoutConstraintStrength.Required
-        )
-      )
-
-      raws.push(
-        this.solver.addConstraint(
-          childBounds.y,
-          LayoutConstraintOperator.Ge,
-          containerBounds.y,
-          LayoutConstraintStrength.Required
-        )
-      )
-
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([
-            { variable: containerBounds.x },
-            { variable: containerBounds.width },
-          ]),
-          LayoutConstraintOperator.Ge,
-          this.solver.expression([{ variable: childBounds.x }, { variable: childBounds.width }]),
-          LayoutConstraintStrength.Required
-        )
-      )
-
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([
-            { variable: containerBounds.y },
-            { variable: containerBounds.height },
-          ]),
-          LayoutConstraintOperator.Ge,
-          this.solver.expression([{ variable: childBounds.y }, { variable: childBounds.height }]),
-          LayoutConstraintStrength.Required
-        )
-      )
+      builder
+        .expr([1, childBounds.x])
+        .ge([1, containerBounds.x])
+        .required()
+      builder
+        .expr([1, childBounds.y])
+        .ge([1, containerBounds.y])
+        .required()
+      builder
+        .expr([1, containerBounds.x], [1, containerBounds.width])
+        .ge([1, childBounds.x], [1, childBounds.width])
+        .required()
+      builder
+        .expr([1, containerBounds.y], [1, containerBounds.height])
+        .ge([1, childBounds.y], [1, childBounds.height])
+        .required()
     }
 
+    raws.push(...builder.getRawConstraints())
     this.record("enclose", raws)
   }
 
@@ -452,7 +401,7 @@ export class LayoutConstraints {
     gap?: number
   ): kiwi.Constraint[] {
     const actualGap = gap ?? this.theme.defaultStyleSet.horizontalGap
-    const raws: kiwi.Constraint[] = []
+    const builder = this.solver.createConstraintsBuilder()
 
     for (let i = 0; i < targets.length - 1; i++) {
       const current = targets[i]!
@@ -460,20 +409,17 @@ export class LayoutConstraints {
       const currentBounds = current.layout
       const nextBounds = next.layout
 
-      raws.push(
-        this.solver.addConstraint(
-          nextBounds.x,
-          LayoutConstraintOperator.Eq,
-          this.solver.expression(
-            [{ variable: currentBounds.x }, { variable: currentBounds.width }],
-            actualGap
-          ),
-          LayoutConstraintStrength.Strong
+      builder
+        .expr([1, nextBounds.x])
+        .eq(
+          [1, currentBounds.x],
+          [1, currentBounds.width],
+          [actualGap, 1]
         )
-      )
+        .strong()
     }
 
-    return raws
+    return builder.getRawConstraints()
   }
 
   private createArrangeVerticalConstraints(
@@ -481,7 +427,7 @@ export class LayoutConstraints {
     gap?: number
   ): kiwi.Constraint[] {
     const actualGap = gap ?? this.theme.defaultStyleSet.verticalGap
-    const raws: kiwi.Constraint[] = []
+    const builder = this.solver.createConstraintsBuilder()
 
     for (let i = 0; i < targets.length - 1; i++) {
       const current = targets[i]!
@@ -489,48 +435,35 @@ export class LayoutConstraints {
       const currentBounds = current.layout
       const nextBounds = next.layout
 
-      raws.push(
-        this.solver.addConstraint(
-          nextBounds.y,
-          LayoutConstraintOperator.Eq,
-          this.solver.expression(
-            [{ variable: currentBounds.y }, { variable: currentBounds.height }],
-            actualGap
-          ),
-          LayoutConstraintStrength.Strong
+      builder
+        .expr([1, nextBounds.y])
+        .eq(
+          [1, currentBounds.y],
+          [1, currentBounds.height],
+          [actualGap, 1]
         )
-      )
+        .strong()
     }
 
-    return raws
+    return builder.getRawConstraints()
   }
 
   private createAlignCenterXConstraints(targets: LayoutConstraintTarget[]): kiwi.Constraint[] {
     const raws: kiwi.Constraint[] = []
     if (targets.length < 2) return raws
-    const first = targets[0]!
-    const firstBounds = first.layout
+    const builder = this.solver.createConstraintsBuilder()
+    const firstBounds = targets[0]!.layout
 
     for (let i = 1; i < targets.length; i++) {
-      const current = targets[i]!
-      const currentBounds = current.layout
+      const currentBounds = targets[i]!.layout
 
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([
-            { variable: currentBounds.x },
-            { variable: currentBounds.width, coefficient: 0.5 },
-          ]),
-          LayoutConstraintOperator.Eq,
-          this.solver.expression([
-            { variable: firstBounds.x },
-            { variable: firstBounds.width, coefficient: 0.5 },
-          ]),
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder
+        .expr([1, currentBounds.x], [0.5, currentBounds.width])
+        .eq([1, firstBounds.x], [0.5, firstBounds.width])
+        .strong()
     }
 
+    raws.push(...builder.getRawConstraints())
     return raws
   }
 
@@ -538,25 +471,19 @@ export class LayoutConstraints {
     const raws: kiwi.Constraint[] = []
     if (targets.length < 2) return raws
 
+    const builder = this.solver.createConstraintsBuilder()
     const firstBounds = targets[0]!.layout
 
     for (let i = 1; i < targets.length; i++) {
-      const current = targets[i]!
-      const currentBounds = current.layout
+      const currentBounds = targets[i]!.layout
 
-      raws.push(
-        this.solver.addConstraint(
-          this.solver.expression([
-            { variable: currentBounds.x },
-            { variable: currentBounds.width },
-          ]),
-          LayoutConstraintOperator.Eq,
-          this.solver.expression([{ variable: firstBounds.x }, { variable: firstBounds.width }]),
-          LayoutConstraintStrength.Strong
-        )
-      )
+      builder
+        .expr([1, currentBounds.x], [1, currentBounds.width])
+        .eq([1, firstBounds.x], [1, firstBounds.width])
+        .strong()
     }
 
+    raws.push(...builder.getRawConstraints())
     return raws
   }
 

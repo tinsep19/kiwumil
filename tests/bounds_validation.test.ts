@@ -5,7 +5,6 @@ import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
 import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
 import { Symbols } from "../src/dsl/symbols"
 import { DefaultTheme } from "../src/theme"
-import { Operator } from "../src/layout/layout_solver"
 
 describe("Bounds Validation", () => {
   describe("getBoundsValues", () => {
@@ -20,11 +19,12 @@ describe("Bounds Validation", () => {
     test("should return finite values for valid bounds", () => {
       const bounds = context.variables.createBound("test")
 
-      context.solver.addConstraint(bounds.x, Operator.Eq, 10)
-      context.solver.addConstraint(bounds.y, Operator.Eq, 20)
-      context.solver.addConstraint(bounds.width, Operator.Eq, 100)
-      context.solver.addConstraint(bounds.height, Operator.Eq, 50)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.x]).eq([10, 1]).strong()
+      builder.expr([1, bounds.y]).eq([20, 1]).strong()
+      builder.expr([1, bounds.width]).eq([100, 1]).strong()
+      builder.expr([1, bounds.height]).eq([50, 1]).strong()
+      context.solve()
 
       const values = getBoundsValues(bounds)
 
@@ -38,9 +38,10 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBound("test")
 
       // Create a scenario with negative width (right < left)
-      context.solver.addConstraint(bounds.x, Operator.Eq, 100)
-      context.solver.addConstraint(bounds.width, Operator.Eq, -50)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.x]).eq([100, 1]).strong()
+      builder.expr([1, bounds.width]).eq([-50, 1]).strong()
+      context.solve()
 
       // Should still return the negative value but log warning
       const values = getBoundsValues(bounds)
@@ -51,9 +52,10 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBound("test")
 
       // Create a scenario with negative height (bottom < top)
-      context.solver.addConstraint(bounds.y, Operator.Eq, 100)
-      context.solver.addConstraint(bounds.height, Operator.Eq, -30)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.y]).eq([100, 1]).strong()
+      builder.expr([1, bounds.height]).eq([-30, 1]).strong()
+      context.solve()
 
       // Should still return the negative value but log warning
       const values = getBoundsValues(bounds)
@@ -74,11 +76,12 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBound("actor")
 
       // Set negative width
-      context.solver.addConstraint(bounds.x, Operator.Eq, 0)
-      context.solver.addConstraint(bounds.y, Operator.Eq, 0)
-      context.solver.addConstraint(bounds.width, Operator.Eq, -80)
-      context.solver.addConstraint(bounds.height, Operator.Eq, 100)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.x]).eq([0, 1]).strong()
+      builder.expr([1, bounds.y]).eq([0, 1]).strong()
+      builder.expr([1, bounds.width]).eq([-80, 1]).strong()
+      builder.expr([1, bounds.height]).eq([100, 1]).strong()
+      context.solve()
 
       const actor = new ActorSymbol({
         id: "test-actor",
@@ -101,11 +104,12 @@ describe("Bounds Validation", () => {
     test("should render with valid positive dimensions for normal bounds", () => {
       const bounds = context.variables.createBound("actor")
 
-      context.solver.addConstraint(bounds.x, Operator.Eq, 10)
-      context.solver.addConstraint(bounds.y, Operator.Eq, 10)
-      context.solver.addConstraint(bounds.width, Operator.Eq, 60)
-      context.solver.addConstraint(bounds.height, Operator.Eq, 80)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.x]).eq([10, 1]).strong()
+      builder.expr([1, bounds.y]).eq([10, 1]).strong()
+      builder.expr([1, bounds.width]).eq([60, 1]).strong()
+      builder.expr([1, bounds.height]).eq([80, 1]).strong()
+      context.solve()
 
       const actor = new ActorSymbol({
         id: "test-actor",
@@ -138,11 +142,12 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBound("usecase")
 
       // Set negative height
-      context.solver.addConstraint(bounds.x, Operator.Eq, 0)
-      context.solver.addConstraint(bounds.y, Operator.Eq, 0)
-      context.solver.addConstraint(bounds.width, Operator.Eq, 120)
-      context.solver.addConstraint(bounds.height, Operator.Eq, -50)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.x]).eq([0, 1]).strong()
+      builder.expr([1, bounds.y]).eq([0, 1]).strong()
+      builder.expr([1, bounds.width]).eq([120, 1]).strong()
+      builder.expr([1, bounds.height]).eq([-50, 1]).strong()
+      context.solve()
 
       const usecase = new UsecaseSymbol({
         id: "test-usecase",
@@ -168,11 +173,12 @@ describe("Bounds Validation", () => {
     test("should render with valid positive dimensions for normal bounds", () => {
       const bounds = context.variables.createBound("usecase")
 
-      context.solver.addConstraint(bounds.x, Operator.Eq, 10)
-      context.solver.addConstraint(bounds.y, Operator.Eq, 10)
-      context.solver.addConstraint(bounds.width, Operator.Eq, 120)
-      context.solver.addConstraint(bounds.height, Operator.Eq, 60)
-      context.solver.updateVariables()
+      let builder = context.createConstraintsBuilder()
+      builder.expr([1, bounds.x]).eq([10, 1]).strong()
+      builder.expr([1, bounds.y]).eq([10, 1]).strong()
+      builder.expr([1, bounds.width]).eq([120, 1]).strong()
+      builder.expr([1, bounds.height]).eq([60, 1]).strong()
+      context.solve()
 
       const usecase = new UsecaseSymbol({
         id: "test-usecase",

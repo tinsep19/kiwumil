@@ -1,5 +1,5 @@
-import { ConstraintsBuilder } from "../src/layout/layout_constraints"
-import { LayoutSolver, Operator, Strength } from "../src/layout/layout_solver"
+import { ConstraintsBuilder, LayoutConstraintOperator, LayoutConstraintStrength } from "../src/layout/layout_constraints"
+import { LayoutSolver } from "../src/layout/layout_solver"
 import { LayoutVariables } from "../src/layout/layout_variables"
 
 describe("ConstraintsBuilder", () => {
@@ -12,14 +12,15 @@ describe("ConstraintsBuilder", () => {
     const builder = solver.createConstraintsBuilder()
     builder.expr([1, x]).eq([1, y]).strong()
 
-    solver.addConstraint(y, Operator.Eq, 100)
+    const setter = solver.createConstraintsBuilder()
+    setter.expr([1, y]).eq([100, 1]).strong()
     solver.updateVariables()
 
     const raw = builder.getRawConstraints()
     expect(raw).toHaveLength(1)
     const constraint = raw[0]
-    expect(constraint.op()).toBe(Operator.Eq)
-    expect(constraint.strength()).toBe(Strength.Strong)
+    expect(constraint.op()).toBe(LayoutConstraintOperator.Eq)
+    expect(constraint.strength()).toBe(LayoutConstraintStrength.Strong)
     expect(vars.valueOf(x)).toBeCloseTo(vars.valueOf(y))
     expect(vars.valueOf(x)).toBeCloseTo(100)
   })
@@ -37,7 +38,7 @@ describe("ConstraintsBuilder", () => {
     const raw = builder.getRawConstraints()
     expect(raw).toHaveLength(1)
     const constraint = raw[0]
-    expect(constraint.op()).toBe(Operator.Eq)
+    expect(constraint.op()).toBe(LayoutConstraintOperator.Eq)
     expect(vars.valueOf(x)).toBeCloseTo(0)
   })
 
@@ -50,7 +51,8 @@ describe("ConstraintsBuilder", () => {
     const builder = solver.createConstraintsBuilder()
     builder.expr([1, x], [-1, y]).eq0().strong()
 
-    solver.addConstraint(x, Operator.Eq, 42)
+    const setter = solver.createConstraintsBuilder()
+    setter.expr([1, x]).eq([42, 1]).strong()
     solver.updateVariables()
 
     expect(vars.valueOf(y)).toBeCloseTo(vars.valueOf(x))
@@ -66,7 +68,8 @@ describe("ConstraintsBuilder", () => {
     const builder = solver.createConstraintsBuilder()
     builder.expr([2, x], [-3, y], [7, 1]).eq0().strong()
 
-    solver.addConstraint(x, Operator.Eq, 10)
+    const setter = solver.createConstraintsBuilder()
+    setter.expr([1, x]).eq([10, 1]).strong()
     solver.updateVariables()
 
     expect(vars.valueOf(y)).toBeCloseTo((2 * 10 + 7) / 3)

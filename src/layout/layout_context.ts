@@ -1,6 +1,5 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
-import type { Bounds } from "./bounds"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import {
   LayoutConstraints,
@@ -8,13 +7,6 @@ import {
 } from "./layout_constraints"
 import { LayoutSolver } from "./layout_solver"
 import { ConstraintsBuilder } from "./constraints_builder"
-
-type BoundsAxis = Exclude<keyof Bounds, "type" | "boundId">
-
-interface BoundsTerm {
-  axis: BoundsAxis
-  coefficient?: number
-}
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
@@ -33,6 +25,13 @@ export class LayoutContext {
     this.solver.updateVariables()
   }
 
+  /**
+   * Create a ConstraintsBuilder backed by the internal solver.
+   */
+  createConstraintsBuilder() {
+    return this.solver.createConstraintsBuilder()
+  }
+
   solveAndApply(_symbols: SymbolBase[]) {
     this.solve()
     // Symbols now use .layout directly in toSVG/getConnectionPoint
@@ -41,24 +40,6 @@ export class LayoutContext {
 
   valueOf(variable: LayoutVar): number {
     return this.variables.valueOf(variable)
-  }
-
-  /**
-   * LayoutSolver へのアクセサ（制約追加や式作成のため）
-   * @returns LayoutSolver
-   */
-  getSolver(): LayoutSolver {
-    return this.solver
-  }
-
-  expressionFromBounds(bounds: Bounds, terms: BoundsTerm[], constant = 0) {
-    return this.constraints.expression(
-      terms.map((term) => ({
-        variable: bounds[term.axis],
-        coefficient: term.coefficient,
-      })),
-      constant
-    )
   }
 
   applyMinSize(

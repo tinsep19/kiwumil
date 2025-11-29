@@ -1,14 +1,5 @@
 // src/layout/layout_variables.ts
-import {
-  createLayoutVar,
-  Operator,
-  Strength,
-  LayoutSolver,
-  type LayoutVar,
-  type LayoutTerm,
-  type LayoutExpression,
-  type LayoutExpressionInput,
-} from "./layout_solver"
+import { createLayoutVar, LayoutSolver, type LayoutVar } from "./layout_solver"
 import {
   createBoundId,
   type Bounds,
@@ -20,20 +11,13 @@ import {
 } from "./bounds"
 
 // 互換性のため既存の export を維持
-export type { LayoutVar, LayoutTerm, LayoutExpression, LayoutExpressionInput }
+export type { LayoutVar }
 
 // 新しい型エイリアス
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
 
 // 後方互換性のため deprecated 型を再エクスポート（将来的に削除予定）
 export type { LayoutType, LayoutBound } from "./bounds"
-
-// LayoutConstraints で定義されているが、互換性のためここでも再エクスポート
-export const LayoutConstraintOperator = Operator
-export type LayoutConstraintOperator = Operator
-
-export const LayoutConstraintStrength = Strength
-export type LayoutConstraintStrength = Strength
 
 /**
  * Layout変数とバウンドの生成・管理を担当
@@ -81,33 +65,23 @@ export class LayoutVariables {
     const centerX = this.createVar(`${prefix}.centerX`)
     const centerY = this.createVar(`${prefix}.centerY`)
 
-    // right = x + width
-    solver.addConstraint(
-      right,
-      Operator.Eq,
-      solver.expression([{ variable: x }, { variable: width }])
-    )
-
-    // bottom = y + height
-    solver.addConstraint(
-      bottom,
-      Operator.Eq,
-      solver.expression([{ variable: y }, { variable: height }])
-    )
-
-    // centerX = x + width * 0.5
-    solver.addConstraint(
-      centerX,
-      Operator.Eq,
-      solver.expression([{ variable: x }, { variable: width, coefficient: 0.5 }])
-    )
-
-    // centerY = y + height * 0.5
-    solver.addConstraint(
-      centerY,
-      Operator.Eq,
-      solver.expression([{ variable: y }, { variable: height, coefficient: 0.5 }])
-    )
+    const builder = solver.createConstraintsBuilder()
+    builder
+      .expr([1, right])
+      .eq([1, x], [1, width])
+      .strong()
+    builder
+      .expr([1, bottom])
+      .eq([1, y], [1, height])
+      .strong()
+    builder
+      .expr([1, centerX])
+      .eq([1, x], [0.5, width])
+      .strong()
+    builder
+      .expr([1, centerY])
+      .eq([1, y], [0.5, height])
+      .strong()
 
     return {
       boundId,
