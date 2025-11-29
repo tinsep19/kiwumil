@@ -22,6 +22,14 @@ export function createLayoutVar(name: string): LayoutVar {
 
 export type { LayoutVar } from "./layout_types"
 
+export type SuggestHandleStrength = "strong" | "medium" | "weak"
+
+export interface SuggestHandle {
+  suggest(value: number): void
+  strength(): SuggestHandleStrength
+  dispose(): void
+}
+
 /**
  * kiwi.Solver のラッパークラス
  * ソルバーのライフサイクル管理と操作を集約
@@ -31,27 +39,6 @@ export class LayoutSolver {
 
   constructor() {
     this.solver = new kiwi.Solver()
-  }
-
-  /**
-   * 制約の編集を開始
-   */
-  addEditVariable(variable: LayoutVar, strength: kiwi.Strength): void {
-    this.solver.addEditVariable(variable, strength)
-  }
-
-  /**
-   * 変数の編集を終了
-   */
-  removeEditVariable(variable: LayoutVar): void {
-    this.solver.removeEditVariable(variable)
-  }
-
-  /**
-   * 変数に値を提案
-   */
-  suggestValue(variable: LayoutVar, value: number): void {
-    this.solver.suggestValue(variable, value)
   }
 
   /**
@@ -66,5 +53,74 @@ export class LayoutSolver {
    */
   createConstraintsBuilder(): ConstraintsBuilder {
     return new ConstraintsBuilder(this.solver)
+  }
+
+  /**
+   * Fluent edit variable handle を作成
+   */
+  createHandle(variable: LayoutVar): SuggestHandleFactory {
+    return new SuggestHandleFactoryImpl(this.solver, variable)
+  }
+}
+
+/** @internal */
+class SuggestHandleImpl implements SuggestHandle {
+  private disposed = false
+
+  constructor(
+    private readonly solver: kiwi.Solver,
+    private readonly variable: LayoutVar,
+    private readonly label: SuggestHandleStrength
+  ) {}
+
+  suggest(value: number): void {
+    this.ensureActive()
+    this.solver.suggestValue(this.variable, value)
+  }
+
+  strength(): SuggestHandleStrength {
+    return this.label
+  }
+
+  dispose(): void {
+    if (this.disposed) {
+      return
+    }
+    this.solver.removeEditVariable(this.variable)
+    this.disposed = true
+  }
+
+  private ensureActive(): void {
+    if (this.disposed) {
+      throw new Error("SuggestHandle: already disposed")
+    }
+  }
+}
+
+export interface SuggestHandleFactory {
+  strong(): SuggestHandle
+  medium(): SuggestHandle
+  weak(): SuggestHandle
+}
+
+/** @internal */
+class SuggestHandleFactoryImpl implements SuggestHandleFactory {
+  constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVar) {}
+
+  strong(): SuggestHandle {
+    return this.createHandle("strong", kiwi.Strength.strong)
+  }
+
+  medium(): SuggestHandle {
+    return this.createHandle("medium", kiwi.Strength.medium)
+  }
+
+  weak(): SuggestHandle {
+    return this.createHandle("weak", kiwi.Strength.weak)
+  }
+
+  private createHandle(label: SuggestHandleStrength, strength: number): SuggestHandle {
+    this.solver.addEditVariable(this.variable, strength)
+    return new SuggestHandleImpl(this.solver, this.variable, label)
   }
 }
