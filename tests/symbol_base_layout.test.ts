@@ -1,7 +1,7 @@
 import { SymbolBase } from "../src/model/symbol_base"
 import { LayoutVariables } from "../src/layout/layout_variables"
 import { LayoutSolver, Operator } from "../src/layout/layout_solver"
-import { LayoutConstraintBuilder } from "../src/layout/layout_constraints"
+import { ConstraintsBuilder } from "../src/layout/constraints_builder"
 import type { Point } from "../src/model/types"
 import type { LayoutBounds } from "../src/layout/bounds"
 import { DefaultTheme } from "../src/theme"
@@ -23,7 +23,7 @@ class DummySymbol extends SymbolBase {
     return from
   }
 
-  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(_builder: ConstraintsBuilder): void {
     // no custom constraints
   }
 }
@@ -45,7 +45,7 @@ class DummySymbolWithConstraints extends SymbolBase {
     return from
   }
 
-  ensureLayoutBounds(builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(builder: ConstraintsBuilder): void {
     const bounds = this.layout
     builder.expr([1, bounds.width]).ge([20, 1]).weak()
     builder.expr([1, bounds.height]).ge([20, 1]).weak()

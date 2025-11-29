@@ -580,4 +580,4 @@ export class LayoutConstraints {
   }
 }
 
-export { ConstraintsBuilder, ConstraintsBuilder as LayoutConstraintBuilder } from "./constraints_builder"
+export { ConstraintsBuilder } from "./constraints_builder"

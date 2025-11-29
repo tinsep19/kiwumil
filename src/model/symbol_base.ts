@@ -2,7 +2,7 @@
 import type { SymbolId, Point } from "./types"
 import type { Theme } from "../theme"
 import type { LayoutBounds } from "../layout/bounds"
-import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
+import type { ConstraintsBuilder } from "../layout/constraints_builder"
 
 export interface SymbolBaseOptions {
   id: SymbolId
@@ -24,5 +24,5 @@ export abstract class SymbolBase {
 
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
-  abstract ensureLayoutBounds(builder: LayoutConstraintBuilder): void
+  abstract ensureLayoutBounds(builder: ConstraintsBuilder): void
 }

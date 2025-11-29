@@ -1,5 +1,5 @@
 // src/plugin/uml/symbols/actor_symbol.ts
-import type { LayoutConstraintBuilder } from "../../../layout/layout_constraints"
+import type { ConstraintsBuilder } from "../../../layout/constraints_builder"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
@@ -108,7 +108,7 @@ export class ActorSymbol extends SymbolBase {
     `
   }
 
-  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(_builder: ConstraintsBuilder): void {
     // Controller constraints handled elsewhere
   }
 }
