@@ -56,4 +56,19 @@ describe("ConstraintsBuilder", () => {
     expect(vars.valueOf(y)).toBeCloseTo(vars.valueOf(x))
     expect(vars.valueOf(y)).toBeCloseTo(42)
   })
+
+  test("expr(...).eq0() can solve 2x - 3y + 7 = 0", () => {
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+    const x = vars.createVar("builder:x-linear")
+    const y = vars.createVar("builder:y-linear")
+
+    const builder = new ConstraintsBuilder(solver.getInternalSolver())
+    builder.expr([2, x], [-3, y], [7, 1]).eq0().strong()
+
+    solver.addConstraint(x, Operator.Eq, 10)
+    solver.updateVariables()
+
+    expect(vars.valueOf(y)).toBeCloseTo((2 * 10 + 7) / 3)
+  })
 })
