@@ -12,7 +12,7 @@ import {
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
 import type { LayoutBounds } from "../dist/layout/bounds"
-import type { LayoutConstraintBuilder } from "../dist/layout/layout_constraints"
+import type { ConstraintsBuilder } from "../dist/layout/layout_constraints"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 import {
@@ -44,7 +44,7 @@ class TestSymbol extends SymbolBase {
     return { x: 0, y: 0 }
   }
 
-  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(_builder: ConstraintsBuilder): void {
     // no-op for testing
   }
 }

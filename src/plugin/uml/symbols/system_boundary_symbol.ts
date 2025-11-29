@@ -2,10 +2,9 @@
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../model/types"
 import { getBoundsValues } from "../../../layout/bounds"
-import type { ContainerBounds, LayoutBounds } from "../../../layout/bounds"
+import type { ContainerBounds } from "../../../layout/bounds"
 import type { Theme } from "../../../theme"
-import { LayoutConstraintStrength } from "../../../layout/layout_variables"
-import type { LayoutConstraintBuilder } from "../../../layout/layout_constraints"
+import type { ConstraintsBuilder } from "../../../layout/constraints_builder"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { ContainerSymbol, type ContainerPadding } from "../../../model/container_symbol"
 
@@ -13,8 +12,6 @@ export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
   label: string
   container: ContainerBounds
 }
-
-type BoundsAxis = "x" | "y" | "width" | "height"
 
 export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol {
   readonly label: string
@@ -49,7 +46,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     return theme.defaultStyleSet.verticalGap / 2
   }
 
-  private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
+  private buildContainerConstraints(builder: ConstraintsBuilder): void {
     const bounds = this.layout
     const theme = this.theme
     const padding = this.getContainerPadding(theme)
@@ -57,36 +54,23 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    builder.eq(
-      this.container.x,
-      this.expressionFromBounds(builder, bounds, "x", padding.left),
-      LayoutConstraintStrength.Strong
-    )
-    builder.eq(
-      this.container.y,
-      this.expressionFromBounds(builder, bounds, "y", padding.top + header),
-      LayoutConstraintStrength.Strong
-    )
-    builder.eq(
-      this.container.width,
-      this.expressionFromBounds(builder, bounds, "width", -horizontalPadding),
-      LayoutConstraintStrength.Strong
-    )
-    builder.eq(
-      this.container.height,
-      this.expressionFromBounds(builder, bounds, "height", -verticalPadding),
-      LayoutConstraintStrength.Strong
-    )
+    builder
+      .expr([1, this.container.x])
+      .eq([1, bounds.x], [padding.left, 1])
+      .strong()
+    builder
+      .expr([1, this.container.y])
+      .eq([1, bounds.y], [padding.top + header, 1])
+      .strong()
+    builder
+      .expr([1, this.container.width])
+      .eq([1, bounds.width], [-horizontalPadding, 1])
+      .strong()
+    builder
+      .expr([1, this.container.height])
+      .eq([1, bounds.height], [-verticalPadding, 1])
+      .strong()
   }
-  private expressionFromBounds(
-    builder: LayoutConstraintBuilder,
-    bounds: LayoutBounds,
-    axis: BoundsAxis,
-    constant = 0
-  ) {
-    return builder.expression([{ variable: bounds[axis] }], constant)
-  }
-
   getConnectionPoint(from: Point): Point {
     const { x, y, width, height } = getBoundsValues(this.layout)
 
@@ -114,14 +98,14 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     }
   }
 
-  ensureLayoutBounds(builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(builder: ConstraintsBuilder): void {
     this.buildContainerConstraints(builder)
     if (this.constraintsApplied) {
       return
     }
     const bounds = this.layout
-    builder.ge(bounds.width, this.defaultWidth, LayoutConstraintStrength.Weak)
-    builder.ge(bounds.height, this.defaultHeight, LayoutConstraintStrength.Weak)
+    builder.expr([1, bounds.width]).ge([this.defaultWidth, 1]).weak()
+    builder.expr([1, bounds.height]).ge([this.defaultHeight, 1]).weak()
     this.constraintsApplied = true
   }
 

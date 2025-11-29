@@ -47,7 +47,7 @@ kiwi.Solver のラッパークラスとして実装。以下のメソッドを�
 - `removeEditVariable(variable)`: 変数の編集を終了
 - `suggestValue(variable, value)`: 変数に値を提案
 - `updateVariables()`: ソルバーを実行し、すべての変数の値を更新
-- `getInternalSolver()`: 内部の kiwi.Solver にアクセス（必要に応じて）
+- `createConstraintsBuilder()`: 内部 solver から fluent builder を作成
 
 将来的に LayoutContext が LayoutSolver を所有する際の基盤となる。
 

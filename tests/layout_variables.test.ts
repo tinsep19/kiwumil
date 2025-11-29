@@ -1,5 +1,5 @@
 import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver, Operator } from "../src/layout/kiwi"
+import { LayoutSolver } from "../src/layout/layout_solver"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
@@ -7,7 +7,8 @@ describe("LayoutVariables", () => {
     const solver = new LayoutSolver()
     const x = variables.createVar("x")
 
-    solver.addConstraint(x, Operator.Eq, 42)
+    const builder = solver.createConstraintsBuilder()
+    builder.expr([1, x]).eq([42, 1]).strong()
     solver.updateVariables()
 
     expect(variables.valueOf(x)).toBeCloseTo(42)
@@ -19,8 +20,12 @@ describe("LayoutVariables", () => {
     const a = variables.createVar("a")
     const b = variables.createVar("b")
 
-    solver.addConstraint(a, Operator.Eq, 10)
-    solver.addConstraint(b, Operator.Eq, solver.expression([{ variable: a, coefficient: 1 }], 20))
+    const builder = solver.createConstraintsBuilder()
+    builder.expr([1, a]).eq([10, 1]).strong()
+    builder
+      .expr([1, b])
+      .eq([1, a], [20, 1])
+      .strong()
 
     solver.updateVariables()
 

@@ -1,4 +1,4 @@
-import type { LayoutVar } from "./kiwi"
+import type { LayoutVar } from "./layout_solver"
 
 const BOUND_ID_BRAND = Symbol("BoundId")
 export type BoundId = string & { readonly [BOUND_ID_BRAND]: true }

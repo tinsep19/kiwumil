@@ -169,7 +169,7 @@ CodeQL による静的解析を実行：
 
 ### 参考となる箇所
 
-- `src/layout/kiwi/index.ts` - 制約ソルバのラッパー
+- `src/layout/layout_solver.ts` - 制約ソルバのラッパー
 - `src/layout/layout_constraints.ts` - 制約の構築
 - `src/model/symbol_base.ts` - Symbol の制約定義
 

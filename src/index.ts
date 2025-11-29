@@ -20,7 +20,7 @@ export { DIAGRAM_CONTAINER_ID } from "./model/types"
 // Layout 型定義
 export type { LayoutContext } from "./layout/layout_context"
 export type { LayoutConstraintType } from "./layout/layout_constraints"
-export { LayoutConstraintStrength } from "./layout/layout_variables"
+export { LayoutConstraintStrength } from "./layout/layout_constraints"
 
 // 新しい型名
 export type { Bounds, BoundsType } from "./layout/bounds"

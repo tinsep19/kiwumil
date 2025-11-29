@@ -1,12 +1,9 @@
 // src/layout/hint/guide_builder.ts
 import type { ContainerSymbolId, SymbolId } from "../../model/types"
 import type { SymbolBase } from "../../model/symbol_base"
-import {
-  LayoutConstraintOperator,
-  LayoutConstraintStrength,
-  type LayoutVar,
-} from "../layout_variables"
+import type { Term } from "../constraints_builder"
 import type { LayoutContext } from "../layout_context"
+import { type LayoutVar } from "../layout_variables"
 import type { LayoutConstraintTarget } from "../layout_constraint_target"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
@@ -73,8 +70,10 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
 
     if (typeof initialValue === "number") {
       this.context
-        .getSolver()
-        .addConstraint(this.guideVar, LayoutConstraintOperator.Eq, initialValue)
+        .createConstraintsBuilder()
+        .expr([1, this.guideVar])
+        .eq([initialValue, 1])
+        .strong()
     }
   }
 
@@ -86,14 +85,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.context
-        .getSolver()
-        .addConstraint(
-          bounds.x,
-          LayoutConstraintOperator.Eq,
-          this.guideVar,
-          LayoutConstraintStrength.Strong
-        )
+      this.enforceStrongEquality([[1, bounds.x]], [[1, this.guideVar]])
     }
     return this
   }
@@ -105,14 +97,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.context
-        .getSolver()
-        .addConstraint(
-          bounds.right,
-          LayoutConstraintOperator.Eq,
-          this.guideVar,
-          LayoutConstraintStrength.Strong
-        )
+      this.enforceStrongEquality([[1, bounds.right]], [[1, this.guideVar]])
     }
     return this
   }
@@ -123,14 +108,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.context
-      .getSolver()
-      .addConstraint(
-        this.guideVar,
-        LayoutConstraintOperator.Eq,
-        bounds.x,
-        LayoutConstraintStrength.Strong
-      )
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.x]])
     return this
   }
 
@@ -140,14 +118,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.context
-      .getSolver()
-      .addConstraint(
-        this.guideVar,
-        LayoutConstraintOperator.Eq,
-        bounds.right,
-        LayoutConstraintStrength.Strong
-      )
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.right]])
     return this
   }
 
@@ -159,14 +130,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.context
-        .getSolver()
-        .addConstraint(
-          bounds.y,
-          LayoutConstraintOperator.Eq,
-          this.guideVar,
-          LayoutConstraintStrength.Strong
-        )
+      this.enforceStrongEquality([[1, bounds.y]], [[1, this.guideVar]])
     }
     return this
   }
@@ -178,14 +142,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.context
-        .getSolver()
-        .addConstraint(
-          bounds.bottom,
-          LayoutConstraintOperator.Eq,
-          this.guideVar,
-          LayoutConstraintStrength.Strong
-        )
+      this.enforceStrongEquality([[1, bounds.bottom]], [[1, this.guideVar]])
     }
     return this
   }
@@ -196,14 +153,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.context
-      .getSolver()
-      .addConstraint(
-        this.guideVar,
-        LayoutConstraintOperator.Eq,
-        bounds.y,
-        LayoutConstraintStrength.Strong
-      )
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.y]])
     return this
   }
 
@@ -213,14 +163,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.context
-      .getSolver()
-      .addConstraint(
-        this.guideVar,
-        LayoutConstraintOperator.Eq,
-        bounds.bottom,
-        LayoutConstraintStrength.Strong
-      )
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.bottom]])
     return this
   }
 
@@ -232,14 +175,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       if (!symbol) continue
       const bounds = symbol.layout
       const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
-      this.context
-        .getSolver()
-        .addConstraint(
-          targetVar,
-          LayoutConstraintOperator.Eq,
-          this.guideVar,
-          LayoutConstraintStrength.Strong
-        )
+      this.enforceStrongEquality([[1, targetVar]], [[1, this.guideVar]])
     }
     return this
   }
@@ -250,14 +186,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     if (!symbol) return this
     const bounds = symbol.layout
     const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
-    this.context
-      .getSolver()
-      .addConstraint(
-        this.guideVar,
-        LayoutConstraintOperator.Eq,
-        targetVar,
-        LayoutConstraintStrength.Strong
-      )
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, targetVar]])
     return this
   }
 
@@ -291,6 +220,14 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return Array.from(this.alignedSymbols)
       .map((id) => this.resolveTarget(id))
       .filter((target): target is LayoutConstraintTarget => Boolean(target))
+  }
+
+  private enforceStrongEquality(lhs: Term[], rhs: Term[]) {
+    this.context
+      .createConstraintsBuilder()
+      .expr(...lhs)
+      .eq(...rhs)
+      .strong()
   }
 
   private ensureFollowAvailable(method: string) {

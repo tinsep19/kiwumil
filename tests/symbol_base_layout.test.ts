@@ -1,7 +1,7 @@
 import { SymbolBase } from "../src/model/symbol_base"
 import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver, Operator } from "../src/layout/kiwi"
-import { LayoutConstraintBuilder } from "../src/layout/layout_constraints"
+import { LayoutSolver } from "../src/layout/layout_solver"
+import { ConstraintsBuilder } from "../src/layout/constraints_builder"
 import type { Point } from "../src/model/types"
 import type { LayoutBounds } from "../src/layout/bounds"
 import { DefaultTheme } from "../src/theme"
@@ -23,7 +23,7 @@ class DummySymbol extends SymbolBase {
     return from
   }
 
-  ensureLayoutBounds(_builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(_builder: ConstraintsBuilder): void {
     // no custom constraints
   }
 }
@@ -45,10 +45,10 @@ class DummySymbolWithConstraints extends SymbolBase {
     return from
   }
 
-  ensureLayoutBounds(builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(builder: ConstraintsBuilder): void {
     const bounds = this.layout
-    builder.ge(bounds.width, 20)
-    builder.ge(bounds.height, 20)
+    builder.expr([1, bounds.width]).ge([20, 1]).weak()
+    builder.expr([1, bounds.height]).ge([20, 1]).weak()
   }
 }
 
@@ -60,8 +60,9 @@ describe("SymbolBase layout bounds", () => {
     const symbol = new DummySymbol("dummy-1", bounds)
     const symbolBounds = symbol.layout
 
-    solver.addConstraint(symbolBounds.x, Operator.Eq, 15)
-    solver.addConstraint(symbolBounds.y, Operator.Eq, 25)
+    const setter = solver.createConstraintsBuilder()
+    setter.expr([1, symbolBounds.x]).eq([15, 1]).strong()
+    setter.expr([1, symbolBounds.y]).eq([25, 1]).strong()
     solver.updateVariables()
 
     expect(vars.valueOf(symbolBounds.x)).toBeCloseTo(15)
@@ -82,7 +83,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBound("dummy-3")
     const symbol = new DummySymbol("dummy-3", bounds)
-    const builder = new LayoutConstraintBuilder(solver)
+    const builder = solver.createConstraintsBuilder()
 
     symbol.ensureLayoutBounds(builder)
 
@@ -95,7 +96,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBound("dummy-4")
     const symbol = new DummySymbolWithConstraints("dummy-4", bounds)
-    const builder = new LayoutConstraintBuilder(solver)
+    const builder = solver.createConstraintsBuilder()
 
     symbol.ensureLayoutBounds(builder)
 

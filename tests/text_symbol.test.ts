@@ -1,7 +1,7 @@
 import { TextSymbol } from "../src/plugin/core/symbols/text_symbol"
 import { DefaultTheme } from "../src/theme"
 import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver } from "../src/layout/kiwi"
+import { LayoutSolver } from "../src/layout/layout_solver"
 
 describe("TextSymbol", () => {
   test("calculates default size from multiline text", () => {
@@ -32,15 +32,14 @@ describe("TextSymbol", () => {
     })
     // Set up layout bounds
     const lb = symbol.layout
-    solver.addEditVariable(lb.x, "strong")
-    solver.addEditVariable(lb.y, "strong")
-    solver.addEditVariable(lb.width, "strong")
-    solver.addEditVariable(lb.height, "strong")
-
-    solver.suggestValue(lb.x, 0)
-    solver.suggestValue(lb.y, 0)
-    solver.suggestValue(lb.width, 200)
-    solver.suggestValue(lb.height, 100)
+    const xHandle = solver.createHandle(lb.x).strong()
+    const yHandle = solver.createHandle(lb.y).strong()
+    const widthHandle = solver.createHandle(lb.width).strong()
+    const heightHandle = solver.createHandle(lb.height).strong()
+    xHandle.suggest(0)
+    yHandle.suggest(0)
+    widthHandle.suggest(200)
+    heightHandle.suggest(100)
     solver.updateVariables()
 
     const svg = symbol.toSVG()
@@ -67,15 +66,14 @@ describe("TextSymbol", () => {
     })
     // Set up layout bounds
     const lb = symbol.layout
-    solver.addEditVariable(lb.x, "strong")
-    solver.addEditVariable(lb.y, "strong")
-    solver.addEditVariable(lb.width, "strong")
-    solver.addEditVariable(lb.height, "strong")
-
-    solver.suggestValue(lb.x, 0)
-    solver.suggestValue(lb.y, 0)
-    solver.suggestValue(lb.width, 200)
-    solver.suggestValue(lb.height, 80)
+    const xHandle = solver.createHandle(lb.x).strong()
+    const yHandle = solver.createHandle(lb.y).strong()
+    const widthHandle = solver.createHandle(lb.width).strong()
+    const heightHandle = solver.createHandle(lb.height).strong()
+    xHandle.suggest(0)
+    yHandle.suggest(0)
+    widthHandle.suggest(200)
+    heightHandle.suggest(80)
     solver.updateVariables()
 
     const svg = symbol.toSVG()

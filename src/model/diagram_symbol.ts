@@ -3,15 +3,12 @@ import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
-import type { ContainerBounds, LayoutBounds } from "../layout/bounds"
+import type { ContainerBounds } from "../layout/bounds"
 import type { LayoutContext } from "../layout/layout_context"
-import type { LayoutConstraintBuilder } from "../layout/layout_constraints"
-import { LayoutConstraintStrength } from "../layout/layout_variables"
+import type { ConstraintsBuilder } from "../layout/constraints_builder"
 import { getBoundsValues } from "../layout/bounds"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
-
-type BoundsAxis = "x" | "y" | "width" | "height"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
@@ -56,54 +53,41 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     })
   }
 
-  private buildContainerConstraints(builder: LayoutConstraintBuilder): void {
+  private buildContainerConstraints(builder: ConstraintsBuilder): void {
     const bounds = this.layout
     const padding = this.getContainerPadding(this.theme)
     const header = this.getHeaderHeight(this.theme)
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    builder.eq(
-      this.container.x,
-      this.expressionFromBounds(builder, bounds, "x", padding.left),
-      LayoutConstraintStrength.Strong
-    )
-    builder.eq(
-      this.container.y,
-      this.expressionFromBounds(builder, bounds, "y", padding.top + header),
-      LayoutConstraintStrength.Strong
-    )
-    builder.eq(
-      this.container.width,
-      this.expressionFromBounds(builder, bounds, "width", -horizontalPadding),
-      LayoutConstraintStrength.Strong
-    )
-    builder.eq(
-      this.container.height,
-      this.expressionFromBounds(builder, bounds, "height", -verticalPadding),
-      LayoutConstraintStrength.Strong
-    )
+    builder
+      .expr([1, this.container.x])
+      .eq([1, bounds.x], [padding.left, 1])
+      .strong()
+    builder
+      .expr([1, this.container.y])
+      .eq([1, bounds.y], [padding.top + header, 1])
+      .strong()
+    builder
+      .expr([1, this.container.width])
+      .eq([1, bounds.width], [-horizontalPadding, 1])
+      .strong()
+    builder
+      .expr([1, this.container.height])
+      .eq([1, bounds.height], [-verticalPadding, 1])
+      .strong()
   }
 
-  private expressionFromBounds(
-    builder: LayoutConstraintBuilder,
-    bounds: LayoutBounds,
-    axis: BoundsAxis,
-    constant = 0
-  ) {
-    return builder.expression([{ variable: bounds[axis] }], constant)
-  }
-
-  ensureLayoutBounds(builder: LayoutConstraintBuilder): void {
+  ensureLayoutBounds(builder: ConstraintsBuilder): void {
     this.buildContainerConstraints(builder)
     if (this.constraintsApplied) {
       return
     }
     const bounds = this.layout
-    builder.eq(bounds.x, 0, LayoutConstraintStrength.Strong)
-    builder.eq(bounds.y, 0, LayoutConstraintStrength.Strong)
-    builder.ge(bounds.width, 200, LayoutConstraintStrength.Weak)
-    builder.ge(bounds.height, 150, LayoutConstraintStrength.Weak)
+    builder.expr([1, bounds.x]).eq([0, 1]).strong()
+    builder.expr([1, bounds.y]).eq([0, 1]).strong()
+    builder.expr([1, bounds.width]).ge([200, 1]).weak()
+    builder.expr([1, bounds.height]).ge([150, 1]).weak()
     this.constraintsApplied = true
   }
 

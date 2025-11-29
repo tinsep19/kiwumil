@@ -1,16 +1,12 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model/symbol_base"
-import type { Bounds } from "./bounds"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
-import { LayoutConstraints, LayoutConstraintStrength } from "./layout_constraints"
-import { LayoutSolver } from "./kiwi"
-
-type BoundsAxis = Exclude<keyof Bounds, "type" | "boundId">
-
-interface BoundsTerm {
-  axis: BoundsAxis
-  coefficient?: number
-}
+import {
+  LayoutConstraints,
+  LayoutConstraintStrength,
+} from "./layout_constraints"
+import { LayoutSolver } from "./layout_solver"
+import { ConstraintsBuilder } from "./constraints_builder"
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
@@ -29,6 +25,13 @@ export class LayoutContext {
     this.solver.updateVariables()
   }
 
+  /**
+   * Create a ConstraintsBuilder backed by the internal solver.
+   */
+  createConstraintsBuilder() {
+    return this.solver.createConstraintsBuilder()
+  }
+
   solveAndApply(_symbols: SymbolBase[]) {
     this.solve()
     // Symbols now use .layout directly in toSVG/getConnectionPoint
@@ -39,24 +42,6 @@ export class LayoutContext {
     return this.variables.valueOf(variable)
   }
 
-  /**
-   * LayoutSolver へのアクセサ（制約追加や式作成のため）
-   * @returns LayoutSolver
-   */
-  getSolver(): LayoutSolver {
-    return this.solver
-  }
-
-  expressionFromBounds(bounds: Bounds, terms: BoundsTerm[], constant = 0) {
-    return this.constraints.expression(
-      terms.map((term) => ({
-        variable: bounds[term.axis],
-        coefficient: term.coefficient,
-      })),
-      constant
-    )
-  }
-
   applyMinSize(
     symbol: SymbolBase,
     size: { width: number; height: number },
@@ -65,8 +50,8 @@ export class LayoutContext {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
       symbol.ensureLayoutBounds(builder)
-      builder.ge(bounds.width, size.width, strength)
-      builder.ge(bounds.height, size.height, strength)
+      this.applyStrength(builder.expr([1, bounds.width]).ge([size.width, 1]), strength)
+      this.applyStrength(builder.expr([1, bounds.height]).ge([size.height, 1]), strength)
     })
   }
 
@@ -77,8 +62,21 @@ export class LayoutContext {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
       symbol.ensureLayoutBounds(builder)
-      builder.eq(bounds.x, 0, strength)
-      builder.eq(bounds.y, 0, strength)
+      this.applyStrength(builder.expr([1, bounds.x]).eq([0, 1]), strength)
+      this.applyStrength(builder.expr([1, bounds.y]).eq([0, 1]), strength)
     })
+  }
+
+  private applyStrength(
+    builder: ConstraintsBuilder,
+    strength: LayoutConstraintStrength
+  ) {
+    if (strength === LayoutConstraintStrength.Required) {
+      return builder.required()
+    }
+    if (strength === LayoutConstraintStrength.Strong) {
+      return builder.strong()
+    }
+    return builder.weak()
   }
 }
