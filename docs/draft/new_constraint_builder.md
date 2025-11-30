@@ -5,7 +5,7 @@
 ## 型定義
 
 ```typescript
-type ExprTerm = [number, LayoutVar | 1 ];
+type ExprTerm = [number, LayoutVar | number];
 ```
 
 ---
@@ -102,6 +102,10 @@ class ConstraintBuilder {
 const [x, y, z, w, a, b] : LayoutVar[] = variables
 const builder = new ConstraintBuilder(solver);
 
+builder
+  .expr([1, height])
+  .eq([2, radius], [1, strokeWidth])
+  .strong(); // can use `strokeWidth` or other numeric constants on the RHS
 
 
 builder.expr([1, x], [2, y]).eq([3, z]).strong();
@@ -118,6 +122,7 @@ console.log(builder.rawConstraints);
 ### 備考
 
 - `expr`／`eq`／`ge`／`le` など、可変長引数で複数項指定可能  
+- 係数付きの定数項（例: `strokeWidth` や非 1 のオフセット）も `[number, number]` 形式で直接指定できる
 - `eq0`／`ge0`／`le0` は右辺を `[[0, 0]]` で固定
 - Chainable API形式
 - 完成した制約は `this.solver.addConstraint` で確定
