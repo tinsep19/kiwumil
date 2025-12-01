@@ -7,6 +7,8 @@ import type { Theme } from "../theme"
 import type { RelationshipId, SymbolBase } from "../model"
 import type { IconMeta } from "../icon"
 
+export type PluginIcons = Record<string, () => IconMeta | null>
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
@@ -14,7 +16,8 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
     createSymbolFactory: (
       symbols: Symbols,
       context: LayoutContext,
-      theme: Theme
+      theme: Theme,
+      icons: Record<string, () => IconMeta | null>
     ) => Record<string, (...args: any[]) => SymbolBase>
   }
 >
@@ -25,7 +28,8 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
     createRelationshipFactory: (
       relationships: Relationships,
       context: LayoutContext,
-      theme: Theme
+      theme: Theme,
+      icons: Record<string, () => IconMeta | null>
     ) => Record<string, (...args: any[]) => RelationshipId>
   }
 >
@@ -74,5 +78,5 @@ type IconEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
 export type IconFactory = () => IconMeta | null
 
 export type BuildIconNamespace<TPlugins extends readonly DiagramPlugin[]> = {
-  [K in IconEnabledPlugins<TPlugins>["name"]]: Record<string, IconFactory>
+  [K in IconEnabledPlugins<TPlugins>["name"]]: PluginIcons
 }

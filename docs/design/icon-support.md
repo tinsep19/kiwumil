@@ -1,67 +1,57 @@
 # アイコン対応（設計）
 
-このドキュメントは、`docs/design/plugin-system.ja.md` に基づいてプラグインが SVG アイコンを提供・利用するための設計を示す。
-`DiagramPlugin` ベースの名前空間・登録フローに沿って `icon` API を導入し、描画・メタデータ・セキュリティ要件を満たす仕様とする。
+このドキュメントは `docs/design/plugin-system.ja.md` の上に乗る形で、プラグインが SVG アイコンを提供し、DSL 側がそれを安全に参照・描画するための設計をまとめたものです。実装済みのモジュール群（`src/icon/*` / `src/dsl/*`）を踏まえ、アーキテクチャと今後の作業をクリアにします。
 
 ## 1. ゴール
 
-- SVG アイコンはプラグインによりファイルとして提供され、DSL の `icon` 名前空間から参照できる。
-- 実行時に使用されたアイコンだけを `<symbol>` にまとめて `<use>` で再利用する。
-- プラグイン命名規則 (`DiagramPlugin.name`) や既存の ID フォーマットと衝突しない形で管理される。
-- セキュリティ的に SVG インジェクションや外部参照を排除する。
+- プラグインが `registerIcons` を通じて自前のアイコンセットを登録できる。
+- DSL の `icon` 名前空間から各プラグイン・アイコンを型安全に参照できるようにし、Symbol/Relationship の `create*Factory` に渡す。
+- 実行時には `IconRegistry` が使用されたアイコンのみを `<defs>` に集約し、`<use>` で再利用する。
+- 名前衝突や非同期の依存が起きないように、アイコン構成を `NamespaceBuilder` → `DiagramBuilder` の流れで一貫してハンドリングする。
+- SVG のセキュリティ要件（外部リソース排除、プレーン SVG）に適合したレンダリングを維持する。
 
-## 2. 構成要素
+## 2. アーキテクチャ
 
-### 2.1 プラグイン構成
+### 2.1 プラグインからのアイコン登録
 
-- すべてのプラグインは `icons/` フォルダを持ち、その配下に `.svg` をプラグイン固有ファイル名で配置する（例: `plugin/icons/actors.svg`）。
-- `DiagramPlugin` に `createIconFactory?` を追加することで、アイコンを公開する DSL として `icon.${plugin}.${name}()` を提供する。
-- アイコンファイルは `icon-loader` により読み込み・バリデーションされ、`IconMeta` を生成する。
+- `DiagramPlugin` インターフェースは現在オプションの `registerIcons` を持ち、`createLoader(plugin, importMeta, cb)` を通じて `IconLoader` にアイコンを登録する。
+- `IconLoader`（`src/icon/icon_loader.ts`）は `register(name, relPath)` でファイルパスを保持し、`load_sync(name)` で同期的に `IconMeta`（`width` / `height` / `viewBox` / `href` / `raw`）を返す。`href` は `plugin-name` 形式の `symbolId` に対応する。
+- `NamespaceBuilder.buildIconNamespace()` が各プラグインの `registerIcons` を呼び出し、`PluginIcons`（`Record<string, () => IconMeta | null>`）という map を生成する。これにより `icon.${plugin}.${name}` 形式の名前空間が DSL 上に構築される。
 
-### 2.2 DSL 側
+### 2.2 DSL 側のアイコン名前空間
 
-- `TypeDiagram().use(...)` でプラグインが登録されるとき、`icon` 名前空間にも自動的にエントリを追加する。
-- `icon` は `el`/`rel` と同様に plugin name をキーとし `icon.${plugin}` を提供、`icon.${plugin}.${iconName}()` で次を返す（同期、`IconMeta`）:
-  - `usageId: IconUsageId`（`icon:${plugin}.${iconName}/${serial}` 型、内部管理用）
-  - `symbolId: string`（SVG `<symbol id="...">` で使う描画ID）
-  - `metadata: IconMeta`（`width`, `height`, `viewBox` などの制約/ヒント）
-  - `rawSvg: string`（`icon-registry` が `<symbol>` に組み込む内容。最適化済み）
+- `DiagramBuilder.build` は `NamespaceBuilder` に `Symbol`/`Relationship` とは別にアイコン名前空間を先に構築させる。返ってきた `icon` オブジェクトは `Record<string, PluginIcons>` で、ビルダーのコールバック引数 `{ el, rel, hint, icon }` に含まれる。
+- そのコールバックをさらに `el` や `rel` へ渡すとき、各 plugin factory（`createSymbolFactory`/`createRelationshipFactory`）には該当プラグインの `PluginIcons` オブジェクトが `icons` 引数として渡る。これにより Symbol や Relationship が必要に応じて `IconMeta` を取得できる。
+- 型テスト（`tsd/icon_namespace.test-d.ts`）はこのオブジェクト構造を保証し、`PluginIcons` が外部からアクセス可能であることを検証している。
 
-- DSL の `build` コールバックはオブジェクト形式で受け取る（例: `build(({ el, rel, hint, icon }) => { ... })`）。`icon` は上記の `icon` 名前空間を指す。
-- `icon` 呼び出しは `Symbol` の生成時 (たとえば `new IconSym(symbolId, meta)`) の引数として利用でき、シンボルがサイズ制約を持つ場合の参照先となる。
-- DSL の `hint` や `layout` が `icon` から供給された `metadata` を参照することで、サイズやアスペクト比に応じたレイアウトができるようサポートする。
+### 2.3 アイコンの描画パイプライン
 
-- `NamespaceBuilder` に `buildIconNamespace()` を追加し、プラグインの `registerIcons` を呼び出して静的な `IconLoader` を生成・利用することで同期的に `icon` 名前空間を構築する実装を追加した。
-- 型面では `IconFactory` / `BuildIconNamespace` を導入して、`icon` 名前空間の型を明示的に表現している。
+- `IconRegistry`（`src/icon/icon_registry.ts`）は `register(plugin, name, svgContent)` で `<symbol>` への変換を保持し、`mark_usage` で使用が明示されたアイコンを追跡する。
+- `normalize_id(plugin, name)` は `plugin-name` 形式へ正規化し、大文字や記号を `-` に替換。先頭が数字の場合は `i-` を付与することで `<symbol id>` の安全性を担保する。
+- `IconRegistry.emit_symbols()` は集めたシンボルを `<defs>` にまとめ、`SvgGenerator.emit_document(body)`（`src/icon/svg_generator.ts`）がそれを最終 SVG 文書に差し込む。レンダラーは `<use href="#symbolId">` を使って再利用する。
+- 将来的に `DiagramBuilder` のレンダラーパスへ `IconRegistry` を組み込み、アイコン使用が `Symbols`/`Relationships` の描画タイミングと同期するようにしたい。
 
----
-更新日: 2025-12-01T08:08:14.826Z
+### 2.4 ID 命名・メタデータ
 
-### 2.3 アイコン登録・描画
+- `IconMeta` は `width`/`height`/`viewBox`/`href`/`raw` を含む構造で、DSL のヒントや `layout` に渡せる。`href` は `IconLoader` が `plugin-name` 形式で生成する `symbolId` を指す。
+- `normalize_id` のルール（小文字化・無効文字は `-` 置換・数字先頭に `i-`）は `IconRegistry` だけでなく `IconLoader` が命名規則を守るための指針にもなる。
+- `icon.${plugin}` 内では `PluginIcons` により同期 API を提供し、`IconMeta | null` を返す関数を扱う。これは `IconLoader.load_sync` が簡易実装を提供することで一致する。
 
-- `icon-registry` は `usageId` をキーに使用アイコンを集約し、`svg-generator` が `<defs>` 内に `<symbol id="{symbolId}">...</symbol>` を出力する。
-- 未使用のアイコンは `icon-registry` に記録されず出力に含まれない。
-- アプリケーション側のレンダリングロジックは `<use href="#{symbolId}">` を用いて再利用する。
-- `<symbol>` の `id`（描画 ID）は `${plugin}-${iconName}` 等のシンプルな形式とし、一次的な変換処理ではプレフィックスに `plugin` を使って名前衝突を防ぐ。
+## 3. セキュリティ / 最適化
 
-## 3. ID 命名と管理
+- `IconLoader` は仮の実装であるが、プロダクションでは SVG を読み込む際に `<script>` や外部リソース（`<image>`/`href` 等）の除去、SVGO 等による不要属性の削除を行うべきである。
+- `IconRegistry` と `SvgGenerator` はすべてのアイコンをインラインの `<symbol>` として DOM に埋め込み、`<use href="#symbolId">` のみで再利用することでクロスドメイン参照を禁止する。
+- セキュリティフラグ（例: `trusted`）を将来的に `IconRegistry` に追加する余地はあるが、現状は `register` の段階で安全な SVG を渡すことが前提。
 
-- **描画 ID (`symbolId`)**: SVG 内で `<symbol>` を定義/参照するための ID。`icon.${plugin}.${iconName}` のように小文字でハイフン結合し、先頭数字なら `i-` を付与。`<use>` はこの ID を `href="#..."` で呼び出す。
-- **管理 ID (`IconUsageId`)**: 内部処理（ロギング・使用集計）用のユニーク ID。`icon:${plugin}.${iconName}/${index}` の形式とし、`Icons` レジストリが `registerUsage` で連番を割り当てることで、`Symbols` と同様に使用履歴を追跡する。
-- 描画 ID は `icon-registry.emitSymbols()` 時に `symbolId` を `href` 参照先へそのまま埋め込む一方、DSL 側では `usageId` を `IconHint` などに渡して `svg-generator` へ取り込む。
+## 4. 実装状況と今後のタスク
 
-## 4. セキュリティ / 最適化
+1. `IconLoader` / `IconRegistry` / `SvgGenerator` を `src/icon/*` に実装済みなので、レンダリングパイプラインやテスト（`tests/*`）で期待される挙動を明確にする。
+2. DSL の `icon` 名前空間の型 (`PluginIcons` / `BuildIconNamespace`) を `src/dsl/*` で整備し、テスト `tsd/icon_namespace.test-d.ts` でも保証済み。
+3. `docs/draft/icon-support.md` の草案はこのドキュメントに統合し、詳細な API 例やアイコンモジュールの責務を `docs/design` にリンクする。
+4. 今後の作業:
+   1. 実装済みアイコン API の利用例を `docs/design/plugin-system.ja.md` に追記し、DSL との連携を図示。
+   2. `IconLoader.load_sync` の実際のファイル読み込み / 最適化処理を追加し、`IconMeta.raw` に含める SVG を検証する。
+   3. `SvgGenerator` から `DiagramBuilder` のレンダリングパスへの統合と、実際の `<defs>` 出力の単体テスト強化。
+   4. セキュリティチェックリスト（`docs/design/security.md` など）にアイコンの検証項目を加える。
 
-- SVG ファイルは `icon-loader` でプレーン SVG であること（`<script>` 不在、外部リソース不使用）を検査し、最適化ツール（SVGO など）で不要属性を排除する。
-- `icon-registry` には `trusted` フラグを導入し、未検証アイコンはレンダリング前に警告または排除できるようにする。
-- 外部 `<use>` 参照は禁止。すべてのアイコンはインライン `<symbol>` として `svg-generator` が解決することで CORS を回避し、`<use>` の `href` は常に `#symbolId`（同一ドキュメント）に限定する。
-
-## 5. タスクと次の設計作業
-
-1. `DiagramPlugin` インターフェースに `createIconFactory?(icons: Icons): Record<string, () => IconReference>` を追加し、`use` 時に `icon` namespace を登録するフローを記述。
-2. `Icons` レジストリの設計：`register(plugin, iconName, svgContent)`、`markUsage(plugin, iconName)` など。`metadata` を保持して `layout` に伝播する。
-3. DSL ドキュメントで `icon.${plugin}.${name}()` の戻り値・使い方を具体的に示す（`hint.icon` / `layout` 配下のサポート）。
-4. `icon-loader` / `icon-registry` / `svg-generator` モジュールの責務とテストケース（ID重複、未使用排除、メタデータ反映）を整理。
-5. セキュリティ要件（SVGインジェクション防止、外部参照禁止）を含むレビュー項目を `docs/design/security.md` などにまとめる。
-
-この設計を元に `docs/draft/icon-support.md` の草案を `docs/design/icon-support.md` に統合し、プラグインシステムの設計ドキュメント群へのリンクと整合性を確認してください。*** End Patch****** End Patch** 
+この設計を基に、プラグインシステムとアイコン名前空間の整合性を維持しながら今後の拡張を進めてください。

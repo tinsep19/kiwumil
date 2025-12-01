@@ -10,12 +10,10 @@ import {
   Generalize,
   Include,
 } from "./relationships"
-import type { DiagramPlugin } from "../../dsl"
+import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import { toContainerSymbolId } from "../../model"
 import type { LayoutContext } from "../../layout"
-import type { Symbols } from "../../dsl"
-import type { Relationships } from "../../dsl"
 import type { Theme } from "../../theme"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
 
@@ -27,7 +25,7 @@ import { toSymbolId, type SymbolOrId } from "../../dsl"
 export const UMLPlugin = {
   name: "uml",
 
-  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme) {
+  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {
@@ -99,7 +97,7 @@ export const UMLPlugin = {
     }
   },
 
-  createRelationshipFactory(relationships: Relationships, _context: LayoutContext, theme: Theme) {
+  createRelationshipFactory(relationships: Relationships, _context: LayoutContext, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {

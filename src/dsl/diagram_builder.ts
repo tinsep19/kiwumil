@@ -9,12 +9,16 @@ import { convertMetaUrlToSvgPath } from "../utils"
 import { LayoutContext } from "../layout"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { Theme } from "../theme"
-import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
+import type {
+  BuildElementNamespace,
+  BuildRelationshipNamespace,
+  BuildIconNamespace,
+  PluginIcons,
+} from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
 import { IconLoader } from "../icon"
-import type { IconMeta } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -27,7 +31,7 @@ type IntelliSenseBlockObject<TPlugins extends readonly DiagramPlugin[]> = (
     el: BuildElementNamespace<TPlugins>
     rel: BuildRelationshipNamespace<TPlugins>
     hint: HintFactory
-    icon: Record<string, Record<string, () => IconMeta | null>>
+    icon: Record<string, PluginIcons>
   }
 ) => void
 
@@ -35,7 +39,7 @@ type IntelliSenseBlockArgs<TPlugins extends readonly DiagramPlugin[]> = (
   el: BuildElementNamespace<TPlugins>,
   rel: BuildRelationshipNamespace<TPlugins>,
   hint: HintFactory,
-  icon: Record<string, Record<string, () => IconMeta | null>>
+  icon: Record<string, PluginIcons>
 ) => void
 
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
@@ -44,8 +48,8 @@ type IconRegistrarCreateLoader = RegisterIconsParam["createLoader"]
 type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
 
 const isObjectStyleCallback = <TPlugins extends readonly DiagramPlugin[]>(
-  cb: IntelliSenseBlock<TPlugins>
-): cb is IntelliSenseBlockObject<TPlugins> => cb.length === 1
+  buildBlock: IntelliSenseBlock<TPlugins>
+): buildBlock is IntelliSenseBlockObject<TPlugins> => buildBlock.length === 1
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
@@ -113,14 +117,13 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
-    // Icon loaders registered by plugins
+    // Icon loaders registered by plugins (build icons first)
     const icon_loaders: Record<string, IconLoader> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === 'function') {
-        // create loader API using static IconLoader import
-        const createLoader: IconRegistrarCreateLoader = (pluginName, importMeta, cb) => {
+        const createLoader: IconRegistrarCreateLoader = (pluginName, importMeta, iconRegistrationBlock) => {
           const loader = new IconLoader(pluginName, importMeta?.url ?? '')
-          cb(loader)
+          iconRegistrationBlock(loader)
           icon_loaders[pluginName] = loader
         }
 
@@ -130,27 +133,31 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       }
     }
 
-    const el = namespaceBuilder.buildElementNamespace(symbols, context, this.currentTheme)
+    // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
+    const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
+    const iconRegistry = icon as Record<string, PluginIcons>
+    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
+      iconRegistry[pluginName] = {}
+      for (const name of loader.list()) {
+        // use sync loader if available
+        iconRegistry[pluginName][name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
+      }
+    }
+
+    // build element namespace (symbols) then relationship namespace, passing icons to factories
+    const el = namespaceBuilder.buildElementNamespace(symbols, context, this.currentTheme, icon)
     const rel = namespaceBuilder.buildRelationshipNamespace(
       relationships,
       context,
-      this.currentTheme
+      this.currentTheme,
+      icon
     )
+
     const hint = new HintFactory({
       context,
       symbols,
       diagramContainer: diagramSymbol.id as ContainerSymbolId,
     })
-
-    // create separate icon namespace: icon.<plugin>.<name>() -> Promise<IconMeta>
-    const icon: Record<string, Record<string, () => IconMeta | null>> = {}
-    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
-      icon[pluginName] = {}
-      for (const name of loader.list()) {
-        // use sync loader if available
-        icon[pluginName][name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
-      }
-    }
 
     // invoke callback: support both object-style callback and legacy arg-style
     try {

@@ -1,12 +1,11 @@
 // src/dsl/namespace_builder.ts
 import type { DiagramPlugin } from "./diagram_plugin"
-import type { BuildElementNamespace, BuildRelationshipNamespace, BuildIconNamespace } from "./namespace_types"
+import type { BuildElementNamespace, BuildRelationshipNamespace, BuildIconNamespace, PluginIcons } from "./namespace_types"
 import type { LayoutContext } from "../layout"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import { IconLoader } from "../icon"
-import type { IconMeta } from "../icon"
 
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
 type IconRegistrarCreateLoader = RegisterIconsParam["createLoader"]
@@ -38,13 +37,16 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildElementNamespace(
     symbols: Symbols,
     layout: LayoutContext,
-    theme: Theme
+    theme: Theme,
+    icons: BuildIconNamespace<TPlugins>
   ): BuildElementNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
+    const iconNamespace = icons as Record<string, PluginIcons>
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createSymbolFactory === "function") {
-        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout, theme)
+        const pluginIcons = iconNamespace[plugin.name] || {}
+        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout, theme, pluginIcons as PluginIcons)
       }
     }
 
@@ -66,13 +68,21 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildRelationshipNamespace(
     relationships: Relationships,
     layout: LayoutContext,
-    theme: Theme
+    theme: Theme,
+    icons: BuildIconNamespace<TPlugins>
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
+    const iconNamespace = icons as Record<string, PluginIcons>
 
     for (const plugin of this.plugins) {
       if (typeof plugin.createRelationshipFactory === "function") {
-        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout, theme)
+        const pluginIcons = iconNamespace[plugin.name] || {}
+        namespace[plugin.name] = plugin.createRelationshipFactory(
+          relationships,
+          layout,
+          theme,
+          pluginIcons as PluginIcons
+        )
       }
     }
 
@@ -86,7 +96,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * BuildIconNamespace 型に従ったオブジェクトを返す（同期 API を想定）。
    */
   buildIconNamespace(): BuildIconNamespace<TPlugins> {
-    const namespace: Record<string, Record<string, () => IconMeta | null>> = {}
+    const namespace: Record<string, PluginIcons> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === 'function') {

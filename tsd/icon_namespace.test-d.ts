@@ -1,10 +1,11 @@
 import { expectType } from 'tsd'
 import { TypeDiagram } from '../src/dsl'
 import type { IconMeta } from '../src/icon'
+import type { PluginIcons } from '../src/dsl/namespace_types'
 
 const builder = TypeDiagram('t')
 
-type CB = Parameters<typeof builder['build']>[0]
+type BuilderCallback = Parameters<typeof builder['build']>[0]
 
 // Define an expected parameter shape and ensure it's assignable to the builder callback type
 type ExpectedCallbackParam = {
@@ -15,10 +16,10 @@ type ExpectedCallbackParam = {
   }
 }
 
-const cb2 = ({ icon }: { icon: Record<string, Record<string, () => IconMeta | null>> }) => {
+const iconNamespaceCallback = ({ icon }: { icon: Record<string, PluginIcons> }) => {
   // existence: icon.myplugin should be present (type-wise)
   const p = icon['myplugin']
-  expectType<Record<string, () => IconMeta | null> | undefined>(p)
+  expectType<PluginIcons | undefined>(p)
 
   // specifically, icon1 should exist and be a zero-arg function returning IconMeta | null
   const f = p && p['icon1']
@@ -39,6 +40,6 @@ const cb2 = ({ icon }: { icon: Record<string, Record<string, () => IconMeta | nu
 }
 
 // This assignment ensures that the builder's callback type accepts the object-form with icon namespace
-const cb: CB = cb2 as unknown as CB
+const builderCallback: BuilderCallback = iconNamespaceCallback as unknown as BuilderCallback
 
-builder.build(cb)
+builder.build(builderCallback)

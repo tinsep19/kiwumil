@@ -7,9 +7,8 @@ import {
   TextSymbol,
   type TextInfo,
 } from "./symbols"
-import type { DiagramPlugin } from "../../dsl"
+import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
 import type { LayoutContext } from "../../layout"
-import type { Symbols } from "../../dsl"
 import type { Theme } from "../../theme"
 
 /**
@@ -20,7 +19,7 @@ import type { Theme } from "../../theme"
 export const CorePlugin = {
   name: "core",
 
-  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme) {
+  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {
