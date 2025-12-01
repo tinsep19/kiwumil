@@ -32,6 +32,12 @@
 - `layout/hint/grid_builder.ts` は `../../dsl` の新しい index から `isRectMatrix`/`toSymbolId`/`SymbolOrId` を取得し、`Model`・`Layout` の型を整理した。
 - ESLint に `local/require-directory-index-import` というカスタムルールを導入し、ディレクトリを跨ぐ import が対象ファイルを直接参照する場合に警告・エラーを出すよう lint チェックを強化。
 
+### Step 4: TS Path Alias
+
+- `tsconfig.json` と `tsconfig.tsd.json` に `compilerOptions.baseUrl` を `.`、`paths["@/*"] = ["src/*"]` を追加し、`@/foo` 形式で `src` 直下を指せるようにした。
+- ESLint カスタムルール `eslint-rules/directory-entry-import.js` を拡張して alias を解決し、`@/layout/utils` などの alias 参照についてもディレクトリエントリ単位での依存チェックが行われるように対応。
+- 上記により `@/layout` のような alias を使いつつ、実体ファイル（`layout/bounds.ts` など）への直接 import を防止するガードが効いた。
+
 ### Verification
 
 - `npm run lint` を実行（`@typescript-eslint/no-explicit-any` の既存警告が `src/dsl/namespace_types.ts:16` および `:27` にありますが、エラーではなく継続して警告が出るだけです）。

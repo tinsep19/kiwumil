@@ -2,37 +2,77 @@ import fs from "node:fs"
 import path from "node:path"
 
 const EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".d.ts"]
+const projectRoot = path.resolve(process.cwd())
+const srcRoot = path.join(projectRoot, "src")
 
-/**
- * Attempt to resolve the imported module to a concrete file.
- * Tries the exact path, then common extensions, and finally `index` files inside directories.
- * Returns the absolute filename when found, otherwise null.
- */
-function resolveImportedFile(importerDir, sourceValue) {
-  const basePath = path.resolve(importerDir, sourceValue)
+const tsconfigPath = path.join(projectRoot, "tsconfig.json")
+let baseUrl = projectRoot
+let aliasConfigs = []
 
-  const candidatePaths = [basePath]
-  for (const ext of EXTENSIONS) {
-    candidatePaths.push(`${basePath}${ext}`)
-  }
-  for (const ext of EXTENSIONS) {
-    candidatePaths.push(path.join(basePath, `index${ext}`))
-  }
+try {
+  const tsconfigRaw = fs.readFileSync(tsconfigPath, "utf8")
+  const tsconfigJson = JSON.parse(tsconfigRaw)
+  const compilerOptions = tsconfigJson?.compilerOptions ?? {}
+  baseUrl = path.resolve(projectRoot, compilerOptions.baseUrl ?? ".")
 
+  const paths = compilerOptions.paths ?? {}
+  aliasConfigs = Object.entries(paths)
+    .map(([pattern, targets]) => {
+      if (!Array.isArray(targets) || targets.length === 0) {
+        return undefined
+      }
+      const target = targets[0]
+      const placeholder = "__ALIAS_WILDCARD__"
+      const escaped = pattern
+        .replace(/\*/g, placeholder)
+        .replace(/[-/\\^$+?.()|[\]{}]/g, "\\$&")
+        .replace(new RegExp(placeholder, "g"), "(.*)")
+      const regex = new RegExp(`^${escaped}$`)
+      return {
+        pattern,
+        regex,
+        target,
+      }
+    })
+    .filter(Boolean)
+} catch {
+  aliasConfigs = []
+}
+
+function resolveCandidateFile(basePath) {
+  const candidatePaths = [basePath, ...EXTENSIONS.flatMap((ext) => [`${basePath}${ext}`, path.join(basePath, `index${ext}`)])]
   for (const candidate of candidatePaths) {
     if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
-      return candidate
+      return path.normalize(candidate)
     }
   }
-
   return null
 }
 
-/**
- * Returns true when the given import source is relative (starts with `.`).
- */
-function isRelativeImport(value) {
-  return value.startsWith(".")
+function buildAliasAbsolutePath(sourceValue) {
+  for (const alias of aliasConfigs) {
+    const match = sourceValue.match(alias.regex)
+    if (!match) continue
+    let resolvedTarget = alias.target
+    for (let i = 1; i < match.length; i++) {
+      resolvedTarget = resolvedTarget.replace(/\*/, match[i] ?? "")
+    }
+    const candidateBase = path.resolve(baseUrl, resolvedTarget)
+    return resolveCandidateFile(candidateBase)
+  }
+  return null
+}
+
+function resolveFile(importerDir, sourceValue) {
+  if (sourceValue.startsWith(".")) {
+    const candidateBase = path.resolve(importerDir, sourceValue)
+    return resolveCandidateFile(candidateBase)
+  }
+  return buildAliasAbsolutePath(sourceValue)
+}
+
+function isAliasImport(sourceValue) {
+  return aliasConfigs.some((alias) => alias.regex.test(sourceValue))
 }
 
 const rule = {
@@ -58,10 +98,11 @@ const rule = {
     function checkNode(node) {
       if (!node.source || typeof node.source.value !== "string") return
       const sourceValue = node.source.value
-      if (!isRelativeImport(sourceValue)) return
+      if (!sourceValue.startsWith(".") && !isAliasImport(sourceValue)) return
 
-      const targetFile = resolveImportedFile(importerDir, sourceValue)
+      const targetFile = resolveFile(importerDir, sourceValue)
       if (!targetFile) return
+      if (!targetFile.startsWith(srcRoot)) return
 
       const importerDirNormalized = path.normalize(importerDir)
       const targetDir = path.dirname(targetFile)
