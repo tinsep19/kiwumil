@@ -38,9 +38,10 @@ type IntelliSenseBlockArgs<TPlugins extends readonly DiagramPlugin[]> = (
   icon: Record<string, Record<string, () => IconMeta | null>>
 ) => void
 
-type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
+type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
+type IconRegistrarCreateLoader = RegisterIconsParam["createLoader"]
 
-type IconRegistrar = NonNullable<DiagramPlugin["registerIcons"]>
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
 
 const isObjectStyleCallback = <TPlugins extends readonly DiagramPlugin[]>(
   cb: IntelliSenseBlock<TPlugins>
@@ -117,7 +118,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === 'function') {
         // create loader API using static IconLoader import
-        const createLoader: IconRegistrar["createLoader"] = (pluginName, importMeta, cb) => {
+        const createLoader: IconRegistrarCreateLoader = (pluginName, importMeta, cb) => {
           const loader = new IconLoader(pluginName, importMeta?.url ?? '')
           cb(loader)
           icon_loaders[pluginName] = loader
@@ -142,21 +143,21 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     })
 
     // create separate icon namespace: icon.<plugin>.<name>() -> Promise<IconMeta>
-    const icon_namespace: Record<string, Record<string, () => IconMeta | null>> = {}
+    const icon: Record<string, Record<string, () => IconMeta | null>> = {}
     for (const [pluginName, loader] of Object.entries(icon_loaders)) {
-      icon_namespace[pluginName] = {}
+      icon[pluginName] = {}
       for (const name of loader.list()) {
         // use sync loader if available
-        icon_namespace[pluginName][name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
+        icon[pluginName][name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
       }
     }
 
     // invoke callback: support both object-style callback and legacy arg-style
     try {
       if (isObjectStyleCallback(callback)) {
-        callback({ el, rel, hint, icon: icon_namespace })
+        callback({ el, rel, hint, icon })
       } else {
-        callback(el, rel, hint, icon_namespace)
+        callback(el, rel, hint, icon)
       }
     } catch (e) {
       // rethrow

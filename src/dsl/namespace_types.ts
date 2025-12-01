@@ -7,6 +7,7 @@ import type { Theme } from "../theme"
 import type { RelationshipId, SymbolBase } from "../model"
 import type { IconMeta } from "../icon"
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
   {
@@ -14,7 +15,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
       symbols: Symbols,
       context: LayoutContext,
       theme: Theme
-    ) => Record<string, (...args: unknown[]) => SymbolBase>
+    ) => Record<string, (...args: any[]) => SymbolBase>
   }
 >
 
@@ -25,9 +26,10 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
       relationships: Relationships,
       context: LayoutContext,
       theme: Theme
-    ) => Record<string, (...args: unknown[]) => RelationshipId>
+    ) => Record<string, (...args: any[]) => RelationshipId>
   }
 >
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * プラグイン配列から ElementNamespace 型を生成
