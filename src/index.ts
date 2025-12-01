@@ -1,40 +1,27 @@
 // メインエントリポイント
-export { TypeDiagram } from "./dsl/diagram_builder"
+export { TypeDiagram, Symbols, Relationships } from "./dsl"
 
 // プラグイン
-export { CorePlugin } from "./plugin/core/plugin"
-export { UMLPlugin } from "./plugin/uml/plugin"
-export type { TextInfo } from "./plugin/core/symbols/text_symbol"
+export { CorePlugin, UMLPlugin } from "./plugin"
+export type { TextInfo } from "./plugin"
 
-export { Symbols } from "./dsl/symbols"
-export { Relationships } from "./dsl/relationships"
 // 型定義
-export type { DiagramPlugin } from "./dsl/diagram_plugin"
-export type { DiagramInfo } from "./model/diagram_info"
-export type { Theme } from "./theme"
-export type { SymbolBase } from "./model/symbol_base"
-export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model/types"
-export { toContainerSymbolId } from "./model/container_symbol"
-export { DIAGRAM_CONTAINER_ID } from "./model/types"
+export type { DiagramPlugin } from "./dsl"
+export type { DiagramInfo, SymbolBase } from "./model"
+export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model"
+export { toContainerSymbolId, DIAGRAM_CONTAINER_ID } from "./model"
 
 // Layout 型定義
-export type { LayoutContext } from "./layout/layout_context"
-export type { LayoutConstraintType } from "./layout/layout_constraints"
-export { LayoutConstraintStrength } from "./layout/layout_constraints"
-
-// 新しい型名
-export type { Bounds, BoundsType } from "./layout/bounds"
-
-// 後方互換性のための deprecated 型エイリアス
-/**
- * @deprecated Use Bounds instead
- */
-export type { LayoutBound } from "./layout/bounds"
-
-/**
- * @deprecated Use BoundsType instead
- */
-export type { LayoutType } from "./layout/bounds"
+export type {
+  Bounds,
+  BoundsType,
+  LayoutBound,
+  LayoutContext,
+  LayoutConstraintType,
+  LayoutType,
+} from "./layout"
+export { LayoutConstraintStrength } from "./layout"
 
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"
+export type { Theme } from "./theme"
