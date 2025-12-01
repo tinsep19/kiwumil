@@ -1,6 +1,6 @@
 import { expectType } from 'tsd'
 import { TypeDiagram } from '../src/dsl'
-import type { IconMeta } from '../src/icon/icon_loader'
+import type { IconMeta } from '../src/icon'
 
 const builder = TypeDiagram('t')
 
@@ -31,11 +31,11 @@ const cb2 = ({ icon }: { icon: Record<string, Record<string, () => IconMeta | nu
   // keyof-based checks: ensure 'myplugin' exists as key and 'icon1' exists under it
   type IconNS = typeof icon
   type HasMyPlugin = 'myplugin' extends keyof IconNS ? true : false
-  expectType<true>(null as any as HasMyPlugin)
+  expectType<true>(null as unknown as HasMyPlugin)
 
   type MyPluginNS = IconNS['myplugin']
   type HasIcon1 = 'icon1' extends keyof MyPluginNS ? true : false
-  expectType<true>(null as any as HasIcon1)
+  expectType<true>(null as unknown as HasIcon1)
 }
 
 // This assignment ensures that the builder's callback type accepts the object-form with icon namespace

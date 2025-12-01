@@ -1,4 +1,4 @@
-import { IconLoader } from '../src/icon/icon_loader';
+import { IconLoader } from '../src/icon';
 
 describe('IconLoader (stub)', () => {
   test('register and list', () => {

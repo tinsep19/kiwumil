@@ -13,7 +13,7 @@ import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namesp
 import { DefaultTheme } from "../theme"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
-import { IconLoader } from "../icon/icon_loader" // static import
+import { IconLoader } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型

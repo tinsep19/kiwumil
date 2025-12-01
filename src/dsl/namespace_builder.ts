@@ -1,12 +1,12 @@
 // src/dsl/namespace_builder.ts
 import type { DiagramPlugin } from "./diagram_plugin"
-import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
+import type { BuildElementNamespace, BuildRelationshipNamespace, BuildIconNamespace } from "./namespace_types"
 import type { LayoutContext } from "../layout"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
-import { IconLoader } from "../icon/icon_loader"
-import type { BuildIconNamespace } from "./namespace_types"
+import { IconLoader } from "../icon"
+import type { IconMeta } from "../icon"
 
 /**
  * Namespace Builder
@@ -83,7 +83,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * BuildIconNamespace 型に従ったオブジェクトを返す（同期 API を想定）。
    */
   buildIconNamespace(): BuildIconNamespace<TPlugins> {
-    const namespace: Record<string, Record<string, () => import('../icon/icon_loader').IconMeta | null>> = {}
+    const namespace: Record<string, Record<string, () => IconMeta | null>> = {}
 
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === 'function') {

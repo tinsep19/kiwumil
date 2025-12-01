@@ -5,6 +5,7 @@ import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import type { RelationshipId, SymbolBase } from "../model"
+import type { IconMeta } from "../icon"
 
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
@@ -68,7 +69,7 @@ type IconEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   }
 >
 
-export type IconFactory = () => import("../icon/icon_loader").IconMeta | null
+export type IconFactory = () => IconMeta | null
 
 export type BuildIconNamespace<TPlugins extends readonly DiagramPlugin[]> = {
   [K in IconEnabledPlugins<TPlugins>["name"]]: Record<string, IconFactory>
