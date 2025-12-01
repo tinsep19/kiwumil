@@ -4,6 +4,7 @@ import type { LayoutContext } from "../layout"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
+import type { PluginIcons } from "./namespace_types"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolBase>
@@ -27,7 +28,7 @@ export interface DiagramPlugin {
    * @param symbols - 生成した Symbol を登録するインスタンス
    * @returns Symbol 作成関数のオブジェクト（各関数は `SymbolBase` を返す）
    */
-  createSymbolFactory?(symbols: Symbols, context: LayoutContext, theme: Theme): SymbolFactoryMap
+  createSymbolFactory?(symbols: Symbols, context: LayoutContext, theme: Theme, icons: PluginIcons): SymbolFactoryMap
 
   /**
    * Relationship 用の DSL ファクトリを生成
@@ -38,6 +39,18 @@ export interface DiagramPlugin {
   createRelationshipFactory?(
     relationships: Relationships,
     context: LayoutContext,
-    theme: Theme
+    theme: Theme,
+    icons: PluginIcons
   ): RelationshipFactoryMap
+
+  /**
+   * Optional: plugin can register icons. The icons API provides createLoader(plugin, importMeta, cb)
+   */
+  registerIcons?(icons: {
+    createLoader: (
+      plugin: string,
+      importMeta: ImportMeta,
+      cb: (loader: { register: (name: string, relPath: string) => void }) => void
+    ) => void
+  }): void
 }

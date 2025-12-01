@@ -5,14 +5,19 @@ import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import type { RelationshipId, SymbolBase } from "../model"
+import type { IconMeta } from "../icon"
 
+export type PluginIcons = Record<string, () => IconMeta | null>
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
   {
     createSymbolFactory: (
       symbols: Symbols,
       context: LayoutContext,
-      theme: Theme
+      theme: Theme,
+      icons: Record<string, () => IconMeta | null>
     ) => Record<string, (...args: any[]) => SymbolBase>
   }
 >
@@ -23,10 +28,12 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
     createRelationshipFactory: (
       relationships: Relationships,
       context: LayoutContext,
-      theme: Theme
+      theme: Theme,
+      icons: Record<string, () => IconMeta | null>
     ) => Record<string, (...args: any[]) => RelationshipId>
   }
 >
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * プラグイン配列から ElementNamespace 型を生成
@@ -58,4 +65,18 @@ export type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]
   [K in RelationshipEnabledPlugins<TPlugins>["name"]]: ReturnType<
     Extract<RelationshipEnabledPlugins<TPlugins>, { name: K }>["createRelationshipFactory"]
   >
+}
+
+// Icon namespace types
+type IconEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
+  TPlugins[number],
+  {
+    registerIcons: NonNullable<DiagramPlugin["registerIcons"]>
+  }
+>
+
+export type IconFactory = () => IconMeta | null
+
+export type BuildIconNamespace<TPlugins extends readonly DiagramPlugin[]> = {
+  [K in IconEnabledPlugins<TPlugins>["name"]]: PluginIcons
 }

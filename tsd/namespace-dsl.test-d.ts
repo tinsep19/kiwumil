@@ -61,7 +61,7 @@ class TestRelationship extends RelationshipBase {
 
 const CustomPlugin = {
   name: "custom",
-  createSymbolFactory(symbols, layout, _theme: Theme) {
+  createSymbolFactory(symbols, layout, _theme: Theme, _icons: Record<string, () => import("../src/icon").IconMeta | null>) {
     const plugin = this.name
 
     return {
@@ -74,7 +74,7 @@ const CustomPlugin = {
       },
     }
   },
-  createRelationshipFactory(relationships, layout, _theme: Theme) {
+  createRelationshipFactory(relationships, layout, _theme: Theme, _icons: Record<string, () => import("../src/icon").IconMeta | null>) {
     void layout
     const plugin = this.name
 

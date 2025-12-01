@@ -4,7 +4,12 @@ export { NamespaceBuilder } from "./namespace_builder"
 export { Symbols } from "./symbols"
 export { Relationships } from "./relationships"
 export type { DiagramPlugin } from "./diagram_plugin"
-export type { BuildElementNamespace, BuildRelationshipNamespace } from "./namespace_types"
+export type {
+  BuildElementNamespace,
+  BuildRelationshipNamespace,
+  BuildIconNamespace,
+  PluginIcons,
+} from "./namespace_types"
 export { isRectMatrix } from "./matrix_utils"
 export type { Matrix, IsRectMatrix } from "./matrix_utils"
 export { toSymbolId, toContainerSymbolId } from "./symbol_helpers"
