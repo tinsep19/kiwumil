@@ -1,5 +1,5 @@
 import type { Theme } from "../theme"
-import type { SymbolBase } from "../model/symbol_base"
+import type { SymbolBase } from "../model"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import {
   LayoutConstraints,

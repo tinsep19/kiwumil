@@ -5,9 +5,9 @@ import { RectangleSymbol } from "./symbols/rectangle_symbol"
 import { RoundedRectangleSymbol } from "./symbols/rounded_rectangle_symbol"
 import { TextSymbol } from "./symbols/text_symbol"
 import type { TextInfo } from "./symbols/text_symbol"
-import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { LayoutContext } from "../../layout/layout_context"
-import type { Symbols } from "../../dsl/symbols"
+import type { DiagramPlugin } from "../../dsl"
+import type { LayoutContext } from "../../layout"
+import type { Symbols } from "../../dsl"
 import type { Theme } from "../../theme"
 
 /**

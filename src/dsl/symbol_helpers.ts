@@ -1,7 +1,5 @@
 // src/dsl/symbol_helpers.ts
-import type { SymbolBase } from "../model/symbol_base"
-import type { ContainerSymbol } from "../model/container_symbol"
-import type { ContainerSymbolId, SymbolId } from "../model/types"
+import type { ContainerSymbol, ContainerSymbolId, SymbolBase, SymbolId } from "../model"
 
 /**
  * SymbolBase or SymbolId union for DSL helpers.

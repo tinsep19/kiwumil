@@ -25,6 +25,12 @@
 - `src/index.ts` をディレクトリインポートに切り替え、`dsl`/`plugin`/`model`/`layout` の公開 API をまとめて参照するように変更。
 - `dsl/hint_factory.ts` も `layout/hint` の index を経由するよう更新し、直接ファイルを import しない形で依存を整えた。
 
+### Step 3: Directory-Level Imports
+
+- ディレクトリ間の依存関係（`dsl`→`layout`/`model`/`plugin`/`render`/`utils` など）を `index.ts` 経由に統一するため、個別ファイル指定だった import をディレクトリエントリに置き換え。
+- `dsl/diagram_builder.ts`、`dsl/hint_factory.ts`、`plugin/core`・`plugin/uml` 系、`layout/hint` などの主要モジュールで `../layout`・`../model`・`../plugin` を使い、内部ファイルへの直接参照を排除。
+- `layout/hint/grid_builder.ts` は `../../dsl` の新しい index から `isRectMatrix`/`toSymbolId`/`SymbolOrId` を取得し、`Model`・`Layout` の型を整理した。
+
 ### Verification
 
-- `npm run lint` を実行（`@typescript-eslint/no-explicit-any` の既存警告が `src/dsl/namespace_types.ts:17` および `:28` にありますが、エラーではなく継続して警告が出るだけです）。
+- `npm run lint` を実行（`@typescript-eslint/no-explicit-any` の既存警告が `src/dsl/namespace_types.ts:16` および `:27` にありますが、エラーではなく継続して警告が出るだけです）。

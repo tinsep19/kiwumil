@@ -1,9 +1,12 @@
 // src/dsl/hint_factory.ts
-import type { ContainerSymbolId } from "../model/types"
-import { DIAGRAM_CONTAINER_ID } from "../model/types"
-import type { ContainerSymbol } from "../model/container_symbol"
-import type { SymbolBase } from "../model/symbol_base"
-import type { LayoutContext } from "../layout/layout_context"
+import {
+  ContainerSymbol,
+  ContainerSymbolId,
+  DIAGRAM_CONTAINER_ID,
+  LayoutContext,
+  SymbolBase,
+  toContainerSymbolId,
+} from "../model"
 import { Symbols } from "./symbols"
 import {
   FigureBuilder,
@@ -14,11 +17,10 @@ import {
 } from "../layout/hint"
 import {
   ContainerSymbolOrId,
-  toContainerSymbolId,
   toSymbolId,
   type SymbolOrId,
 } from "./symbol_helpers"
-import type { LayoutConstraintTarget } from "../layout/layout_constraint_target"
+import type { LayoutConstraintTarget } from "../layout"
 
 type LayoutTargetId = SymbolOrId | ContainerSymbolId
 type LayoutContainerTarget = ContainerSymbolOrId
