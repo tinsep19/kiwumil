@@ -1,10 +1,9 @@
 // tests/grid_figure_builder.test.ts
 
 import { describe, expect, test } from "bun:test"
-import { isRectMatrix } from "../src/dsl/matrix_utils"
-import { TypeDiagram } from "../src/dsl/diagram_builder"
-import { CorePlugin } from "../src/plugin/core/core_plugin"
-import { UMLPlugin } from "../src/plugin/uml/plugin"
+import { isRectMatrix, TypeDiagram } from "@/dsl"
+import { CorePlugin } from "@/plugin/core"
+import { UMLPlugin } from "@/plugin/uml"
 
 describe("Matrix Utils", () => {
   test("isRectMatrix returns true for rectangular matrix", () => {

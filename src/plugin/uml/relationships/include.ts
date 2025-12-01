@@ -1,8 +1,11 @@
 // src/plugin/uml/relationships/include.ts
-import { RelationshipBase, type RelationshipBaseOptions } from "../../../model/relationship_base"
-import type { SymbolBase } from "../../../model/symbol_base"
-import type { SymbolId } from "../../../model/types"
-import { getBoundsValues } from "../../../layout/bounds"
+import {
+  RelationshipBase,
+  type RelationshipBaseOptions,
+  type SymbolBase,
+  type SymbolId,
+} from "../../../model"
+import { getBoundsValues } from "../../../layout"
 
 export class Include extends RelationshipBase {
   constructor(options: RelationshipBaseOptions) {

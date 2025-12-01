@@ -1,7 +1,7 @@
 // tests/namespace_dsl.test.ts
-import { TypeDiagram } from "../src/dsl/diagram_builder"
-import { UMLPlugin } from "../src/plugin/uml/plugin"
-import { CorePlugin } from "../src/plugin/core/plugin"
+import { TypeDiagram } from "@/dsl"
+import { UMLPlugin } from "@/plugin/uml"
+import { CorePlugin } from "@/plugin/core"
 
 describe("Namespace-based DSL", () => {
   test("UML Plugin - Basic usage", () => {

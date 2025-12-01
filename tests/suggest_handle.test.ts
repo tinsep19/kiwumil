@@ -1,4 +1,4 @@
-import { createLayoutVar, LayoutSolver } from "../src/layout/layout_solver"
+import { createLayoutVar, LayoutSolver } from "@/layout"
 
 describe("SuggestHandle", () => {
   test("propagates suggestions and exposes strength label", () => {

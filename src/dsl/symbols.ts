@@ -1,5 +1,4 @@
-import type { SymbolBase } from "../model/symbol_base"
-import type { SymbolId } from "../model/types"
+import type { SymbolBase, SymbolId } from "../model"
 
 /**
  * Symbol 管理クラス

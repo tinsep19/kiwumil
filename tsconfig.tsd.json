@@ -5,6 +5,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"],
       "@tinsep19/kiwumil": ["./dist/index.d.ts"],
       "@tinsep19/kiwumil/*": ["./dist/*"],
       "kiwumil": ["./dist/index.d.ts"],

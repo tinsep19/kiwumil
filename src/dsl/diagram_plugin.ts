@@ -1,10 +1,9 @@
 // src/dsl/diagram_plugin.ts
-import type { RelationshipId } from "../model/types"
-import type { LayoutContext } from "../layout/layout_context"
+import type { RelationshipId, SymbolBase } from "../model"
+import type { LayoutContext } from "../layout"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
-import type { SymbolBase } from "../model/symbol_base"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolBase>

@@ -1,7 +1,7 @@
 // tests/uml_relationships.test.ts
 import { describe, test, expect } from "bun:test"
-import { TypeDiagram } from "../src/dsl/diagram_builder"
-import { UMLPlugin } from "../src/plugin/uml/plugin"
+import { TypeDiagram } from "@/dsl"
+import { UMLPlugin } from "@/plugin/uml"
 
 describe("UML Relationships", () => {
   describe("Include Relationship", () => {

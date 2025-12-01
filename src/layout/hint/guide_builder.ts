@@ -1,10 +1,6 @@
 // src/layout/hint/guide_builder.ts
-import type { ContainerSymbolId, SymbolId } from "../../model/types"
-import type { SymbolBase } from "../../model/symbol_base"
-import type { Term } from "../constraints_builder"
-import type { LayoutContext } from "../layout_context"
-import { type LayoutVar } from "../layout_variables"
-import type { LayoutConstraintTarget } from "../layout_constraint_target"
+import type { ContainerSymbolId, SymbolBase, SymbolId } from "../../model"
+import type { LayoutContext, LayoutConstraintTarget, LayoutVar, Term } from "@/layout"
 
 type LayoutTargetId = SymbolId | ContainerSymbolId
 

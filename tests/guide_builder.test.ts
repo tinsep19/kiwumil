@@ -1,10 +1,8 @@
 import { describe, test, beforeEach, expect } from "bun:test"
-import { LayoutContext } from "../src/layout/layout_context"
-import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
-import { HintFactory } from "../src/dsl/hint_factory"
-import { Symbols } from "../src/dsl/symbols"
-import { DefaultTheme } from "../src/theme"
-import { getBoundsValues } from "../src/layout/bounds"
+import { LayoutContext, getBoundsValues } from "@/layout"
+import { ActorSymbol } from "@/plugin/uml"
+import { HintFactory, Symbols } from "@/dsl"
+import { DefaultTheme } from "@/theme"
 
 describe("GuideBuilder (refactored common implementation)", () => {
   let symbols: Symbols

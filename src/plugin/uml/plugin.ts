@@ -1,19 +1,23 @@
 // src/plugin/uml/plugin.ts
-import { ActorSymbol } from "./symbols/actor_symbol"
-import { UsecaseSymbol } from "./symbols/usecase_symbol"
-import { SystemBoundarySymbol } from "./symbols/system_boundary_symbol"
-import { Association } from "./relationships/association"
-import { Include } from "./relationships/include"
-import { Extend } from "./relationships/extend"
-import { Generalize } from "./relationships/generalize"
-import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { RelationshipId } from "../../model/types"
-import { toContainerSymbolId } from "../../model/container_symbol"
-import type { LayoutContext } from "../../layout/layout_context"
-import type { Symbols } from "../../dsl/symbols"
-import type { Relationships } from "../../dsl/relationships"
+import {
+  ActorSymbol,
+  SystemBoundarySymbol,
+  UsecaseSymbol,
+} from "./symbols"
+import {
+  Association,
+  Extend,
+  Generalize,
+  Include,
+} from "./relationships"
+import type { DiagramPlugin } from "../../dsl"
+import type { RelationshipId } from "../../model"
+import { toContainerSymbolId } from "../../model"
+import type { LayoutContext } from "../../layout"
+import type { Symbols } from "../../dsl"
+import type { Relationships } from "../../dsl"
 import type { Theme } from "../../theme"
-import { toSymbolId, type SymbolOrId } from "../../dsl/symbol_helpers"
+import { toSymbolId, type SymbolOrId } from "../../dsl"
 
 /**
  * UML Plugin (Namespace-based)

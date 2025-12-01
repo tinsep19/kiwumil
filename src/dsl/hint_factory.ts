@@ -1,24 +1,23 @@
 // src/dsl/hint_factory.ts
-import type { ContainerSymbolId } from "../model/types"
-import { DIAGRAM_CONTAINER_ID } from "../model/types"
-import type { ContainerSymbol } from "../model/container_symbol"
-import type { SymbolBase } from "../model/symbol_base"
-import type { LayoutContext } from "../layout/layout_context"
-import { GridBuilder } from "../layout/hint/grid_builder"
-import { FigureBuilder } from "../layout/hint/figure_builder"
+import { ContainerSymbol, ContainerSymbolId, SymbolBase } from "../model"
+import { LayoutContext } from "../layout"
 import { Symbols } from "./symbols"
 import {
+  FigureBuilder,
+  GridBuilder,
   GuideBuilderImpl,
   type GuideBuilderX,
   type GuideBuilderY,
-} from "../layout/hint/guide_builder"
+} from "../layout/hint"
 import {
   ContainerSymbolOrId,
   toContainerSymbolId,
   toSymbolId,
   type SymbolOrId,
 } from "./symbol_helpers"
-import type { LayoutConstraintTarget } from "../layout/layout_constraint_target"
+import type { LayoutConstraintTarget } from "../layout"
+
+const DEFAULT_DIAGRAM_CONTAINER_ID = "__diagram__" as ContainerSymbolId
 
 type LayoutTargetId = SymbolOrId | ContainerSymbolId
 type LayoutContainerTarget = ContainerSymbolOrId
@@ -33,7 +32,7 @@ export class HintFactory {
   constructor({
     context,
     symbols,
-    diagramContainer = DIAGRAM_CONTAINER_ID,
+    diagramContainer = DEFAULT_DIAGRAM_CONTAINER_ID,
   }: {
     context: LayoutContext
     symbols: Symbols
@@ -46,7 +45,7 @@ export class HintFactory {
 
   /**
    * Grid Builder を返す（矩形行列レイアウト用）
-   * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
+   * @param container コンテナID。省略時は diagram 全体を対象とする
    */
   grid(container?: LayoutContainerTarget): GridBuilder {
     const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
@@ -55,7 +54,7 @@ export class HintFactory {
 
   /**
    * Figure Builder を返す（非矩形レイアウト用）
-   * @param container コンテナID。省略時は diagram 全体（DIAGRAM_CONTAINER_ID）を対象とする
+   * @param container コンテナID。省略時は diagram 全体を対象とする
    */
   figure(container?: LayoutContainerTarget): FigureBuilder {
     const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer

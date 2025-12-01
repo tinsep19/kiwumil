@@ -1,9 +1,9 @@
 // src/plugin/core/symbols/rectangle_symbol.ts
-import type { ConstraintsBuilder } from "../../../layout/constraints_builder"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
+import type { ConstraintsBuilder } from "../../../layout"
+import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../model/types"
-import { getBoundsValues } from "../../../layout/bounds"
+import type { Point } from "../../../model"
+import { getBoundsValues } from "../../../layout"
 
 export interface RectangleSymbolOptions extends SymbolBaseOptions {
   label: string

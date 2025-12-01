@@ -1,10 +1,8 @@
 // src/render/svg_renderer.ts
-import type { SymbolBase } from "../model/symbol_base"
-import type { RelationshipBase } from "../model/relationship_base"
-import type { SymbolId } from "../model/types"
+import type { RelationshipBase, SymbolBase, SymbolId } from "../model"
 import type { Theme } from "../theme"
-import { DiagramSymbol } from "../model/diagram_symbol"
-import { getBoundsValues } from "../layout/bounds"
+import { DiagramSymbol } from "../model"
+import { getBoundsValues } from "../layout"
 
 interface RenderElement {
   zIndex: number

@@ -1,4 +1,4 @@
-import type { ContainerBounds } from "../layout/bounds"
+import type { ContainerBounds } from "../layout"
 import type { SymbolBase } from "./symbol_base"
 import type { ContainerSymbolId, SymbolId } from "./types"
 

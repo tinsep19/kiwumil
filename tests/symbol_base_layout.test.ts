@@ -1,10 +1,7 @@
-import { SymbolBase } from "../src/model/symbol_base"
-import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver } from "../src/layout/layout_solver"
-import { ConstraintsBuilder } from "../src/layout/constraints_builder"
-import type { Point } from "../src/model/types"
-import type { LayoutBounds } from "../src/layout/bounds"
-import { DefaultTheme } from "../src/theme"
+import { SymbolBase } from "@/model"
+import { LayoutVariables, LayoutSolver, ConstraintsBuilder, LayoutBounds } from "@/layout"
+import type { Point } from "@/model"
+import { DefaultTheme } from "@/theme"
 
 class DummySymbol extends SymbolBase {
   constructor(id: string, layout: LayoutBounds) {
