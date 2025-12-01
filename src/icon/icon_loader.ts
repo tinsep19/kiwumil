@@ -26,12 +26,16 @@ export class IconLoader {
     return Object.keys(this.registry);
   }
 
-  // Load an icon (stubbed). Real implementation should read file, sanitize and optimize.
-  async load(name: string): Promise<IconMeta | null> {
+  // Synchronous load helper (returns optimized meta). Real impl should read & sanitize from disk.
+  load_sync(name: string): IconMeta | null {
     const rel = this.registry[name];
     if (!rel) return null;
-    // TODO: read file from disk based on baseUrl, sanitize, optimize (SVGO), extract viewBox/width/height
     const id = `${this.plugin}-${name}`.toLowerCase();
     return { href: id, raw: `<svg><!-- stub for ${rel} --></svg>` };
+  }
+
+  // Async wrapper kept for backward-compatibility
+  async load(name: string): Promise<IconMeta | null> {
+    return this.load_sync(name)
   }
 }

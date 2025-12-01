@@ -21,12 +21,13 @@
 ### 2.2 DSL 側
 
 - `TypeDiagram().use(...)` でプラグインが登録されるとき、`icon` 名前空間にも自動的にエントリを追加する。
-- `el`/`rel` と同様に `icon` は plugin name をキーとし `icon.${plugin}` を提供、`icon.${plugin}.${iconName}()` で次を返す:
+- `icon` は `el`/`rel` と同様に plugin name をキーとし `icon.${plugin}` を提供、`icon.${plugin}.${iconName}()` で次を返す（同期、`IconMeta`）:
   - `usageId: IconUsageId`（`icon:${plugin}.${iconName}/${serial}` 型、内部管理用）
   - `symbolId: string`（SVG `<symbol id="...">` で使う描画ID）
   - `metadata: IconMeta`（`width`, `height`, `viewBox` などの制約/ヒント）
   - `rawSvg: string`（`icon-registry` が `<symbol>` に組み込む内容。最適化済み）
 
+- DSL の `build` コールバックはオブジェクト形式で受け取る（例: `build(({ el, rel, hint, icon }) => { ... })`）。`icon` は上記の `icon` 名前空間を指す。
 - `icon` 呼び出しは `Symbol` の生成時 (たとえば `new IconSym(symbolId, meta)`) の引数として利用でき、シンボルがサイズ制約を持つ場合の参照先となる。
 - DSL の `hint` や `layout` が `icon` から供給された `metadata` を参照することで、サイズやアスペクト比に応じたレイアウトができるようサポートする。
 

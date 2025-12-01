@@ -40,4 +40,15 @@ export interface DiagramPlugin {
     context: LayoutContext,
     theme: Theme
   ): RelationshipFactoryMap
+
+  /**
+   * Optional: plugin can register icons. The icons API provides createLoader(plugin, importMeta, cb)
+   */
+  registerIcons?(icons: {
+    createLoader: (
+      plugin: string,
+      importMeta: ImportMeta,
+      cb: (loader: { register: (name: string, relPath: string) => void }) => void
+    ) => void
+  }): void
 }

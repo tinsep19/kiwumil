@@ -13,6 +13,7 @@ import type { BuildElementNamespace, BuildRelationshipNamespace } from "./namesp
 import { DefaultTheme } from "../theme"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
+import { IconLoader } from "../icon/icon_loader" // static import
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -20,11 +21,23 @@ import { Relationships } from "./relationships"
  * el (element), rel (relationship), hint の3つのパラメータを受け取り、
  * 型安全に図の要素を定義できる。
  */
-type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
+type IntelliSenseBlockObject<TPlugins extends readonly DiagramPlugin[]> = (
+  args: {
+    el: BuildElementNamespace<TPlugins>
+    rel: BuildRelationshipNamespace<TPlugins>
+    hint: HintFactory
+    icon: Record<string, Record<string, () => import('../icon').IconMeta | null>>
+  }
+) => void
+
+type IntelliSenseBlockArgs<TPlugins extends readonly DiagramPlugin[]> = (
   el: BuildElementNamespace<TPlugins>,
   rel: BuildRelationshipNamespace<TPlugins>,
-  hint: HintFactory
+  hint: HintFactory,
+  icon: Record<string, Record<string, () => import('../icon').IconMeta | null>>
 ) => void
+
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
@@ -91,6 +104,22 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }) as DiagramSymbol
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
+
+    // Icon loaders registered by plugins
+    const icon_loaders: Record<string, any> = {}
+    for (const plugin of this.plugins) {
+      if (typeof plugin.registerIcons === 'function') {
+        // create loader API using static IconLoader import
+        plugin.registerIcons({
+          createLoader: (pluginName: string, importMeta: ImportMeta, cb: any) => {
+            const loader = new IconLoader(pluginName, importMeta?.url ?? '')
+            cb(loader)
+            icon_loaders[pluginName] = loader
+          },
+        })
+      }
+    }
+
     const el = namespaceBuilder.buildElementNamespace(symbols, context, this.currentTheme)
     const rel = namespaceBuilder.buildRelationshipNamespace(
       relationships,
@@ -103,7 +132,29 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       diagramContainer: diagramSymbol.id as ContainerSymbolId,
     })
 
-    callback(el, rel, hint)
+    // create separate icon namespace: icon.<plugin>.<name>() -> Promise<IconMeta>
+    const icon_namespace: Record<string, Record<string, () => import('../icon').IconMeta | null>> = {}
+    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
+      icon_namespace[pluginName] = {}
+      for (const name of loader.list()) {
+        // use sync loader if available
+        icon_namespace[pluginName][name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
+      }
+    }
+
+    // invoke callback: support both object-style callback and legacy arg-style
+    try {
+      // If callback declares 1 parameter, prefer object form
+      if ((callback as any).length === 1) {
+        (callback as any)({ el, rel, hint, icon: icon_namespace })
+      } else {
+        // legacy: pass as separate args
+        (callback as any)(el, rel, hint, icon_namespace)
+      }
+    } catch (e) {
+      // rethrow
+      throw e
+    }
 
     const relationshipList = relationships.getAll()
     const symbolList = symbols.getAll().filter((symbol) => symbol.id !== diagramSymbol.id)

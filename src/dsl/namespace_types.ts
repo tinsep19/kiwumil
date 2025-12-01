@@ -59,3 +59,17 @@ export type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]
     Extract<RelationshipEnabledPlugins<TPlugins>, { name: K }>["createRelationshipFactory"]
   >
 }
+
+// Icon namespace types
+type IconEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
+  TPlugins[number],
+  {
+    registerIcons: (icons: any) => void
+  }
+>
+
+export type IconFactory = () => import("../icon/icon_loader").IconMeta | null
+
+export type BuildIconNamespace<TPlugins extends readonly DiagramPlugin[]> = {
+  [K in IconEnabledPlugins<TPlugins>["name"]]: Record<string, IconFactory>
+}

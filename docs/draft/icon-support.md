@@ -70,25 +70,22 @@
 
 DSL を以下のように改修する
 
-- icon 名前空間を提供。これまでそれぞれ引数だったがオブジェクト形式のコールバック引数に変更する
-- icon 名前空間にplugin名 + icon名() でアイコン情報を提供
-- アイコン情報には幅、高さおよび参照のためのid値(href)が含まれており、Symbolはこれをもとに配置に必要な制約を追加する
-- またSVG生成、制約追加のためのヘルパー関数が提供される
+- icon 名前空間を提供。これまでそれぞれ引数だったがオブジェクト形式のコールバック引数に変更する（例: build(({el, rel, hint, icon}) => {})）。
+- icon 名前空間に plugin 名 + icon 名() でアイコン情報を提供する（例: icon.myplugin.icon1() が IconMeta を返す）。
+- アイコン情報には幅、高さおよび参照のための id 値 (href) が含まれており、Symbol はこれをもとに配置に必要な制約を追加する。
+- また SVG 生成、制約追加のためのヘルパー関数が提供される。
 
 ```typescript
-
 TypeDiagrame("tile")
   .use(MyPlugin)
-  .build({ el, rel, hint, icon } => {
+  .build(({ el, rel, hint, icon }) => {
     // IconInfo provides { height, width, href } from loaded svg icon.
-    // provide some methods for constraints , rendering
-    const icon1:IconInfo = icon.myplugin.icon1()
+    const icon1: IconInfo = icon.myplugin.icon1()
     const iconSymbol = el.myplugin.icon({
-      icon_info : icon1
+      icon_info: icon1
     })
   })
   .render(import.meta)
-
 ```
 
 ## プラグインからのアイコン提供方法

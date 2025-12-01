@@ -5,6 +5,8 @@ import type { LayoutContext } from "../layout"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
+import { IconLoader } from "../icon/icon_loader"
+import type { BuildIconNamespace } from "./namespace_types"
 
 /**
  * Namespace Builder
@@ -72,5 +74,33 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     }
 
     return namespace as BuildRelationshipNamespace<TPlugins>
+  }
+
+  /**
+   * Icon Namespace を構築
+   *
+   * プラグインが registerIcons を提供している場合、簡易的な loader を生成して
+   * BuildIconNamespace 型に従ったオブジェクトを返す（同期 API を想定）。
+   */
+  buildIconNamespace(): BuildIconNamespace<TPlugins> {
+    const namespace: Record<string, Record<string, () => import('../icon/icon_loader').IconMeta | null>> = {}
+
+    for (const plugin of this.plugins) {
+      if (typeof plugin.registerIcons === 'function') {
+        const pluginName = plugin.name
+        const loader = new IconLoader(pluginName, '')
+        // call registerIcons to let plugin register icons into our loader
+        plugin.registerIcons({
+          createLoader: (_p: string, _importMeta: ImportMeta, cb: any) => cb(loader),
+        } as any)
+
+        namespace[pluginName] = {}
+        for (const name of loader.list()) {
+          namespace[pluginName][name] = () => loader.load_sync(name)
+        }
+      }
+    }
+
+    return namespace as BuildIconNamespace<TPlugins>
   }
 }
