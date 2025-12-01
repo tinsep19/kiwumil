@@ -1,8 +1,8 @@
 // src/layout/hint/figure_builder.ts
 
 import type { ContainerSymbolId, SymbolId } from "../../model"
-import type { HintFactory } from "../../dsl/hint_factory"
-import { toSymbolId, type SymbolOrId } from "../../dsl/symbol_helpers"
+import type { HintFactory, SymbolOrId } from "../../dsl"
+import { toSymbolId } from "../../dsl"
 
 /**
  * Figure レイアウト用の Builder

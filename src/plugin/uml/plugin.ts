@@ -1,11 +1,15 @@
 // src/plugin/uml/plugin.ts
-import { ActorSymbol } from "./symbols/actor_symbol"
-import { UsecaseSymbol } from "./symbols/usecase_symbol"
-import { SystemBoundarySymbol } from "./symbols/system_boundary_symbol"
-import { Association } from "./relationships/association"
-import { Include } from "./relationships/include"
-import { Extend } from "./relationships/extend"
-import { Generalize } from "./relationships/generalize"
+import {
+  ActorSymbol,
+  SystemBoundarySymbol,
+  UsecaseSymbol,
+} from "./symbols"
+import {
+  Association,
+  Extend,
+  Generalize,
+  Include,
+} from "./relationships"
 import type { DiagramPlugin } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import { toContainerSymbolId } from "../../model"

@@ -1,10 +1,12 @@
 // src/plugin/core/plugin.ts
-import { CircleSymbol } from "./symbols/circle_symbol"
-import { EllipseSymbol } from "./symbols/ellipse_symbol"
-import { RectangleSymbol } from "./symbols/rectangle_symbol"
-import { RoundedRectangleSymbol } from "./symbols/rounded_rectangle_symbol"
-import { TextSymbol } from "./symbols/text_symbol"
-import type { TextInfo } from "./symbols/text_symbol"
+import {
+  CircleSymbol,
+  EllipseSymbol,
+  RectangleSymbol,
+  RoundedRectangleSymbol,
+  TextSymbol,
+  type TextInfo,
+} from "./symbols"
 import type { DiagramPlugin } from "../../dsl"
 import type { LayoutContext } from "../../layout"
 import type { Symbols } from "../../dsl"
