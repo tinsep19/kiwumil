@@ -8,6 +8,8 @@ import type { Theme } from "../theme"
 import { IconLoader } from "../icon"
 import type { IconMeta } from "../icon"
 
+type IconRegistrar = NonNullable<DiagramPlugin["registerIcons"]>
+
 /**
  * Namespace Builder
  *
@@ -90,9 +92,10 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
         const pluginName = plugin.name
         const loader = new IconLoader(pluginName, '')
         // call registerIcons to let plugin register icons into our loader
+        const createLoader: IconRegistrar["createLoader"] = (_p, _importMeta, cb) => cb(loader)
         plugin.registerIcons({
-          createLoader: (_p: string, _importMeta: ImportMeta, cb: any) => cb(loader),
-        } as any)
+          createLoader,
+        })
 
         namespace[pluginName] = {}
         for (const name of loader.list()) {

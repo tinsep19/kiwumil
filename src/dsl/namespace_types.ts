@@ -14,7 +14,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
       symbols: Symbols,
       context: LayoutContext,
       theme: Theme
-    ) => Record<string, (...args: any[]) => SymbolBase>
+    ) => Record<string, (...args: unknown[]) => SymbolBase>
   }
 >
 
@@ -25,7 +25,7 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
       relationships: Relationships,
       context: LayoutContext,
       theme: Theme
-    ) => Record<string, (...args: any[]) => RelationshipId>
+    ) => Record<string, (...args: unknown[]) => RelationshipId>
   }
 >
 
@@ -65,7 +65,7 @@ export type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]
 type IconEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
   {
-    registerIcons: (icons: any) => void
+    registerIcons: NonNullable<DiagramPlugin["registerIcons"]>
   }
 >
 

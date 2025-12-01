@@ -14,6 +14,7 @@ import { DefaultTheme } from "../theme"
 import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
 import { IconLoader } from "../icon"
+import type { IconMeta } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -26,7 +27,7 @@ type IntelliSenseBlockObject<TPlugins extends readonly DiagramPlugin[]> = (
     el: BuildElementNamespace<TPlugins>
     rel: BuildRelationshipNamespace<TPlugins>
     hint: HintFactory
-    icon: Record<string, Record<string, () => import('../icon').IconMeta | null>>
+    icon: Record<string, Record<string, () => IconMeta | null>>
   }
 ) => void
 
@@ -34,10 +35,16 @@ type IntelliSenseBlockArgs<TPlugins extends readonly DiagramPlugin[]> = (
   el: BuildElementNamespace<TPlugins>,
   rel: BuildRelationshipNamespace<TPlugins>,
   hint: HintFactory,
-  icon: Record<string, Record<string, () => import('../icon').IconMeta | null>>
+  icon: Record<string, Record<string, () => IconMeta | null>>
 ) => void
 
 type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
+
+type IconRegistrar = NonNullable<DiagramPlugin["registerIcons"]>
+
+const isObjectStyleCallback = <TPlugins extends readonly DiagramPlugin[]>(
+  cb: IntelliSenseBlock<TPlugins>
+): cb is IntelliSenseBlockObject<TPlugins> => cb.length === 1
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
@@ -106,16 +113,18 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
     // Icon loaders registered by plugins
-    const icon_loaders: Record<string, any> = {}
+    const icon_loaders: Record<string, IconLoader> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === 'function') {
         // create loader API using static IconLoader import
+        const createLoader: IconRegistrar["createLoader"] = (pluginName, importMeta, cb) => {
+          const loader = new IconLoader(pluginName, importMeta?.url ?? '')
+          cb(loader)
+          icon_loaders[pluginName] = loader
+        }
+
         plugin.registerIcons({
-          createLoader: (pluginName: string, importMeta: ImportMeta, cb: any) => {
-            const loader = new IconLoader(pluginName, importMeta?.url ?? '')
-            cb(loader)
-            icon_loaders[pluginName] = loader
-          },
+          createLoader,
         })
       }
     }
@@ -133,7 +142,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     })
 
     // create separate icon namespace: icon.<plugin>.<name>() -> Promise<IconMeta>
-    const icon_namespace: Record<string, Record<string, () => import('../icon').IconMeta | null>> = {}
+    const icon_namespace: Record<string, Record<string, () => IconMeta | null>> = {}
     for (const [pluginName, loader] of Object.entries(icon_loaders)) {
       icon_namespace[pluginName] = {}
       for (const name of loader.list()) {
@@ -144,12 +153,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // invoke callback: support both object-style callback and legacy arg-style
     try {
-      // If callback declares 1 parameter, prefer object form
-      if ((callback as any).length === 1) {
-        (callback as any)({ el, rel, hint, icon: icon_namespace })
+      if (isObjectStyleCallback(callback)) {
+        callback({ el, rel, hint, icon: icon_namespace })
       } else {
-        // legacy: pass as separate args
-        (callback as any)(el, rel, hint, icon_namespace)
+        callback(el, rel, hint, icon_namespace)
       }
     } catch (e) {
       // rethrow
