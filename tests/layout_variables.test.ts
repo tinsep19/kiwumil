@@ -1,5 +1,4 @@
-import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver } from "../src/layout/layout_solver"
+import { LayoutVariables, LayoutSolver } from "@/layout"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {

@@ -1,7 +1,7 @@
 // tests/theme.test.ts
 import { describe, test, expect } from "bun:test"
-import { DefaultTheme, BlueTheme, DarkTheme, getStyleForSymbol } from "../src/theme"
-import type { Theme } from "../src/theme"
+import { DefaultTheme, BlueTheme, DarkTheme, getStyleForSymbol } from "@/theme"
+import type { Theme } from "@/theme"
 
 describe("Theme System", () => {
   describe("DefaultTheme", () => {

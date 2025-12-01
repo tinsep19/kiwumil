@@ -1,10 +1,8 @@
 import { describe, test, expect, beforeEach } from "bun:test"
-import { getBoundsValues } from "../src/layout/bounds"
-import { LayoutContext } from "../src/layout/layout_context"
-import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
-import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
-import { Symbols } from "../src/dsl/symbols"
-import { DefaultTheme } from "../src/theme"
+import { LayoutContext, getBoundsValues } from "@/layout"
+import { ActorSymbol, UsecaseSymbol } from "@/plugin/uml"
+import { Symbols } from "@/dsl"
+import { DefaultTheme } from "@/theme"
 
 describe("Bounds Validation", () => {
   describe("getBoundsValues", () => {

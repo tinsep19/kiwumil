@@ -1,6 +1,10 @@
-import { ConstraintsBuilder, LayoutConstraintOperator, LayoutConstraintStrength } from "../src/layout/layout_constraints"
-import { LayoutSolver } from "../src/layout/layout_solver"
-import { LayoutVariables } from "../src/layout/layout_variables"
+import {
+  ConstraintsBuilder,
+  LayoutConstraintOperator,
+  LayoutConstraintStrength,
+  LayoutSolver,
+  LayoutVariables,
+} from "@/layout"
 
 describe("ConstraintsBuilder", () => {
   test("expr()/eq() with strong constraint keeps variables equal", () => {

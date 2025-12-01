@@ -1,7 +1,6 @@
-import { TextSymbol } from "../src/plugin/core/symbols/text_symbol"
-import { DefaultTheme } from "../src/theme"
-import { LayoutVariables } from "../src/layout/layout_variables"
-import { LayoutSolver } from "../src/layout/layout_solver"
+import { TextSymbol } from "@/plugin/core"
+import { DefaultTheme } from "@/theme"
+import { LayoutVariables, LayoutSolver } from "@/layout"
 
 describe("TextSymbol", () => {
   test("calculates default size from multiline text", () => {

@@ -37,6 +37,7 @@
 - `tsconfig.json` と `tsconfig.tsd.json` に `compilerOptions.baseUrl` を `.`、`paths["@/*"] = ["src/*"]` を追加し、`@/foo` 形式で `src` 直下を指せるようにした。
 - ESLint カスタムルール `eslint-rules/directory-entry-import.js` を拡張して alias を解決し、`@/layout/utils` などの alias 参照についてもディレクトリエントリ単位での依存チェックが行われるように対応。
 - 上記により `@/layout` のような alias を使いつつ、実体ファイル（`layout/bounds.ts` など）への直接 import を防止するガードが効いた。
+- `tests/` と `tsd/` の import 文を alias に書き換え、`@/`/`@tinsep19/kiwumil` を使って `src` や `dist` への参照を短くしつつ、Lint で alias 経由のチェックが効くようにした。
 
 ### Verification
 

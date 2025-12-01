@@ -1,14 +1,9 @@
 import { describe, test, beforeEach, expect } from "bun:test"
-import { LayoutContext } from "../src/layout/layout_context"
-import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
-import { UsecaseSymbol } from "../src/plugin/uml/symbols/usecase_symbol"
-import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
-import { DiagramSymbol } from "../src/model/diagram_symbol"
-import { HintFactory } from "../src/dsl/hint_factory"
-import { Symbols } from "../src/dsl/symbols"
-import { DefaultTheme } from "../src/theme"
-import { toContainerSymbolId } from "../src/model/container_symbol"
-import { getBoundsValues } from "../src/layout/bounds"
+import { LayoutContext, getBoundsValues } from "@/layout"
+import { ActorSymbol, UsecaseSymbol, SystemBoundarySymbol } from "@/plugin/uml"
+import { DiagramSymbol, toContainerSymbolId } from "@/model"
+import { HintFactory, Symbols } from "@/dsl"
+import { DefaultTheme } from "@/theme"
 
 describe("Layout pipeline", () => {
   let symbols: Symbols

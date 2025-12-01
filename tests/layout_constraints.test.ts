@@ -1,11 +1,9 @@
 import { describe, beforeEach, test, expect } from "bun:test"
-import { LayoutContext } from "../src/layout/layout_context"
-import { HintFactory } from "../src/dsl/hint_factory"
-import { Symbols } from "../src/dsl/symbols"
-import { DefaultTheme } from "../src/theme"
-import { ActorSymbol } from "../src/plugin/uml/symbols/actor_symbol"
-import { SystemBoundarySymbol } from "../src/plugin/uml/symbols/system_boundary_symbol"
-import { toContainerSymbolId } from "../src/model/container_symbol"
+import { LayoutContext } from "@/layout"
+import { HintFactory, Symbols } from "@/dsl"
+import { DefaultTheme } from "@/theme"
+import { ActorSymbol, SystemBoundarySymbol } from "@/plugin/uml"
+import { toContainerSymbolId } from "@/model"
 
 describe("LayoutConstraints metadata", () => {
   let context: LayoutContext
