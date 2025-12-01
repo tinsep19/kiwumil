@@ -1,4 +1,4 @@
-export {
+export type {
   BoundId,
   Bounds,
   BoundsType,
@@ -9,17 +9,14 @@ export {
   LayoutType,
   TypedBounds,
   BoundsMap,
-  createBoundId,
-  getBoundsValues,
 } from "./bounds"
+export { createBoundId, getBoundsValues } from "./bounds"
 export { LayoutContext } from "./layout_context"
-export {
+export { LayoutConstraintOperator, LayoutConstraintStrength, LayoutConstraints } from "./layout_constraints"
+export type {
   LayoutConstraint,
   LayoutConstraintId,
-  LayoutConstraintOperator,
-  LayoutConstraintStrength,
   LayoutConstraintType,
-  LayoutConstraints,
 } from "./layout_constraints"
 export { ConstraintsBuilder, type Term } from "./constraints_builder"
 export {
@@ -31,6 +28,6 @@ export {
   type SuggestHandleStrength,
 } from "./layout_solver"
 export { LayoutVariables } from "./layout_variables"
-export { LayoutConstraintTarget } from "./layout_constraint_target"
-export { LAYOUT_VAR_BRAND, isLayoutVar } from "./layout_types"
+export type { LayoutConstraintTarget } from "./layout_constraint_target"
+export { isLayoutVar } from "./layout_solver"
 export * from "./hint"

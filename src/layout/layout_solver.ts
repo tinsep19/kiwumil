@@ -1,8 +1,15 @@
 // src/layout/layout_solver.ts
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
-import { LAYOUT_VAR_BRAND, type LayoutVar } from "./layout_types"
 import { ConstraintsBuilder } from "./constraints_builder"
+
+const LAYOUT_VAR_BRAND = Symbol("LayoutVarBrand")
+
+export type LayoutVar = kiwi.Variable & { readonly [LAYOUT_VAR_BRAND]: true }
+
+export function isLayoutVar(input: unknown): input is LayoutVar {
+  return typeof input === "object" && input !== null && LAYOUT_VAR_BRAND in input
+}
 
 /**
  * ブランド付き LayoutVar を作成
@@ -19,8 +26,6 @@ export function createLayoutVar(name: string): LayoutVar {
   })
   return variable as LayoutVar
 }
-
-export type { LayoutVar } from "./layout_types"
 
 export type SuggestHandleStrength = "strong" | "medium" | "weak"
 

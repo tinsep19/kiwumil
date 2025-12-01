@@ -1,5 +1,5 @@
 import * as kiwi from "@lume/kiwi"
-import type { LayoutVar } from "./layout_types"
+import type { LayoutVar } from "./layout_solver"
 
 export type Term = [number, LayoutVar | number]
 

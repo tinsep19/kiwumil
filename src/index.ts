@@ -9,7 +9,7 @@ export type { TextInfo } from "./plugin"
 export type { DiagramPlugin } from "./dsl"
 export type { DiagramInfo, SymbolBase } from "./model"
 export type { SymbolId, ContainerSymbolId, RelationshipId } from "./model"
-export { toContainerSymbolId, DIAGRAM_CONTAINER_ID } from "./model"
+export { toContainerSymbolId } from "./model"
 
 // Layout 型定義
 export type {

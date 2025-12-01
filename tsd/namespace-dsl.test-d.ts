@@ -5,22 +5,24 @@ import {
   type DiagramPlugin,
   type SymbolId,
   type RelationshipId,
-} from "@tinsep19/kiwumil"
-import { SymbolBase } from "@tinsep19/kiwumil/model/symbol_base"
+} from "../dist"
+import { SymbolBase } from "../dist/model/symbol_base"
 import {
   RelationshipBase,
   type RelationshipBaseOptions,
-} from "@tinsep19/kiwumil/model/relationship_base"
-import type { LayoutBounds } from "@tinsep19/kiwumil/layout/bounds"
-import type { ConstraintsBuilder } from "@tinsep19/kiwumil/layout/layout_constraints"
-import { DefaultTheme } from "@tinsep19/kiwumil/theme"
-import type { Theme } from "@tinsep19/kiwumil/theme"
+} from "../dist/model/relationship_base"
+import type { LayoutBounds } from "../dist/layout/bounds"
+import type { ConstraintsBuilder } from "../dist/layout/layout_constraints"
+import { DefaultTheme } from "../dist/theme"
+import type { Theme } from "../dist/theme"
 import {
   toSymbolId,
   type SymbolOrId,
-} from "@tinsep19/kiwumil/dsl/symbol_helpers"
-import { CircleSymbol, TextSymbol } from "@tinsep19/kiwumil/plugin/core"
-import { ActorSymbol, SystemBoundarySymbol } from "@tinsep19/kiwumil/plugin/uml"
+} from "../dist/dsl/symbol_helpers"
+import { CircleSymbol } from "../dist/plugin/core/symbols/circle_symbol"
+import { TextSymbol } from "../dist/plugin/core/symbols/text_symbol"
+import { ActorSymbol } from "../dist/plugin/uml/symbols/actor_symbol"
+import { SystemBoundarySymbol } from "../dist/plugin/uml/symbols/system_boundary_symbol"
 
 class TestSymbol extends SymbolBase {
   readonly label: string
