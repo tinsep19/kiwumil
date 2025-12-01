@@ -31,6 +31,12 @@
 - `icon` 呼び出しは `Symbol` の生成時 (たとえば `new IconSym(symbolId, meta)`) の引数として利用でき、シンボルがサイズ制約を持つ場合の参照先となる。
 - DSL の `hint` や `layout` が `icon` から供給された `metadata` を参照することで、サイズやアスペクト比に応じたレイアウトができるようサポートする。
 
+- `NamespaceBuilder` に `buildIconNamespace()` を追加し、プラグインの `registerIcons` を呼び出して静的な `IconLoader` を生成・利用することで同期的に `icon` 名前空間を構築する実装を追加した。
+- 型面では `IconFactory` / `BuildIconNamespace` を導入して、`icon` 名前空間の型を明示的に表現している。
+
+---
+更新日: 2025-12-01T08:08:14.826Z
+
 ### 2.3 アイコン登録・描画
 
 - `icon-registry` は `usageId` をキーに使用アイコンを集約し、`svg-generator` が `<defs>` 内に `<symbol id="{symbolId}">...</symbol>` を出力する。
