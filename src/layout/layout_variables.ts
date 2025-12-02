@@ -91,18 +91,22 @@ export class LayoutVariables {
   }
 
   /**
-   * 複数の Bounds を一括で生成する factory メソッド
-   * @param set キーと BoundsType のマップ
-   * @returns キーと対応する型付き Bounds のマップ
+   * 複数の Bounds または LayoutVar を一括で生成する factory メソッド
+   * @param set キーと BoundsType または "variable" のマップ
+   * @returns キーと対応する型付き Bounds または LayoutVar のマップ
    */
-  createBoundsSet<T extends Record<string, BoundsType>>(
+  createBoundsSet<T extends Record<string, BoundsType | "variable">>(
     set: T
-  ): { [K in keyof T]: BoundsMap[T[K]] } {
-    const result: Record<string, Bounds> = {}
+  ): { [K in keyof T]: T[K] extends "variable" ? LayoutVar : BoundsMap[T[K] & BoundsType] } {
+    const result: Record<string, Bounds | LayoutVar> = {}
     for (const [key, type] of Object.entries(set)) {
-      result[key] = this.createBound(key, type)
+      if (type === "variable") {
+        result[key] = this.createVar(key)
+      } else {
+        result[key] = this.createBound(key, type)
+      }
     }
-    return result as { [K in keyof T]: BoundsMap[T[K]] }
+    return result as { [K in keyof T]: T[K] extends "variable" ? LayoutVar : BoundsMap[T[K] & BoundsType] }
   }
 
   valueOf(variable: LayoutVar): number {
