@@ -72,4 +72,48 @@ describe("LayoutVariables", () => {
     expect(boundsSet.myContainer.type).toBe("container")
     expect(boundsSet.myItem.type).toBe("item")
   })
+
+  test("createBoundsSet creates LayoutVar when value is 'variable'", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+
+    const boundsSet = variables.createBoundsSet({
+      content: "container" as const,
+      foo: "variable" as const,
+      item: "item" as const,
+    })
+
+    // content should be ContainerBounds
+    expect(boundsSet.content).toBeDefined()
+    expect(boundsSet.content.type).toBe("container")
+    expect(boundsSet.content.x).toBeDefined()
+
+    // foo should be LayoutVar (created via createVar)
+    expect(boundsSet.foo).toBeDefined()
+    expect(typeof boundsSet.foo.value).toBe("function")
+    // LayoutVar should not have type, x, y, etc properties
+    expect((boundsSet.foo as unknown as { type?: string }).type).toBeUndefined()
+
+    // item should be ItemBounds
+    expect(boundsSet.item).toBeDefined()
+    expect(boundsSet.item.type).toBe("item")
+  })
+
+  test("createBoundsSet with variable supports constraint solving", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+
+    const boundsSet = variables.createBoundsSet({
+      myVar: "variable" as const,
+      myBounds: "layout" as const,
+    })
+
+    // Set myVar to 100
+    const builder = solver.createConstraintsBuilder()
+    builder.expr([1, boundsSet.myVar]).eq([100, 1]).strong()
+    solver.updateVariables()
+
+    expect(variables.valueOf(boundsSet.myVar)).toBeCloseTo(100)
+    expect(boundsSet.myBounds.type).toBe("layout")
+  })
 })
