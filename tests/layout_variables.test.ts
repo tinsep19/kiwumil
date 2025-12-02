@@ -116,4 +116,17 @@ describe("LayoutVariables", () => {
     expect(variables.valueOf(boundsSet.myVar)).toBeCloseTo(100)
     expect(boundsSet.myBounds.type).toBe("layout")
   })
+
+  test("createConstraintsBuilder returns a working ConstraintsBuilder", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+    const x = variables.createVar("x")
+
+    // Use the convenience method directly from LayoutVariables
+    const builder = variables.createConstraintsBuilder()
+    builder.expr([1, x]).eq([42, 1]).strong()
+    solver.updateVariables()
+
+    expect(variables.valueOf(x)).toBeCloseTo(42)
+  })
 })

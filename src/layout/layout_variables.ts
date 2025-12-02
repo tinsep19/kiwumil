@@ -117,4 +117,12 @@ export class LayoutVariables {
   getSolver(): LayoutSolver {
     return this.solver
   }
+
+  /**
+   * ConstraintsBuilder を作成するための便利メソッド
+   * LayoutVariables を受け取る側から直接 ConstraintsBuilder を作成できる
+   */
+  createConstraintsBuilder(): ReturnType<LayoutSolver["createConstraintsBuilder"]> {
+    return this.solver.createConstraintsBuilder()
+  }
 }
