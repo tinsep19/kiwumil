@@ -2,7 +2,7 @@
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
-import { DiagramSymbol, toContainerSymbolId } from "../model"
+import { DiagramSymbol, Symbols, toContainerSymbolId } from "../model"
 import type { ContainerSymbolId, DiagramInfo, SymbolBase } from "../model"
 import { CorePlugin } from "../plugin"
 import { convertMetaUrlToSvgPath } from "../utils"
@@ -16,7 +16,6 @@ import type {
   PluginIcons,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import { Symbols } from "./symbols"
 import { Relationships } from "./relationships"
 import { IconLoader } from "../icon"
 
@@ -92,9 +91,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
    * @returns レンダリング可能な図オブジェクト
    */
   build(callback: IntelliSenseBlock<TPlugins>) {
-    const symbols = new Symbols()
-    const relationships = new Relationships()
     const context = new LayoutContext(this.currentTheme)
+    const symbols = new Symbols(context.variables)
+    const relationships = new Relationships()
 
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo

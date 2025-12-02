@@ -10,8 +10,8 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      symbols = new Symbols()
       context = new LayoutContext(DefaultTheme)
+      symbols = new Symbols(context.variables)
     })
 
     test("should return finite values for valid bounds", () => {
@@ -66,8 +66,8 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      symbols = new Symbols()
       context = new LayoutContext(DefaultTheme)
+      symbols = new Symbols(context.variables)
     })
 
     test("should clamp negative width to safe value in SVG output", () => {
@@ -132,8 +132,8 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      symbols = new Symbols()
       context = new LayoutContext(DefaultTheme)
+      symbols = new Symbols(context.variables)
     })
 
     test("should clamp negative height to safe value in SVG output", () => {

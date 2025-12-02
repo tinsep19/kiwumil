@@ -2,7 +2,7 @@
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { BuildElementNamespace, BuildRelationshipNamespace, BuildIconNamespace, PluginIcons } from "./namespace_types"
 import type { LayoutContext } from "../layout"
-import type { Symbols } from "./symbols"
+import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import { IconLoader } from "../icon"

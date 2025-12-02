@@ -1,4 +1,6 @@
-import type { SymbolBase, SymbolId } from "../model"
+import type { LayoutVariables } from "../layout"
+import type { SymbolBase } from "./symbol_base"
+import type { SymbolId } from "./types"
 
 /**
  * Symbol 管理クラス
@@ -8,6 +10,11 @@ import type { SymbolBase, SymbolId } from "../model"
  */
 export class Symbols {
   private readonly symbols: SymbolBase[] = []
+  private readonly variables: LayoutVariables
+
+  constructor(variables: LayoutVariables) {
+    this.variables = variables
+  }
 
   /**
    * 指定したプラグインによる Symbol を登録し、factory が返す Symbol を返す。
