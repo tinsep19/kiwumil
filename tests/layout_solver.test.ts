@@ -11,8 +11,8 @@ describe("Layout pipeline", () => {
   let hint: HintFactory
 
   beforeEach(() => {
-    symbols = new Symbols()
     context = new LayoutContext(DefaultTheme)
+    symbols = new Symbols(context.variables)
     hint = new HintFactory({ context, symbols })
   })
 

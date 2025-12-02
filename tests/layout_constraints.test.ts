@@ -11,8 +11,8 @@ describe("LayoutConstraints metadata", () => {
   let symbols: Symbols
 
   beforeEach(() => {
-    symbols = new Symbols()
     context = new LayoutContext(DefaultTheme)
+    symbols = new Symbols(context.variables)
     hint = new HintFactory({ context, symbols })
   })
 
