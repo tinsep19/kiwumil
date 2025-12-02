@@ -39,16 +39,6 @@ export interface Bounds {
 export type TypedBounds<T extends BoundsType> = Bounds & { readonly type: T }
 
 /**
- * @deprecated Use BoundsType instead
- */
-export type LayoutType = BoundsType
-
-/**
- * @deprecated Use Bounds instead
- */
-export type LayoutBound = Bounds
-
-/**
  * 型エイリアス: Symbol の外矩形を表す Bounds
  */
 export type LayoutBounds = TypedBounds<"layout">
@@ -81,23 +71,44 @@ export function getBoundsValues(bounds: Bounds): {
   y: number
   width: number
   height: number
+  right: number
+  bottom: number
+  centerX: number
+  centerY: number
 } {
   const rawX = bounds.x.value()
   const rawY = bounds.y.value()
   const rawWidth = bounds.width.value()
   const rawHeight = bounds.height.value()
+  const rawRight = bounds.right.value()
+  const rawBottom = bounds.bottom.value()
+  const rawCenterX = bounds.centerX.value()
+  const rawCenterY = bounds.centerY.value()
 
   // NaN や Infinity を検出してログ出力
   const hasInvalidValues =
     !Number.isFinite(rawX) ||
     !Number.isFinite(rawY) ||
     !Number.isFinite(rawWidth) ||
-    !Number.isFinite(rawHeight)
+    !Number.isFinite(rawHeight) ||
+    !Number.isFinite(rawRight) ||
+    !Number.isFinite(rawBottom) ||
+    !Number.isFinite(rawCenterX) ||
+    !Number.isFinite(rawCenterY)
 
   if (hasInvalidValues) {
     console.warn(
       `[getBoundsValues] Invalid bounds detected:`,
-      `x=${rawX}, y=${rawY}, width=${rawWidth}, height=${rawHeight}`
+      {
+        x: rawX,
+        y: rawY,
+        width: rawWidth,
+        height: rawHeight,
+        right: rawRight,
+        bottom: rawBottom,
+        centerX: rawCenterX,
+        centerY: rawCenterY,
+      }
     )
   }
 
@@ -116,5 +127,9 @@ export function getBoundsValues(bounds: Bounds): {
     y: rawY,
     width: rawWidth,
     height: rawHeight,
+    right: rawRight,
+    bottom: rawBottom,
+    centerX: rawCenterX,
+    centerY: rawCenterY,
   }
 }
