@@ -2,8 +2,8 @@ import { LayoutVariables, LayoutSolver } from "@/layout"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
-    const variables = new LayoutVariables()
     const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 
     const builder = solver.createConstraintsBuilder()
@@ -14,8 +14,8 @@ describe("LayoutVariables", () => {
   })
 
   test("supports expressions combining variables and constants", () => {
-    const variables = new LayoutVariables()
     const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
     const a = variables.createVar("a")
     const b = variables.createVar("b")
 

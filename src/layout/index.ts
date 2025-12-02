@@ -20,7 +20,6 @@ export type {
 } from "./layout_constraints"
 export { ConstraintsBuilder, type Term } from "./constraints_builder"
 export {
-  createLayoutVar,
   LayoutSolver,
   type LayoutVar,
   type SuggestHandle,

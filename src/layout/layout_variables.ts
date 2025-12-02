@@ -1,5 +1,5 @@
 // src/layout/layout_variables.ts
-import { createLayoutVar, LayoutSolver, type LayoutVar } from "./layout_solver"
+import { LayoutSolver, type LayoutVar } from "./layout_solver"
 import {
   createBoundId,
   type Bounds,
@@ -24,14 +24,14 @@ export type { LayoutType, LayoutBound } from "./bounds"
  * 式の作成や制約の追加は LayoutSolver が担当
  */
 export class LayoutVariables {
-  private readonly solver?: LayoutSolver
+  private readonly solver: LayoutSolver
 
-  constructor(solver?: LayoutSolver) {
+  constructor(solver: LayoutSolver) {
     this.solver = solver
   }
 
   createVar(name: string): LayoutVar {
-    return createLayoutVar(name)
+    return this.solver.createLayoutVar(name)
   }
 
   /**
@@ -44,13 +44,6 @@ export class LayoutVariables {
     prefix: string,
     type: Type = "layout" as Type
   ): BoundsMap[Type] {
-    const solver = this.getSolver()
-    if (!solver) {
-      throw new Error(
-        "LayoutVariables: solver is not injected. Cannot create bound with constraints."
-      )
-    }
-
     const boundId = createBoundId(`${prefix}:${type}`)
 
     // 基本的な 4 つの変数を作成
@@ -65,7 +58,7 @@ export class LayoutVariables {
     const centerX = this.createVar(`${prefix}.centerX`)
     const centerY = this.createVar(`${prefix}.centerY`)
 
-    const builder = solver.createConstraintsBuilder()
+    const builder = this.solver.createConstraintsBuilder()
     builder
       .expr([1, right])
       .eq([1, x], [1, width])
@@ -120,7 +113,7 @@ export class LayoutVariables {
    * solver へのアクセサ（後方互換性のため）
    * LayoutContext から注入された solver を取得する
    */
-  getSolver(): LayoutSolver | undefined {
+  getSolver(): LayoutSolver {
     return this.solver
   }
 }
