@@ -15,10 +15,8 @@ export { toContainerSymbolId } from "./model"
 export type {
   Bounds,
   BoundsType,
-  LayoutBound,
   LayoutContext,
   LayoutConstraintType,
-  LayoutType,
 } from "./layout"
 export { LayoutConstraintStrength } from "./layout"
 

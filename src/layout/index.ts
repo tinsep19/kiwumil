@@ -4,9 +4,7 @@ export type {
   BoundsType,
   ContainerBounds,
   ItemBounds,
-  LayoutBound,
   LayoutBounds,
-  LayoutType,
   TypedBounds,
   BoundsMap,
 } from "./bounds"

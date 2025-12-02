@@ -16,9 +16,6 @@ export type { LayoutVar }
 // 新しい型エイリアス
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
 
-// 後方互換性のため deprecated 型を再エクスポート（将来的に削除予定）
-export type { LayoutType, LayoutBound } from "./bounds"
-
 /**
  * Layout変数とバウンドの生成・管理を担当
  * 式の作成や制約の追加は LayoutSolver が担当
