@@ -11,22 +11,6 @@ export function isLayoutVar(input: unknown): input is LayoutVar {
   return typeof input === "object" && input !== null && LAYOUT_VAR_BRAND in input
 }
 
-/**
- * ブランド付き LayoutVar を作成
- *
- * @param name - 変数名
- * @returns LayoutVar
- */
-export function createLayoutVar(name: string): LayoutVar {
-  const variable = new kiwi.Variable(name)
-  Object.defineProperty(variable, LAYOUT_VAR_BRAND, {
-    value: true,
-    enumerable: false,
-    configurable: false,
-  })
-  return variable as LayoutVar
-}
-
 export type SuggestHandleStrength = "strong" | "medium" | "weak"
 
 export interface SuggestHandle {
@@ -44,6 +28,19 @@ export class LayoutSolver {
 
   constructor() {
     this.solver = new kiwi.Solver()
+  }
+
+  /**
+   * Create a branded LayoutVar
+   */
+  createLayoutVar(name: string): LayoutVar {
+    const variable = new kiwi.Variable(name)
+    Object.defineProperty(variable, LAYOUT_VAR_BRAND, {
+      value: true,
+      enumerable: false,
+      configurable: false,
+    })
+    return variable as LayoutVar
   }
 
   /**
