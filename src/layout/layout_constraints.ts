@@ -26,27 +26,8 @@ const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
 
 export type LayoutConstraintId = string & { readonly [LAYOUT_CONSTRAINT_ID]: true }
 
-export type LayoutConstraintType =
-  | "arrangeHorizontal"
-  | "arrangeVertical"
-  | "alignLeft"
-  | "alignRight"
-  | "alignTop"
-  | "alignBottom"
-  | "alignCenterX"
-  | "alignCenterY"
-  | "alignWidth"
-  | "alignHeight"
-  | "alignSize"
-  | "enclose"
-  | "encloseGrid"
-  | "encloseFigure"
-  | "symbolBounds"
-  | "containerInbounds"
-
 export interface LayoutConstraint {
   id: LayoutConstraintId
-  type: LayoutConstraintType
   rawConstraints: kiwi.Constraint[]
 }
 
@@ -68,13 +49,12 @@ export class LayoutConstraints {
 
   withSymbol(
     symbolId: LayoutSymbolId,
-    type: LayoutConstraintType,
     build: (builder: ConstraintsBuilder) => void
   ) {
     const builder = this.solver.createConstraintsBuilder()
 
     build(builder)
-    this.record(type, builder.getRawConstraints(), symbolId)
+    this.record(builder.getRawConstraints(), symbolId)
   }
 
   arrangeHorizontal(
@@ -97,7 +77,7 @@ export class LayoutConstraints {
     }
 
     raws.push(...builder.getRawConstraints())
-    this.record("arrangeHorizontal", raws)
+    this.record(raws)
   }
 
   arrangeVertical(targets: LayoutConstraintTarget[], gap = this.theme.defaultStyleSet.verticalGap) {
@@ -117,7 +97,7 @@ export class LayoutConstraints {
     }
 
     raws.push(...builder.getRawConstraints())
-    this.record("arrangeVertical", raws)
+    this.record(raws)
   }
 
   alignLeft(targets: LayoutConstraintTarget[]) {
@@ -132,7 +112,7 @@ export class LayoutConstraints {
     }
 
     raws.push(...builder.getRawConstraints())
-    this.record("alignLeft", raws)
+    this.record(raws)
   }
 
   alignRight(targets: LayoutConstraintTarget[]) {
@@ -150,7 +130,7 @@ export class LayoutConstraints {
     }
 
     raws.push(...builder.getRawConstraints())
-    this.record("alignRight", raws)
+    this.record(raws)
   }
 
   alignTop(targets: LayoutConstraintTarget[]) {
@@ -165,7 +145,7 @@ export class LayoutConstraints {
     }
     raws.push(...builder.getRawConstraints())
 
-    this.record("alignTop", raws)
+    this.record(raws)
   }
 
   alignBottom(targets: LayoutConstraintTarget[]) {
@@ -183,7 +163,7 @@ export class LayoutConstraints {
     }
     raws.push(...builder.getRawConstraints())
 
-    this.record("alignBottom", raws)
+    this.record(raws)
   }
 
   alignCenterX(targets: LayoutConstraintTarget[]) {
@@ -207,7 +187,7 @@ export class LayoutConstraints {
     }
     raws.push(...builder.getRawConstraints())
 
-    this.record("alignCenterX", raws)
+    this.record(raws)
   }
 
   alignCenterY(targets: LayoutConstraintTarget[]) {
@@ -231,7 +211,7 @@ export class LayoutConstraints {
     }
     raws.push(...builder.getRawConstraints())
 
-    this.record("alignCenterY", raws)
+    this.record(raws)
   }
 
   alignWidth(targets: LayoutConstraintTarget[]) {
@@ -246,7 +226,7 @@ export class LayoutConstraints {
     }
     raws.push(...builder.getRawConstraints())
 
-    this.record("alignWidth", raws)
+    this.record(raws)
   }
 
   alignHeight(targets: LayoutConstraintTarget[]) {
@@ -261,7 +241,7 @@ export class LayoutConstraints {
     }
     raws.push(...builder.getRawConstraints())
 
-    this.record("alignHeight", raws)
+    this.record(raws)
   }
 
   alignSize(targets: LayoutConstraintTarget[]) {
@@ -296,7 +276,7 @@ export class LayoutConstraints {
     }
 
     raws.push(...builder.getRawConstraints())
-    this.record("enclose", raws)
+    this.record(raws)
   }
 
   /**
@@ -331,7 +311,7 @@ export class LayoutConstraints {
     // 各列を垂直配置
     const numCols = matrix[0]?.length ?? 0
     if (numCols === 0) {
-      this.record("encloseGrid", raws, container.boundId)
+      this.record(raws, container.boundId)
       return
     }
 
@@ -344,7 +324,7 @@ export class LayoutConstraints {
       raws.push(...colRaws)
     }
 
-    this.record("encloseGrid", raws, container.boundId)
+    this.record(raws, container.boundId)
   }
 
   /**
@@ -393,7 +373,7 @@ export class LayoutConstraints {
       raws.push(...alignRaws)
     }
 
-    this.record("encloseFigure", raws, container.boundId)
+    this.record(raws, container.boundId)
   }
 
   private createArrangeHorizontalConstraints(
@@ -487,11 +467,10 @@ export class LayoutConstraints {
     return raws
   }
 
-  private record(type: LayoutConstraintType, raws: kiwi.Constraint[], ownerId?: string) {
+  private record(raws: kiwi.Constraint[], ownerId?: string) {
     if (raws.length === 0) return
     const constraint: LayoutConstraint = {
       id: ownerId ? this.createSymbolScopedId(ownerId) : this.createId(),
-      type,
       rawConstraints: raws,
     }
     this.constraints.push(constraint)

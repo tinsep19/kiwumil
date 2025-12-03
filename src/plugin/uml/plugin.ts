@@ -43,7 +43,7 @@ export const UMLPlugin = {
             label,
             theme,
           })
-          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+          context.constraints.withSymbol(symbolId, (builder) => {
             actor.ensureLayoutBounds(builder)
           })
           return actor
@@ -64,7 +64,7 @@ export const UMLPlugin = {
             label,
             theme,
           })
-          context.constraints.withSymbol(symbolId, "symbolBounds", (builder) => {
+          context.constraints.withSymbol(symbolId, (builder) => {
             usecase.ensureLayoutBounds(builder)
           })
           return usecase
@@ -88,7 +88,7 @@ export const UMLPlugin = {
             label,
             theme,
           })
-          context.constraints.withSymbol(id, "containerInbounds", (builder) => {
+          context.constraints.withSymbol(id, (builder) => {
             boundary.ensureLayoutBounds(builder)
           })
           return boundary

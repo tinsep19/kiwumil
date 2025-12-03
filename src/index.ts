@@ -16,7 +16,6 @@ export type {
   Bounds,
   BoundsType,
   LayoutContext,
-  LayoutConstraintType,
 } from "./layout"
 export { LayoutConstraintStrength } from "./layout"
 
