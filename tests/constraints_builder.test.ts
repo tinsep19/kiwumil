@@ -1,10 +1,9 @@
 import {
   ConstraintsBuilder,
-  LayoutConstraintOperator,
-  LayoutConstraintStrength,
   LayoutSolver,
   LayoutVariables,
 } from "@/layout"
+import * as kiwi from "@lume/kiwi"
 
 describe("ConstraintsBuilder", () => {
   test("expr()/eq() with strong constraint keeps variables equal", () => {
@@ -23,8 +22,8 @@ describe("ConstraintsBuilder", () => {
     const raw = builder.getRawConstraints()
     expect(raw).toHaveLength(1)
     const constraint = raw[0]
-    expect(constraint.op()).toBe(LayoutConstraintOperator.Eq)
-    expect(constraint.strength()).toBe(LayoutConstraintStrength.Strong)
+    expect(constraint.op()).toBe(kiwi.Operator.Eq)
+    expect(constraint.strength()).toBe(kiwi.Strength.strong)
     expect(vars.valueOf(x)).toBeCloseTo(vars.valueOf(y))
     expect(vars.valueOf(x)).toBeCloseTo(100)
   })
@@ -42,7 +41,7 @@ describe("ConstraintsBuilder", () => {
     const raw = builder.getRawConstraints()
     expect(raw).toHaveLength(1)
     const constraint = raw[0]
-    expect(constraint.op()).toBe(LayoutConstraintOperator.Eq)
+    expect(constraint.op()).toBe(kiwi.Operator.Eq)
     expect(vars.valueOf(x)).toBeCloseTo(0)
   })
 

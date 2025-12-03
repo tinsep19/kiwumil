@@ -10,7 +10,7 @@ export type {
 } from "./bounds"
 export { createBoundId, getBoundsValues } from "./bounds"
 export { LayoutContext } from "./layout_context"
-export { LayoutConstraintOperator, LayoutConstraintStrength, LayoutConstraints } from "./layout_constraints"
+export { LayoutConstraints } from "./layout_constraints"
 export type {
   LayoutConstraint,
   LayoutConstraintId,
