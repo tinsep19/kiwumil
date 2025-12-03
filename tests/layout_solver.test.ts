@@ -54,7 +54,7 @@ describe("Layout pipeline", () => {
         label: id,
         theme: DefaultTheme,
       })
-      context.constraints.withSymbol(containerId, "containerInbounds", (builder) => {
+      context.constraints.withSymbol(containerId, (builder) => {
         boundary.ensureLayoutBounds(builder)
       })
       return boundary

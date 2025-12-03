@@ -14,7 +14,6 @@ export { LayoutConstraintOperator, LayoutConstraintStrength, LayoutConstraints }
 export type {
   LayoutConstraint,
   LayoutConstraintId,
-  LayoutConstraintType,
 } from "./layout_constraints"
 export { ConstraintsBuilder, type Term } from "./constraints_builder"
 export {

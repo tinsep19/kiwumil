@@ -41,7 +41,7 @@ describe("LayoutConstraints metadata", () => {
         label: id,
         theme: DefaultTheme,
       })
-      context.constraints.withSymbol(containerId, "containerInbounds", (builder) => {
+      context.constraints.withSymbol(containerId, (builder) => {
         boundary.ensureLayoutBounds(builder)
       })
       return boundary
@@ -55,12 +55,16 @@ describe("LayoutConstraints metadata", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
 
-    const entries = context.constraints
-      .list()
-      .filter((constraint) => constraint.type === "arrangeHorizontal")
+    const entries = context.constraints.list()
 
-    expect(entries).toHaveLength(1)
-    expect(entries[0].rawConstraints).toHaveLength(2) // three symbols -> two sibling constraints
+    // arrangeHorizontal creates one constraint entry with two sibling constraints
+    // (three symbols -> two sibling constraints)
+    const arrangeConstraints = entries.filter(
+      (constraint) => constraint.rawConstraints.length === 2
+    )
+
+    expect(arrangeConstraints).toHaveLength(1)
+    expect(arrangeConstraints[0].rawConstraints).toHaveLength(2)
   })
 
   test("enclose records required bounds for each child", () => {
@@ -70,9 +74,13 @@ describe("LayoutConstraints metadata", () => {
 
     hint.enclose(boundary.id, [first.id, second.id])
 
-    const entry = context.constraints.list().find((constraint) => constraint.type === "enclose")
+    // enclose creates one constraint entry with 8 required constraints
+    // (four required constraints per child)
+    const entry = context.constraints.list().find(
+      (constraint) => constraint.rawConstraints.length === 8
+    )
 
     expect(entry).toBeDefined()
-    expect(entry?.rawConstraints).toHaveLength(8) // four required constraints per child
+    expect(entry?.rawConstraints).toHaveLength(8)
   })
 })

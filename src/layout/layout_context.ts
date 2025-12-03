@@ -48,7 +48,7 @@ export class LayoutContext {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
   ) {
     const bounds = symbol.layout
-    this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
+    this.constraints.withSymbol(symbol.id, (builder) => {
       symbol.ensureLayoutBounds(builder)
       this.applyStrength(builder.expr([1, bounds.width]).ge([size.width, 1]), strength)
       this.applyStrength(builder.expr([1, bounds.height]).ge([size.height, 1]), strength)
@@ -60,7 +60,7 @@ export class LayoutContext {
     strength: LayoutConstraintStrength = LayoutConstraintStrength.Strong
   ) {
     const bounds = symbol.layout
-    this.constraints.withSymbol(symbol.id, "symbolBounds", (builder) => {
+    this.constraints.withSymbol(symbol.id, (builder) => {
       symbol.ensureLayoutBounds(builder)
       this.applyStrength(builder.expr([1, bounds.x]).eq([0, 1]), strength)
       this.applyStrength(builder.expr([1, bounds.y]).eq([0, 1]), strength)

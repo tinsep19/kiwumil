@@ -46,7 +46,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   private registerContainerConstraints(context: LayoutContext) {
-    context.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
+    context.constraints.withSymbol(this.id, (builder) => {
       this.ensureLayoutBounds(builder)
     })
   }
