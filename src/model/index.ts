@@ -12,3 +12,4 @@ export type {
   RelationshipId,
   SymbolId,
 } from "./types"
+export { Hints, ConstraintsBuilder } from "./hints"

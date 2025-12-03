@@ -7,7 +7,7 @@ import {
   GuideBuilderImpl,
   type GuideBuilderX,
   type GuideBuilderY,
-} from "../layout/hint"
+} from "../hint"
 import {
   ContainerSymbolOrId,
   toContainerSymbolId,
