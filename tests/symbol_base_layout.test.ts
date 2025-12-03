@@ -57,9 +57,10 @@ describe("SymbolBase layout bounds", () => {
     const symbol = new DummySymbol("dummy-1", bounds)
     const symbolBounds = symbol.layout
 
-    const setter = solver.createConstraintsBuilder()
-    setter.expr([1, symbolBounds.x]).eq([15, 1]).strong()
-    setter.expr([1, symbolBounds.y]).eq([25, 1]).strong()
+    solver.createConstraint("test-init", (builder) => {
+      builder.expr([1, symbolBounds.x]).eq([15, 1]).strong()
+      builder.expr([1, symbolBounds.y]).eq([25, 1]).strong()
+    })
     solver.updateVariables()
 
     expect(vars.valueOf(symbolBounds.x)).toBeCloseTo(15)
@@ -80,11 +81,12 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBound("dummy-3")
     const symbol = new DummySymbol("dummy-3", bounds)
-    const builder = solver.createConstraintsBuilder()
+    
+    const constraint = solver.createConstraint("test-ensure", (builder) => {
+      symbol.ensureLayoutBounds(builder)
+    })
 
-    symbol.ensureLayoutBounds(builder)
-
-    const rawConstraints = builder.getRawConstraints()
+    const rawConstraints = constraint.rawConstraints
     expect(rawConstraints).toHaveLength(0)
   })
 
@@ -93,11 +95,12 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBound("dummy-4")
     const symbol = new DummySymbolWithConstraints("dummy-4", bounds)
-    const builder = solver.createConstraintsBuilder()
+    
+    const constraint = solver.createConstraint("test-custom", (builder) => {
+      symbol.ensureLayoutBounds(builder)
+    })
 
-    symbol.ensureLayoutBounds(builder)
-
-    const rawConstraints = builder.getRawConstraints()
+    const rawConstraints = constraint.rawConstraints
     expect(rawConstraints.length).toBeGreaterThan(0)
   })
 })

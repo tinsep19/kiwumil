@@ -23,14 +23,6 @@ export class LayoutContext {
   }
 
   /**
-   * Create a ConstraintsBuilder backed by the internal solver.
-   * @deprecated Use createConstraint instead
-   */
-  createConstraintsBuilder(): ConstraintsBuilder {
-    return this.solver.createConstraintsBuilder()
-  }
-
-  /**
    * Create a constraint with an ID using a callback pattern
    * @param id Constraint identifier
    * @param fn Builder callback function

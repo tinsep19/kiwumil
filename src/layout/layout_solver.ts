@@ -60,13 +60,6 @@ export class LayoutSolver {
   }
 
   /**
-   * Fluent ConstraintBuilder を作成
-   */
-  createConstraintsBuilder(): ConstraintsBuilder {
-    return new ConstraintsBuilder(this.solver)
-  }
-
-  /**
    * Create a constraint with an ID using a callback pattern
    * @param id Constraint identifier
    * @param fn Builder callback function

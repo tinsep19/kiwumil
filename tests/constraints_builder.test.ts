@@ -12,14 +12,16 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x")
     const y = vars.createVar("builder:y")
 
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([1, x]).eq([1, y]).strong()
+    const constraint1 = solver.createConstraint("test-eq", (builder) => {
+      builder.expr([1, x]).eq([1, y]).strong()
+    })
 
-    const setter = solver.createConstraintsBuilder()
-    setter.expr([1, y]).eq([100, 1]).strong()
+    const constraint2 = solver.createConstraint("test-setter", (builder) => {
+      builder.expr([1, y]).eq([100, 1]).strong()
+    })
     solver.updateVariables()
 
-    const raw = builder.getRawConstraints()
+    const raw = constraint1.rawConstraints
     expect(raw).toHaveLength(1)
     const constraint = raw[0]
     expect(constraint.op()).toBe(kiwi.Operator.Eq)
@@ -33,15 +35,16 @@ describe("ConstraintsBuilder", () => {
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x-zero")
 
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([1, x]).eq0().strong()
+    const constraint = solver.createConstraint("test-eq0", (builder) => {
+      builder.expr([1, x]).eq0().strong()
+    })
 
     solver.updateVariables()
 
-    const raw = builder.getRawConstraints()
+    const raw = constraint.rawConstraints
     expect(raw).toHaveLength(1)
-    const constraint = raw[0]
-    expect(constraint.op()).toBe(kiwi.Operator.Eq)
+    const constraintObj = raw[0]
+    expect(constraintObj.op()).toBe(kiwi.Operator.Eq)
     expect(vars.valueOf(x)).toBeCloseTo(0)
   })
 
@@ -51,11 +54,13 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x-eq0")
     const y = vars.createVar("builder:y-eq0")
 
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([1, x], [-1, y]).eq0().strong()
+    solver.createConstraint("test-eq0-vars", (builder) => {
+      builder.expr([1, x], [-1, y]).eq0().strong()
+    })
 
-    const setter = solver.createConstraintsBuilder()
-    setter.expr([1, x]).eq([42, 1]).strong()
+    solver.createConstraint("test-setter", (builder) => {
+      builder.expr([1, x]).eq([42, 1]).strong()
+    })
     solver.updateVariables()
 
     expect(vars.valueOf(y)).toBeCloseTo(vars.valueOf(x))
@@ -68,11 +73,13 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x-linear")
     const y = vars.createVar("builder:y-linear")
 
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([2, x], [-3, y], [7, 1]).eq0().strong()
+    solver.createConstraint("test-linear", (builder) => {
+      builder.expr([2, x], [-3, y], [7, 1]).eq0().strong()
+    })
 
-    const setter = solver.createConstraintsBuilder()
-    setter.expr([1, x]).eq([10, 1]).strong()
+    solver.createConstraint("test-setter", (builder) => {
+      builder.expr([1, x]).eq([10, 1]).strong()
+    })
     solver.updateVariables()
 
     expect(vars.valueOf(y)).toBeCloseTo((2 * 10 + 7) / 3)
