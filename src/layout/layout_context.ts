@@ -2,7 +2,7 @@ import type { Theme } from "../theme"
 import type { SymbolBase } from "../model"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints } from "./layout_constraints"
-import { LayoutSolver } from "./layout_solver"
+import { LayoutSolver, type LayoutConstraint } from "./layout_solver"
 import type { ConstraintsBuilder } from "./constraints_builder"
 
 export class LayoutContext {
@@ -23,10 +23,13 @@ export class LayoutContext {
   }
 
   /**
-   * Create a ConstraintsBuilder backed by the internal solver.
+   * Create a constraint with an ID using a callback pattern
+   * @param id Constraint identifier
+   * @param fn Builder callback function
+   * @returns LayoutConstraint with id and rawConstraints
    */
-  createConstraintsBuilder(): ConstraintsBuilder {
-    return this.solver.createConstraintsBuilder()
+  createConstraint(id: string, fn: (builder: ConstraintsBuilder) => void): LayoutConstraint {
+    return this.solver.createConstraint(id, fn)
   }
 
   solveAndApply(_symbols: SymbolBase[]) {

@@ -65,11 +65,12 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     }
 
     if (typeof initialValue === "number") {
-      this.context
-        .createConstraintsBuilder()
-        .expr([1, this.guideVar])
-        .eq([initialValue, 1])
-        .strong()
+      this.context.createConstraint(`guide/${variableName}/initial`, (builder) => {
+        builder
+          .expr([1, this.guideVar])
+          .eq([initialValue, 1])
+          .strong()
+      })
     }
   }
 
@@ -81,7 +82,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.enforceStrongEquality([[1, bounds.x]], [[1, this.guideVar]])
+      this.enforceStrongEquality([[1, bounds.x]], [[1, this.guideVar]], `guide/alignLeft/${id}`)
     }
     return this
   }
@@ -93,7 +94,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.enforceStrongEquality([[1, bounds.right]], [[1, this.guideVar]])
+      this.enforceStrongEquality([[1, bounds.right]], [[1, this.guideVar]], `guide/alignRight/${id}`)
     }
     return this
   }
@@ -104,7 +105,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.x]])
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.x]], `guide/followLeft/${symbolId}`)
     return this
   }
 
@@ -114,7 +115,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.right]])
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.right]], `guide/followRight/${symbolId}`)
     return this
   }
 
@@ -126,7 +127,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.enforceStrongEquality([[1, bounds.y]], [[1, this.guideVar]])
+      this.enforceStrongEquality([[1, bounds.y]], [[1, this.guideVar]], `guide/alignTop/${id}`)
     }
     return this
   }
@@ -138,7 +139,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
       const bounds = symbol.layout
-      this.enforceStrongEquality([[1, bounds.bottom]], [[1, this.guideVar]])
+      this.enforceStrongEquality([[1, bounds.bottom]], [[1, this.guideVar]], `guide/alignBottom/${id}`)
     }
     return this
   }
@@ -149,7 +150,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.y]])
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.y]], `guide/followTop/${symbolId}`)
     return this
   }
 
@@ -159,7 +160,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
     const bounds = symbol.layout
-    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.bottom]])
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.bottom]], `guide/followBottom/${symbolId}`)
     return this
   }
 
@@ -171,7 +172,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       if (!symbol) continue
       const bounds = symbol.layout
       const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
-      this.enforceStrongEquality([[1, targetVar]], [[1, this.guideVar]])
+      this.enforceStrongEquality([[1, targetVar]], [[1, this.guideVar]], `guide/alignCenter/${id}`)
     }
     return this
   }
@@ -182,7 +183,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     if (!symbol) return this
     const bounds = symbol.layout
     const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
-    this.enforceStrongEquality([[1, this.guideVar]], [[1, targetVar]])
+    this.enforceStrongEquality([[1, this.guideVar]], [[1, targetVar]], `guide/followCenter/${symbolId}`)
     return this
   }
 
@@ -218,12 +219,13 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
       .filter((target): target is LayoutConstraintTarget => Boolean(target))
   }
 
-  private enforceStrongEquality(lhs: Term[], rhs: Term[]) {
-    this.context
-      .createConstraintsBuilder()
-      .expr(...lhs)
-      .eq(...rhs)
-      .strong()
+  private enforceStrongEquality(lhs: Term[], rhs: Term[], id: string) {
+    this.context.createConstraint(id, (builder) => {
+      builder
+        .expr(...lhs)
+        .eq(...rhs)
+        .strong()
+    })
   }
 
   private ensureFollowAvailable(method: string) {

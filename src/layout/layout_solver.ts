@@ -11,6 +11,15 @@ export function isLayoutVar(input: unknown): input is LayoutVar {
   return typeof input === "object" && input !== null && LAYOUT_VAR_BRAND in input
 }
 
+const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
+
+export type LayoutConstraintId = string & { readonly [LAYOUT_CONSTRAINT_ID]: true }
+
+export interface LayoutConstraint {
+  id: LayoutConstraintId
+  rawConstraints: kiwi.Constraint[]
+}
+
 export type SuggestHandleStrength = "strong" | "medium" | "weak"
 
 export interface SuggestHandle {
@@ -51,10 +60,18 @@ export class LayoutSolver {
   }
 
   /**
-   * Fluent ConstraintBuilder を作成
+   * Create a constraint with an ID using a callback pattern
+   * @param id Constraint identifier
+   * @param fn Builder callback function
+   * @returns LayoutConstraint with id and rawConstraints
    */
-  createConstraintsBuilder(): ConstraintsBuilder {
-    return new ConstraintsBuilder(this.solver)
+  createConstraint(id: string, fn: (builder: ConstraintsBuilder) => void): LayoutConstraint {
+    const builder = new ConstraintsBuilder(this.solver)
+    fn(builder)
+    return {
+      id: id as LayoutConstraintId,
+      rawConstraints: builder.getRawConstraints(),
+    }
   }
 
   /**
@@ -126,3 +143,4 @@ class SuggestHandleFactoryImpl implements SuggestHandleFactory {
     return new SuggestHandleImpl(this.solver, this.variable, label)
   }
 }
+

@@ -6,8 +6,9 @@ describe("LayoutVariables", () => {
     const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([1, x]).eq([42, 1]).strong()
+    solver.createConstraint("test-eq", (builder) => {
+      builder.expr([1, x]).eq([42, 1]).strong()
+    })
     solver.updateVariables()
 
     expect(variables.valueOf(x)).toBeCloseTo(42)
@@ -19,12 +20,13 @@ describe("LayoutVariables", () => {
     const a = variables.createVar("a")
     const b = variables.createVar("b")
 
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([1, a]).eq([10, 1]).strong()
-    builder
-      .expr([1, b])
-      .eq([1, a], [20, 1])
-      .strong()
+    solver.createConstraint("test-combined", (builder) => {
+      builder.expr([1, a]).eq([10, 1]).strong()
+      builder
+        .expr([1, b])
+        .eq([1, a], [20, 1])
+        .strong()
+    })
 
     solver.updateVariables()
 
@@ -109,8 +111,9 @@ describe("LayoutVariables", () => {
     })
 
     // Set myVar to 100
-    const builder = solver.createConstraintsBuilder()
-    builder.expr([1, boundsSet.myVar]).eq([100, 1]).strong()
+    solver.createConstraint("test-var-set", (builder) => {
+      builder.expr([1, boundsSet.myVar]).eq([100, 1]).strong()
+    })
     solver.updateVariables()
 
     expect(variables.valueOf(boundsSet.myVar)).toBeCloseTo(100)
@@ -122,9 +125,10 @@ describe("LayoutVariables", () => {
     const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 
-    // Use the convenience method directly from LayoutVariables
-    const builder = variables.createConstraintsBuilder()
-    builder.expr([1, x]).eq([42, 1]).strong()
+    // Use the new createConstraint method from solver
+    solver.createConstraint("test-constraint", (builder) => {
+      builder.expr([1, x]).eq([42, 1]).strong()
+    })
     solver.updateVariables()
 
     expect(variables.valueOf(x)).toBeCloseTo(42)
