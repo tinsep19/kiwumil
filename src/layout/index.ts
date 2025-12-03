@@ -9,7 +9,6 @@ export type {
   BoundsMap,
 } from "./bounds"
 export { createBoundId, getBoundsValues } from "./bounds"
-export { LayoutContext } from "./layout_context"
 export { ConstraintsBuilder, type Term } from "./constraints_builder"
 export {
   LayoutSolver,

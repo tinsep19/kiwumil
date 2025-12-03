@@ -8,7 +8,7 @@ import {
   type TextInfo,
 } from "./symbols"
 import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
-import type { LayoutContext } from "../../layout"
+import type { LayoutContext } from "../../model"
 import type { Theme } from "../../theme"
 
 /**
