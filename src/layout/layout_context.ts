@@ -1,12 +1,10 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "../model"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
-import {
-  LayoutConstraints,
-  LayoutConstraintStrength,
-} from "./layout_constraints"
+import { LayoutConstraints } from "./layout_constraints"
 import { LayoutSolver } from "./layout_solver"
 import { ConstraintsBuilder } from "./constraints_builder"
+import * as kiwi from "@lume/kiwi"
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
@@ -45,7 +43,7 @@ export class LayoutContext {
   applyMinSize(
     symbol: SymbolBase,
     size: { width: number; height: number },
-    strength: LayoutConstraintStrength = LayoutConstraintStrength.Weak
+    strength: number = kiwi.Strength.weak
   ) {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, (builder) => {
@@ -57,7 +55,7 @@ export class LayoutContext {
 
   anchorToOrigin(
     symbol: SymbolBase,
-    strength: LayoutConstraintStrength = LayoutConstraintStrength.Strong
+    strength: number = kiwi.Strength.strong
   ) {
     const bounds = symbol.layout
     this.constraints.withSymbol(symbol.id, (builder) => {
@@ -69,12 +67,12 @@ export class LayoutContext {
 
   private applyStrength(
     builder: ConstraintsBuilder,
-    strength: LayoutConstraintStrength
+    strength: number
   ) {
-    if (strength === LayoutConstraintStrength.Required) {
+    if (strength === kiwi.Strength.required) {
       return builder.required()
     }
-    if (strength === LayoutConstraintStrength.Strong) {
+    if (strength === kiwi.Strength.strong) {
       return builder.strong()
     }
     return builder.weak()

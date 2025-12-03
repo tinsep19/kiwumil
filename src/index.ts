@@ -17,7 +17,6 @@ export type {
   BoundsType,
   LayoutContext,
 } from "./layout"
-export { LayoutConstraintStrength } from "./layout"
 
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"

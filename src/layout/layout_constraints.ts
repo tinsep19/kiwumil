@@ -5,23 +5,6 @@ import { LayoutSolver } from "./layout_solver"
 import { ConstraintsBuilder } from "./constraints_builder"
 import type { LayoutConstraintTarget } from "./layout_constraint_target"
 
-// 互換性のため既存の export を維持
-export const LayoutConstraintOperator = Object.freeze({
-  Eq: kiwi.Operator.Eq,
-  Ge: kiwi.Operator.Ge,
-  Le: kiwi.Operator.Le,
-} as const)
-export type LayoutConstraintOperator =
-  (typeof LayoutConstraintOperator)[keyof typeof LayoutConstraintOperator]
-
-export const LayoutConstraintStrength = Object.freeze({
-  Required: kiwi.Strength.required,
-  Strong: kiwi.Strength.strong,
-  Weak: kiwi.Strength.weak,
-} as const)
-export type LayoutConstraintStrength =
-  (typeof LayoutConstraintStrength)[keyof typeof LayoutConstraintStrength]
-
 const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
 
 export type LayoutConstraintId = string & { readonly [LAYOUT_CONSTRAINT_ID]: true }
