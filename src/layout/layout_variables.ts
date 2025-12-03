@@ -55,23 +55,24 @@ export class LayoutVariables {
     const centerX = this.createVar(`${prefix}.centerX`)
     const centerY = this.createVar(`${prefix}.centerY`)
 
-    const builder = this.solver.createConstraintsBuilder()
-    builder
-      .expr([1, right])
-      .eq([1, x], [1, width])
-      .strong()
-    builder
-      .expr([1, bottom])
-      .eq([1, y], [1, height])
-      .strong()
-    builder
-      .expr([1, centerX])
-      .eq([1, x], [0.5, width])
-      .strong()
-    builder
-      .expr([1, centerY])
-      .eq([1, y], [0.5, height])
-      .strong()
+    this.solver.createConstraint(`${boundId}:computed`, (builder) => {
+      builder
+        .expr([1, right])
+        .eq([1, x], [1, width])
+        .strong()
+      builder
+        .expr([1, bottom])
+        .eq([1, y], [1, height])
+        .strong()
+      builder
+        .expr([1, centerX])
+        .eq([1, x], [0.5, width])
+        .strong()
+      builder
+        .expr([1, centerY])
+        .eq([1, y], [0.5, height])
+        .strong()
+    })
 
     return {
       boundId,
