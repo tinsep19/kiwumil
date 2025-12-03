@@ -92,7 +92,7 @@ export class ConstraintsBuilder {
   }
 
   medium(): this {
-    return this.finalize(kiwi.Strength.strong)
+    return this.finalize(kiwi.Strength.medium)
   }
 
   weak(): this {
