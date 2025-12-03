@@ -3,6 +3,7 @@ import type { SymbolBase } from "../model"
 import { LayoutVariables, type LayoutVar } from "./layout_variables"
 import { LayoutConstraints } from "./layout_constraints"
 import { LayoutSolver } from "./layout_solver"
+import type { ConstraintsBuilder } from "./constraints_builder"
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
@@ -24,7 +25,7 @@ export class LayoutContext {
   /**
    * Create a ConstraintsBuilder backed by the internal solver.
    */
-  createConstraintsBuilder() {
+  createConstraintsBuilder(): ConstraintsBuilder {
     return this.solver.createConstraintsBuilder()
   }
 
