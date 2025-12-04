@@ -1,9 +1,7 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
-import { LayoutVariables, type LayoutVar } from "../layout/layout_variables"
-import { Hints } from "../hint/hints"
-import { LayoutSolver, type LayoutConstraint } from "../layout/layout_solver"
-import type { ConstraintsBuilder } from "../layout/constraints_builder"
+import { LayoutVariables, type LayoutVar, LayoutSolver, type LayoutConstraint, type ConstraintsBuilder } from "../layout"
+import { Hints } from "../hint"
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
