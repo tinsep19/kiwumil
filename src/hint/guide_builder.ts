@@ -193,13 +193,13 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
 
     if (this.axis === "x") {
       // X軸ガイドの場合は垂直方向に並べる
-      this.context.constraints.arrangeVertical(
+      this.context.hints.arrangeVertical(
         targets,
         gap ?? this.context.theme.defaultStyleSet.verticalGap
       )
     } else {
       // Y軸ガイドの場合は水平方向に並べる
-      this.context.constraints.arrangeHorizontal(
+      this.context.hints.arrangeHorizontal(
         targets,
         gap ?? this.context.theme.defaultStyleSet.horizontalGap
       )

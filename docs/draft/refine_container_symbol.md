@@ -14,7 +14,7 @@ class MyContainerSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   private registerContainerConstraints() {
-    this.layout.constraints.withSymbol(this.id, "containerInbounds", (builder) => {
+    this.layout.hints.withSymbol(this.id, "containerInbounds", (builder) => {
       this.ensureLayoutBounds(builder)
       // container と layout Bounds 間のパディング等を登録
     })
@@ -23,5 +23,5 @@ class MyContainerSymbol extends SymbolBase implements ContainerSymbol {
 ```
 
 この形により、`DiagramSymbol` や `SystemBoundarySymbol` はそれぞれ自前の `container` ContainerBounds を持ち、
-`layout.constraints.withSymbol(symbolId, ...)` を使って `containerInbounds` 制約を登録します。
+`layout.hints.withSymbol(symbolId, ...)` を使って `containerInbounds` 制約を登録します。
 また `ensureLayoutBounds(builder)` を明示的に呼ぶことで、シンボル固有の制約 (padding, header 等) が builder の中で確実に追加されます。

@@ -82,47 +82,47 @@ export class HintFactory {
   }
 
   arrangeHorizontal(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.arrangeHorizontal(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.arrangeHorizontal(this.resolveConstraintTargets(symbolIds))
   }
 
   arrangeVertical(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.arrangeVertical(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.arrangeVertical(this.resolveConstraintTargets(symbolIds))
   }
 
   alignLeft(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignLeft(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignLeft(this.resolveConstraintTargets(symbolIds))
   }
 
   alignRight(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignRight(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignRight(this.resolveConstraintTargets(symbolIds))
   }
 
   alignTop(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignTop(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignTop(this.resolveConstraintTargets(symbolIds))
   }
 
   alignBottom(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignBottom(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignBottom(this.resolveConstraintTargets(symbolIds))
   }
 
   alignCenterX(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignCenterX(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignCenterX(this.resolveConstraintTargets(symbolIds))
   }
 
   alignCenterY(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignCenterY(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignCenterY(this.resolveConstraintTargets(symbolIds))
   }
 
   alignWidth(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignWidth(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignWidth(this.resolveConstraintTargets(symbolIds))
   }
 
   alignHeight(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignHeight(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignHeight(this.resolveConstraintTargets(symbolIds))
   }
 
   alignSize(...symbolIds: LayoutTargetId[]) {
-    this.context.constraints.alignSize(this.resolveConstraintTargets(symbolIds))
+    this.context.hints.alignSize(this.resolveConstraintTargets(symbolIds))
   }
 
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
@@ -142,7 +142,7 @@ export class HintFactory {
     if (!containerTarget) return
     const childTargets = this.resolveConstraintTargets(childIds)
 
-    this.context.constraints.enclose(containerTarget, childTargets)
+    this.context.hints.enclose(containerTarget, childTargets)
   }
 
   createGuideX(value?: number): GuideBuilderX {

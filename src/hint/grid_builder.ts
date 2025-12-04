@@ -83,7 +83,7 @@ export class GridBuilder {
     // 制約を適用
     this.hint
       .getLayoutContext()
-      .constraints.encloseGrid(containerTarget, matrixTargets, this.options)
+      .hints.encloseGrid(containerTarget, matrixTargets, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {

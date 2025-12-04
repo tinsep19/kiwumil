@@ -41,7 +41,7 @@ describe("LayoutConstraints metadata", () => {
         label: id,
         theme: DefaultTheme,
       })
-      context.constraints.withSymbol(containerId, (builder) => {
+      context.hints.withSymbol(containerId, (builder) => {
         boundary.ensureLayoutBounds(builder)
       })
       return boundary
@@ -55,7 +55,7 @@ describe("LayoutConstraints metadata", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
 
-    const entries = context.constraints.list()
+    const entries = context.hints.list()
 
     // arrangeHorizontal creates one constraint entry with two sibling constraints
     // (three symbols -> two sibling constraints)
@@ -76,7 +76,7 @@ describe("LayoutConstraints metadata", () => {
 
     // enclose creates one constraint entry with 8 required constraints
     // (four required constraints per child)
-    const entry = context.constraints.list().find(
+    const entry = context.hints.list().find(
       (constraint) => constraint.rawConstraints.length === 8
     )
 
