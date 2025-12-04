@@ -11,9 +11,8 @@ import {
   Include,
 } from "./relationships"
 import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
-import type { RelationshipId } from "../../model"
+import type { RelationshipId, LayoutContext } from "../../model"
 import { toContainerSymbolId } from "../../model"
-import type { LayoutContext } from "../../layout"
 import type { Theme } from "../../theme"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
 

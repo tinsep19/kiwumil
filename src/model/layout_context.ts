@@ -1,21 +1,19 @@
 import type { Theme } from "../theme"
-import type { SymbolBase } from "../model"
-import { LayoutVariables, type LayoutVar } from "./layout_variables"
-import { LayoutConstraints } from "./layout_constraints"
-import { LayoutSolver, type LayoutConstraint } from "./layout_solver"
-import type { ConstraintsBuilder } from "./constraints_builder"
+import type { SymbolBase } from "./"
+import { LayoutVariables, type LayoutVar, LayoutSolver, type LayoutConstraint, type ConstraintsBuilder } from "../layout"
+import { Hints } from "../hint"
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
   readonly variables: LayoutVariables
-  readonly constraints: LayoutConstraints
+  readonly constraints: Hints
   readonly theme: Theme
 
   constructor(theme: Theme) {
     this.theme = theme
     this.solver = new LayoutSolver()
     this.variables = new LayoutVariables(this.solver)
-    this.constraints = new LayoutConstraints(this.solver, theme)
+    this.constraints = new Hints(this.solver, theme)
   }
 
   solve() {

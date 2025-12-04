@@ -1,8 +1,8 @@
-// src/layout/hint/grid_builder.ts
+// src/hint/grid_builder.ts
 
-import type { ContainerSymbolId, SymbolId } from "../../model"
-import type { HintFactory } from "../../dsl"
-import { isRectMatrix, toSymbolId, type SymbolOrId } from "../../dsl"
+import type { ContainerSymbolId, SymbolId } from "../model"
+import type { HintFactory } from "../dsl"
+import { isRectMatrix, toSymbolId, type SymbolOrId } from "../dsl"
 
 /**
  * Grid レイアウト用の Builder

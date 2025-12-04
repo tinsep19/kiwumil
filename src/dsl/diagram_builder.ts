@@ -2,11 +2,10 @@
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
-import { DiagramSymbol, Symbols, toContainerSymbolId } from "../model"
+import { DiagramSymbol, Symbols, toContainerSymbolId, LayoutContext } from "../model"
 import type { ContainerSymbolId, DiagramInfo, SymbolBase } from "../model"
 import { CorePlugin } from "../plugin"
 import { convertMetaUrlToSvgPath } from "../utils"
-import { LayoutContext } from "../layout"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { Theme } from "../theme"
 import type {

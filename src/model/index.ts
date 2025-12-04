@@ -12,3 +12,4 @@ export type {
   RelationshipId,
   SymbolId,
 } from "./types"
+export { LayoutContext } from "./layout_context"

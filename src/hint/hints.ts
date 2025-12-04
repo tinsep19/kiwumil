@@ -1,13 +1,11 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { ContainerSymbolId, SymbolId } from "../model"
-import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint } from "./layout_solver"
-import { ConstraintsBuilder } from "./constraints_builder"
-import type { LayoutConstraintTarget } from "./layout_constraint_target"
+import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutConstraintTarget } from "../layout"
 
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
-export class LayoutConstraints {
+export class Hints {
   private readonly constraints: LayoutConstraint[] = []
   private counter = 0
   private readonly symbolCounter = new Map<string, number>()
@@ -447,4 +445,4 @@ export class LayoutConstraints {
   }
 }
 
-export { ConstraintsBuilder } from "./constraints_builder"
+export { ConstraintsBuilder } from "../layout"

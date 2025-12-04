@@ -1,13 +1,12 @@
 // src/dsl/hint_factory.ts
-import { ContainerSymbol, ContainerSymbolId, SymbolBase, Symbols } from "../model"
-import { LayoutContext } from "../layout"
+import { ContainerSymbol, ContainerSymbolId, SymbolBase, Symbols, LayoutContext } from "../model"
 import {
   FigureBuilder,
   GridBuilder,
   GuideBuilderImpl,
   type GuideBuilderX,
   type GuideBuilderY,
-} from "../layout/hint"
+} from "../hint"
 import {
   ContainerSymbolOrId,
   toContainerSymbolId,
