@@ -1,19 +1,76 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { ContainerSymbolId, SymbolId } from "../model"
-import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutConstraintTarget } from "../layout"
+import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutConstraintTarget, type LayoutVar } from "../layout"
 
 type LayoutSymbolId = SymbolId | ContainerSymbolId
+
+export interface HintVariableOptions {
+  /** 
+   * Variable name suffix. If not provided, an auto-incremented counter is used.
+   * Full variable name will be: hint:{baseName}_{suffix}
+   */
+  name?: string
+  /**
+   * Base name for the variable (e.g., "anchor_x", "guide_y")
+   * Defaults to "var"
+   */
+  baseName?: string
+}
+
+export interface HintVariable {
+  /** The created LayoutVar */
+  variable: LayoutVar
+  /** Full variable name with hint: prefix */
+  name: string
+  /** Constraint IDs associated with this hint variable (if any) */
+  constraintIds: LayoutConstraintId[]
+}
 
 export class Hints {
   private readonly constraints: LayoutConstraint[] = []
   private counter = 0
   private readonly symbolCounter = new Map<string, number>()
+  private readonly hintVariables: HintVariable[] = []
+  private hintVarCounter = 0
 
   constructor(
     private readonly solver: LayoutSolver,
     private readonly theme: Theme
   ) {}
+
+  /**
+   * Create a hint variable using the LayoutSolver API.
+   * The variable is held in Hints scope and not registered to Symbols.
+   * Variable names are automatically prefixed with "hint:".
+   * 
+   * @param options Configuration for the hint variable
+   * @returns HintVariable containing the created variable and metadata
+   */
+  createHintVariable(options?: HintVariableOptions): HintVariable {
+    const baseName = options?.baseName ?? "var"
+    const suffix = options?.name ?? `${this.hintVarCounter++}`
+    const fullName = `hint:${baseName}_${suffix}`
+    
+    // Create the variable using LayoutSolver's public API
+    const variable = this.solver.createLayoutVar(fullName)
+    
+    const hintVariable: HintVariable = {
+      variable,
+      name: fullName,
+      constraintIds: [],
+    }
+    
+    this.hintVariables.push(hintVariable)
+    return hintVariable
+  }
+
+  /**
+   * Get all hint variables created by this Hints instance
+   */
+  getHintVariables(): readonly HintVariable[] {
+    return [...this.hintVariables]
+  }
 
   list(): LayoutConstraint[] {
     return [...this.constraints]
