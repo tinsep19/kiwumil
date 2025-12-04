@@ -6,14 +6,14 @@ import { Hints } from "../hint"
 export class LayoutContext {
   private readonly solver: LayoutSolver
   readonly variables: LayoutVariables
-  readonly constraints: Hints
+  readonly hints: Hints
   readonly theme: Theme
 
   constructor(theme: Theme) {
     this.theme = theme
     this.solver = new LayoutSolver()
     this.variables = new LayoutVariables(this.solver)
-    this.constraints = new Hints(this.solver, theme)
+    this.hints = new Hints(this.solver, theme)
   }
 
   solve() {

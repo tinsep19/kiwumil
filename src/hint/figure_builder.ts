@@ -80,7 +80,7 @@ export class FigureBuilder {
     // 制約を適用
     this.hint
       .getLayoutContext()
-      .constraints.encloseFigure(containerTarget, rowTargets, this.options)
+      .hints.encloseFigure(containerTarget, rowTargets, this.options)
   }
 
   private applyContainerMetadata(children: SymbolId[]): void {
