@@ -31,7 +31,6 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 - Hints.createHintVariable(...) などの API で内部的に既存 LayoutSolver の API を呼んで LayoutVariable を生成する。
 - 生成された変数は Hints のスコープ（その Hint の生成物）として保持する。Symbols へは登録しない。
 - Hint 固有の制約は solver に登録し、その制約 ID 等を Hints が保持する。
-- Hint の破棄（Hints.disposeHintVariable(...)）では、Hints が管理する制約を solver から削除する責務を持つ。
 
 ### HintFactory
 - HintFactory は LayoutContext を保持しない。代わりに Hints インスタンスを注入して保持する。
@@ -50,7 +49,7 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 3. Hints は既存の LayoutSolver API を呼び、必要な LayoutVariable を生成する。必要なら Hint 固有の補助制約を solver に登録する。
 4. Hints は生成した LayoutVariable を Guide に返す（Symbols には登録しない）。
 5. Guide は Symbols.get("symbolX") で既存 Symbol を参照し、solver の制約作成 API を呼んで Symbol と Hints が作った LayoutVariable を結ぶ制約を作る。
-6. Guide の不要化時に、Guide は自分が作成した制約を削除し、Hints.disposeHintVariable を呼んで Hints 側のクリーンアップを行う。
+6. Guide の不要化時に、Guide は自分が作成した制約を削除する。
 
 ---
 
