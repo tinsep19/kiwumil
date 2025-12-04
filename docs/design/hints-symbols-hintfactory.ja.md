@@ -1,7 +1,8 @@
-# DESIGN: Hints / Symbols / HintFactory の設計（草案）
+# DESIGN: Hints / Symbols / HintFactory の設計
 
 日付: 2025-12-04  
-作成者: tinsep19 チーム向け草案
+ステータス: 実装完了  
+作成者: tinsep19 チーム
 
 ## 背景と目的
 Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい（制約を直接作成できるようにしたい）という要望がありました。これに合わせて以下の設計方針を採用します：
@@ -64,3 +65,85 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 - Hints が生成する変数に名前付けする場合は自動プレフィックスを付与する（例: hint:anchor_x_1234）。
 - Symbols が管理する変数名と衝突しないように注意する。
 - Guide が作成する制約には、作成元を示すメタデータ（creator/tag）を付与することを推奨する。
+
+---
+
+## 実装状況
+
+### 実装完了（2025-12-04）
+
+#### Hints クラス (`src/hint/hints.ts`)
+- ✅ `createHintVariable(options?: HintVariableOptions): HintVariable` メソッドを実装
+  - 内部で `LayoutSolver.createLayoutVar()` を呼び出し
+  - 自動プレフィックス `hint:` を付与
+  - カウンターによる自動命名（例: `hint:guide_x_0`, `hint:guide_x_1`）
+  - 生成した変数を Hints インスタンスで保持
+- ✅ `getHintVariables(): readonly HintVariable[]` メソッドを実装
+  - Hints が作成したすべての hint 変数を取得可能
+
+#### HintVariableOptions インターフェース
+```typescript
+interface HintVariableOptions {
+  name?: string        // 変数名サフィックス（オプション）
+  baseName?: string    // ベース名（デフォルト: "var"）
+}
+```
+
+#### HintVariable インターフェース
+```typescript
+interface HintVariable {
+  variable: LayoutVar           // 生成された LayoutVar
+  name: string                  // hint: プレフィックス付きの完全な変数名
+  constraintIds: LayoutConstraintId[]  // 関連する制約 ID
+}
+```
+
+#### GuideBuilder の統合 (`src/hint/guide_builder.ts`)
+- ✅ `GuideBuilderImpl` のコンストラクタを更新
+  - `context.variables.createVar()` から `context.hints.createHintVariable()` に変更
+  - GuideBuilder が作成する変数も Hints で追跡可能
+
+### テストカバレッジ
+- ✅ `tests/hints_createHintVariable.test.ts`: 基本動作テスト（9件）
+- ✅ `tests/hintfactory_integration.test.ts`: 統合テスト（6件）
+- ✅ 既存テスト（108件）もすべて合格
+
+### 利用例
+
+#### 基本的な使用方法
+```typescript
+const context = new LayoutContext(theme)
+
+// Hint 変数を作成
+const anchor = context.hints.createHintVariable({
+  baseName: "anchor_x",
+  name: "center"
+})
+// 生成される変数名: "hint:anchor_x_center"
+
+// 制約を作成
+context.createConstraint("anchor/position", (builder) => {
+  builder.expr([1, anchor.variable]).eq([100, 1]).strong()
+})
+```
+
+#### GuideBuilder との統合
+```typescript
+const hint = new HintFactory({ context, symbols })
+
+// ガイドを作成（内部で Hints.createHintVariable を使用）
+const guideX = hint.createGuideX(100)
+guideX.alignLeft(symbol1.id, symbol2.id)
+
+// Hints が作成した変数を確認
+const hintVars = context.hints.getHintVariables()
+console.log(hintVars.map(v => v.name))
+// => ["hint:guide_x_guideX-0", ...]
+```
+
+### 実装の特徴
+1. **既存 API との互換性**: LayoutSolver の API は一切変更していない
+2. **Symbols との分離**: Hints が作成した変数は Symbols に自動登録されない
+3. **追跡可能性**: `getHintVariables()` で作成した変数を取得可能
+4. **命名規則**: `hint:` プレフィックスで明確に区別
+5. **後方互換性**: 既存のコードはすべて動作し続ける
