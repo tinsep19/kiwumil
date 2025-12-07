@@ -1,0 +1,110 @@
+# LayoutVar から LayoutVariable へのリファクタリング
+
+## 概要
+
+LayoutVar のブランディング型から明確なインターフェース・実装クラス構造への移行を実施。
+createLayoutVar API も createLayoutVariable にリネームし、より明示的な設計にした。
+
+## 変更日時
+
+2025-12-07
+
+## 背景
+
+以前の実装では Symbol ブランディングを使用して kiwi.Variable を LayoutVar として扱っていたが、
+これには以下の問題があった：
+
+1. 型の分離が不十分で、kiwi 依存が暗黙的
+2. インターフェースと実装が分離されていない
+3. テストやモックが困難
+
+## 変更内容
+
+### 1. 新しい型定義の追加
+
+```typescript
+export type VariableId = string
+
+export interface ILayoutVariable<T = kiwi.Variable> {
+  id: VariableId
+  value(): number
+  variable: T
+}
+
+export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
+  constructor(
+    public readonly id: VariableId,
+    public readonly variable: kiwi.Variable
+  ) {}
+
+  value(): number {
+    return this.variable.value()
+  }
+}
+```
+
+### 2. API の変更
+
+- `createLayoutVar(name: string): LayoutVar` → `createLayoutVariable(id: VariableId): LayoutVariable`
+- `isLayoutVar()` を削除（instanceof LayoutVariable を使用）
+- LAYOUT_VAR_BRAND を削除
+
+### 3. 更新されたファイル
+
+#### コア実装
+- `src/layout/layout_solver.ts` - 新しい LayoutVariable クラスと API
+- `src/layout/layout_variables.ts` - createLayoutVariable の使用
+- `src/layout/constraints_builder.ts` - Term 型を LayoutVariable に更新
+- `src/layout/bounds.ts` - Bounds インターフェースを LayoutVariable に更新
+- `src/layout/index.ts` - エクスポートを更新
+
+#### ヒント機能
+- `src/hint/hints.ts` - HintVariable を LayoutVariable に更新
+- `src/hint/guide_builder.ts` - GuideBuilder インターフェースを更新
+
+#### モデル
+- `src/model/layout_context.ts` - valueOf を LayoutVariable 対応に
+
+#### テスト
+- `tests/suggest_handle.test.ts` - createLayoutVariable を使用
+- `tests/hints_createHintVariable.test.ts` - instanceof チェックに変更
+
+#### ドキュメント
+- `docs/design/layout-system.md` - API ドキュメントを更新
+- `docs/design/layout-system.ja.md` - 日本語版を更新
+- `docs/draft/suggest_handle.md` - SuggestHandle の例を更新
+
+## 利点
+
+1. **型の分離**: インターフェース (ILayoutVariable) と実装 (LayoutVariable) が明確に分離
+2. **kiwi 依存の明示化**: variable プロパティで kiwi.Variable へのアクセスを明示
+3. **テスト性の向上**: instanceof による型チェックが可能
+4. **将来のモジュール分割**: インターフェースベースの設計により、将来的な分割が容易
+
+## テスト結果
+
+- 全テスト通過: 123 pass / 0 fail
+- ビルド成功
+- Lint チェック通過
+
+## 互換性
+
+この変更は破壊的変更だが、すべての内部使用箇所を一括で移行したため、
+リポジトリ内での互換性は完全に保たれている。
+
+外部利用者がいる場合は、以下の移行が必要：
+
+```typescript
+// Before
+const v = solver.createLayoutVar("x")
+if (isLayoutVar(v)) { ... }
+
+// After
+const v = solver.createLayoutVariable("x")
+if (v instanceof LayoutVariable) { ... }
+```
+
+## 関連コミット
+
+- 0e7541e: Refactor LayoutVar to LayoutVariable with clear interface
+- c52a09b: Update documentation to reflect LayoutVariable API changes
