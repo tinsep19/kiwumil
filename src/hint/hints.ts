@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { ContainerSymbolId, SymbolId } from "../model"
-import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutConstraintTarget, type LayoutVar } from "../layout"
+import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutConstraintTarget, type LayoutVariable } from "../layout"
 
 type LayoutSymbolId = SymbolId | ContainerSymbolId
 
@@ -19,8 +19,8 @@ export interface HintVariableOptions {
 }
 
 export interface HintVariable {
-  /** The created LayoutVar */
-  variable: LayoutVar
+  /** The created LayoutVariable */
+  variable: LayoutVariable
   /** Full variable name with hint: prefix */
   name: string
   /** Constraint IDs associated with this hint variable (if any) */
@@ -53,7 +53,7 @@ export class Hints {
     const fullName = `hint:${baseName}_${suffix}`
     
     // Create the variable using LayoutSolver's public API
-    const variable = this.solver.createLayoutVar(fullName)
+    const variable = this.solver.createLayoutVariable(fullName)
     
     const hintVariable: HintVariable = {
       variable,

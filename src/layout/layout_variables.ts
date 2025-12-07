@@ -1,5 +1,5 @@
 // src/layout/layout_variables.ts
-import { LayoutSolver, type LayoutVar } from "./layout_solver"
+import { LayoutSolver, type LayoutVariable } from "./layout_solver"
 import {
   createBoundId,
   type Bounds,
@@ -11,7 +11,7 @@ import {
 } from "./bounds"
 
 // 互換性のため既存の export を維持
-export type { LayoutVar }
+export type { LayoutVariable }
 
 // 新しい型エイリアス
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
@@ -27,8 +27,8 @@ export class LayoutVariables {
     this.solver = solver
   }
 
-  createVar(name: string): LayoutVar {
-    return this.solver.createLayoutVar(name)
+  createVar(name: string): LayoutVariable {
+    return this.solver.createLayoutVariable(name)
   }
 
   /**
@@ -89,14 +89,14 @@ export class LayoutVariables {
   }
 
   /**
-   * 複数の Bounds または LayoutVar を一括で生成する factory メソッド
+   * 複数の Bounds または LayoutVariable を一括で生成する factory メソッド
    * @param set キーと BoundsType または "variable" のマップ
-   * @returns キーと対応する型付き Bounds または LayoutVar のマップ
+   * @returns キーと対応する型付き Bounds または LayoutVariable のマップ
    */
   createBoundsSet<T extends Record<string, BoundsType | "variable">>(
     set: T
-  ): { [K in keyof T]: T[K] extends "variable" ? LayoutVar : BoundsMap[T[K] & BoundsType] } {
-    const result: Record<string, Bounds | LayoutVar> = {}
+  ): { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] } {
+    const result: Record<string, Bounds | LayoutVariable> = {}
     for (const [key, type] of Object.entries(set)) {
       if (type === "variable") {
         result[key] = this.createVar(key)
@@ -104,10 +104,10 @@ export class LayoutVariables {
         result[key] = this.createBound(key, type)
       }
     }
-    return result as { [K in keyof T]: T[K] extends "variable" ? LayoutVar : BoundsMap[T[K] & BoundsType] }
+    return result as { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] }
   }
 
-  valueOf(variable: LayoutVar): number {
+  valueOf(variable: LayoutVariable): number {
     return variable.value()
   }
 

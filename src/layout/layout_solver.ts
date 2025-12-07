@@ -3,12 +3,23 @@
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
 
-const LAYOUT_VAR_BRAND = Symbol("LayoutVarBrand")
+export type VariableId = string
 
-export type LayoutVar = kiwi.Variable & { readonly [LAYOUT_VAR_BRAND]: true }
+export interface ILayoutVariable<T = kiwi.Variable> {
+  id: VariableId
+  value(): number
+  variable: T
+}
 
-export function isLayoutVar(input: unknown): input is LayoutVar {
-  return typeof input === "object" && input !== null && LAYOUT_VAR_BRAND in input
+export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
+  constructor(
+    public readonly id: VariableId,
+    public readonly variable: kiwi.Variable
+  ) {}
+
+  value(): number {
+    return this.variable.value()
+  }
 }
 
 const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
@@ -40,16 +51,11 @@ export class LayoutSolver {
   }
 
   /**
-   * Create a branded LayoutVar
+   * Create a LayoutVariable
    */
-  createLayoutVar(name: string): LayoutVar {
-    const variable = new kiwi.Variable(name)
-    Object.defineProperty(variable, LAYOUT_VAR_BRAND, {
-      value: true,
-      enumerable: false,
-      configurable: false,
-    })
-    return variable as LayoutVar
+  createLayoutVariable(id: VariableId): LayoutVariable {
+    const variable = new kiwi.Variable(id)
+    return new LayoutVariable(id, variable)
   }
 
   /**
@@ -77,7 +83,7 @@ export class LayoutSolver {
   /**
    * Fluent edit variable handle を作成
    */
-  createHandle(variable: LayoutVar): SuggestHandleFactory {
+  createHandle(variable: LayoutVariable): SuggestHandleFactory {
     return new SuggestHandleFactoryImpl(this.solver, variable)
   }
 }
@@ -88,13 +94,13 @@ class SuggestHandleImpl implements SuggestHandle {
 
   constructor(
     private readonly solver: kiwi.Solver,
-    private readonly variable: LayoutVar,
+    private readonly variable: LayoutVariable,
     private readonly label: SuggestHandleStrength
   ) {}
 
   suggest(value: number): void {
     this.ensureActive()
-    this.solver.suggestValue(this.variable, value)
+    this.solver.suggestValue(this.variable.variable, value)
   }
 
   strength(): SuggestHandleStrength {
@@ -105,7 +111,7 @@ class SuggestHandleImpl implements SuggestHandle {
     if (this.disposed) {
       return
     }
-    this.solver.removeEditVariable(this.variable)
+    this.solver.removeEditVariable(this.variable.variable)
     this.disposed = true
   }
 
@@ -124,7 +130,7 @@ export interface SuggestHandleFactory {
 
 /** @internal */
 class SuggestHandleFactoryImpl implements SuggestHandleFactory {
-  constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVar) {}
+  constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVariable) {}
 
   strong(): SuggestHandle {
     return this.createHandle("strong", kiwi.Strength.strong)
@@ -139,7 +145,7 @@ class SuggestHandleFactoryImpl implements SuggestHandleFactory {
   }
 
   private createHandle(label: SuggestHandleStrength, strength: number): SuggestHandle {
-    this.solver.addEditVariable(this.variable, strength)
+    this.solver.addEditVariable(this.variable.variable, strength)
     return new SuggestHandleImpl(this.solver, this.variable, label)
   }
 }
