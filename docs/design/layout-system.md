@@ -54,7 +54,7 @@ export class LayoutContext {
   
   solve(): void
   solveAndApply(symbols: SymbolBase[]): void
-  valueOf(variable: LayoutVar): number
+  valueOf(variable: LayoutVariable): number
   getSolver(): LayoutSolver
 }
 ```
@@ -65,7 +65,7 @@ kiwi の Variable/Constraint 生成を担う薄い層。
 
 ```typescript
 export class LayoutVariables {
-  createVar(name: string): LayoutVar
+  createVar(name: string): LayoutVariable
   createBound(id: SymbolId | ContainerSymbolId): Bounds
   expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
   addConstraint(
@@ -74,7 +74,7 @@ export class LayoutVariables {
     rhs: LayoutExpressionInput,
     strength: LayoutConstraintStrength
   ): kiwi.Constraint
-  valueOf(variable: LayoutVar): number
+  valueOf(variable: LayoutVariable): number
 }
 ```
 
@@ -110,14 +110,14 @@ Bounds はインターフェースとして定義され、すべてのプロパ�
 ```typescript
 export interface Bounds {
   readonly type: BoundsType  // "layout" | "container" | "item"
-  readonly x: LayoutVar
-  readonly y: LayoutVar
-  readonly width: LayoutVar
-  readonly height: LayoutVar
-  readonly right: LayoutVar    // 派生変数: x + width
-  readonly bottom: LayoutVar   // 派生変数: y + height
-  readonly centerX: LayoutVar  // 派生変数: x + width * 0.5
-  readonly centerY: LayoutVar  // 派生変数: y + height * 0.5
+  readonly x: LayoutVariable
+  readonly y: LayoutVariable
+  readonly width: LayoutVariable
+  readonly height: LayoutVariable
+  readonly right: LayoutVariable    // 派生変数: x + width
+  readonly bottom: LayoutVariable   // 派生変数: y + height
+  readonly centerX: LayoutVariable  // 派生変数: x + width * 0.5
+  readonly centerY: LayoutVariable  // 派生変数: y + height * 0.5
 }
 ```
 
