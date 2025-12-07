@@ -9,11 +9,12 @@ describe("LayoutConstraints metadata", () => {
   let context: LayoutContext
   let hint: HintFactory
   let symbols: Symbols
+  const diagramContainerId = toContainerSymbolId("__diagram__")
 
   beforeEach(() => {
     context = new LayoutContext(DefaultTheme)
     symbols = new Symbols(context.variables)
-    hint = new HintFactory({ context, symbols })
+    hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
   })
 
   function createActor(id: string) {

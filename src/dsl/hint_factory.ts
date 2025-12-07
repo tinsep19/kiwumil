@@ -15,8 +15,6 @@ import {
 } from "./symbol_helpers"
 import type { LayoutConstraintTarget } from "../layout"
 
-const DEFAULT_DIAGRAM_CONTAINER_ID = "__diagram__" as ContainerSymbolId
-
 type LayoutTargetId = SymbolOrId | ContainerSymbolId
 type LayoutContainerTarget = ContainerSymbolOrId
 
@@ -30,11 +28,11 @@ export class HintFactory {
   constructor({
     context,
     symbols,
-    diagramContainer = DEFAULT_DIAGRAM_CONTAINER_ID,
+    diagramContainer,
   }: {
     context: LayoutContext
     symbols: Symbols
-    diagramContainer?: ContainerSymbolId
+    diagramContainer: ContainerSymbolId
   }) {
     this.context = context
     this.symbols = symbols

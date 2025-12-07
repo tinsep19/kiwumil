@@ -10,11 +10,12 @@ describe("Layout pipeline", () => {
   let symbols: Symbols
   let context: LayoutContext
   let hint: HintFactory
+  const diagramContainerId = toContainerSymbolId("__diagram__")
 
   beforeEach(() => {
     context = new LayoutContext(DefaultTheme)
     symbols = new Symbols(context.variables)
-    hint = new HintFactory({ context, symbols })
+    hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
   })
 
   function createActor(id: string) {
