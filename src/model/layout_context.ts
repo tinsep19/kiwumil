@@ -1,6 +1,6 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
-import { LayoutVariables, type LayoutVar, LayoutSolver, type LayoutConstraint, type ConstraintsBuilder } from "../layout"
+import { LayoutVariables, type LayoutVariable, LayoutSolver, type LayoutConstraint, type ConstraintsBuilder } from "../layout"
 import { Hints } from "../hint"
 
 export class LayoutContext {
@@ -36,7 +36,7 @@ export class LayoutContext {
     // No longer need to populate the deprecated bounds property
   }
 
-  valueOf(variable: LayoutVar): number {
+  valueOf(variable: LayoutVariable): number {
     return this.variables.valueOf(variable)
   }
 }

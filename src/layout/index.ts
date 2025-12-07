@@ -14,11 +14,12 @@ export {
   LayoutSolver,
   type LayoutConstraint,
   type LayoutConstraintId,
-  type LayoutVar,
   type SuggestHandle,
   type SuggestHandleFactory,
   type SuggestHandleStrength,
+  type VariableId,
+  type ILayoutVariable,
+  LayoutVariable,
 } from "./layout_solver"
 export { LayoutVariables } from "./layout_variables"
 export type { LayoutConstraintTarget } from "./layout_constraint_target"
-export { isLayoutVar } from "./layout_solver"

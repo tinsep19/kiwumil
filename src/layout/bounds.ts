@@ -1,4 +1,4 @@
-import type { LayoutVar } from "./layout_solver"
+import type { LayoutVariable } from "./layout_solver"
 
 const BOUND_ID_BRAND = Symbol("BoundId")
 export type BoundId = string & { readonly [BOUND_ID_BRAND]: true }
@@ -22,14 +22,14 @@ export type BoundsType = "layout" | "container" | "item"
 export interface Bounds {
   readonly boundId: BoundId
   readonly type: BoundsType
-  readonly x: LayoutVar
-  readonly y: LayoutVar
-  readonly width: LayoutVar
-  readonly height: LayoutVar
-  readonly right: LayoutVar
-  readonly bottom: LayoutVar
-  readonly centerX: LayoutVar
-  readonly centerY: LayoutVar
+  readonly x: LayoutVariable
+  readonly y: LayoutVariable
+  readonly width: LayoutVariable
+  readonly height: LayoutVariable
+  readonly right: LayoutVariable
+  readonly bottom: LayoutVariable
+  readonly centerX: LayoutVariable
+  readonly centerY: LayoutVariable
 }
 
 /**

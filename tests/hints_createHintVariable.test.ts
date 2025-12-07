@@ -1,7 +1,7 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "@/model"
 import { DefaultTheme } from "@/theme"
-import { isLayoutVar } from "@/layout"
+import { LayoutVariable } from "@/layout"
 
 describe("Hints.createHintVariable", () => {
   let context: LayoutContext
@@ -14,7 +14,7 @@ describe("Hints.createHintVariable", () => {
     const hintVar = context.hints.createHintVariable()
     
     expect(hintVar.variable).toBeDefined()
-    expect(isLayoutVar(hintVar.variable)).toBe(true)
+    expect(hintVar.variable).toBeInstanceOf(LayoutVariable)
     expect(hintVar.name).toMatch(/^hint:var_\d+$/)
     expect(hintVar.constraintIds).toEqual([])
   })
