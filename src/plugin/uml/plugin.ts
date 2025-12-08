@@ -34,19 +34,21 @@ export const UMLPlugin = {
        * @returns 生成された ActorSymbol
        */
       actor(label: string): ActorSymbol {
-        return symbols.register(plugin, "actor", (symbolId) => {
-          const bound = context.variables.createBounds(symbolId)
+        return symbols.register(plugin, "actor", (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
           const actor = new ActorSymbol({
             id: symbolId,
             layout: bound,
             label,
             theme,
           })
-          context.hints.withSymbol(symbolId, (builder) => {
+          r.setSymbol(actor)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
             actor.ensureLayoutBounds(builder)
           })
-          return actor
-        })
+          return r.build()
+        }).symbol as ActorSymbol
       },
 
       /**
@@ -55,19 +57,21 @@ export const UMLPlugin = {
        * @returns 生成された UsecaseSymbol
        */
       usecase(label: string): UsecaseSymbol {
-        return symbols.register(plugin, "usecase", (symbolId) => {
-          const bound = context.variables.createBounds(symbolId)
+        return symbols.register(plugin, "usecase", (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
           const usecase = new UsecaseSymbol({
             id: symbolId,
             layout: bound,
             label,
             theme,
           })
-          context.hints.withSymbol(symbolId, (builder) => {
+          r.setSymbol(usecase)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
             usecase.ensureLayoutBounds(builder)
           })
-          return usecase
-        })
+          return r.build()
+        }).symbol as UsecaseSymbol
       },
 
       /**
@@ -76,10 +80,10 @@ export const UMLPlugin = {
        * @returns 生成された SystemBoundarySymbol
        */
       systemBoundary(label: string): SystemBoundarySymbol {
-        return symbols.register(plugin, "systemBoundary", (symbolId) => {
+        return symbols.register(plugin, "systemBoundary", (symbolId, r) => {
           const id = toContainerSymbolId(symbolId)
-          const bound = context.variables.createBounds(id)
-          const container = context.variables.createBounds(`${id}.container`, "container")
+          const bound = r.createBounds("layout", "layout")
+          const container = r.createBounds("container", "container")
           const boundary = new SystemBoundarySymbol({
             id,
             layout: bound,
@@ -87,11 +91,13 @@ export const UMLPlugin = {
             label,
             theme,
           })
-          context.hints.withSymbol(id, (builder) => {
+          r.setSymbol(boundary)
+          r.setCharacs({ id, layout: bound, container })
+          r.setConstraint((builder) => {
             boundary.ensureLayoutBounds(builder)
           })
-          return boundary
-        })
+          return r.build()
+        }).symbol as SystemBoundarySymbol
       },
     }
   },
