@@ -2,7 +2,7 @@
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
-import { DiagramSymbol, Symbols, toContainerSymbolId, LayoutContext } from "../model"
+import { DiagramSymbol, Symbols, LayoutContext } from "../model"
 import type { ContainerSymbolId, DiagramInfo, SymbolBase } from "../model"
 import { CorePlugin } from "../plugin"
 import { convertMetaUrlToSvgPath } from "../utils"
@@ -97,13 +97,12 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
-    const diagramSymbol = symbols.register("__builtin__", "diagram", (symbolId) => {
-      const containerId = toContainerSymbolId(symbolId)
-      const diagramBound = context.variables.createBounds(containerId)
-      const containerBound = context.variables.createBounds(`${containerId}.container`, "container")
-      return new DiagramSymbol(
+    const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
+      const diagramBound = r.createBounds("layout", "layout")
+      const containerBound = r.createBounds("container", "container")
+      const symbol = new DiagramSymbol(
         {
-          id: containerId,
+          id,
           layout: diagramBound,
           container: containerBound,
           info: diagramInfo,
@@ -111,7 +110,13 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
         },
         context
       )
-    }) as DiagramSymbol
+      r.setSymbol(symbol)
+      r.setCharacs({id, layout: diagramBound, container: containerBound})
+      r.setConstraint((builder) => {
+        symbol.ensureLayoutBounds(builder)
+      })
+      return r.build()
+    }).symbol as DiagramSymbol
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
@@ -170,7 +175,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     const relationshipList = relationships.getAll()
-    const symbolList = symbols.getAll().filter((symbol) => symbol.id !== diagramSymbol.id)
+    const symbolList = symbols.getAll().filter((reg) => reg.symbol.id !== diagramSymbol.id).map((reg) => reg.symbol as SymbolBase)
     const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
 
     if (symbolList.length > 0) {

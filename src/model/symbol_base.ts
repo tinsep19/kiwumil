@@ -2,6 +2,7 @@
 import type { SymbolId, Point } from "./types"
 import type { Theme } from "../theme"
 import type { ConstraintsBuilder, LayoutBounds } from "../layout"
+import type { ISymbol } from "./symbols"
 
 export interface SymbolBaseOptions {
   id: SymbolId
@@ -9,7 +10,7 @@ export interface SymbolBaseOptions {
   theme: Theme
 }
 
-export abstract class SymbolBase {
+export abstract class SymbolBase implements ISymbol {
   readonly id: SymbolId
   readonly layout: LayoutBounds
   protected readonly theme: Theme
@@ -24,4 +25,11 @@ export abstract class SymbolBase {
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
   abstract ensureLayoutBounds(builder: ConstraintsBuilder): void
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
+  }
 }

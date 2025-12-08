@@ -6,6 +6,7 @@ import type {
   ILayoutVariable,
   LayoutConstraint,
   ConstraintSpec,
+  BoundsType,
 } from "../layout"
 import type { SymbolId, Point } from "./types"
 
@@ -20,12 +21,12 @@ export interface ISymbol {
 
 /**
  * ISymbolCharacs: シンボルに付随するレイアウト情報群
- * key -> ContainerBounds | ItemBounds | ILayoutVariable
- * 必須で id と layout は含む
+ * 必須で id と layout は含む。その他の key は ContainerBounds | ItemBounds | ILayoutVariable
  */
-export type ISymbolCharacs = Record<string, ContainerBounds | ItemBounds | ILayoutVariable> & {
+export type ISymbolCharacs = {
   id: SymbolId
   layout: LayoutBounds
+  [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | ILayoutVariable
 }
 
 /**
@@ -62,7 +63,10 @@ export class SymbolRegistrationBuilder {
    * 自動的に id を与える（ユーザーは意識しなくて良い）
    * type は "layout" | "container" | "item" 相当
    */
-  createBounds(key: string, type: "layout" | "container" | "item") {
+  createBounds<Type extends BoundsType>(
+    key: string,
+    type: Type
+  ) {
     return this.variables.createBounds(`${this.id}#${key}`, type)
   }
 
