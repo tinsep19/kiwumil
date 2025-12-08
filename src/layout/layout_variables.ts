@@ -1,5 +1,5 @@
 // src/layout/layout_variables.ts
-import { LayoutSolver, type LayoutVariable } from "./layout_solver"
+import { LayoutSolver, type LayoutVariable, type ConstraintSpec, type LayoutConstraint } from "./layout_solver"
 import {
   createBoundId,
   type Bounds,
@@ -116,6 +116,16 @@ export class LayoutVariables {
 
   valueOf(variable: LayoutVariable): number {
     return variable.value()
+  }
+
+  /**
+   * Create a constraint by forwarding to the solver.
+   * @param name Constraint identifier
+   * @param spec Builder callback function
+   * @returns LayoutConstraint with id and rawConstraints
+   */
+  createConstraint(name: string, spec: ConstraintSpec): LayoutConstraint {
+    return this.solver.createConstraint(name, spec)
   }
 
   /**
