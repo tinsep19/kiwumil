@@ -7,7 +7,7 @@ import type { Theme } from "../theme"
 import { IconLoader } from "../icon"
 
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
-type IconRegistrarCreateLoader = RegisterIconsParam["createLoader"]
+type CreateRegistrar = RegisterIconsParam["createRegistrar"]
 
 /**
  * Namespace Builder
@@ -102,9 +102,9 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
         const pluginName = plugin.name
         const loader = new IconLoader(pluginName, '')
         // call registerIcons to let plugin register icons into our loader
-        const createLoader: IconRegistrarCreateLoader = (_p, _importMeta, cb) => cb(loader)
+        const createRegistrar: CreateRegistrar = (_p, _importMeta, cb) => cb(loader)
         plugin.registerIcons({
-          createLoader,
+          createRegistrar,
         })
 
         namespace[pluginName] = {}
