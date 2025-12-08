@@ -34,7 +34,7 @@ interface DiagramSymbolOptions extends SymbolBaseOptions {
 }
 
 class DiagramSymbol extends SymbolBase implements ContainerSymbol {
-  readonly container = layout.variables.createBound(`${this.id}.container`, "container")
+  readonly container = layout.variables.createBounds(`${this.id}.container`, "container")
 
   constructor(options: DiagramSymbolOptions, private readonly layout: LayoutContext) {
     super(options)

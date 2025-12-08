@@ -6,7 +6,7 @@
 
 ```ts
 class MyContainerSymbol extends SymbolBase implements ContainerSymbol {
-  readonly container = layout.variables.createBound(`${this.id}.container`, "container")
+  readonly container = layout.variables.createBounds(`${this.id}.container`, "container")
 
   constructor(options: SymbolBaseOptions, private readonly layout: LayoutContext) {
     super(options)

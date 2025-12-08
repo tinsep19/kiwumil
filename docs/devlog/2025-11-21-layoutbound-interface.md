@@ -56,7 +56,7 @@ export interface LayoutBound {
 }
 ```
 
-### 2. LayoutVariables に createBound() factory メソッドを追加
+### 2. LayoutVariables に createBounds() factory メソッドを追加
 
 ```typescript
 class LayoutVariables {
@@ -112,7 +112,7 @@ this.layoutBounds = new LayoutBound(
 )
 
 // 変更後
-this.layoutBounds = vars.createBound(this.id)
+this.layoutBounds = vars.createBounds(this.id)
 ```
 
 **ContainerSymbolBase の変更**:
@@ -128,7 +128,7 @@ this.contentBounds = new LayoutBound(
 )
 
 // 変更後
-this.contentBounds = vars.createBound(`${this.id}.content`)
+this.contentBounds = vars.createBounds(`${this.id}.content`)
 ```
 
 ## テスト結果
@@ -166,7 +166,7 @@ $ bun run test:types
 ```
 LayoutVariables（変数とバウンドの生成・管理）
   - createVar(name): LayoutVar の生成
-  - createBound(prefix): LayoutBound の生成（factory）
+  - createBounds(prefix): LayoutBound の生成（factory）
     → 8 つの変数を作成
     → computed properties の制約を設定
   - valueOf(variable): 変数値の取得

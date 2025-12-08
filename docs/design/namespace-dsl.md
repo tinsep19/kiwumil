@@ -203,7 +203,7 @@ Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提
 - `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
 - 両ファクトリは `Symbols` / `Relationships` インスタンスと `LayoutContext` を受け取ります。
 - Symbol / Relationship の登録は `Symbols.register()` / `Relationships.register()` メソッドを使用します。
-- LayoutBound は `layout.variables.createBound(symbolId)` で生成し、コンストラクタに注入します。
+- LayoutBound は `layout.variables.createBounds(symbolId)` で生成し、コンストラクタに注入します。
 
 ### 参考資料
 
@@ -370,7 +370,7 @@ Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意�
 - `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` として追加される
 - 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
 - ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
-- レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
+- レイアウト変数 (`LayoutBound`) は `layout.variables.createBounds()` で生成され、コンストラクタで注入される
 - プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
 
 **プラグインの実装方法（手順、コード例、TypeScript テクニック）は [plugin-system.md](./plugin-system.md) を参照してください。**

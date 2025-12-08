@@ -23,7 +23,7 @@
 
 1. **Bounds に boundId を追加**
    - `Bounds`/`BoundsMap` (`src/layout/bounds.ts`) に `boundId: string` を追加。
-   - `LayoutVariables.createBound()` で指定 ID を元に安定した `boundId` を生成し、返却する Bounds に付与。
+   - `LayoutVariables.createBounds()` で指定 ID を元に安定した `boundId` を生成し、返却する Bounds に付与。
    - 受け入れ基準: Bounds が `boundId` を公開し、既存利用側が動作する。
 
 2. **Hint レイヤーで Symbol 解決を完結**

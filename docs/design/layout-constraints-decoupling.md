@@ -23,7 +23,7 @@
 
 1. **Add boundId to Bounds**
    - Update `Bounds`/`BoundsMap` definitions (`src/layout/bounds.ts`) to include `boundId: string`.
-   - Ensure `LayoutVariables.createBound()` generates a stable `boundId` (e.g., based on the provided identifier) and attaches it to the returned bounds.
+   - Ensure `LayoutVariables.createBounds()` generates a stable `boundId` (e.g., based on the provided identifier) and attaches it to the returned bounds.
    - Acceptance: Bounds expose `boundId`, and all existing consumers compile without needing symbol lookups.
 
 2. **Resolve symbols in Hint layer**

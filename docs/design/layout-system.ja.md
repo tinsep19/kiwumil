@@ -66,7 +66,7 @@ kiwi の Variable/Constraint 生成を担う薄い層。
 ```typescript
 export class LayoutVariables {
   createVar(name: string): LayoutVariable
-  createBound(id: SymbolId | ContainerSymbolId): Bounds
+  createBounds(id: SymbolId | ContainerSymbolId): Bounds
   expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
   addConstraint(
     lhs: LayoutExpressionInput,
@@ -123,11 +123,11 @@ export interface Bounds {
 
 ### 派生変数の実装
 
-派生変数は `createBound()` 呼び出し時に事前生成され、制約も同時に設定されます。
+派生変数は `createBounds()` 呼び出し時に事前生成され、制約も同時に設定されます。
 
 ```typescript
-// LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
-createBound(id: SymbolId | ContainerSymbolId): Bounds {
+// LayoutVariables.createBounds() で生成時に派生変数を作成し制約を設定
+createBounds(id: SymbolId | ContainerSymbolId): Bounds {
   const x = this.createVar(\`\${id}.x\`)
   const y = this.createVar(\`\${id}.y\`)
   const width = this.createVar(\`\${id}.width\`)
@@ -155,7 +155,7 @@ createBound(id: SymbolId | ContainerSymbolId): Bounds {
 ```
 
 **設計ポイント:**
-- **事前生成**: すべての派生変数は createBound() 呼び出し時に生成される
+- **事前生成**: すべての派生変数は createBounds() 呼び出し時に生成される
 - **一貫性**: 派生変数は常に存在し、nullable でない
 - **自動制約登録**: 派生変数の定義式は制約として自動登録される
 
@@ -553,7 +553,7 @@ Symbol生成時に \`LayoutContext\` を注入し、初期制約を登録しま�
 // プラグインでのシンボル生成
 circle(label: string): SymbolId {
   const symbol = symbols.register(plugin, 'circle', (symbolId) => {
-    const bound = layout.variables.createBound(symbolId)
+    const bound = layout.variables.createBounds(symbolId)
     const circle = new CircleSymbol(symbolId, label, bound)
     
     // 必要に応じて制約を追加（例: 固定サイズ）

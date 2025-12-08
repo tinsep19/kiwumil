@@ -101,7 +101,7 @@ interface DiagramPlugin {
 
 - **`name`**: プラグインの名前空間（`el.{name}.xxx()` でアクセス）
 - **SymbolId / RelationshipId を返す**: `Symbols.register()` / `Relationships.register()` で登録し、ID を返す
-- **`LayoutContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`layout.variables.createBound(id)` で LayoutBound を生成してシンボルに注入する
+- **`LayoutContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`layout.variables.createBounds(id)` で LayoutBound を生成してシンボルに注入する
 - **ファクトリはオプショナル**: Symbol のみ・Relationship のみを提供するプラグインも問題なく動作する
 - **登録は Symbols/Relationships が担当**: `symbols.register(plugin, name, factory)` を呼び出すと、ID の生成と配列への追加が自動的に行われる
 - **名前空間名はユニークにする**: `NamespaceBuilder` は `plugin.name` をキーに `el` / `rel` を構築するため、同じ名前のプラグインがあると後勝ちで上書きされる。`core` はビルトインなので避けること。
@@ -128,7 +128,7 @@ export const MyPlugin: DiagramPlugin = {
     return {
       mySymbol(label: string): SymbolId {
         const symbol = symbols.register(plugin, "mySymbol", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
+          const bound = layout.variables.createBounds(symbolId)
           const instance = new MySymbol(symbolId, label, bound)
           return instance
         })
@@ -178,7 +178,7 @@ export const UMLPlugin = {
     return {
       actor(label: string): SymbolId {
         const symbol = symbols.register(plugin, "actor", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
+          const bound = layout.variables.createBounds(symbolId)
           const actor = new ActorSymbol(symbolId, label, bound)
           return actor
         })
@@ -187,7 +187,7 @@ export const UMLPlugin = {
       
       usecase(label: string): SymbolId {
         const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
+          const bound = layout.variables.createBounds(symbolId)
           const usecase = new UsecaseSymbol(symbolId, label, bound)
           return usecase
         })
@@ -197,7 +197,7 @@ export const UMLPlugin = {
       systemBoundary(label: string): ContainerSymbolId {
         const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
-          const bound = layout.variables.createBound(id)
+          const bound = layout.variables.createBounds(id)
           return new SystemBoundarySymbol(id, label, bound, layout)
         })
         return symbol.id as ContainerSymbolId
@@ -400,7 +400,7 @@ export const MyDiagramPlugin: DiagramPlugin = {
     return {
       mySymbol(label: string): SymbolId {
         const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
+          const bound = layout.variables.createBounds(symbolId)
           return new MySymbol(symbolId, label, bound)
         })
         return symbol.id
@@ -489,7 +489,7 @@ mySymbol(label: string): SymbolId {
 ```typescript
 mySymbol(label: string): SymbolId {
   const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
-    const bound = layout.variables.createBound(symbolId)
+    const bound = layout.variables.createBounds(symbolId)
     return new MySymbol(symbolId, label, bound)
   })
   return symbol.id
@@ -504,7 +504,7 @@ mySymbol(label: string): SymbolId {
 class MySymbol extends SymbolBase {
   constructor(id: SymbolId, label: string, layout: LayoutContext) {
     super(id, label)
-    this.layoutBounds = layout.variables.createBound(id)
+    this.layoutBounds = layout.variables.createBounds(id)
   }
 }
 ```
@@ -521,7 +521,7 @@ class MySymbol extends SymbolBase {
 // プラグイン側で LayoutBound を生成
 mySymbol(label: string): SymbolId {
   const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
-    const bound = layout.variables.createBound(symbolId)
+    const bound = layout.variables.createBounds(symbolId)
     return new MySymbol(symbolId, label, bound)
   })
   return symbol.id

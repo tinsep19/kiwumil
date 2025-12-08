@@ -6,7 +6,7 @@
 ```
 function mySymbol(label: string): SymbolId {
   const symbol = symbols.register(plugin, "MySymbol", (symbolId) => {
-    const bound = layout.variables.createBound(symbolId)
+    const bound = layout.variables.createBounds(symbolId)
     const mySymbol = new MySymbol({
       id: symbolId,
       layoutBounds: bound,

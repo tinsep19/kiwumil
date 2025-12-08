@@ -67,7 +67,7 @@ const CustomPlugin = {
     return {
       node(label: string): TestSymbol {
         const symbol = symbols.register(plugin, "node", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
+          const bound = layout.variables.createBounds(symbolId)
           return new TestSymbol(symbolId, label, bound)
         }) as TestSymbol
         return symbol

@@ -20,12 +20,12 @@ SymbolBase と ContainerSymbolBase における LayoutBound の immutable 注入
    - type-only import で LayoutConstraintBuilder を使用
 
 2. **ContainerSymbolBase**
-   - constructor で layout.variables.createBound(id) を実行
+   - constructor で layout.variables.createBounds(id) を実行
    - super() で LayoutBound を渡す
    - getContentLayoutBounds() 提供
 
 3. **Plugin (core/uml)**
-   - すべてのファクトリで layout.variables.createBound(symbolId) を実行
+   - すべてのファクトリで layout.variables.createBounds(symbolId) を実行
    - シンボルコンストラクタに bound を渡す
 
 ## 動作フロー
