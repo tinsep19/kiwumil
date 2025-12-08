@@ -12,6 +12,7 @@ export { createBoundId, getBoundsValues } from "./bounds"
 export { ConstraintsBuilder, type Term } from "./constraints_builder"
 export {
   LayoutSolver,
+  type ConstraintSpec,
   type LayoutConstraint,
   type LayoutConstraintId,
   type SuggestHandle,

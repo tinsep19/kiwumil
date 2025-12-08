@@ -5,6 +5,8 @@ import { ConstraintsBuilder } from "./constraints_builder"
 
 export type VariableId = string
 
+export type ConstraintSpec = (builder: ConstraintsBuilder) => void
+
 export interface ILayoutVariable<T = kiwi.Variable> {
   id: VariableId
   value(): number
@@ -68,12 +70,12 @@ export class LayoutSolver {
   /**
    * Create a constraint with an ID using a callback pattern
    * @param id Constraint identifier
-   * @param fn Builder callback function
+   * @param spec Builder callback function
    * @returns LayoutConstraint with id and rawConstraints
    */
-  createConstraint(id: string, fn: (builder: ConstraintsBuilder) => void): LayoutConstraint {
+  createConstraint(id: string, spec: ConstraintSpec): LayoutConstraint {
     const builder = new ConstraintsBuilder(this.solver)
-    fn(builder)
+    spec(builder)
     return {
       id: id as LayoutConstraintId,
       rawConstraints: builder.getRawConstraints(),
