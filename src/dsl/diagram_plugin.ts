@@ -9,14 +9,14 @@ type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolBase>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-export type IconLoader = { register: (name: string, relPath: string) => void }
-export type IconLoaderCallback = (loader: IconLoader) => void
+export type IconRegistrar = { register: (name: string, relPath: string) => void }
+export type IconRegistrarCallback = (registrar: IconRegistrar) => void
 
 export type Icons = {
   createLoader: (
     plugin: string,
     importMeta: ImportMeta,
-    callback: IconLoaderCallback
+    callback: IconRegistrarCallback
   ) => void
 }
 
