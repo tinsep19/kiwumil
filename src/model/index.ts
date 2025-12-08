@@ -6,7 +6,6 @@ export { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 export { Symbols } from "./symbols"
 export type { DiagramInfo } from "./diagram_info"
 export type {
-  Bounds,
   ContainerSymbolId,
   Point,
   RelationshipId,
