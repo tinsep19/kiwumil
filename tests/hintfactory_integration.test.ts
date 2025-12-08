@@ -18,7 +18,7 @@ describe("HintFactory with Hints integration", () => {
 
   function createRectangle(id: string) {
     return symbols.register("test", "rectangle", (symbolId) => {
-      const bound = context.variables.createBound(symbolId)
+      const bound = context.variables.createBounds(symbolId)
       const rect = new RectangleSymbol({
         id: symbolId,
         layout: bound,

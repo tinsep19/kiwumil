@@ -20,7 +20,7 @@ describe("Layout pipeline", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const bound = context.variables.createBound(symbolId)
+      const bound = context.variables.createBounds(symbolId)
       const actor = new ActorSymbol({
         id: symbolId,
         layout: bound,
@@ -33,7 +33,7 @@ describe("Layout pipeline", () => {
 
   function createUsecase(id: string) {
     return symbols.register("test", "usecase", (symbolId) => {
-      const bound = context.variables.createBound(symbolId)
+      const bound = context.variables.createBounds(symbolId)
       const usecase = new UsecaseSymbol({
         id: symbolId,
         layout: bound,
@@ -47,8 +47,8 @@ describe("Layout pipeline", () => {
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
-      const bound = context.variables.createBound(containerId)
-      const container = context.variables.createBound(`${containerId}.container`, "container")
+      const bound = context.variables.createBounds(containerId)
+      const container = context.variables.createBounds(`${containerId}.container`, "container")
       const boundary = new SystemBoundarySymbol({
         id: containerId,
         layout: bound,
@@ -65,8 +65,8 @@ describe("Layout pipeline", () => {
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
     const diagramId = toContainerSymbolId("__diagram__")
-    const diagramBound = context.variables.createBound(diagramId)
-    const diagramContainer = context.variables.createBound(`${diagramId}.container`, "container")
+    const diagramBound = context.variables.createBounds(diagramId)
+    const diagramContainer = context.variables.createBounds(`${diagramId}.container`, "container")
     const diagram = new DiagramSymbol(
       {
         id: diagramId,

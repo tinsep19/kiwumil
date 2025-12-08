@@ -6,7 +6,7 @@ describe("TextSymbol", () => {
   test("calculates default size from multiline text", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bound = vars.createBound("core:text-0")
+    const bound = vars.createBounds("core:text-0")
     const symbol = new TextSymbol({
       id: "core:text-0",
       layout: bound,
@@ -22,7 +22,7 @@ describe("TextSymbol", () => {
   test("renders tspans for each line including blanks", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bound = vars.createBound("core:text-1")
+    const bound = vars.createBounds("core:text-1")
     const symbol = new TextSymbol({
       id: "core:text-1",
       layout: bound,
@@ -50,7 +50,7 @@ describe("TextSymbol", () => {
   test("applies text info overrides", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bound = vars.createBound("core:text-2")
+    const bound = vars.createBounds("core:text-2")
     const symbol = new TextSymbol({
       id: "core:text-2",
       layout: bound,

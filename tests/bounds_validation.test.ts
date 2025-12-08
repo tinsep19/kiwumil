@@ -16,7 +16,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should return finite values for valid bounds", () => {
-      const bounds = context.variables.createBound("test")
+      const bounds = context.variables.createBounds("test")
 
       context.createConstraint("test-bounds", (builder) => {
         builder.expr([1, bounds.x]).eq([10, 1]).strong()
@@ -35,7 +35,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should detect and warn about negative width", () => {
-      const bounds = context.variables.createBound("test")
+      const bounds = context.variables.createBounds("test")
 
       // Create a scenario with negative width (right < left)
       context.createConstraint("test-negative-width", (builder) => {
@@ -50,7 +50,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should detect and warn about negative height", () => {
-      const bounds = context.variables.createBound("test")
+      const bounds = context.variables.createBounds("test")
 
       // Create a scenario with negative height (bottom < top)
       context.createConstraint("test-negative-height", (builder) => {
@@ -75,7 +75,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should clamp negative width to safe value in SVG output", () => {
-      const bounds = context.variables.createBound("actor")
+      const bounds = context.variables.createBounds("actor")
 
       // Set negative width
       context.createConstraint("test-actor-negative-width", (builder) => {
@@ -105,7 +105,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should render with valid positive dimensions for normal bounds", () => {
-      const bounds = context.variables.createBound("actor")
+      const bounds = context.variables.createBounds("actor")
 
       context.createConstraint("test-actor-normal", (builder) => {
         builder.expr([1, bounds.x]).eq([10, 1]).strong()
@@ -143,7 +143,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should clamp negative height to safe value in SVG output", () => {
-      const bounds = context.variables.createBound("usecase")
+      const bounds = context.variables.createBounds("usecase")
 
       // Set negative height
       context.createConstraint("test-usecase-negative-height", (builder) => {
@@ -176,7 +176,7 @@ describe("Bounds Validation", () => {
     })
 
     test("should render with valid positive dimensions for normal bounds", () => {
-      const bounds = context.variables.createBound("usecase")
+      const bounds = context.variables.createBounds("usecase")
 
       context.createConstraint("test-usecase-normal", (builder) => {
         builder.expr([1, bounds.x]).eq([10, 1]).strong()

@@ -63,7 +63,7 @@ export class SymbolRegistrationBuilder {
    * type は "layout" | "container" | "item" 相当
    */
   createBounds(key: string, type: "layout" | "container" | "item") {
-    return this.variables.createBound(`${this.id}#${key}`, type)
+    return this.variables.createBounds(`${this.id}#${key}`, type)
   }
 
   /**
