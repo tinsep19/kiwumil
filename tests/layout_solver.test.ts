@@ -19,36 +19,46 @@ describe("Layout pipeline", () => {
   })
 
   function createActor(id: string) {
-    return symbols.register("test", "actor", (symbolId) => {
-      const bound = context.variables.createBounds(symbolId)
+    return symbols.register("test", "actor", (symbolId, r) => {
+      const bound = r.createBounds("layout", "layout")
       const actor = new ActorSymbol({
         id: symbolId,
         layout: bound,
         label: id,
         theme: DefaultTheme,
       })
-      return actor
-    })
+      r.setSymbol(actor)
+      r.setCharacs({ id: symbolId, layout: bound })
+      r.setConstraint((builder) => {
+        actor.ensureLayoutBounds(builder)
+      })
+      return r.build()
+    }).symbol as ActorSymbol
   }
 
   function createUsecase(id: string) {
-    return symbols.register("test", "usecase", (symbolId) => {
-      const bound = context.variables.createBounds(symbolId)
+    return symbols.register("test", "usecase", (symbolId, r) => {
+      const bound = r.createBounds("layout", "layout")
       const usecase = new UsecaseSymbol({
         id: symbolId,
         layout: bound,
         label: id,
         theme: DefaultTheme,
       })
-      return usecase
-    })
+      r.setSymbol(usecase)
+      r.setCharacs({ id: symbolId, layout: bound })
+      r.setConstraint((builder) => {
+        usecase.ensureLayoutBounds(builder)
+      })
+      return r.build()
+    }).symbol as UsecaseSymbol
   }
 
   function createBoundary(id: string) {
-    return symbols.register("test", "systemBoundary", (symbolId) => {
+    return symbols.register("test", "systemBoundary", (symbolId, r) => {
       const containerId = toContainerSymbolId(symbolId)
-      const bound = context.variables.createBounds(containerId)
-      const container = context.variables.createBounds(`${containerId}.container`, "container")
+      const bound = r.createBounds("layout", "layout")
+      const container = r.createBounds("container", "container")
       const boundary = new SystemBoundarySymbol({
         id: containerId,
         layout: bound,
@@ -56,11 +66,13 @@ describe("Layout pipeline", () => {
         label: id,
         theme: DefaultTheme,
       })
-      context.hints.withSymbol(containerId, (builder) => {
+      r.setSymbol(boundary)
+      r.setCharacs({ id: containerId, layout: bound, container })
+      r.setConstraint((builder) => {
         boundary.ensureLayoutBounds(builder)
       })
-      return boundary
-    })
+      return r.build()
+    }).symbol as SystemBoundarySymbol
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
@@ -77,7 +89,7 @@ describe("Layout pipeline", () => {
       },
       context
     )
-    context.solveAndApply([...symbols.getAll(), diagram])
+    context.solveAndApply([...symbols.getAllSymbols(), diagram])
 
     const bounds = getBoundsValues(diagram.layout)
     expect(bounds.x).toBeCloseTo(0)
@@ -91,7 +103,7 @@ describe("Layout pipeline", () => {
     const b = createActor("b")
 
     hint.arrangeHorizontal(a.id, b.id)
-    context.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAllSymbols())
 
     const aBounds = getBoundsValues(a.layout)
     const bBounds = getBoundsValues(b.layout)
@@ -107,7 +119,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
     hint.alignCenterY(a.id, b.id, c.id)
-    context.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAllSymbols())
 
     const aBounds = getBoundsValues(a.layout)
     const bBounds = getBoundsValues(b.layout)
@@ -123,7 +135,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeVertical(a.id, b.id)
     hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
-    context.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAllSymbols())
 
     const aBounds = getBoundsValues(a.layout)
     const bBounds = getBoundsValues(b.layout)
@@ -138,7 +150,7 @@ describe("Layout pipeline", () => {
 
     const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
 
-    context.solveAndApply(symbols.getAll())
+    context.solveAndApply(symbols.getAllSymbols())
 
     const aBounds = getBoundsValues(a.layout)
     const bBounds = getBoundsValues(b.layout)

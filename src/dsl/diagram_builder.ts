@@ -143,7 +143,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       iconRegistry[pluginName] = {}
       for (const name of loader.list()) {
         // use sync loader if available
-        iconRegistry[pluginName][name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
+        iconRegistry[pluginName]![name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
       }
     }
 

@@ -17,16 +17,21 @@ describe("HintFactory with Hints integration", () => {
   })
 
   function createRectangle(id: string) {
-    return symbols.register("test", "rectangle", (symbolId) => {
-      const bound = context.variables.createBounds(symbolId)
+    return symbols.register("test", "rectangle", (symbolId, r) => {
+      const bound = r.createBounds("layout", "layout")
       const rect = new RectangleSymbol({
         id: symbolId,
         layout: bound,
         label: id,
         theme: DefaultTheme,
       })
-      return rect
-    })
+      r.setSymbol(rect)
+      r.setCharacs({ id: symbolId, layout: bound })
+      r.setConstraint((builder) => {
+        rect.ensureLayoutBounds(builder)
+      })
+      return r.build()
+    }).symbol as RectangleSymbol
   }
 
   test("GuideBuilder creates hint variables through Hints", () => {
