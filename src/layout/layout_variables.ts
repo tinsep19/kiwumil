@@ -27,8 +27,15 @@ export class LayoutVariables {
     this.solver = solver
   }
 
-  createVar(name: string): LayoutVariable {
+  createVariable(name: string): LayoutVariable {
     return this.solver.createLayoutVariable(name)
+  }
+
+  /**
+   * @deprecated Use createVariable instead. This method is kept for backward compatibility and will be removed in a future major version.
+   */
+  createVar(name: string): LayoutVariable {
+    return this.createVariable(name)
   }
 
   /**
@@ -44,16 +51,16 @@ export class LayoutVariables {
     const boundId = createBoundId(`${prefix}:${type}`)
 
     // 基本的な 4 つの変数を作成
-    const x = this.createVar(`${prefix}.x`)
-    const y = this.createVar(`${prefix}.y`)
-    const width = this.createVar(`${prefix}.width`)
-    const height = this.createVar(`${prefix}.height`)
+    const x = this.createVariable(`${prefix}.x`)
+    const y = this.createVariable(`${prefix}.y`)
+    const width = this.createVariable(`${prefix}.width`)
+    const height = this.createVariable(`${prefix}.height`)
 
     // computed properties を作成
-    const right = this.createVar(`${prefix}.right`)
-    const bottom = this.createVar(`${prefix}.bottom`)
-    const centerX = this.createVar(`${prefix}.centerX`)
-    const centerY = this.createVar(`${prefix}.centerY`)
+    const right = this.createVariable(`${prefix}.right`)
+    const bottom = this.createVariable(`${prefix}.bottom`)
+    const centerX = this.createVariable(`${prefix}.centerX`)
+    const centerY = this.createVariable(`${prefix}.centerY`)
 
     this.solver.createConstraint(`${boundId}:computed`, (builder) => {
       builder
@@ -99,7 +106,7 @@ export class LayoutVariables {
     const result: Record<string, Bounds | LayoutVariable> = {}
     for (const [key, type] of Object.entries(set)) {
       if (type === "variable") {
-        result[key] = this.createVar(key)
+        result[key] = this.createVariable(key)
       } else {
         result[key] = this.createBound(key, type)
       }
