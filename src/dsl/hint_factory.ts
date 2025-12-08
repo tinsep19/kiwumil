@@ -68,7 +68,7 @@ export class HintFactory {
    * Symbols 配列を取得（Builder から参照）
    */
   getSymbols(): readonly SymbolBase[] {
-    return this.symbols.getAll()
+    return this.symbols.getAllSymbols()
   }
 
   horizontal(...symbolIds: LayoutTargetId[]) {
@@ -125,11 +125,11 @@ export class HintFactory {
 
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
     const containerId = toContainerSymbolId(container)
-    const containerSymbol = this.symbols.findById(containerId)
+    const containerSymbol = this.symbols.findSymbolById(containerId)
     if (containerSymbol) {
       const containerNestLevel = containerSymbol.nestLevel
       for (const childId of childIds) {
-        const childSymbol = this.symbols.findById(toSymbolId(childId))
+        const childSymbol = this.symbols.findSymbolById(toSymbolId(childId))
         if (childSymbol) {
           childSymbol.nestLevel = containerNestLevel + 1
         }
@@ -191,6 +191,6 @@ export class HintFactory {
   }
 
   private findSymbolById(id: LayoutTargetId) {
-    return this.symbols.findById(toSymbolId(id))
+    return this.symbols.findSymbolById(toSymbolId(id))
   }
 }

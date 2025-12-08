@@ -53,7 +53,7 @@ describe("SymbolBase layout bounds", () => {
   test("initializes layout bounds when provided via constructor", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bounds = vars.createBound("dummy-1")
+    const bounds = vars.createBounds("dummy-1")
     const symbol = new DummySymbol("dummy-1", bounds)
     const symbolBounds = symbol.layout
 
@@ -70,7 +70,7 @@ describe("SymbolBase layout bounds", () => {
   test("layout property returns the injected bounds", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bounds = vars.createBound("dummy-2")
+    const bounds = vars.createBounds("dummy-2")
     const symbol = new DummySymbol("dummy-2", bounds)
 
     expect(symbol.layout).toBe(bounds)
@@ -79,7 +79,7 @@ describe("SymbolBase layout bounds", () => {
   test("ensureLayoutBounds accepts a builder", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bounds = vars.createBound("dummy-3")
+    const bounds = vars.createBounds("dummy-3")
     const symbol = new DummySymbol("dummy-3", bounds)
     
     const constraint = solver.createConstraint("test-ensure", (builder) => {
@@ -93,7 +93,7 @@ describe("SymbolBase layout bounds", () => {
   test("ensureLayoutBounds runs custom constraints", () => {
     const solver = new LayoutSolver()
     const vars = new LayoutVariables(solver)
-    const bounds = vars.createBound("dummy-4")
+    const bounds = vars.createBounds("dummy-4")
     const symbol = new DummySymbolWithConstraints("dummy-4", bounds)
     
     const constraint = solver.createConstraint("test-custom", (builder) => {

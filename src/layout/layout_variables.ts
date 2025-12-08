@@ -44,7 +44,7 @@ export class LayoutVariables {
    * @param prefix 変数名のプレフィックス
    * @param type レイアウトの種類 (デフォルト: "layout")
    */
-  createBound<Type extends BoundsType = "layout">(
+  createBounds<Type extends BoundsType = "layout">(
     prefix: string,
     type: Type = "layout" as Type
   ): BoundsMap[Type] {
@@ -108,7 +108,7 @@ export class LayoutVariables {
       if (type === "variable") {
         result[key] = this.createVariable(key)
       } else {
-        result[key] = this.createBound(key, type)
+        result[key] = this.createBounds(key, type)
       }
     }
     return result as { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] }

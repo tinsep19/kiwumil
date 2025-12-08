@@ -109,7 +109,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
         namespace[pluginName] = {}
         for (const name of loader.list()) {
-          namespace[pluginName][name] = () => loader.load_sync(name)
+          namespace[pluginName]![name] = () => loader.load_sync(name)
         }
       }
     }

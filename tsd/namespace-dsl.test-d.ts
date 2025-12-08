@@ -66,10 +66,16 @@ const CustomPlugin = {
 
     return {
       node(label: string): TestSymbol {
-        const symbol = symbols.register(plugin, "node", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          return new TestSymbol(symbolId, label, bound)
-        }) as TestSymbol
+        const symbol = symbols.register(plugin, "node", (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
+          const testSymbol = new TestSymbol(symbolId, label, bound)
+          r.setSymbol(testSymbol)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
+            testSymbol.ensureLayoutBounds(builder)
+          })
+          return r.build()
+        }).symbol as TestSymbol
         return symbol
       },
     }

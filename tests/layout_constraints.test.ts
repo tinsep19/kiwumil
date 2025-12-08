@@ -18,23 +18,28 @@ describe("LayoutConstraints metadata", () => {
   })
 
   function createActor(id: string) {
-    return symbols.register("test", "actor", (symbolId) => {
-      const bound = context.variables.createBound(symbolId)
+    return symbols.register("test", "actor", (symbolId, r) => {
+      const bound = r.createBounds("layout", "layout")
       const actor = new ActorSymbol({
         id: symbolId,
         layout: bound,
         label: id,
         theme: DefaultTheme,
       })
-      return actor
-    })
+      r.setSymbol(actor)
+      r.setCharacs({ id: symbolId, layout: bound })
+      r.setConstraint((builder) => {
+        actor.ensureLayoutBounds(builder)
+      })
+      return r.build()
+    }).symbol as ActorSymbol
   }
 
   function createBoundary(id: string) {
-    return symbols.register("test", "systemBoundary", (symbolId) => {
+    return symbols.register("test", "systemBoundary", (symbolId, r) => {
       const containerId = toContainerSymbolId(symbolId)
-      const bound = context.variables.createBound(containerId)
-      const container = context.variables.createBound(`${containerId}.container`, "container")
+      const bound = r.createBounds("layout", "layout")
+      const container = r.createBounds("container", "container")
       const boundary = new SystemBoundarySymbol({
         id: containerId,
         layout: bound,
@@ -42,11 +47,13 @@ describe("LayoutConstraints metadata", () => {
         label: id,
         theme: DefaultTheme,
       })
-      context.hints.withSymbol(containerId, (builder) => {
+      r.setSymbol(boundary)
+      r.setCharacs({ id: containerId, layout: bound, container })
+      r.setConstraint((builder) => {
         boundary.ensureLayoutBounds(builder)
       })
-      return boundary
-    })
+      return r.build()
+    }).symbol as SystemBoundarySymbol
   }
 
   test("arrangeHorizontal records logical constraints per neighbor pair", () => {
