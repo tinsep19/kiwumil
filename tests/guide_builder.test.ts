@@ -19,7 +19,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId) => {
-      const bound = context.variables.createBound(symbolId)
+      const bound = context.variables.createBounds(symbolId)
       const actor = new ActorSymbol({
         id: symbolId,
         layout: bound,

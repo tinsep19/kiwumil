@@ -35,7 +35,7 @@ export const UMLPlugin = {
        */
       actor(label: string): ActorSymbol {
         return symbols.register(plugin, "actor", (symbolId) => {
-          const bound = context.variables.createBound(symbolId)
+          const bound = context.variables.createBounds(symbolId)
           const actor = new ActorSymbol({
             id: symbolId,
             layout: bound,
@@ -56,7 +56,7 @@ export const UMLPlugin = {
        */
       usecase(label: string): UsecaseSymbol {
         return symbols.register(plugin, "usecase", (symbolId) => {
-          const bound = context.variables.createBound(symbolId)
+          const bound = context.variables.createBounds(symbolId)
           const usecase = new UsecaseSymbol({
             id: symbolId,
             layout: bound,
@@ -78,8 +78,8 @@ export const UMLPlugin = {
       systemBoundary(label: string): SystemBoundarySymbol {
         return symbols.register(plugin, "systemBoundary", (symbolId) => {
           const id = toContainerSymbolId(symbolId)
-          const bound = context.variables.createBound(id)
-          const container = context.variables.createBound(`${id}.container`, "container")
+          const bound = context.variables.createBounds(id)
+          const container = context.variables.createBounds(`${id}.container`, "container")
           const boundary = new SystemBoundarySymbol({
             id,
             layout: bound,

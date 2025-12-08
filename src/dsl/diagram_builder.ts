@@ -99,8 +99,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     const diagramSymbol = symbols.register("__builtin__", "diagram", (symbolId) => {
       const containerId = toContainerSymbolId(symbolId)
-      const diagramBound = context.variables.createBound(containerId)
-      const containerBound = context.variables.createBound(`${containerId}.container`, "container")
+      const diagramBound = context.variables.createBounds(containerId)
+      const containerBound = context.variables.createBounds(`${containerId}.container`, "container")
       return new DiagramSymbol(
         {
           id: containerId,
