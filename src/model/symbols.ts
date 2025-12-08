@@ -9,6 +9,7 @@ import type {
   BoundsType,
 } from "../layout"
 import type { SymbolId, Point } from "./types"
+import type { SymbolBase } from "./symbol_base"
 
 /**
  * ISymbol: DSL でユーザーが触れる最小限のシンボルインターフェース
@@ -162,10 +163,27 @@ export class Symbols {
   }
 
   /**
+   * 登録済み Symbol (SymbolBase) を列挙する読み取り専用配列
+   * 後方互換性のため、SymbolBase として返す
+   */
+  getAllSymbols(): readonly SymbolBase[] {
+    return this.registrations.map((reg) => reg.symbol as SymbolBase)
+  }
+
+  /**
    * 指定した ID に一致する SymbolRegistration を返す（存在しなければ undefined）
    */
   findById(id: SymbolId): SymbolRegistration | undefined {
     return this.registrations.find((r) => r.symbol.id === id)
+  }
+
+  /**
+   * 指定した ID に一致する Symbol (SymbolBase) を返す（存在しなければ undefined）
+   * 後方互換性のため、SymbolBase として返す
+   */
+  findSymbolById(id: SymbolId): SymbolBase | undefined {
+    const registration = this.registrations.find((r) => r.symbol.id === id)
+    return registration?.symbol as SymbolBase | undefined
   }
 
   /**
