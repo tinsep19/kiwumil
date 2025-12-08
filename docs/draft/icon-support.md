@@ -96,6 +96,18 @@ TypeDiagrame("tile")
 
 ```
 
+// アイコン登録用の型定義
+export type IconRegistrar = { register: (name: string, relPath: string) => void }
+export type IconRegistrarCallback = (registrar: IconRegistrar) => void
+
+export type Icons = {
+  createRegistrar: (
+    plugin: string,
+    importMeta: ImportMeta,
+    callback: IconRegistrarCallback
+  ) => void
+}
+
 interface DiagramPlugin {
   registerIcons(icons: Icons)? 
   // ...
@@ -105,10 +117,10 @@ export const MyPlugin = {
   registerIcons(icons: Icons) {
     const plugin = 'myplugin'
     // 下記のコードにより、icon.myplugin.icon1(), icon.myplugin.icon2() が提供されるようになる
-    icons.createLoader(plugin, import.meta, loader => {
-      loader.register('icon1', 'icons/icon1.svg')
-      loader.register('icon2', 'icons/icon2.svg')
-    }    
+    icons.createRegistrar(plugin, import.meta, registrar => {
+      registrar.register('icon1', 'icons/icon1.svg')
+      registrar.register('icon2', 'icons/icon2.svg')
+    })    
   }
 }
   

@@ -66,6 +66,20 @@ TypeDiagram("My UML Diagram")
 import type { LayoutContext } from "../layout/layout_context"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
+import type { Theme } from "../theme"
+import type { PluginIcons } from "./namespace_types"
+
+// アイコン登録用の型
+export type IconRegistrar = { register: (name: string, relPath: string) => void }
+export type IconRegistrarCallback = (registrar: IconRegistrar) => void
+
+export type Icons = {
+  createRegistrar: (
+    plugin: string,
+    importMeta: ImportMeta,
+    callback: IconRegistrarCallback
+  ) => void
+}
 
 interface DiagramPlugin {
   /**
@@ -77,23 +91,37 @@ interface DiagramPlugin {
    * Symbol 用の DSL ファクトリを生成
    * @param symbols - 生成した Symbol を登録するインスタンス
    * @param layout - レイアウトコンテキスト（LayoutBound 生成用）
+   * @param theme - テーマ設定
+   * @param icons - プラグインが登録したアイコンへのアクセス
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
   createSymbolFactory?(
     symbols: Symbols,
-    layout: LayoutContext
+    layout: LayoutContext,
+    theme: Theme,
+    icons: PluginIcons
   ): Record<string, (...args: any[]) => SymbolId>
 
   /**
    * Relationship 用の DSL ファクトリを生成
    * @param relationships - 生成した Relationship を登録するインスタンス
    * @param layout - レイアウトコンテキスト
+   * @param theme - テーマ設定
+   * @param icons - プラグインが登録したアイコンへのアクセス
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
   createRelationshipFactory?(
     relationships: Relationships,
-    layout: LayoutContext
+    layout: LayoutContext,
+    theme: Theme,
+    icons: PluginIcons
   ): Record<string, (...args: any[]) => RelationshipId>
+
+  /**
+   * アイコンを登録する（オプショナル）
+   * @param icons - アイコン登録用のAPI
+   */
+  registerIcons?(icons: Icons): void
 }
 ```
 
@@ -106,6 +134,41 @@ interface DiagramPlugin {
 - **登録は Symbols/Relationships が担当**: `symbols.register(plugin, name, factory)` を呼び出すと、ID の生成と配列への追加が自動的に行われる
 - **名前空間名はユニークにする**: `NamespaceBuilder` は `plugin.name` をキーに `el` / `rel` を構築するため、同じ名前のプラグインがあると後勝ちで上書きされる。`core` はビルトインなので避けること。
 - **ファクトリ関数の引数に `any` を許容**: `DiagramPlugin` はプラグイン固有の DSL 引数すべてを統一的に受ける必要があり、ここで具象型を強制すると別プラグインの署名が破綻する。`satisfies DiagramPlugin` を使えば各プラグイン実装は個別の厳密なシグネチャ（例: `actor(label: string)`, `lifeline(config: LifelineOptions)`）を保てるため、インターフェース側は `any` で緩く受けて型安全性を失わない。
+- **`registerIcons` でアイコンを登録**: プラグインは `registerIcons` メソッドでSVGアイコンを登録できる。`icons.createRegistrar()` を使用してアイコンファイルのパスを登録すると、DSL内で `icon.{plugin}.{iconName}()` として利用可能になる。
+
+### アイコン登録の例
+
+プラグインでアイコンを提供する場合、`registerIcons` メソッドを実装します：
+
+```typescript
+export const MyPlugin: DiagramPlugin = {
+  name: 'myplugin',
+  
+  registerIcons(icons: Icons) {
+    icons.createRegistrar(this.name, import.meta, (registrar) => {
+      // プラグインディレクトリ内の icons フォルダからアイコンを登録
+      registrar.register('icon1', 'icons/icon1.svg')
+      registrar.register('icon2', 'icons/icon2.svg')
+    })
+  },
+  
+  // ... createSymbolFactory, createRelationshipFactory
+}
+```
+
+DSL内での使用：
+
+```typescript
+TypeDiagram("My Diagram")
+  .use(MyPlugin)
+  .build((el, rel, hint, icon) => {
+    // アイコン情報を取得（width, height, href などを含む）
+    const iconMeta = icon.myplugin.icon1()
+    
+    // アイコンを使用するシンボルを作成
+    const mySymbol = el.myplugin.iconSymbol(iconMeta)
+  })
+```
 
 ---
 
