@@ -17,10 +17,3 @@ export type ContainerSymbolOrId = ContainerSymbol | SymbolId
 export function toSymbolId(symbol: SymbolOrId): SymbolId {
   return typeof symbol === "string" ? symbol : symbol.id
 }
-
-/**
- * Resolve a container symbol identifier from a ContainerSymbol or SymbolId.
- */
-export function toContainerSymbolId(container: ContainerSymbolOrId): SymbolId {
-  return typeof container === "string" ? container : container.id
-}

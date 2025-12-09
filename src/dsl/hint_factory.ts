@@ -9,7 +9,6 @@ import {
 } from "../hint"
 import {
   ContainerSymbolOrId,
-  toContainerSymbolId,
   toSymbolId,
   type SymbolOrId,
 } from "./symbol_helpers"
@@ -44,7 +43,7 @@ export class HintFactory {
    * @param container コンテナID。省略時は diagram 全体を対象とする
    */
   grid(container?: LayoutContainerTarget): GridBuilder {
-    const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
+    const targetContainer = container ? toSymbolId(container) : this.diagramContainer
     return new GridBuilder(this, targetContainer)
   }
 
@@ -53,7 +52,7 @@ export class HintFactory {
    * @param container コンテナID。省略時は diagram 全体を対象とする
    */
   figure(container?: LayoutContainerTarget): FigureBuilder {
-    const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
+    const targetContainer = container ? toSymbolId(container) : this.diagramContainer
     return new FigureBuilder(this, targetContainer)
   }
 
@@ -124,7 +123,7 @@ export class HintFactory {
   }
 
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
-    const containerId = toContainerSymbolId(container)
+    const containerId = toSymbolId(container)
     const containerSymbol = this.symbols.findSymbolById(containerId)
     if (containerSymbol) {
       const containerNestLevel = containerSymbol.nestLevel
