@@ -45,7 +45,7 @@ import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
 TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     // UML Plugin の名前空間を使用
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
@@ -66,7 +66,7 @@ import { TypeDiagram } from 'kiwumil'
 
 // CorePlugin はデフォルトで適用されています
 TypeDiagram("Simple Diagram")
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
     
@@ -84,7 +84,7 @@ import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
 TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     // CorePlugin の名前空間（デフォルトで利用可能）
     const circle = el.core.circle("Circle")
     
@@ -113,7 +113,7 @@ TypeDiagram({
 })
   .use(UMLPlugin)
   .theme(DarkTheme)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const cart = el.uml.usecase("Shopping Cart")
     rel.uml.associate(user, cart)
@@ -324,7 +324,7 @@ type RelationshipNamespace = {
 TypeDiagram(titleOrInfo: string | DiagramInfo)
   .use(...plugins: DiagramPlugin[])     // プラグインの追加
   .theme(theme: Theme)                   // テーマの設定（オプション）
-  .build((el, rel, hint) => { ... })    // 図の定義
+  .build(({ el, rel, hint }) => { ... })    // 図の定義
   .render(outputPath: string)            // SVG ファイルの出力
 ```
 

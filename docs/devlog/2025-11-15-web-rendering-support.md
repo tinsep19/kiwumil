@@ -109,7 +109,7 @@ bun example/web_rendering_test.ts
 ```typescript
 TypeDiagram("My Diagram")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     el.uml.actor("User")
   })
   .render("output/my-diagram.svg")
@@ -120,7 +120,7 @@ TypeDiagram("My Diagram")
 // example/my_diagram.ts
 TypeDiagram("My Diagram")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     el.uml.actor("User")
   })
   .render(import.meta)  // 自動的に example/my_diagram.svg に保存
@@ -132,7 +132,7 @@ const container = document.getElementById("diagram")!
 
 TypeDiagram("Web Diagram")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     el.uml.actor("User")
   })
   .render(container)  // container.innerHTML に SVG を挿入

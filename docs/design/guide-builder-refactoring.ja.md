@@ -146,7 +146,7 @@ Builder の実装は `src/layout/hint` に移動しましたが、`HintFactory` 
 import { TypeDiagram } from "@tinsep19/kiwumil"
 
 TypeDiagram("Example")
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     // hint.createGuideX(), hint.grid(), hint.figure() など
     // すべて変更なく使用可能
   })
