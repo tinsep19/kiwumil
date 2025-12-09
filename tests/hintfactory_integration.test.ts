@@ -1,5 +1,5 @@
 import { describe, test, beforeEach, expect } from "bun:test"
-import { LayoutContext, Symbols, toContainerSymbolId } from "@/model"
+import { LayoutContext, Symbols } from "@/model"
 import { DefaultTheme } from "@/theme"
 import { HintFactory } from "@/dsl"
 import { RectangleSymbol } from "@/plugin/core"
@@ -8,7 +8,7 @@ describe("HintFactory with Hints integration", () => {
   let context: LayoutContext
   let symbols: Symbols
   let hint: HintFactory
-  const diagramContainerId = toContainerSymbolId("__diagram__")
+  const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
     context = new LayoutContext(DefaultTheme)

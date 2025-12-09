@@ -1,5 +1,5 @@
 // src/dsl/hint_factory.ts
-import { ContainerSymbol, ContainerSymbolId, SymbolBase, Symbols, LayoutContext } from "../model"
+import { ContainerSymbol, SymbolBase, Symbols, LayoutContext, SymbolId } from "../model"
 import {
   FigureBuilder,
   GridBuilder,
@@ -15,12 +15,12 @@ import {
 } from "./symbol_helpers"
 import type { LayoutConstraintTarget } from "../layout"
 
-type LayoutTargetId = SymbolOrId | ContainerSymbolId
+type LayoutTargetId = SymbolOrId
 type LayoutContainerTarget = ContainerSymbolOrId
 
 export class HintFactory {
   private guideCounter = 0
-  private diagramContainer: ContainerSymbolId
+  private diagramContainer: SymbolId
 
   private readonly context: LayoutContext
   private readonly symbols: Symbols
@@ -32,7 +32,7 @@ export class HintFactory {
   }: {
     context: LayoutContext
     symbols: Symbols
-    diagramContainer: ContainerSymbolId
+    diagramContainer: SymbolId
   }) {
     this.context = context
     this.symbols = symbols

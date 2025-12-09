@@ -1,6 +1,6 @@
 // src/hint/figure_builder.ts
 
-import type { ContainerSymbolId, SymbolId } from "../model"
+import type { SymbolId } from "../model"
 import type { HintFactory, SymbolOrId } from "../dsl"
 import { toSymbolId } from "../dsl"
 
@@ -18,7 +18,7 @@ export class FigureBuilder {
 
   constructor(
     private readonly hint: HintFactory,
-    private readonly container: ContainerSymbolId
+    private readonly container: SymbolId
   ) {}
 
   /**

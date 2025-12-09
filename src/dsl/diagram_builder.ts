@@ -3,7 +3,7 @@ import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
 import { DiagramSymbol, Symbols, LayoutContext } from "../model"
-import type { ContainerSymbolId, DiagramInfo, SymbolBase } from "../model"
+import type { DiagramInfo, SymbolBase } from "../model"
 import { CorePlugin } from "../plugin"
 import { convertMetaUrlToSvgPath } from "../utils"
 import type { DiagramPlugin } from "./diagram_plugin"
@@ -144,7 +144,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const hint = new HintFactory({
       context,
       symbols,
-      diagramContainer: diagramSymbol.id as ContainerSymbolId,
+      diagramContainer: diagramSymbol.id,
     })
 
     // invoke callback: object-style only
@@ -156,7 +156,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     if (symbolList.length > 0) {
       hint.enclose(
-        diagramSymbol.id as ContainerSymbolId,
+        diagramSymbol.id,
         symbolList.map((s) => s.id)
       )
     }
