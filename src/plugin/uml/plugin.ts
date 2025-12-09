@@ -11,7 +11,7 @@ import {
   Include,
 } from "./relationships"
 import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
-import type { RelationshipId, LayoutContext } from "../../model"
+import type { RelationshipId } from "../../model"
 import { toContainerSymbolId } from "../../model"
 import type { Theme } from "../../theme"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
@@ -24,7 +24,7 @@ import { toSymbolId, type SymbolOrId } from "../../dsl"
 export const UMLPlugin = {
   name: "uml",
 
-  createSymbolFactory(symbols: Symbols, context: LayoutContext, theme: Theme, _icons: PluginIcons) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {
@@ -102,7 +102,7 @@ export const UMLPlugin = {
     }
   },
 
-  createRelationshipFactory(relationships: Relationships, _context: LayoutContext, theme: Theme, _icons: PluginIcons) {
+  createRelationshipFactory(relationships: Relationships, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {

@@ -1,7 +1,7 @@
 // src/dsl/namespace_builder.ts
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { BuildElementNamespace, BuildRelationshipNamespace, BuildIconNamespace, PluginIcons } from "./namespace_types"
-import type { LayoutContext, Symbols } from "../model"
+import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import { IconLoader } from "../icon"
@@ -35,7 +35,6 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    */
   buildElementNamespace(
     symbols: Symbols,
-    layout: LayoutContext,
     theme: Theme,
     icons: BuildIconNamespace<TPlugins>
   ): BuildElementNamespace<TPlugins> {
@@ -45,7 +44,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     for (const plugin of this.plugins) {
       if (typeof plugin.createSymbolFactory === "function") {
         const pluginIcons = iconNamespace[plugin.name] || {}
-        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout, theme, pluginIcons as PluginIcons)
+        namespace[plugin.name] = plugin.createSymbolFactory(symbols, theme, pluginIcons as PluginIcons)
       }
     }
 
@@ -66,7 +65,6 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    */
   buildRelationshipNamespace(
     relationships: Relationships,
-    layout: LayoutContext,
     theme: Theme,
     icons: BuildIconNamespace<TPlugins>
   ): BuildRelationshipNamespace<TPlugins> {
@@ -78,7 +76,6 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
         const pluginIcons = iconNamespace[plugin.name] || {}
         namespace[plugin.name] = plugin.createRelationshipFactory(
           relationships,
-          layout,
           theme,
           pluginIcons as PluginIcons
         )
