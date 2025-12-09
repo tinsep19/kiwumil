@@ -1,5 +1,5 @@
 // src/dsl/diagram_plugin.ts
-import type { RelationshipId, SymbolBase, Symbols, LayoutContext } from "../model"
+import type { RelationshipId, SymbolBase, Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import type { PluginIcons } from "./namespace_types"
@@ -37,7 +37,7 @@ export interface DiagramPlugin {
    * @param symbols - 生成した Symbol を登録するインスタンス
    * @returns Symbol 作成関数のオブジェクト（各関数は `SymbolBase` を返す）
    */
-  createSymbolFactory?(symbols: Symbols, context: LayoutContext, theme: Theme, icons: PluginIcons): SymbolFactoryMap
+  createSymbolFactory?(symbols: Symbols, theme: Theme, icons: PluginIcons): SymbolFactoryMap
 
   /**
    * Relationship 用の DSL ファクトリを生成
@@ -47,7 +47,6 @@ export interface DiagramPlugin {
    */
   createRelationshipFactory?(
     relationships: Relationships,
-    context: LayoutContext,
     theme: Theme,
     icons: PluginIcons
   ): RelationshipFactoryMap

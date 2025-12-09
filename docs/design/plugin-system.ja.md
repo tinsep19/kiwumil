@@ -63,9 +63,10 @@ TypeDiagram("My UML Diagram")
 ### 型定義
 
 ```typescript
-import type { LayoutContext } from "../layout/layout_context"
 import type { Symbols } from "./symbols"
 import type { Relationships } from "./relationships"
+import type { Theme } from "../theme"
+import type { PluginIcons } from "./namespace_types"
 
 interface DiagramPlugin {
   /**
@@ -76,23 +77,27 @@ interface DiagramPlugin {
   /**
    * Symbol 用の DSL ファクトリを生成
    * @param symbols - 生成した Symbol を登録するインスタンス
-   * @param layout - レイアウトコンテキスト（LayoutBound 生成用）
+   * @param theme - テーマ設定
+   * @param icons - プラグインが登録したアイコンへのアクセス
    * @returns Symbol 作成関数のオブジェクト（各関数は SymbolId を返す）
    */
   createSymbolFactory?(
     symbols: Symbols,
-    layout: LayoutContext
+    theme: Theme,
+    icons: PluginIcons
   ): Record<string, (...args: any[]) => SymbolId>
 
   /**
    * Relationship 用の DSL ファクトリを生成
    * @param relationships - 生成した Relationship を登録するインスタンス
-   * @param layout - レイアウトコンテキスト
+   * @param theme - テーマ設定
+   * @param icons - プラグインが登録したアイコンへのアクセス
    * @returns Relationship 作成関数のオブジェクト（各関数は RelationshipId を返す）
    */
   createRelationshipFactory?(
     relationships: Relationships,
-    layout: LayoutContext
+    theme: Theme,
+    icons: PluginIcons
   ): Record<string, (...args: any[]) => RelationshipId>
 }
 ```
@@ -101,7 +106,6 @@ interface DiagramPlugin {
 
 - **`name`**: プラグインの名前空間（`el.{name}.xxx()` でアクセス）
 - **SymbolId / RelationshipId を返す**: `Symbols.register()` / `Relationships.register()` で登録し、ID を返す
-- **`LayoutContext` の利用**: ファクトリは第2引数 `layout` を受け取り、`layout.variables.createBound(id)` で LayoutBound を生成してシンボルに注入する
 - **ファクトリはオプショナル**: Symbol のみ・Relationship のみを提供するプラグインも問題なく動作する
 - **登録は Symbols/Relationships が担当**: `symbols.register(plugin, name, factory)` を呼び出すと、ID の生成と配列への追加が自動的に行われる
 - **名前空間名はユニークにする**: `NamespaceBuilder` は `plugin.name` をキーに `el` / `rel` を構築するため、同じ名前のプラグインがあると後勝ちで上書きされる。`core` はビルトインなので避けること。
@@ -116,34 +120,50 @@ interface DiagramPlugin {
 ```typescript
 import type { DiagramPlugin } from "kiwumil"
 import type { SymbolBase, RelationshipBase, SymbolId, RelationshipId } from "kiwumil"
-import type { LayoutContext } from "kiwumil"
 import type { Symbols, Relationships } from "kiwumil"
+import type { Theme } from "kiwumil"
+import type { PluginIcons } from "kiwumil"
 
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
     
     return {
       mySymbol(label: string): SymbolId {
-        const symbol = symbols.register(plugin, "mySymbol", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const instance = new MySymbol(symbolId, label, bound)
-          return instance
+        const symbol = symbols.register(plugin, "mySymbol", (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
+          const instance = new MySymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme
+          })
+          r.setSymbol(instance)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
+            instance.ensureLayoutBounds(builder)
+          })
+          return r.build()
         })
         return symbol.id
       }
     }
   },
 
-  createRelationshipFactory(relationships: Relationships, layout: LayoutContext) {
+  createRelationshipFactory(relationships: Relationships, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
     
     return {
       myRelation(from: SymbolId, to: SymbolId): RelationshipId {
         const relationship = relationships.register(plugin, "myRelation", (id) => {
-          return new MyRelation(id, from, to)
+          return new MyRelation({
+            id,
+            from,
+            to,
+            theme
+          })
         })
         return relationship.id
       }
@@ -165,41 +185,119 @@ import { Generalize } from "./relationships/generalize"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
 import { toContainerSymbolId } from "../../model/container_symbol_base"
-import type { LayoutContext } from "../../layout/layout_context"
 import { Symbols } from "../../dsl/symbols"
 import { Relationships } from "../../dsl/relationships"
+import type { Theme } from "../../theme"
+import type { PluginIcons } from "../../dsl"
 
 export const UMLPlugin = {
   name: 'uml',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
     
     return {
       actor(label: string): SymbolId {
-        const symbol = symbols.register(plugin, "actor", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const actor = new ActorSymbol(symbolId, label, bound)
-          return actor
+        const symbol = symbols.register(plugin, "actor", (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
+          const actor = new ActorSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme
+          })
+          r.setSymbol(actor)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
+            actor.ensureLayoutBounds(builder)
+          })
+          return r.build()
         })
         return symbol.id
       },
       
       usecase(label: string): SymbolId {
-        const symbol = symbols.register(plugin, "usecase", (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          const usecase = new UsecaseSymbol(symbolId, label, bound)
-          return usecase
+        const symbol = symbols.register(plugin, "usecase", (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
+          const usecase = new UsecaseSymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme
+          })
+          r.setSymbol(usecase)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
+            usecase.ensureLayoutBounds(builder)
+          })
+          return r.build()
         })
         return symbol.id
       },
       
       systemBoundary(label: string): ContainerSymbolId {
-        const symbol = symbols.register(plugin, "systemBoundary", (symbolId) => {
+        const symbol = symbols.register(plugin, "systemBoundary", (symbolId, r) => {
           const id = toContainerSymbolId(symbolId)
-          const bound = layout.variables.createBound(id)
-          return new SystemBoundarySymbol(id, label, bound, layout)
+          const bound = r.createBounds("layout", "layout")
+          const container = r.createBounds("container", "container")
+          const boundary = new SystemBoundarySymbol({
+            id,
+            layout: bound,
+            container,
+            label,
+            theme
+          })
+          r.setSymbol(boundary)
+          r.setCharacs({ id, layout: bound, container })
+          r.setConstraint((builder) => {
+            boundary.ensureLayoutBounds(builder)
+          })
+          return r.build()
         })
+        return symbol.id as ContainerSymbolId
+      }
+    }
+  },
+  
+  createRelationshipFactory(
+    relationships: Relationships,
+    theme: Theme,
+    _icons: PluginIcons
+  ) {
+    const plugin = this.name
+    
+    return {
+      associate(from: SymbolId, to: SymbolId): RelationshipId {
+        const relationship = relationships.register(plugin, "association", (id) => 
+          new Association({ id, from, to, theme })
+        )
+        return relationship.id
+      },
+      
+      include(from: SymbolId, to: SymbolId): RelationshipId {
+        const relationship = relationships.register(plugin, "include", (id) => 
+          new Include({ id, from, to, theme })
+        )
+        return relationship.id
+      },
+      
+      extend(from: SymbolId, to: SymbolId): RelationshipId {
+        const relationship = relationships.register(plugin, "extend", (id) => 
+          new Extend({ id, from, to, theme })
+        )
+        return relationship.id
+      },
+      
+      generalize(from: SymbolId, to: SymbolId): RelationshipId {
+        const relationship = relationships.register(plugin, "generalize", (id) => 
+          new Generalize({ id, from, to, theme })
+        )
+        return relationship.id
+      }
+    }
+  }
+} as const satisfies DiagramPlugin
+```
         return symbol.id as ContainerSymbolId
       }
     }
@@ -394,27 +492,43 @@ import type { Relationships } from "../../dsl/relationships"
 export const MyDiagramPlugin: DiagramPlugin = {
   name: 'mydiagram',
   
-  createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
     
     return {
       mySymbol(label: string): SymbolId {
-        const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
-          const bound = layout.variables.createBound(symbolId)
-          return new MySymbol(symbolId, label, bound)
+        const symbol = symbols.register(plugin, 'mySymbol', (symbolId, r) => {
+          const bound = r.createBounds("layout", "layout")
+          const instance = new MySymbol({
+            id: symbolId,
+            layout: bound,
+            label,
+            theme
+          })
+          r.setSymbol(instance)
+          r.setCharacs({ id: symbolId, layout: bound })
+          r.setConstraint((builder) => {
+            instance.ensureLayoutBounds(builder)
+          })
+          return r.build()
         })
         return symbol.id
       }
     }
   },
   
-  createRelationshipFactory(relationships: Relationships, _layout: LayoutContext) {
+  createRelationshipFactory(relationships: Relationships, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
     
     return {
       myRelation(from: SymbolId, to: SymbolId): RelationshipId {
         const relationship = relationships.register(plugin, 'myRelation', (id) => {
-          return new MyRelation(id, from, to)
+          return new MyRelation({
+            id,
+            from,
+            to,
+            theme
+          })
         })
         return relationship.id
       }
@@ -464,7 +578,7 @@ createSymbolFactory(symbols: any, layout: any) {
 
 **✅ 推奨:**
 ```typescript
-createSymbolFactory(symbols: Symbols, layout: LayoutContext) {
+createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
   return {
     mySymbol(label: string): SymbolId {
       // 明示的な型定義
@@ -488,9 +602,20 @@ mySymbol(label: string): SymbolId {
 **✅ 推奨:**
 ```typescript
 mySymbol(label: string): SymbolId {
-  const symbol = symbols.register(plugin, 'mySymbol', (symbolId) => {
-    const bound = layout.variables.createBound(symbolId)
-    return new MySymbol(symbolId, label, bound)
+  const symbol = symbols.register(plugin, 'mySymbol', (symbolId, r) => {
+    const bound = r.createBounds("layout", "layout")
+    const instance = new MySymbol({
+      id: symbolId,
+      layout: bound,
+      label,
+      theme
+    })
+    r.setSymbol(instance)
+    r.setCharacs({ id: symbolId, layout: bound })
+    r.setConstraint((builder) => {
+      instance.ensureLayoutBounds(builder)
+    })
+    return r.build()
   })
   return symbol.id
 }
