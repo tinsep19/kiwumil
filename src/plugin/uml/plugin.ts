@@ -12,7 +12,6 @@ import {
 } from "./relationships"
 import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
 import type { RelationshipId } from "../../model"
-import { toContainerSymbolId } from "../../model"
 import type { Theme } from "../../theme"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
 
@@ -81,18 +80,17 @@ export const UMLPlugin = {
        */
       systemBoundary(label: string): SystemBoundarySymbol {
         return symbols.register(plugin, "systemBoundary", (symbolId, r) => {
-          const id = toContainerSymbolId(symbolId)
           const bound = r.createBounds("layout", "layout")
           const container = r.createBounds("container", "container")
           const boundary = new SystemBoundarySymbol({
-            id,
+            id: symbolId,
             layout: bound,
             container,
             label,
             theme,
           })
           r.setSymbol(boundary)
-          r.setCharacs({ id, layout: bound, container })
+          r.setCharacs({ id: symbolId, layout: bound, container })
           r.setConstraint((builder) => {
             boundary.ensureLayoutBounds(builder)
           })

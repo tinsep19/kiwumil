@@ -1,6 +1,6 @@
 // src/hint/grid_builder.ts
 
-import type { ContainerSymbolId, SymbolId } from "../model"
+import type { SymbolId } from "../model"
 import type { HintFactory } from "../dsl"
 import { isRectMatrix, toSymbolId, type SymbolOrId } from "../dsl"
 
@@ -18,7 +18,7 @@ export class GridBuilder {
 
   constructor(
     private readonly hint: HintFactory,
-    private readonly container: ContainerSymbolId
+    private readonly container: SymbolId
   ) {}
 
   /**

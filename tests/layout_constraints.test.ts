@@ -3,13 +3,12 @@ import { LayoutContext } from "@/model"
 import { HintFactory, Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 import { ActorSymbol, SystemBoundarySymbol } from "@/plugin/uml"
-import { toContainerSymbolId } from "@/model"
 
 describe("LayoutConstraints metadata", () => {
   let context: LayoutContext
   let hint: HintFactory
   let symbols: Symbols
-  const diagramContainerId = toContainerSymbolId("__diagram__")
+  const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
     context = new LayoutContext(DefaultTheme)
@@ -37,18 +36,17 @@ describe("LayoutConstraints metadata", () => {
 
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId, r) => {
-      const containerId = toContainerSymbolId(symbolId)
       const bound = r.createBounds("layout", "layout")
       const container = r.createBounds("container", "container")
       const boundary = new SystemBoundarySymbol({
-        id: containerId,
+        id: symbolId,
         layout: bound,
         container,
         label: id,
         theme: DefaultTheme,
       })
       r.setSymbol(boundary)
-      r.setCharacs({ id: containerId, layout: bound, container })
+      r.setCharacs({ id: symbolId, layout: bound, container })
       r.setConstraint((builder) => {
         boundary.ensureLayoutBounds(builder)
       })

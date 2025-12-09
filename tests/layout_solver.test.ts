@@ -2,7 +2,7 @@ import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "@/model"
 import { getBoundsValues } from "@/layout"
 import { ActorSymbol, UsecaseSymbol, SystemBoundarySymbol } from "@/plugin/uml"
-import { DiagramSymbol, toContainerSymbolId } from "@/model"
+import { DiagramSymbol } from "@/model"
 import { HintFactory, Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 
@@ -10,7 +10,7 @@ describe("Layout pipeline", () => {
   let symbols: Symbols
   let context: LayoutContext
   let hint: HintFactory
-  const diagramContainerId = toContainerSymbolId("__diagram__")
+  const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
     context = new LayoutContext(DefaultTheme)
@@ -56,18 +56,17 @@ describe("Layout pipeline", () => {
 
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId, r) => {
-      const containerId = toContainerSymbolId(symbolId)
       const bound = r.createBounds("layout", "layout")
       const container = r.createBounds("container", "container")
       const boundary = new SystemBoundarySymbol({
-        id: containerId,
+        id: symbolId,
         layout: bound,
         container,
         label: id,
         theme: DefaultTheme,
       })
       r.setSymbol(boundary)
-      r.setCharacs({ id: containerId, layout: bound, container })
+      r.setCharacs({ id: symbolId, layout: bound, container })
       r.setConstraint((builder) => {
         boundary.ensureLayoutBounds(builder)
       })
@@ -76,7 +75,7 @@ describe("Layout pipeline", () => {
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
-    const diagramId = toContainerSymbolId("__diagram__")
+    const diagramId = "__diagram__"
     const diagramBound = context.variables.createBounds(diagramId)
     const diagramContainer = context.variables.createBounds(`${diagramId}.container`, "container")
     const diagram = new DiagramSymbol(
@@ -137,7 +136,7 @@ describe("Layout pipeline", () => {
     const b = createActor("child-b")
 
     hint.arrangeVertical(a.id, b.id)
-    hint.enclose(toContainerSymbolId(boundary.id), [a.id, b.id])
+    hint.enclose(boundary.id, [a.id, b.id])
     context.solveAndApply(symbols.getAllSymbols())
 
     const aBounds = getBoundsValues(a.layout)

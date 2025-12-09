@@ -1,5 +1,5 @@
 // src/dsl/hint_factory.ts
-import { ContainerSymbol, ContainerSymbolId, SymbolBase, Symbols, LayoutContext } from "../model"
+import { ContainerSymbol, SymbolBase, Symbols, LayoutContext, SymbolId } from "../model"
 import {
   FigureBuilder,
   GridBuilder,
@@ -9,18 +9,17 @@ import {
 } from "../hint"
 import {
   ContainerSymbolOrId,
-  toContainerSymbolId,
   toSymbolId,
   type SymbolOrId,
 } from "./symbol_helpers"
 import type { LayoutConstraintTarget } from "../layout"
 
-type LayoutTargetId = SymbolOrId | ContainerSymbolId
+type LayoutTargetId = SymbolOrId
 type LayoutContainerTarget = ContainerSymbolOrId
 
 export class HintFactory {
   private guideCounter = 0
-  private diagramContainer: ContainerSymbolId
+  private diagramContainer: SymbolId
 
   private readonly context: LayoutContext
   private readonly symbols: Symbols
@@ -32,7 +31,7 @@ export class HintFactory {
   }: {
     context: LayoutContext
     symbols: Symbols
-    diagramContainer: ContainerSymbolId
+    diagramContainer: SymbolId
   }) {
     this.context = context
     this.symbols = symbols
@@ -44,7 +43,7 @@ export class HintFactory {
    * @param container コンテナID。省略時は diagram 全体を対象とする
    */
   grid(container?: LayoutContainerTarget): GridBuilder {
-    const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
+    const targetContainer = container ? toSymbolId(container) : this.diagramContainer
     return new GridBuilder(this, targetContainer)
   }
 
@@ -53,7 +52,7 @@ export class HintFactory {
    * @param container コンテナID。省略時は diagram 全体を対象とする
    */
   figure(container?: LayoutContainerTarget): FigureBuilder {
-    const targetContainer = container ? toContainerSymbolId(container) : this.diagramContainer
+    const targetContainer = container ? toSymbolId(container) : this.diagramContainer
     return new FigureBuilder(this, targetContainer)
   }
 
@@ -124,7 +123,7 @@ export class HintFactory {
   }
 
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
-    const containerId = toContainerSymbolId(container)
+    const containerId = toSymbolId(container)
     const containerSymbol = this.symbols.findSymbolById(containerId)
     if (containerSymbol) {
       const containerNestLevel = containerSymbol.nestLevel

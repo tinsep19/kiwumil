@@ -49,7 +49,7 @@ export class LayoutContext {
   
   constructor(
     theme: Theme,
-    resolveSymbol: (id: SymbolId | ContainerSymbolId) => SymbolBase | undefined
+    resolveSymbol: (id: SymbolId | SymbolId) => SymbolBase | undefined
   )
   
   solve(): void
@@ -66,7 +66,7 @@ kiwi の Variable/Constraint 生成を担う薄い層。
 ```typescript
 export class LayoutVariables {
   createVar(name: string): LayoutVariable
-  createBound(id: SymbolId | ContainerSymbolId): Bounds
+  createBound(id: SymbolId | SymbolId): Bounds
   expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
   addConstraint(
     lhs: LayoutExpressionInput,
@@ -94,8 +94,8 @@ export class LayoutConstraints {
   arrangeVertical(symbolIds: LayoutSymbolId[], gap?: number): void
   alignLeft(symbolIds: LayoutSymbolId[]): void
   // ... 他のヒントメソッド
-  encloseGrid(containerId: ContainerSymbolId, matrix: SymbolId[][], options?): void
-  encloseFigure(containerId: ContainerSymbolId, rows: SymbolId[][], options?): void
+  encloseGrid(containerId: SymbolId, matrix: SymbolId[][], options?): void
+  encloseFigure(containerId: SymbolId, rows: SymbolId[][], options?): void
 }
 ```
 
@@ -127,7 +127,7 @@ export interface Bounds {
 
 ```typescript
 // LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
-createBound(id: SymbolId | ContainerSymbolId): Bounds {
+createBound(id: SymbolId | SymbolId): Bounds {
   const x = this.createVar(\`\${id}.x\`)
   const y = this.createVar(\`\${id}.y\`)
   const width = this.createVar(\`\${id}.width\`)
