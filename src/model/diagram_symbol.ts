@@ -4,7 +4,6 @@ import type { Theme } from "../theme"
 import type { Point } from "./types"
 import type { DiagramInfo } from "./diagram_info"
 import type { ContainerBounds, ConstraintsBuilder } from "../layout"
-import type { LayoutContext } from "./"
 import { getBoundsValues } from "../layout"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
@@ -20,11 +19,10 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   private readonly diagramInfo: DiagramInfo
   private constraintsApplied = false
 
-  constructor(options: DiagramSymbolOptions, layout: LayoutContext) {
+  constructor(options: DiagramSymbolOptions) {
     super(options)
     this.container = options.container
     this.diagramInfo = options.info
-    this.registerContainerConstraints(layout)
   }
 
   getDefaultSize() {
@@ -44,12 +42,6 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
 
   protected getHeaderHeight(theme: Theme): number {
     return theme.defaultStyleSet.verticalGap
-  }
-
-  private registerContainerConstraints(context: LayoutContext) {
-    context.hints.withSymbol(this.id, (builder) => {
-      this.ensureLayoutBounds(builder)
-    })
   }
 
   private buildContainerConstraints(builder: ConstraintsBuilder): void {

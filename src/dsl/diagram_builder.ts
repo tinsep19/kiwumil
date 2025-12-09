@@ -94,8 +94,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
           container: containerBound,
           info: diagramInfo,
           theme: this.currentTheme,
-        },
-        context
+        }
       )
       r.setSymbol(symbol)
       r.setCharacs({id, layout: diagramBound, container: containerBound})

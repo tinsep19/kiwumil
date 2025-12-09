@@ -86,9 +86,12 @@ describe("Layout pipeline", () => {
         container: diagramContainer,
         info: { title: "Test" },
         theme: DefaultTheme,
-      },
-      context
+      }
     )
+    // Register constraints manually since we removed registerContainerConstraints
+    context.hints.withSymbol(diagram.id, (builder) => {
+      diagram.ensureLayoutBounds(builder)
+    })
     context.solveAndApply([...symbols.getAllSymbols(), diagram])
 
     const bounds = getBoundsValues(diagram.layout)
