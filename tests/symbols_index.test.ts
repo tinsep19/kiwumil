@@ -3,6 +3,7 @@ import { LayoutContext } from "@/model"
 import { Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 import type { SymbolId } from "@/model/types"
+import type { SymbolRegistration } from "@/model/symbols"
 
 describe("Symbols Index Map", () => {
   let context: LayoutContext
@@ -13,9 +14,9 @@ describe("Symbols Index Map", () => {
     symbols = new Symbols(context.variables)
   })
 
-  test("findById should return registered symbol", () => {
-    // Register a symbol
-    const registration = symbols.register("test-plugin", "test-symbol", (symbolId, builder) => {
+  // Helper function to create a test symbol registration
+  const createTestSymbol = (plugin: string, symbolName: string): SymbolRegistration => {
+    return symbols.register(plugin, symbolName, (symbolId, builder) => {
       const layout = builder.createBounds("layout", "layout")
       builder.setCharacs({
         id: symbolId,
@@ -32,6 +33,10 @@ describe("Symbols Index Map", () => {
       })
       return builder.build()
     })
+  }
+
+  test("findById should return registered symbol", () => {
+    const registration = createTestSymbol("test-plugin", "test-symbol")
 
     // Test findById
     const found = symbols.findById(registration.symbol.id)
@@ -45,24 +50,7 @@ describe("Symbols Index Map", () => {
   })
 
   test("findSymbolById should return registered symbol", () => {
-    // Register a symbol
-    const registration = symbols.register("test-plugin", "test-symbol", (symbolId, builder) => {
-      const layout = builder.createBounds("layout", "layout")
-      builder.setCharacs({
-        id: symbolId,
-        layout,
-      })
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
-      builder.setConstraint((cb) => {
-        cb.expr([1, layout.width]).eq([100, 1]).strong()
-        cb.expr([1, layout.height]).eq([100, 1]).strong()
-      })
-      return builder.build()
-    })
+    const registration = createTestSymbol("test-plugin", "test-symbol")
 
     // Test findSymbolById
     const found = symbols.findSymbolById(registration.symbol.id)
@@ -76,51 +64,10 @@ describe("Symbols Index Map", () => {
   })
 
   test("findById should work with multiple symbols", () => {
-    // Register multiple symbols
-    const reg1 = symbols.register("plugin1", "symbol1", (symbolId, builder) => {
-      const layout = builder.createBounds("layout", "layout")
-      builder.setCharacs({ id: symbolId, layout })
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
-      builder.setConstraint((cb) => {
-        cb.expr([1, layout.width]).eq([100, 1]).strong()
-        cb.expr([1, layout.height]).eq([100, 1]).strong()
-      })
-      return builder.build()
-    })
-
-    const reg2 = symbols.register("plugin2", "symbol2", (symbolId, builder) => {
-      const layout = builder.createBounds("layout", "layout")
-      builder.setCharacs({ id: symbolId, layout })
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
-      builder.setConstraint((cb) => {
-        cb.expr([1, layout.width]).eq([100, 1]).strong()
-        cb.expr([1, layout.height]).eq([100, 1]).strong()
-      })
-      return builder.build()
-    })
-
-    const reg3 = symbols.register("plugin3", "symbol3", (symbolId, builder) => {
-      const layout = builder.createBounds("layout", "layout")
-      builder.setCharacs({ id: symbolId, layout })
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
-      builder.setConstraint((cb) => {
-        cb.expr([1, layout.width]).eq([100, 1]).strong()
-        cb.expr([1, layout.height]).eq([100, 1]).strong()
-      })
-      return builder.build()
-    })
+    // Register multiple symbols using helper
+    const reg1 = createTestSymbol("plugin1", "symbol1")
+    const reg2 = createTestSymbol("plugin2", "symbol2")
+    const reg3 = createTestSymbol("plugin3", "symbol3")
 
     // Test that all symbols can be found
     expect(symbols.findById(reg1.symbol.id)?.symbol.id).toBe(reg1.symbol.id)
@@ -132,24 +79,10 @@ describe("Symbols Index Map", () => {
   })
 
   test("index map should maintain consistency with registrations array", () => {
-    // Register multiple symbols
+    // Register multiple symbols using helper
     const registrations = []
     for (let i = 0; i < 5; i++) {
-      const reg = symbols.register(`plugin${i}`, `symbol${i}`, (symbolId, builder) => {
-        const layout = builder.createBounds("layout", "layout")
-        builder.setCharacs({ id: symbolId, layout })
-        builder.setSymbol({
-          id: symbolId,
-          render: () => "<svg></svg>",
-          getConnectionPoint: (src) => src,
-        })
-        builder.setConstraint((cb) => {
-          cb.expr([1, layout.width]).eq([100, 1]).strong()
-          cb.expr([1, layout.height]).eq([100, 1]).strong()
-        })
-        return builder.build()
-      })
-      registrations.push(reg)
+      registrations.push(createTestSymbol(`plugin${i}`, `symbol${i}`))
     }
 
     // Verify all registrations can be found via index
