@@ -201,9 +201,9 @@ Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提
 
 - 各プラグインは一意の `name` を持ち、`el.{name}` / `rel.{name}` の形で参照されます。
 - `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
-- 両ファクトリは `Symbols` / `Relationships` インスタンスと `LayoutContext` を受け取ります。
+- 両ファクトリは `Symbols` / `Relationships` インスタンスと `Theme`、`PluginIcons` を受け取ります。
 - Symbol / Relationship の登録は `Symbols.register()` / `Relationships.register()` メソッドを使用します。
-- LayoutBound は `layout.variables.createBound(symbolId)` で生成し、コンストラクタに注入します。
+- LayoutBounds は `symbols.register()` のコールバック内で `r.createBounds()` を使用して生成します。
 
 ### 参考資料
 
@@ -234,12 +234,14 @@ class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
   buildElementNamespace(
     symbols: Symbols,
-    layout: LayoutContext
+    theme: Theme,
+    icons: BuildIconNamespace<TPlugins>
   ): BuildElementNamespace<TPlugins> {
     const namespace = {} as any
     for (const plugin of this.plugins) {
       if (plugin.createSymbolFactory) {
-        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout)
+        const pluginIcons = icons[plugin.name] || {}
+        namespace[plugin.name] = plugin.createSymbolFactory(symbols, theme, pluginIcons)
       }
     }
     return namespace
@@ -247,12 +249,14 @@ class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
   buildRelationshipNamespace(
     relationships: Relationships,
-    layout: LayoutContext
+    theme: Theme,
+    icons: BuildIconNamespace<TPlugins>
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace = {} as any
     for (const plugin of this.plugins) {
       if (plugin.createRelationshipFactory) {
-        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout)
+        const pluginIcons = icons[plugin.name] || {}
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, theme, pluginIcons)
       }
     }
     return namespace
