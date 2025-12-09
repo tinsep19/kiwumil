@@ -3,7 +3,7 @@ export { HintFactory } from "./hint_factory"
 export { NamespaceBuilder } from "./namespace_builder"
 export { Symbols } from "../model"
 export { Relationships } from "./relationships"
-export type { DiagramPlugin } from "./diagram_plugin"
+export type { DiagramPlugin, IconRegistrar, IconRegistrarCallback, Icons } from "./diagram_plugin"
 export type {
   BuildElementNamespace,
   BuildRelationshipNamespace,

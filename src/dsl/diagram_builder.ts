@@ -41,7 +41,7 @@ type IntelliSenseBlockArgs<TPlugins extends readonly DiagramPlugin[]> = (
 ) => void
 
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
-type IconRegistrarCreateLoader = RegisterIconsParam["createLoader"]
+type CreateRegistrar = RegisterIconsParam["createRegistrar"]
 
 type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
 
@@ -124,14 +124,14 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon_loaders: Record<string, IconLoader> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === 'function') {
-        const createLoader: IconRegistrarCreateLoader = (pluginName, importMeta, iconRegistrationBlock) => {
+        const createRegistrar: CreateRegistrar = (pluginName, importMeta, iconRegistrationBlock) => {
           const loader = new IconLoader(pluginName, importMeta?.url ?? '')
           iconRegistrationBlock(loader)
           icon_loaders[pluginName] = loader
         }
 
         plugin.registerIcons({
-          createLoader,
+          createRegistrar,
         })
       }
     }

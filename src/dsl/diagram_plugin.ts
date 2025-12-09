@@ -9,11 +9,14 @@ type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolBase>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+export type IconRegistrar = { register: (name: string, relPath: string) => void }
+export type IconRegistrarCallback = (registrar: IconRegistrar) => void
+
 export type Icons = {
-  createLoader: (
+  createRegistrar: (
     plugin: string,
     importMeta: ImportMeta,
-    cb: (loader: { register: (name: string, relPath: string) => void }) => void
+    callback: IconRegistrarCallback
   ) => void
 }
 
@@ -50,7 +53,7 @@ export interface DiagramPlugin {
   ): RelationshipFactoryMap
 
   /**
-   * Optional: plugin can register icons. The icons API provides createLoader(plugin, importMeta, cb)
+   * Optional: plugin can register icons. The icons API provides createRegistrar(plugin, importMeta, callback)
    */
   registerIcons?(icons: Icons): void
 }
