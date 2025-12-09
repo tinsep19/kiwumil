@@ -21,7 +21,7 @@ import { IconLoader } from "../icon"
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
  *
- * オブジェクトスタイルでel (element), rel (relationship), hint, icon の4つのパラメータを受け取り、
+ * オブジェクトスタイルで `el` (element), `rel` (relationship), `hint`, `icon` の4つのパラメータを受け取り、
  * 型安全に図の要素を定義できる。
  */
 type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
