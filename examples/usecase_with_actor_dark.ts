@@ -3,7 +3,7 @@ import { TypeDiagram, UMLPlugin, DarkTheme } from "../src/index"
 TypeDiagram("Usecase with Actor (Dark Theme)")
   .use(UMLPlugin)
   .theme(DarkTheme)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
     const logout = el.uml.usecase("Logout")

@@ -43,7 +43,7 @@ import { TypeDiagram, UMLPlugin } from "kiwumil"
 
 TypeDiagram("My UML Diagram")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     // el.uml が UMLPlugin によって提供される
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
@@ -551,7 +551,7 @@ import { TypeDiagram, MyDiagramPlugin } from "kiwumil"
 
 TypeDiagram("My Diagram")
   .use(MyDiagramPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const a = el.mydiagram.mySymbol("A")
     const b = el.mydiagram.mySymbol("B")
     rel.mydiagram.myRelation(a, b)
@@ -731,7 +731,7 @@ describe("MyDiagramPlugin", () => {
     let symbolCount = 0
     TypeDiagram("Test")
       .use(MyDiagramPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         const a = el.mydiagram.mySymbol("A")
         const b = el.mydiagram.mySymbol("B")
         
@@ -746,7 +746,7 @@ describe("MyDiagramPlugin", () => {
   test("should create relationships with correct IDs", () => {
     TypeDiagram("Test")
       .use(MyDiagramPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         const a = el.mydiagram.mySymbol("A")
         const b = el.mydiagram.mySymbol("B")
         const relId = rel.mydiagram.myRelation(a, b)
@@ -758,7 +758,7 @@ describe("MyDiagramPlugin", () => {
   test("should work with multiple plugins", () => {
     TypeDiagram("Test")
       .use(MyDiagramPlugin, UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         const mySymbol = el.mydiagram.mySymbol("A")
         const actor = el.uml.actor("User")
         

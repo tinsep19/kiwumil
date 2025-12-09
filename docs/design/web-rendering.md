@@ -128,13 +128,13 @@ export function convertMetaUrlToSvgPath(metaUrl: string): string {
 // 従来の方法
 TypeDiagram("Diagram 1")
   .use(UMLPlugin)
-  .build((el, rel, hint) => { /* ... */ })
+  .build(({ el, rel, hint }) => { /* ... */ })
   .render("output/diagram1.svg")
 
 // import.meta による自動生成
 TypeDiagram("Diagram 2")
   .use(UMLPlugin)
-  .build((el, rel, hint) => { /* ... */ })
+  .build(({ el, rel, hint }) => { /* ... */ })
   .render(import.meta)
 ```
 
@@ -147,7 +147,7 @@ const container = document.getElementById("diagram-container")!
 
 TypeDiagram("Interactive Diagram")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const system = el.uml.usecase("System")
     rel.uml.associate(user, system)
