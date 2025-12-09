@@ -2,8 +2,8 @@
 
 export type SymbolId = string
 
-declare const CONTAINER_SYMBOL_ID: unique symbol
-export type ContainerSymbolId = SymbolId & { readonly [CONTAINER_SYMBOL_ID]: true }
+// ContainerSymbolId をブランド型から単純エイリアスに変更して互換性を保つ
+export type ContainerSymbolId = SymbolId
 
 export type RelationshipId = string
 
