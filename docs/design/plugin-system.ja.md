@@ -183,8 +183,7 @@ import { Include } from "./relationships/include"
 import { Extend } from "./relationships/extend"
 import { Generalize } from "./relationships/generalize"
 import type { DiagramPlugin } from "../../dsl/diagram_plugin"
-import type { SymbolId, RelationshipId, ContainerSymbolId } from "../../model/types"
-import { toContainerSymbolId } from "../../model/container_symbol_base"
+import type { SymbolId, RelationshipId } from "../../model/types"
 import { Symbols } from "../../dsl/symbols"
 import { Relationships } from "../../dsl/relationships"
 import type { Theme } from "../../theme"
@@ -235,26 +234,25 @@ export const UMLPlugin = {
         return symbol.id
       },
       
-      systemBoundary(label: string): ContainerSymbolId {
+      systemBoundary(label: string): SymbolId {
         const symbol = symbols.register(plugin, "systemBoundary", (symbolId, r) => {
-          const id = toContainerSymbolId(symbolId)
           const bound = r.createBounds("layout", "layout")
           const container = r.createBounds("container", "container")
           const boundary = new SystemBoundarySymbol({
-            id,
+            id: symbolId,
             layout: bound,
             container,
             label,
             theme
           })
           r.setSymbol(boundary)
-          r.setCharacs({ id, layout: bound, container })
+          r.setCharacs({ id: symbolId, layout: bound, container })
           r.setConstraint((builder) => {
             boundary.ensureLayoutBounds(builder)
           })
           return r.build()
         })
-        return symbol.id as ContainerSymbolId
+        return symbol.id
       }
     }
   },
@@ -298,10 +296,6 @@ export const UMLPlugin = {
   }
 } as const satisfies DiagramPlugin
 ```
-        return symbol.id as ContainerSymbolId
-      }
-    }
-  },
   
   createRelationshipFactory(
     relationships: Relationships,
