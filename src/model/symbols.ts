@@ -120,6 +120,7 @@ export class SymbolRegistrationBuilder {
  */
 export class Symbols {
   private readonly registrations: SymbolRegistration[] = []
+  private readonly registrations_index: Record<string, SymbolRegistration> = {}
   private readonly variables: LayoutVariables
 
   constructor(variables: LayoutVariables) {
@@ -152,6 +153,7 @@ export class Symbols {
     }
 
     this.registrations.push(registration)
+    this.registrations_index[symbolId] = registration
     return registration
   }
 
@@ -174,7 +176,7 @@ export class Symbols {
    * 指定した ID に一致する SymbolRegistration を返す（存在しなければ undefined）
    */
   findById(id: SymbolId): SymbolRegistration | undefined {
-    return this.registrations.find((r) => r.symbol.id === id)
+    return this.registrations_index[id]
   }
 
   /**
@@ -182,7 +184,7 @@ export class Symbols {
    * 後方互換性のため、SymbolBase として返す
    */
   findSymbolById(id: SymbolId): SymbolBase | undefined {
-    const registration = this.registrations.find((r) => r.symbol.id === id)
+    const registration = this.registrations_index[id]
     return registration?.symbol as SymbolBase | undefined
   }
 
