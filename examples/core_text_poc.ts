@@ -1,7 +1,7 @@
 import { TypeDiagram } from "../src/index"
 
 TypeDiagram("Core Text PoC")
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const singleLine = el.core.text({
       label: "Single line text symbol",
       textAnchor: "start"

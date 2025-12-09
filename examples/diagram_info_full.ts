@@ -9,7 +9,7 @@ TypeDiagram({
 })
   .use(UMLPlugin)
   .theme(BlueTheme)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const shop = el.uml.usecase("Browse Products")
     const cart = el.uml.usecase("Add to Cart")

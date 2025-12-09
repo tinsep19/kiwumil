@@ -102,7 +102,7 @@ const CustomPlugin = {
   }
 } as const satisfies DiagramPlugin
 
-TypeDiagram("Default Core").build((el, rel) => {
+TypeDiagram("Default Core").build(({ el, rel }) => {
   const _core = el.core
   expectAssignable<object>(_core)
   expectType<CircleSymbol>(el.core.circle("Circle"))
@@ -121,7 +121,7 @@ TypeDiagram("Default Core").build((el, rel) => {
 
 TypeDiagram("UML Plugin")
   .use(UMLPlugin)
-  .build((el, rel) => {
+  .build(({ el, rel }) => {
     const _uml = el.uml
     expectAssignable<object>(_uml)
 
@@ -139,7 +139,7 @@ TypeDiagram("UML Plugin")
 TypeDiagram("Multiple Plugins")
   .use(UMLPlugin)
   .use(CustomPlugin)
-  .build((el, rel) => {
+  .build(({ el, rel }) => {
     const _uml = el.uml
     expectAssignable<object>(_uml)
 

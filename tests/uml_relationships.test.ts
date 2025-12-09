@@ -10,7 +10,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel) => {
+        .build(({ el, rel }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           rel.uml.include(usecaseA, usecaseB)
@@ -25,7 +25,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           rel.uml.include(usecaseA, usecaseB)
@@ -45,7 +45,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel) => {
+        .build(({ el, rel }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           rel.uml.extend(usecaseA, usecaseB)
@@ -60,7 +60,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           rel.uml.extend(usecaseA, usecaseB)
@@ -80,7 +80,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel) => {
+        .build(({ el, rel }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           rel.uml.generalize(usecaseA, usecaseB)
@@ -95,7 +95,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           rel.uml.generalize(usecaseA, usecaseB)
@@ -115,7 +115,7 @@ describe("UML Relationships", () => {
 
       const result = TypeDiagram("Test Diagram")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const usecaseA = el.uml.usecase("UseCase A")
           const usecaseB = el.uml.usecase("UseCase B")
           const usecaseC = el.uml.usecase("UseCase C")

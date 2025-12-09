@@ -21,10 +21,10 @@ import { IconLoader } from "../icon"
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
  *
- * el (element), rel (relationship), hint の3つのパラメータを受け取り、
+ * オブジェクトスタイルでel (element), rel (relationship), hint, icon の4つのパラメータを受け取り、
  * 型安全に図の要素を定義できる。
  */
-type IntelliSenseBlockObject<TPlugins extends readonly DiagramPlugin[]> = (
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
   args: {
     el: BuildElementNamespace<TPlugins>
     rel: BuildRelationshipNamespace<TPlugins>
@@ -33,21 +33,8 @@ type IntelliSenseBlockObject<TPlugins extends readonly DiagramPlugin[]> = (
   }
 ) => void
 
-type IntelliSenseBlockArgs<TPlugins extends readonly DiagramPlugin[]> = (
-  el: BuildElementNamespace<TPlugins>,
-  rel: BuildRelationshipNamespace<TPlugins>,
-  hint: HintFactory,
-  icon: Record<string, PluginIcons>
-) => void
-
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
 type CreateRegistrar = RegisterIconsParam["createRegistrar"]
-
-type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = IntelliSenseBlockObject<TPlugins> | IntelliSenseBlockArgs<TPlugins>
-
-const isObjectStyleCallback = <TPlugins extends readonly DiagramPlugin[]>(
-  buildBlock: IntelliSenseBlock<TPlugins>
-): buildBlock is IntelliSenseBlockObject<TPlugins> => buildBlock.length === 1
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
@@ -161,17 +148,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       diagramContainer: diagramSymbol.id as ContainerSymbolId,
     })
 
-    // invoke callback: support both object-style callback and legacy arg-style
-    try {
-      if (isObjectStyleCallback(callback)) {
-        callback({ el, rel, hint, icon })
-      } else {
-        callback(el, rel, hint, icon)
-      }
-    } catch (e) {
-      // rethrow
-      throw e
-    }
+    // invoke callback: object-style only
+    callback({ el, rel, hint, icon })
 
     const relationshipList = relationships.getAll()
     const symbolList = symbols.getAll().filter((reg) => reg.symbol.id !== diagramSymbol.id).map((reg) => reg.symbol as SymbolBase)
@@ -224,7 +202,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *
  * TypeDiagram("My Diagram")
  *   .use(UMLPlugin)
- *   .build((el, rel, hint) => {
+ *   .build(({ el, rel, hint }) => {
  *     // CorePlugin の図形（デフォルトで利用可能）
  *     const circle = el.core.circle("Circle")
  *
@@ -245,7 +223,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   author: "Architecture Team"
  * })
  *   .use(UMLPlugin)
- *   .build((el, rel, hint) => {
+ *   .build(({ el, rel, hint }) => {
  *     // ...
  *   })
  *   .render("output.svg")
@@ -256,7 +234,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * TypeDiagram("Mixed Diagram")
  *   .use(UMLPlugin)
  *   .theme(DarkTheme)
- *   .build((el, rel, hint) => {
+ *   .build(({ el, rel, hint }) => {
  *     el.uml.actor("User")
  *     el.core.circle("Circle")  // CorePlugin はデフォルトで利用可能
  *   })

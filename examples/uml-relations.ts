@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("UML Relations Example")
   .use(UMLPlugin)
-  .build((el, rel, hint) => {
+  .build(({ el, rel, hint }) => {
     // Create three use cases
     const usecaseA = el.uml.usecase("UseCase A")
     const usecaseB = el.uml.usecase("UseCase B")

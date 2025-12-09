@@ -60,7 +60,7 @@ describe("Grid Builder", () => {
 
     const result = TypeDiagram("Grid Test")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -89,7 +89,7 @@ describe("Grid Builder", () => {
 
     const result = TypeDiagram("Grid Custom Gap")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -115,7 +115,7 @@ describe("Grid Builder", () => {
 
     const result = TypeDiagram("Grid Row/Col Gap")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -140,7 +140,7 @@ describe("Grid Builder", () => {
     expect(() => {
       TypeDiagram("Grid Invalid")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
 
           const a = el.core.rectangle("A")
@@ -159,7 +159,7 @@ describe("Grid Builder", () => {
     expect(() => {
       TypeDiagram("Grid No Enclose")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
 
           hint.grid(boundaryId).layout()
@@ -174,7 +174,7 @@ describe("Figure Builder", () => {
 
     const result = TypeDiagram("Figure Test")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -196,7 +196,7 @@ describe("Figure Builder", () => {
 
     const result = TypeDiagram("Figure Custom Gap")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -218,7 +218,7 @@ describe("Figure Builder", () => {
 
     const result = TypeDiagram("Figure Center")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -240,7 +240,7 @@ describe("Figure Builder", () => {
 
     const result = TypeDiagram("Figure Right")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -261,7 +261,7 @@ describe("Figure Builder", () => {
     expect(() => {
       TypeDiagram("Figure No Enclose")
         .use(UMLPlugin)
-        .build((el, rel, hint) => {
+        .build(({ el, rel, hint }) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
 
           hint.figure(boundaryId).layout()
@@ -274,7 +274,7 @@ describe("Figure Builder", () => {
 
     const result = TypeDiagram("Figure Non-Rect")
       .use(UMLPlugin)
-      .build((el, rel, hint) => {
+      .build(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
