@@ -24,6 +24,7 @@ export type {
   IConstraintsBuilder,
   ConstraintSpec,
   HintTarget,
+  ILayoutSolver,
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"
 export { LayoutVariables } from "./layout_variables"

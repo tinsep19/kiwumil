@@ -2,7 +2,7 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
-import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory } from "../core/symbols"
+import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
 import type { ConstraintSpec } from "../core/constraints_builder"
 
 export class LayoutVariable implements ILayoutVariable {
@@ -24,7 +24,7 @@ export interface LayoutConstraint extends ILayoutConstraint {
  * kiwi.Solver のラッパークラス
  * ソルバーのライフサイクル管理と操作を集約
  */
-export class LayoutSolver {
+export class LayoutSolver implements ILayoutSolver {
   private readonly solver: kiwi.Solver
 
   constructor() {
