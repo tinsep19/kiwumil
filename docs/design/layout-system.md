@@ -11,6 +11,44 @@ Kiwumil のレイアウトシステムは、Cassowary アルゴリズムを使�
 
 ## アーキテクチャ
 
+### 型とインターフェースの配置
+
+Kiwumil は `src/core` モジュールで公開インターフェースを集約し、アーキテクチャの境界を明確化しています。
+
+**`src/core/`** - 公開コアインターフェース:
+- `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `ILayoutVariable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
+- `bounds.ts`: `BoundId`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
+- `constraints_builder.ts`: `IConstraintsBuilder`, `Term`, `ConstraintSpec`
+- `layout_solver.ts`: `ILayoutSolver`
+- `hint_target.ts`: `HintTarget`
+
+**`src/model/`** - モデル層実装:
+- `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
+- `LayoutVariables` (moved from `src/layout`)
+
+**`src/layout/`** - レイアウトエンジン実装:
+- `LayoutSolver` (implements `ILayoutSolver`)
+- `ConstraintsBuilder` (implements `IConstraintsBuilder`)
+- `LayoutContext`
+
+### システム構成図
+
+```
+┌────────────────────────────────────────────────────────┐
+│                    src/core (公開API)                  │
+│  - ILayoutSolver, IConstraintsBuilder, ILayoutVariable │
+│  - LayoutBounds, ConstraintSpec, HintTarget           │
+└────────────────────────────────────────────────────────┘
+         ▲                                    ▲
+         │                                    │
+┌────────┴──────────┐              ┌─────────┴──────────┐
+│   src/model       │              │   src/layout       │
+│  - SymbolBase     │              │  - LayoutSolver    │
+│  - LayoutVariables│──────────────▶  - ConstraintsBuilder│
+│  (solver接続)     │              │  (実装層)          │
+└───────────────────┘              └────────────────────┘
+```
+
 ### システム構成図
 
 ```
@@ -49,7 +87,7 @@ export class LayoutContext {
   
   constructor(
     theme: Theme,
-    resolveSymbol: (id: SymbolId) => SymbolBase | undefined
+    resolveSymbol: (id: SymbolId | SymbolId) => SymbolBase | undefined
   )
   
   solve(): void
@@ -61,20 +99,15 @@ export class LayoutContext {
 
 #### LayoutVariables（変数管理）
 
-kiwi の Variable/Constraint 生成を担う薄い層。
+kiwi の Variable/Constraint 生成を担う薄い層。`src/model` に配置され、`ILayoutSolver` インターフェースを通じてレイアウトソルバーを利用します。
 
 ```typescript
 export class LayoutVariables {
-  createVar(name: string): LayoutVariable
-  createBound(id: SymbolId): Bounds
-  expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
-  addConstraint(
-    lhs: LayoutExpressionInput,
-    op: LayoutConstraintOperator,
-    rhs: LayoutExpressionInput,
-    strength: LayoutConstraintStrength
-  ): kiwi.Constraint
-  valueOf(variable: LayoutVariable): number
+  private readonly solver: ILayoutSolver
+  
+  createVariable(id: VariableId): ILayoutVariable
+  createBound(id: SymbolId): LayoutBounds
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): ILayoutConstraint
 }
 ```
 
@@ -105,20 +138,25 @@ export class LayoutConstraints {
 
 ### Bounds の定義
 
-Bounds はインターフェースとして定義され、すべてのプロパティが事前に作成されます。
+Bounds はインターフェースとして `src/core/bounds.ts` に定義され、すべてのプロパティが `ILayoutVariable` インターフェースを使用します。
 
 ```typescript
 export interface Bounds {
   readonly type: BoundsType  // "layout" | "container" | "item"
-  readonly x: LayoutVariable
-  readonly y: LayoutVariable
-  readonly width: LayoutVariable
-  readonly height: LayoutVariable
-  readonly right: LayoutVariable    // 派生変数: x + width
-  readonly bottom: LayoutVariable   // 派生変数: y + height
-  readonly centerX: LayoutVariable  // 派生変数: x + width * 0.5
-  readonly centerY: LayoutVariable  // 派生変数: y + height * 0.5
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable    // 派生変数: x + width
+  readonly bottom: ILayoutVariable   // 派生変数: y + height
+  readonly centerX: ILayoutVariable  // 派生変数: x + width * 0.5
+  readonly centerY: ILayoutVariable  // 派生変数: y + height * 0.5
 }
+
+export type BoundId = string
+export type LayoutBounds = Bounds & { type: 'layout' }
+export type ContainerBounds = Bounds & { type: 'container' }
+export type ItemBounds = Bounds & { type: 'item' }
 ```
 
 ### 派生変数の実装
@@ -127,7 +165,7 @@ export interface Bounds {
 
 ```typescript
 // LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
-createBound(id: SymbolId): Bounds {
+createBound(id: SymbolId | SymbolId): Bounds {
   const x = this.createVar(\`\${id}.x\`)
   const y = this.createVar(\`\${id}.y\`)
   const width = this.createVar(\`\${id}.width\`)
@@ -178,12 +216,13 @@ Symbol は図の要素（ノード）を表現する基底クラスです。
 export abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
-  protected readonly layoutBounds: Bounds
+  protected readonly layoutBounds: LayoutBounds
   bounds?: { x: number; y: number; width: number; height: number }
 
-  constructor(id: SymbolId, label: string, layoutBounds: Bounds)
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBounds)
   
-  getLayoutBounds(): Bounds
+  getLayoutBounds(): LayoutBounds
+  ensureLayoutBounds(builder: IConstraintsBuilder): void
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
@@ -580,60 +619,77 @@ circle(label: string): SymbolId {
 
 ---
 
-## Naming Conventions
+## 命名規則
 
-* Use `context` to name LayoutContext instances.
-* Use `constraints` for LayoutConstraints.
-* Use `variables` for LayoutVariables.
+* `LayoutContext` インスタンスは `context` と呼ぶ
+* `LayoutConstraints` は `constraints`
+* `LayoutVariables` は `variables`
 
 ## LayoutBound Injection
 
 ### 概要
 
-SymbolBase は `{ id, layoutBounds, theme }` をまとめたオプションオブジェクトを受け取り、immutable に保持します。コンテナシンボルは自前で `container: ContainerBounds` を生成し、`LayoutConstraints.withSymbol(symbolId, …)` 内の builder で `containerInbounds` 制約を登録します。これにより `setTheme` や `ContainerSymbolBase` のような手続きが不要になり、インスタンス生成時にすべての依存を明示できます。
+SymbolBase および ContainerSymbolBase は、LayoutBound をコンストラクタで注入し、immutable として保持します。
+これにより、layoutContext への直接依存を排除し、シンボル側で固有の制約を追加できるようになります。
 
 ### SymbolBase の構造
 
 ```typescript
-interface SymbolBaseOptions {
-  id: SymbolId
-  layoutBounds: LayoutBound
-  theme: Theme
-}
+export abstract class SymbolBase {
+  readonly id: SymbolId
+  readonly label: string
+  protected readonly layoutBounds: LayoutBounds
+  // 後方互換性のため残されているが、layoutBounds を使用することを推奨
+  bounds?: { x: number; y: number; width: number; height: number }
 
-abstract class SymbolBase {
-  constructor(options: SymbolBaseOptions) { ... }
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBounds) {
+    this.id = id
+    this.label = label
+    this.layoutBounds = layoutBounds
+  }
 
-  getLayoutBounds(): LayoutBound
+  getLayoutBounds(): LayoutBounds {
+    return this.layoutBounds
+  }
+  
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+    // 各シンボルが固有の制約を追加
+  }
+
+  // toSVG や getConnectionPoint 内で layoutBounds を使用
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
 ```
 
-### Containerシンボル
+### LayoutBound の使用例
 
 ```typescript
-interface ContainerSymbol extends SymbolBase {
-  readonly container: ContainerBounds
-}
-
-class DiagramSymbol extends SymbolBase implements ContainerSymbol {
-  readonly container = layout.variables.createBound(`${this.id}.container`, "container")
-
-  constructor(options: DiagramSymbolOptions, layout: LayoutContext) {
-    super(options)
-    this.registerContainerConstraints()
+export class CircleSymbol extends SymbolBase {
+  toSVG(): string {
+    const bounds = this.getLayoutBounds()
+    const x = bounds.x.value()
+    const y = bounds.y.value()
+    const width = bounds.width.value()
+    const height = bounds.height.value()
+    
+    const cx = x + width / 2
+    const cy = y + height / 2
+    const r = Math.min(width, height) / 2
+    
+    return \`<circle cx="\${cx}" cy="\${cy}" r="\${r}" ... />\`
   }
 }
 ```
 
 ### メリット
 
-1. **依存性の逆転**: Symbol/Relationship は `layoutContext` を直接参照せず options に依存
-2. **責任の分離**: レイアウト変数と制約登録のロジックが明確に分離
-3. **拡張性**: padding/header などの container 固有制約を symbol 内で完結
-4. **型安全性**: construction-time にテーマを含めることで描画スタイルも型チェック
+1. **依存性の逆転**: シンボルは layoutContext に依存しない
+2. **責任の分離**: レイアウト変数の生成と制約の定義が分離
+3. **拡張性**: 将来的なカスタム制約の追加が容易
+4. **型安全性**: コンパイル時に型チェック
 
+---
 
 ## 制約の追跡
 
@@ -657,7 +713,7 @@ layoutContext.constraints.remove("constraints/user/0")
 - ✅ **LayoutContext**: Variables/Constraints のファサード化
 - ✅ **オンライン制約適用**: ヒント呼び出し時に即座に制約追加
 - ✅ **LayoutBound**: インターフェース化、派生変数の事前作成
-- ✅ **Container Symbol Interface**: Container symbols expose `container: ContainerBounds` and register `containerInbounds` constraints without a shared base
+- ✅ **Container Symbol Interface**: `container: ContainerBounds` を保持し `containerInbounds` 制約を登録するシンプルなインターフェース
 - ✅ **DiagramSymbol**: 図全体の統一的な管理
 - ✅ **制約の追跡**: 制約IDによる管理
 

@@ -2,18 +2,10 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
+import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
+import type { ConstraintSpec } from "../core"
 
-export type VariableId = string
-
-export type ConstraintSpec = (builder: ConstraintsBuilder) => void
-
-export interface ILayoutVariable<T = kiwi.Variable> {
-  id: VariableId
-  value(): number
-  variable: T
-}
-
-export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
+export class LayoutVariable implements ILayoutVariable {
   constructor(
     public readonly id: VariableId,
     public readonly variable: kiwi.Variable
@@ -24,28 +16,15 @@ export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
   }
 }
 
-const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
-
-export type LayoutConstraintId = string & { readonly [LAYOUT_CONSTRAINT_ID]: true }
-
-export interface LayoutConstraint {
-  id: LayoutConstraintId
+export interface LayoutConstraint extends ILayoutConstraint {
   rawConstraints: kiwi.Constraint[]
-}
-
-export type SuggestHandleStrength = "strong" | "medium" | "weak"
-
-export interface SuggestHandle {
-  suggest(value: number): void
-  strength(): SuggestHandleStrength
-  dispose(): void
 }
 
 /**
  * kiwi.Solver のラッパークラス
  * ソルバーのライフサイクル管理と操作を集約
  */
-export class LayoutSolver {
+export class LayoutSolver implements ILayoutSolver {
   private readonly solver: kiwi.Solver
 
   constructor() {
@@ -55,7 +34,7 @@ export class LayoutSolver {
   /**
    * Create a LayoutVariable
    */
-  createLayoutVariable(id: VariableId): LayoutVariable {
+  createVariable(id: VariableId): LayoutVariable {
     const variable = new kiwi.Variable(id)
     return new LayoutVariable(id, variable)
   }
@@ -73,11 +52,11 @@ export class LayoutSolver {
    * @param spec Builder callback function
    * @returns LayoutConstraint with id and rawConstraints
    */
-  createConstraint(id: string, spec: ConstraintSpec): LayoutConstraint {
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint {
     const builder = new ConstraintsBuilder(this.solver)
     spec(builder)
     return {
-      id: id as LayoutConstraintId,
+      id,
       rawConstraints: builder.getRawConstraints(),
     }
   }
@@ -85,19 +64,19 @@ export class LayoutSolver {
   /**
    * Fluent edit variable handle を作成
    */
-  createHandle(variable: LayoutVariable): SuggestHandleFactory {
+  createHandle(variable: LayoutVariable): ISuggestHandleFactory {
     return new SuggestHandleFactoryImpl(this.solver, variable)
   }
 }
 
 /** @internal */
-class SuggestHandleImpl implements SuggestHandle {
+class SuggestHandleImpl implements ISuggestHandle {
   private disposed = false
 
   constructor(
     private readonly solver: kiwi.Solver,
     private readonly variable: LayoutVariable,
-    private readonly label: SuggestHandleStrength
+    private readonly label: ConstraintStrength
   ) {}
 
   suggest(value: number): void {
@@ -105,7 +84,7 @@ class SuggestHandleImpl implements SuggestHandle {
     this.solver.suggestValue(this.variable.variable, value)
   }
 
-  strength(): SuggestHandleStrength {
+  strength(): ConstraintStrength {
     return this.label
   }
 
@@ -124,29 +103,23 @@ class SuggestHandleImpl implements SuggestHandle {
   }
 }
 
-export interface SuggestHandleFactory {
-  strong(): SuggestHandle
-  medium(): SuggestHandle
-  weak(): SuggestHandle
-}
-
 /** @internal */
-class SuggestHandleFactoryImpl implements SuggestHandleFactory {
+class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
   constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVariable) {}
 
-  strong(): SuggestHandle {
+  strong(): ISuggestHandle {
     return this.createHandle("strong", kiwi.Strength.strong)
   }
 
-  medium(): SuggestHandle {
+  medium(): ISuggestHandle {
     return this.createHandle("medium", kiwi.Strength.medium)
   }
 
-  weak(): SuggestHandle {
+  weak(): ISuggestHandle {
     return this.createHandle("weak", kiwi.Strength.weak)
   }
 
-  private createHandle(label: SuggestHandleStrength, strength: number): SuggestHandle {
+  private createHandle(label: ConstraintStrength, strength: number): ISuggestHandle {
     this.solver.addEditVariable(this.variable.variable, strength)
     return new SuggestHandleImpl(this.solver, this.variable, label)
   }

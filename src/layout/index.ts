@@ -1,5 +1,18 @@
-export type {
-  BoundId,
+export { ConstraintsBuilder } from "./constraints_builder"
+export {
+  LayoutSolver,
+  type LayoutConstraint,
+  LayoutVariable,
+} from "./layout_solver"
+export type { 
+  VariableId, 
+  BoundId, 
+  LayoutConstraintId, 
+  ILayoutConstraint, 
+  ILayoutVariable, 
+  ISuggestHandle, 
+  ConstraintStrength,
+  ISuggestHandleFactory,
   Bounds,
   BoundsType,
   ContainerBounds,
@@ -7,20 +20,14 @@ export type {
   LayoutBounds,
   TypedBounds,
   BoundsMap,
-} from "./bounds"
-export { createBoundId, getBoundsValues } from "./bounds"
-export { ConstraintsBuilder, type Term } from "./constraints_builder"
-export {
-  LayoutSolver,
-  type ConstraintSpec,
-  type LayoutConstraint,
-  type LayoutConstraintId,
-  type SuggestHandle,
-  type SuggestHandleFactory,
-  type SuggestHandleStrength,
-  type VariableId,
-  type ILayoutVariable,
-  LayoutVariable,
-} from "./layout_solver"
-export { LayoutVariables } from "./layout_variables"
-export type { LayoutConstraintTarget } from "./layout_constraint_target"
+  Term,
+  IConstraintsBuilder,
+  ConstraintSpec,
+  HintTarget,
+  ILayoutSolver,
+} from "../core"
+export { createBoundId, getBoundsValues } from "../core"
+export { LayoutVariables } from "../model"
+
+// For backward compatibility, re-export HintTarget as LayoutConstraintTarget
+export type { HintTarget as LayoutConstraintTarget } from "../core"

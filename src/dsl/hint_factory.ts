@@ -1,5 +1,6 @@
 // src/dsl/hint_factory.ts
-import { ContainerSymbol, SymbolBase, Symbols, LayoutContext, SymbolId } from "../model"
+import { ContainerSymbol, SymbolBase, Symbols, LayoutContext } from "../model"
+import type { SymbolId, HintTarget } from "../core"
 import {
   FigureBuilder,
   GridBuilder,
@@ -12,7 +13,6 @@ import {
   toSymbolId,
   type SymbolOrId,
 } from "./symbol_helpers"
-import type { LayoutConstraintTarget } from "../layout"
 
 type LayoutTargetId = SymbolOrId
 type LayoutContainerTarget = ContainerSymbolOrId
@@ -164,17 +164,17 @@ export class HintFactory {
     )
   }
 
-  resolveConstraintTargets(targets: LayoutTargetId[]): LayoutConstraintTarget[] {
+  resolveConstraintTargets(targets: LayoutTargetId[]): HintTarget[] {
     return targets
       .map((target) => this.resolveConstraintTarget(target))
-      .filter((target): target is LayoutConstraintTarget => Boolean(target))
+      .filter((target): target is HintTarget => Boolean(target))
   }
 
-  getConstraintTarget(target: LayoutTargetId): LayoutConstraintTarget | undefined {
+  getConstraintTarget(target: LayoutTargetId): HintTarget | undefined {
     return this.resolveConstraintTarget(target)
   }
 
-  private resolveConstraintTarget(target: LayoutTargetId): LayoutConstraintTarget | undefined {
+  private resolveConstraintTarget(target: LayoutTargetId): HintTarget | undefined {
     const symbol = this.findSymbolById(target)
     if (!symbol) return undefined
     const container = this.isContainerSymbol(symbol) ? symbol.container : undefined

@@ -1,8 +1,8 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../model"
+import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../layout"
-import type { ContainerBounds, ConstraintsBuilder } from "../../../layout"
+import type { ContainerBounds, IConstraintsBuilder } from "../../../layout"
 import type { Theme } from "../../../theme"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { ContainerSymbol, type ContainerPadding } from "../../../model"
@@ -45,7 +45,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     return theme.defaultStyleSet.verticalGap / 2
   }
 
-  private buildContainerConstraints(builder: ConstraintsBuilder): void {
+  private buildContainerConstraints(builder: IConstraintsBuilder): void {
     const bounds = this.layout
     const theme = this.theme
     const padding = this.getContainerPadding(theme)
@@ -97,7 +97,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     }
   }
 
-  ensureLayoutBounds(builder: ConstraintsBuilder): void {
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
     this.buildContainerConstraints(builder)
     if (this.constraintsApplied) {
       return

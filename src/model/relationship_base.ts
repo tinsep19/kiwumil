@@ -1,6 +1,7 @@
 // src/model/relationship_base.ts
 import type { SymbolBase } from "./symbol_base"
-import type { SymbolId, RelationshipId } from "./types"
+import type { SymbolId } from "../core"
+import type { RelationshipId } from "./types"
 import type { Theme } from "../theme"
 
 export interface RelationshipBaseOptions {

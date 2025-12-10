@@ -1,9 +1,9 @@
 // src/model/diagram_symbol.ts
 import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
-import type { Point } from "./types"
+import type { Point } from "../core"
 import type { DiagramInfo } from "./diagram_info"
-import type { ContainerBounds, ConstraintsBuilder } from "../layout"
+import type { ContainerBounds, IConstraintsBuilder } from "../layout"
 import { getBoundsValues } from "../layout"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
@@ -44,7 +44,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     return theme.defaultStyleSet.verticalGap
   }
 
-  private buildContainerConstraints(builder: ConstraintsBuilder): void {
+  private buildContainerConstraints(builder: IConstraintsBuilder): void {
     const bounds = this.layout
     const padding = this.getContainerPadding(this.theme)
     const header = this.getHeaderHeight(this.theme)
@@ -69,7 +69,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       .strong()
   }
 
-  ensureLayoutBounds(builder: ConstraintsBuilder): void {
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
     this.buildContainerConstraints(builder)
     if (this.constraintsApplied) {
       return

@@ -1,8 +1,8 @@
 // src/plugin/core/symbols/text_symbol.ts
-import type { ConstraintsBuilder } from "../../../layout"
+import type { IConstraintsBuilder } from "../../../layout"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../model"
+import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../layout"
 
 const DEFAULT_PADDING_X = 12
@@ -76,7 +76,7 @@ export class TextSymbol extends SymbolBase {
     }
   }
 
-  ensureLayoutBounds(_builder: ConstraintsBuilder): void {
+  ensureLayoutBounds(_builder: IConstraintsBuilder): void {
     // text symbols currently do not contribute additional constraints
   }
 

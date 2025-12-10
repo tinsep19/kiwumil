@@ -1,45 +1,67 @@
 # Symbol を見ずに LayoutConstraints を運用する計画
 
-## 背景
+## ステータス: 完了 ✅
 
-- 現状の `LayoutConstraints` は、`arrange*`/`align*`/`enclose*` などのヒントごとに `SymbolId` を `SymbolBase` へ解決し、その `layout`/`container` bounds を使って制約を組み立てています。これにより制約レイヤーがシンボル依存になり、Solver に必要な `Bounds` のみで表現できていません。
-- そこで、Bounds に軽量な識別子 (`boundId`) を追加し、Hint レイヤー側で `SymbolId` を一度だけ解決して `LayoutConstraints` に渡すことで、制約ロジックを `Bounds` の集合に集中させる予定です。
+本計画で提案されたレイアウト制約とシンボルの分離は完了しました。
 
-## 目的
+## 実装内容
 
-1. 各 `Bounds` に `boundId` を持たせることで、制約トラッキングに `SymbolId` を直接使う必要を無くす。
-2. Hint レイヤーが `SymbolId` → ソルバに必要な `Bounds`（および必要に応じたコンテナ bounds）を 1 回だけ解決し、それを `LayoutConstraints` に渡す。
-3. `LayoutConstraints` を `Bounds`/`LayoutVar` だけで動作するようリファクタリングし、コンストラクタから `resolveSymbol` を除去する。
+### 1. Bounds に BoundId を追加
 
-## 改修概要
+`src/core/bounds.ts` で `BoundId` を型として定義し、ブランド化を削除:
 
-| 領域 | 内容 |
+```typescript
+export type BoundId = string
+
+export interface Bounds {
+  readonly type: BoundsType
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable
+  readonly bottom: ILayoutVariable
+  readonly centerX: ILayoutVariable
+  readonly centerY: ILayoutVariable
+}
+```
+
+### 2. HintTarget の導入
+
+`src/core/hint_target.ts` に `HintTarget` インターフェースを配置 (旧 `LayoutConstraintTarget`):
+
+```typescript
+export interface HintTarget {
+  ownerId: SymbolId
+  layout: LayoutBounds
+  container?: ContainerBounds
+}
+```
+
+### 3. ILayoutVariable への統一
+
+すべての `Bounds` プロパティが `ILayoutVariable` インターフェースを使用:
+
+- 具象 `LayoutVariable` クラスへの直接依存を排除
+- `src/core` のインターフェースのみに依存
+
+## 完了した実装
+
+| 領域 | 実装内容 |
 | --- | --- |
-| Bounds モデル | 既存の `LayoutVar` フィールドに加えて `boundId` を公開し、拘束対象を識別できるようにする。 |
-| HintFactory/Builder | `LayoutTargetId` を `{ ownerId: string; layout: LayoutBounds; container?: ContainerBounds }` のような `LayoutConstraintTarget` に変換し、そのまま `LayoutConstraints` に渡す。`nestLevel` 更新は継続。 |
-| LayoutConstraints | メソッド引数を `LayoutConstraintTarget[]` に変更し、`target.layout`/`target.container` のみに依存。 Scoped ID は `target.boundId`（あるいは ownerId）を利用。コンストラクタ引数から `resolveSymbol` を削除。 |
+| Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `ILayoutVariable` を使用。 |
+| HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`layout`、`container` を保持。 |
+| LayoutConstraints | `HintTarget` を活用し、Bounds ベースでの制約構築を実現。 |
 
-## 計画
+## 得られたメリット
 
-1. **Bounds に boundId を追加**
-   - `Bounds`/`BoundsMap` (`src/layout/bounds.ts`) に `boundId: string` を追加。
-   - `LayoutVariables.createBound()` で指定 ID を元に安定した `boundId` を生成し、返却する Bounds に付与。
-   - 受け入れ基準: Bounds が `boundId` を公開し、既存利用側が動作する。
+1. **依存性の逆転**: 制約レイヤーが具象型ではなくインターフェースに依存
+2. **型安全性の向上**: コンパイル時の型チェックが強化
+3. **アーキテクチャの明確化**: `src/core` で公開API、`src/layout` で実装という明確な境界
+4. **循環依存の排除**: コア型定義が実装から分離
 
-2. **Hint レイヤーで Symbol 解決を完結**
-   - `HintFactory.normalizeTargets` などに `LayoutTargetId` を `LayoutConstraintTarget` に変換するヘルパーを追加。
-   - Grid/Figure Builder や Guide で `LayoutConstraints` を呼ぶときに解決済みターゲットを渡す（`resolveSymbol` 呼び出しは移動）。
-   - 受け入れ基準: ビルダーは bounds + ownerId だけを `LayoutConstraints` に渡す。
+## 関連変更
 
-3. **LayoutConstraints を Bounds ベースでリファクタリング**
-   - `arrangeHorizontal` 等のシグネチャを `LayoutConstraintTarget[]` に変更。
-   - `target.layout`/`target.container` から `LayoutVar` を取り出して制約を作成。
-   - `record()` や ID 利用箇所は `target.boundId` を使う。
-   - コンストラクタから `resolveSymbol` を削除。
-   - 受け入れ基準: 制約生成が bounds データのみで完結し、既存テストが通る。
-
-## テスト & リスク
-
-- 既存の layout hint テスト (`tests/layout_constraints.test.ts` など) を新しいターゲットシグネチャに合わせて更新。
-- `container` bounds を持たないシンボルが存在するケースでエラーにならないよう、ターゲット生成で `container` を optional に扱う。
-- スケジュール: 各主要タスクは 1 日程度。全体が固まったら統合テストで検証。
+- `LayoutVariable` → `ILayoutVariable` への統一
+- `LayoutConstraintTarget` → `HintTarget` への名前変更
+- `BoundId` のブランド化削除 (単純な `string` 型に)

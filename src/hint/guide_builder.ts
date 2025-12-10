@@ -1,6 +1,7 @@
 // src/hint/guide_builder.ts
-import type { SymbolBase, SymbolId, LayoutContext } from "../model"
-import type { LayoutConstraintTarget, LayoutVariable, Term } from "@/layout"
+import type { SymbolBase, LayoutContext } from "../model"
+import type { SymbolId, Term, HintTarget } from "../core"
+import type { LayoutVariable } from "@/layout"
 
 type LayoutTargetId = SymbolId
 
@@ -50,7 +51,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   constructor(
     private readonly context: LayoutContext,
     private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
-    private readonly resolveTarget: (id: LayoutTargetId) => LayoutConstraintTarget | undefined,
+    private readonly resolveTarget: (id: LayoutTargetId) => HintTarget | undefined,
     private readonly axis: Axis,
     variableName: string,
     initialValue?: number
@@ -218,10 +219,10 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     }
   }
 
-  private getAlignedTargets(): LayoutConstraintTarget[] {
+  private getAlignedTargets(): HintTarget[] {
     return Array.from(this.alignedSymbols)
       .map((id) => this.resolveTarget(id))
-      .filter((target): target is LayoutConstraintTarget => Boolean(target))
+      .filter((target): target is HintTarget => Boolean(target))
   }
 
   private enforceStrongEquality(lhs: Term[], rhs: Term[], id: string) {

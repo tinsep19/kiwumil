@@ -1,5 +1,5 @@
-// src/layout/layout_variables.ts
-import { LayoutSolver, type LayoutVariable, type ConstraintSpec, type LayoutConstraint } from "./layout_solver"
+// src/model/layout_variables.ts
+import type { ILayoutSolver, ILayoutVariable, ILayoutConstraint, ConstraintSpec } from "../core"
 import {
   createBoundId,
   type Bounds,
@@ -8,33 +8,33 @@ import {
   type ContainerBounds,
   type ItemBounds,
   type BoundsMap,
-} from "./bounds"
+} from "../core"
 
 // 互換性のため既存の export を維持
-export type { LayoutVariable }
+export type { ILayoutVariable as LayoutVariable }
 
 // 新しい型エイリアス
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
 
 /**
  * Layout変数とバウンドの生成・管理を担当
- * 式の作成や制約の追加は LayoutSolver が担当
+ * 式の作成や制約の追加は ILayoutSolver が担当
  */
 export class LayoutVariables {
-  private readonly solver: LayoutSolver
+  private readonly solver: ILayoutSolver
 
-  constructor(solver: LayoutSolver) {
+  constructor(solver: ILayoutSolver) {
     this.solver = solver
   }
 
-  createVariable(name: string): LayoutVariable {
-    return this.solver.createLayoutVariable(name)
+  createVariable(name: string): ILayoutVariable {
+    return this.solver.createVariable(name)
   }
 
   /**
    * @deprecated Use createVariable instead. This method is kept for backward compatibility and will be removed in a future major version.
    */
-  createVar(name: string): LayoutVariable {
+  createVar(name: string): ILayoutVariable {
     return this.createVariable(name)
   }
 
@@ -96,14 +96,14 @@ export class LayoutVariables {
   }
 
   /**
-   * 複数の Bounds または LayoutVariable を一括で生成する factory メソッド
+   * 複数の Bounds または ILayoutVariable を一括で生成する factory メソッド
    * @param set キーと BoundsType または "variable" のマップ
-   * @returns キーと対応する型付き Bounds または LayoutVariable のマップ
+   * @returns キーと対応する型付き Bounds または ILayoutVariable のマップ
    */
   createBoundsSet<T extends Record<string, BoundsType | "variable">>(
     set: T
-  ): { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] } {
-    const result: Record<string, Bounds | LayoutVariable> = {}
+  ): { [K in keyof T]: T[K] extends "variable" ? ILayoutVariable : BoundsMap[T[K] & BoundsType] } {
+    const result: Record<string, Bounds | ILayoutVariable> = {}
     for (const [key, type] of Object.entries(set)) {
       if (type === "variable") {
         result[key] = this.createVariable(key)
@@ -111,10 +111,10 @@ export class LayoutVariables {
         result[key] = this.createBounds(key, type)
       }
     }
-    return result as { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] }
+    return result as { [K in keyof T]: T[K] extends "variable" ? ILayoutVariable : BoundsMap[T[K] & BoundsType] }
   }
 
-  valueOf(variable: LayoutVariable): number {
+  valueOf(variable: ILayoutVariable): number {
     return variable.value()
   }
 
@@ -122,9 +122,9 @@ export class LayoutVariables {
    * Create a constraint by forwarding to the solver.
    * @param name Constraint identifier
    * @param spec Builder callback function
-   * @returns LayoutConstraint with id and rawConstraints
+   * @returns ILayoutConstraint with id
    */
-  createConstraint(name: string, spec: ConstraintSpec): LayoutConstraint {
+  createConstraint(name: string, spec: ConstraintSpec): ILayoutConstraint {
     return this.solver.createConstraint(name, spec)
   }
 
@@ -132,7 +132,7 @@ export class LayoutVariables {
    * solver へのアクセサ（後方互換性のため）
    * LayoutContext から注入された solver を取得する
    */
-  getSolver(): LayoutSolver {
+  getSolver(): ILayoutSolver {
     return this.solver
   }
 }

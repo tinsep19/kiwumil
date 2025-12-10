@@ -3,32 +3,11 @@ import type {
   LayoutBounds,
   ContainerBounds,
   ItemBounds,
-  ILayoutVariable,
-  LayoutConstraint,
   ConstraintSpec,
   BoundsType,
 } from "../layout"
-import type { SymbolId, Point } from "./types"
+import type { SymbolId, Point, ISymbol, ISymbolCharacs, ILayoutVariable, ILayoutConstraint } from "../core"
 import type { SymbolBase } from "./symbol_base"
-
-/**
- * ISymbol: DSL でユーザーが触れる最小限のシンボルインターフェース
- */
-export interface ISymbol {
-  id: SymbolId
-  render(): string // 旧 toSVG の名前変更
-  getConnectionPoint(src: Point): Point
-}
-
-/**
- * ISymbolCharacs: シンボルに付随するレイアウト情報群
- * 必須で id と layout は含む。その他の key は ContainerBounds | ItemBounds | ILayoutVariable
- */
-export type ISymbolCharacs = {
-  id: SymbolId
-  layout: LayoutBounds
-  [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | ILayoutVariable
-}
 
 /**
  * SymbolRegistration: register の戻り値型
@@ -36,7 +15,7 @@ export type ISymbolCharacs = {
 export type SymbolRegistration = {
   symbol: ISymbol
   characs: ISymbolCharacs
-  constraint: LayoutConstraint
+  constraint: ILayoutConstraint
 }
 
 /**
@@ -52,7 +31,7 @@ export class SymbolRegistrationBuilder {
 
   private _characs?: ISymbolCharacs
   private _symbol?: ISymbol
-  private _constraint?: LayoutConstraint
+  private _constraint?: ILayoutConstraint
 
   constructor(id: SymbolId, variables: LayoutVariables) {
     this.id = id
@@ -88,11 +67,11 @@ export class SymbolRegistrationBuilder {
   }
 
   /**
-   * setConstraint を ConstraintSpec を受け取り LayoutConstraint を生成して返す仕様に変更しました。
+   * setConstraint を ConstraintSpec を受け取り ILayoutConstraint を生成して返す仕様に変更しました。
    * LayoutVariables（または関連する変数管理オブジェクト）の createConstraint を呼び出して
    * this._constraint に保存します。
    */
-  setConstraint(spec: ConstraintSpec): LayoutConstraint {
+  setConstraint(spec: ConstraintSpec): ILayoutConstraint {
     // variables 側に createConstraint(id, spec) がある前提
     const constraint = this.variables.createConstraint(this.id, spec)
     this._constraint = constraint
