@@ -160,6 +160,14 @@ class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
  * @returns true if v is a branded LayoutVariable
  */
 export function isLayoutVariable(v: unknown): v is LayoutVariable {
-  return isBrandedKiwi(v)
+  return (
+    isBrandedKiwi(v) &&
+    typeof v === "object" &&
+    v !== null &&
+    "id" in v &&
+    "variable" in v &&
+    "value" in v &&
+    typeof (v as any).value === "function"
+  )
 }
 
