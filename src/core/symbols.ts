@@ -51,9 +51,9 @@ export interface SuggestHandle {
 }
 
 /**
- * SuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
+ * ISuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
  */
-export interface SuggestHandleFactory {
+export interface ISuggestHandleFactory {
   strong(): SuggestHandle
   medium(): SuggestHandle
   weak(): SuggestHandle

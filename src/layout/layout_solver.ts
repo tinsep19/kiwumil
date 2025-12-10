@@ -2,7 +2,7 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
-import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle, LayoutConstraintId, ILayoutConstraint, SuggestHandleFactory } from "../core/symbols"
+import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory } from "../core/symbols"
 
 export type ConstraintSpec = (builder: ConstraintsBuilder) => void
 
@@ -65,7 +65,7 @@ export class LayoutSolver {
   /**
    * Fluent edit variable handle を作成
    */
-  createHandle(variable: LayoutVariable): SuggestHandleFactory {
+  createHandle(variable: LayoutVariable): ISuggestHandleFactory {
     return new SuggestHandleFactoryImpl(this.solver, variable)
   }
 }
@@ -105,7 +105,7 @@ class SuggestHandleImpl implements SuggestHandle {
 }
 
 /** @internal */
-class SuggestHandleFactoryImpl implements SuggestHandleFactory {
+class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
   constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVariable) {}
 
   strong(): SuggestHandle {

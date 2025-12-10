@@ -13,7 +13,7 @@ export type {
   ILayoutVariable, 
   SuggestHandle, 
   SuggestHandleStrength,
-  SuggestHandleFactory,
+  ISuggestHandleFactory,
   Bounds,
   BoundsType,
   ContainerBounds,
