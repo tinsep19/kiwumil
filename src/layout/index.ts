@@ -1,4 +1,4 @@
-export { ConstraintsBuilder, type Term } from "./constraints_builder"
+export { ConstraintsBuilder, type Term, type IConstraintsBuilder } from "./constraints_builder"
 export {
   LayoutSolver,
   type ConstraintSpec,

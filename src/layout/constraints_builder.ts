@@ -2,7 +2,7 @@ import * as kiwi from "@lume/kiwi"
 import type { LayoutVariable } from "./layout_solver"
 import type { ILayoutVariable } from "../core"
 
-export type Term = [number, LayoutVariable | ILayoutVariable | number]
+export type Term = [number, ILayoutVariable | number]
 
 interface PendingConstraint {
   lhs?: Term[]
@@ -11,9 +11,26 @@ interface PendingConstraint {
 }
 
 /**
+ * IConstraintsBuilder: Constraint builder interface
+ */
+export interface IConstraintsBuilder {
+  expr(...lhs: Term[]): this
+  eq(...rhs: Term[]): this
+  ge(...rhs: Term[]): this
+  le(...rhs: Term[]): this
+  eq0(): this
+  ge0(): this
+  le0(): this
+  required(): this
+  strong(): this
+  medium(): this
+  weak(): this
+}
+
+/**
  * Fluent constraint builder inspired by docs/draft/new_constraint_builder.md
  */
-export class ConstraintsBuilder {
+export class ConstraintsBuilder implements IConstraintsBuilder {
   readonly rawConstraints: kiwi.Constraint[] = []
   private tmp: PendingConstraint = {}
 
@@ -142,7 +159,7 @@ export class ConstraintsBuilder {
         continue
       }
 
-      // operand is ILayoutVariable or LayoutVariable, both have .variable property
+      // operand is ILayoutVariable, which has .variable property
       const kiwiVar = operand.variable as kiwi.Variable
       if (coefficient === 1) {
         args.push(kiwiVar)
