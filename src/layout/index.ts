@@ -23,7 +23,10 @@ export type {
   BoundsMap,
   Term,
   IConstraintsBuilder,
+  HintTarget,
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"
 export { LayoutVariables } from "./layout_variables"
-export type { LayoutConstraintTarget } from "./layout_constraint_target"
+
+// For backward compatibility, re-export HintTarget as LayoutConstraintTarget
+export type { HintTarget as LayoutConstraintTarget } from "../core"

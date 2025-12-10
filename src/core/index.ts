@@ -27,3 +27,5 @@ export type {
 export { createBoundId, getBoundsValues } from "./bounds"
 
 export type { Term, IConstraintsBuilder } from "./constraints_builder"
+
+export type { HintTarget } from "./hint_target"
