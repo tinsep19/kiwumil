@@ -2,7 +2,7 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
-import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle } from "../core/symbols"
+import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle, LayoutConstraintId, ILayoutConstraint } from "../core/symbols"
 
 export type ConstraintSpec = (builder: ConstraintsBuilder) => void
 
@@ -17,12 +17,7 @@ export class LayoutVariable implements ILayoutVariable {
   }
 }
 
-const LAYOUT_CONSTRAINT_ID = Symbol("LayoutConstraintId")
-
-export type LayoutConstraintId = string & { readonly [LAYOUT_CONSTRAINT_ID]: true }
-
-export interface LayoutConstraint {
-  id: LayoutConstraintId
+export interface LayoutConstraint extends ILayoutConstraint {
   rawConstraints: kiwi.Constraint[]
 }
 
@@ -58,11 +53,11 @@ export class LayoutSolver {
    * @param spec Builder callback function
    * @returns LayoutConstraint with id and rawConstraints
    */
-  createConstraint(id: string, spec: ConstraintSpec): LayoutConstraint {
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint {
     const builder = new ConstraintsBuilder(this.solver)
     spec(builder)
     return {
-      id: id as LayoutConstraintId,
+      id,
       rawConstraints: builder.getRawConstraints(),
     }
   }

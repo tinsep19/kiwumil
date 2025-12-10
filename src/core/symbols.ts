@@ -11,6 +11,18 @@ import type {
 export type VariableId = string
 
 /**
+ * LayoutConstraintId: レイアウト制約の識別子
+ */
+export type LayoutConstraintId = string
+
+/**
+ * ILayoutConstraint: レイアウト制約のインターフェース
+ */
+export interface ILayoutConstraint {
+  id: LayoutConstraintId
+}
+
+/**
  * ILayoutVariable: レイアウト変数のインターフェース
  */
 export interface ILayoutVariable {
