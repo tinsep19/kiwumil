@@ -3,7 +3,6 @@ export {
   LayoutSolver,
   type ConstraintSpec,
   type LayoutConstraint,
-  type SuggestHandleFactory,
   LayoutVariable,
 } from "./layout_solver"
 export type { 
@@ -14,6 +13,7 @@ export type {
   ILayoutVariable, 
   SuggestHandle, 
   SuggestHandleStrength,
+  SuggestHandleFactory,
   Bounds,
   BoundsType,
   ContainerBounds,

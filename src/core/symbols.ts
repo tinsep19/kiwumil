@@ -51,6 +51,15 @@ export interface SuggestHandle {
 }
 
 /**
+ * SuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
+ */
+export interface SuggestHandleFactory {
+  strong(): SuggestHandle
+  medium(): SuggestHandle
+  weak(): SuggestHandle
+}
+
+/**
  * SymbolId: シンボルの一意識別子
  */
 export type SymbolId = string

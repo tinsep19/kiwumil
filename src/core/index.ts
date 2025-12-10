@@ -7,6 +7,7 @@ export type {
   ILayoutVariable,
   SuggestHandleStrength,
   SuggestHandle,
+  SuggestHandleFactory,
   SymbolId,
   Point,
   ISymbol,

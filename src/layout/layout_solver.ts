@@ -2,7 +2,7 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
-import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle, LayoutConstraintId, ILayoutConstraint } from "../core/symbols"
+import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle, LayoutConstraintId, ILayoutConstraint, SuggestHandleFactory } from "../core/symbols"
 
 export type ConstraintSpec = (builder: ConstraintsBuilder) => void
 
@@ -102,12 +102,6 @@ class SuggestHandleImpl implements SuggestHandle {
       throw new Error("SuggestHandle: already disposed")
     }
   }
-}
-
-export interface SuggestHandleFactory {
-  strong(): SuggestHandle
-  medium(): SuggestHandle
-  weak(): SuggestHandle
 }
 
 /** @internal */
