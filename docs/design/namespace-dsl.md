@@ -101,26 +101,6 @@ TypeDiagram("Mixed Diagram")
   .render("output.svg")
 ```
 
-### DiagramInfo とテーマを使用
-
-```typescript
-import { TypeDiagram, UMLPlugin, DarkTheme } from 'kiwumil'
-
-TypeDiagram({
-  title: "E-Commerce System",
-  createdAt: "2025-11-14",
-  author: "Architecture Team"
-})
-  .use(UMLPlugin)
-  .theme(DarkTheme)
-  .build(({ el, rel, hint }) => {
-    const user = el.uml.actor("User")
-    const cart = el.uml.usecase("Shopping Cart")
-    rel.uml.associate(user, cart)
-  })
-  .render("output.svg")
-```
-
 ## アーキテクチャの特徴
 
 ### 完全な型安全性
@@ -131,69 +111,6 @@ TypeScript の型システムを最大限活用し、以下を実現していま
 - **メソッドの補完**: `el.uml.` と入力すると、UML プラグインが提供する全メソッドが表示
 - **型エラーの早期検出**: 存在しないメソッドや間違った引数型はコンパイル時にエラーとして検出
 - **SymbolId / RelationshipId による型安全性**: Symbol と Relationship は一意な ID で識別され、型レベルで区別される
-
-## コア型定義
-
-### SymbolId と RelationshipId
-
-Symbol と Relationship はそれぞれ一意な ID で識別されます：
-
-```typescript
-/**
- * Symbol の一意識別子
- * 形式: `${namespace}:${symbolName}/${index}`
- * 例: "uml:actor/0", "uml:usecase/1", "core:rectangle/0"
- */
-type SymbolId = string & { readonly __brand: 'SymbolId' }
-
-/**
- * Relationship の一意識別子
- * 形式: `${namespace}:${relationshipName}/${index}`
- * 例: "uml:association/0", "uml:include/1", "core:arrow/0"
- */
-type RelationshipId = string & { readonly __brand: 'RelationshipId' }
-```
-
-**ID の命名規則の利点**:
-- デバッグ時にどのプラグインで生成されたかが一目でわかる
-- Symbol/Relationship の種類が明確
-- プラグイン間で ID が衝突しない
-- ログやエラーメッセージでの可読性が向上
-- インデックスベースの採番により、生成順序が追跡可能
-
-### SymbolBase と RelationshipBase
-
-Symbol と Relationship は、オプションオブジェクトを受け取る構造になりました：
-
-```typescript
-interface SymbolBaseOptions {
-  id: SymbolId
-  layoutBounds: LayoutBound
-  theme: Theme
-}
-
-abstract class SymbolBase {
-  constructor(options: SymbolBaseOptions) { ... }
-
-  getLayoutBounds(): LayoutBound
-  abstract toSVG(): string
-  abstract getConnectionPoint(from: Point): Point
-}
-
-interface RelationshipBaseOptions {
-  id: RelationshipId
-  from: SymbolId
-  to: SymbolId
-  theme: Theme
-}
-
-abstract class RelationshipBase {
-  constructor(options: RelationshipBaseOptions) { ... }
-
-  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number
-  abstract toSVG(symbols: Map<SymbolId, SymbolBase>): string
-}
-```
 
 ## プラグインインターフェース
 
