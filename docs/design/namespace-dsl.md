@@ -1,14 +1,16 @@
 # Namespace-Based DSL Architecture
 
-## 概要
+[日本語](./namespace-dsl.ja.md) | English
 
-kiwumil は、プラグインごとの名前空間を持つ型安全な DSL によって図の作成を行います。各プラグインは独自の Symbol と Relationship を提供し、IntelliSense によって補完される直感的な API を実現しています。
+## Overview
 
-## 名前空間ベースの DSL とは
+kiwumil creates diagrams using a type-safe DSL with namespaces for each plugin. Each plugin provides its own Symbols and Relationships, realizing an intuitive API complemented by IntelliSense.
 
-従来の方法では、複数のプラグインから同名の Symbol や Relationship が提供される場合、名前の衝突が発生する可能性がありました。名前空間ベースの DSL では、各プラグインが自身の名前空間を持ち、その配下に Symbol と Relationship を提供します。
+## What is Namespace-Based DSL?
 
-### 構造
+In traditional approaches, when multiple plugins provide Symbols or Relationships with the same name, name collisions could occur. In a namespace-based DSL, each plugin has its own namespace and provides Symbols and Relationships under it.
+
+### Structure
 
 ```
 el (Element Namespace)
@@ -20,7 +22,7 @@ el (Element Namespace)
 │   ├── actor()
 │   ├── usecase()
 │   └── ...
-└── [plugin] (他のプラグイン)
+└── [plugin] (Other plugins)
     └── ...
 
 rel (Relationship Namespace)
@@ -32,21 +34,29 @@ rel (Relationship Namespace)
 │   ├── associate()
 │   ├── extend()
 │   └── ...
-└── [plugin] (他のプラグイン)
+└── [plugin] (Other plugins)
     └── ...
+
+icon (Icon Namespace)
+├── core (CorePlugin)
+│   └── [icons]
+├── uml (UMLPlugin)
+│   └── [icons]
+└── [plugin] (Other plugins)
+    └── [icons]
 ```
 
-## 使用例
+## Usage Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```typescript
 import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
 TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
-    // UML Plugin の名前空間を使用
+  .build(({ el, rel, hint, icon }) => {
+    // Use UML Plugin namespace
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
     const register = el.uml.usecase("Register")
@@ -59,14 +69,14 @@ TypeDiagram("Use Case Diagram")
   .render("output.svg")
 ```
 
-### CorePlugin のみを使用
+### Using CorePlugin Only
 
 ```typescript
 import { TypeDiagram } from 'kiwumil'
 
-// CorePlugin はデフォルトで適用されています
+// CorePlugin is applied by default
 TypeDiagram("Simple Diagram")
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
     
@@ -77,153 +87,70 @@ TypeDiagram("Simple Diagram")
   .render("output.svg")
 ```
 
-### 複数のプラグインを使用
+### Using Multiple Plugins
 
 ```typescript
 import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
 TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
-  .build(({ el, rel, hint }) => {
-    // CorePlugin の名前空間（デフォルトで利用可能）
+  .build(({ el, rel, hint, icon }) => {
+    // CorePlugin namespace (available by default)
     const circle = el.core.circle("Circle")
     
-    // UMLPlugin の名前空間
+    // UMLPlugin namespace
     const actor = el.uml.actor("Actor")
     
-    // SequencePlugin の名前空間
+    // SequencePlugin namespace
     const lifeline = el.sequence.lifeline("Service")
     
-    // 各名前空間の Relationship
+    // Relationships from each namespace
     rel.core.arrow(circle, actor)
     rel.uml.associate(actor, lifeline)
   })
   .render("output.svg")
 ```
 
-### DiagramInfo とテーマを使用
+## Architecture Features
 
-```typescript
-import { TypeDiagram, UMLPlugin, DarkTheme } from 'kiwumil'
+### Complete Type Safety
 
-TypeDiagram({
-  title: "E-Commerce System",
-  createdAt: "2025-11-14",
-  author: "Architecture Team"
-})
-  .use(UMLPlugin)
-  .theme(DarkTheme)
-  .build(({ el, rel, hint }) => {
-    const user = el.uml.actor("User")
-    const cart = el.uml.usecase("Shopping Cart")
-    rel.uml.associate(user, cart)
-  })
-  .render("output.svg")
-```
+The TypeScript type system is fully leveraged to achieve:
 
-## アーキテクチャの特徴
+- **Access only to registered plugins**: When typing `el.`, only the namespaces of registered plugins appear in completion candidates
+- **Method completion**: When typing `el.uml.`, all methods provided by the UML plugin are displayed
+- **Early detection of type errors**: Non-existent methods or incorrect argument types are detected as errors at compile time
+- **Type safety with SymbolId / RelationshipId**: Symbols and Relationships are identified by unique IDs and distinguished at the type level
 
-### 完全な型安全性
+## Plugin Interface
 
-TypeScript の型システムを最大限活用し、以下を実現しています：
+The Namespace-based DSL is constructed by composing namespaces provided by plugins that implement `DiagramPlugin`. Here we cover only the mechanism; details on creating plugins are consolidated in the [Plugin System documentation](./plugin-system.md).
 
-- **登録済みプラグインのみアクセス可能**: `el.` と入力すると、登録されているプラグインの名前空間のみが補完候補に表示
-- **メソッドの補完**: `el.uml.` と入力すると、UML プラグインが提供する全メソッドが表示
-- **型エラーの早期検出**: 存在しないメソッドや間違った引数型はコンパイル時にエラーとして検出
-- **SymbolId / RelationshipId による型安全性**: Symbol と Relationship は一意な ID で識別され、型レベルで区別される
+- Each plugin has a unique `name` and is referenced as `el.{name}` / `rel.{name}`.
+- Both `createSymbolFactory` and `createRelationshipFactory` are optional; only the needed one can be implemented.
+- Both factories receive `Symbols` / `Relationships` instances, `Theme`, and `PluginIcons`.
+- Symbol / Relationship registration uses the `Symbols.register()` / `Relationships.register()` methods.
+- LayoutBounds are generated using `r.createBounds()` within the callback of `symbols.register()`.
 
-## コア型定義
+### Reference Materials
 
-### SymbolId と RelationshipId
+- Complete type definition of the DiagramPlugin interface
+- Implementation examples such as UMLPlugin
+- Centralized management pattern using Symbols / Relationships classes
 
-Symbol と Relationship はそれぞれ一意な ID で識別されます：
+➡ All of these are explained in detail in the [Plugin System documentation](./plugin-system.md). _namespace-dsl.md_ focuses on how el/rel namespaces are assembled as a result of adding plugins.
 
-```typescript
-/**
- * Symbol の一意識別子
- * 形式: `${namespace}:${symbolName}/${index}`
- * 例: "uml:actor/0", "uml:usecase/1", "core:rectangle/0"
- */
-type SymbolId = string & { readonly __brand: 'SymbolId' }
+## Namespace System Implementation
 
-/**
- * Relationship の一意識別子
- * 形式: `${namespace}:${relationshipName}/${index}`
- * 例: "uml:association/0", "uml:include/1", "core:arrow/0"
- */
-type RelationshipId = string & { readonly __brand: 'RelationshipId' }
-```
+### Namespace Object Construction
 
-**ID の命名規則の利点**:
-- デバッグ時にどのプラグインで生成されたかが一目でわかる
-- Symbol/Relationship の種類が明確
-- プラグイン間で ID が衝突しない
-- ログやエラーメッセージでの可読性が向上
-- インデックスベースの採番により、生成順序が追跡可能
-
-### SymbolBase と RelationshipBase
-
-Symbol と Relationship は、オプションオブジェクトを受け取る構造になりました：
-
-```typescript
-interface SymbolBaseOptions {
-  id: SymbolId
-  layoutBounds: LayoutBound
-  theme: Theme
-}
-
-abstract class SymbolBase {
-  constructor(options: SymbolBaseOptions) { ... }
-
-  getLayoutBounds(): LayoutBound
-  abstract toSVG(): string
-  abstract getConnectionPoint(from: Point): Point
-}
-
-interface RelationshipBaseOptions {
-  id: RelationshipId
-  from: SymbolId
-  to: SymbolId
-  theme: Theme
-}
-
-abstract class RelationshipBase {
-  constructor(options: RelationshipBaseOptions) { ... }
-
-  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number
-  abstract toSVG(symbols: Map<SymbolId, SymbolBase>): string
-}
-```
-
-## プラグインインターフェース
-
-Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提供する名前空間を合成することで構築されます。ここでは仕組みのみを扱い、プラグイン作成の詳細は [Plugin System ドキュメント](./plugin-system.md) に集約しています。
-
-- 各プラグインは一意の `name` を持ち、`el.{name}` / `rel.{name}` の形で参照されます。
-- `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
-- 両ファクトリは `Symbols` / `Relationships` インスタンスと `LayoutContext` を受け取ります。
-- Symbol / Relationship の登録は `Symbols.register()` / `Relationships.register()` メソッドを使用します。
-- LayoutBound は `layout.variables.createBound(symbolId)` で生成し、コンストラクタに注入します。
-
-### 参考資料
-
-- DiagramPlugin インターフェースの完全な型定義
-- UMLPlugin などの実装例
-- Symbols / Relationships クラスによる集中管理パターン
-
-➡ これらはすべて [Plugin System ドキュメント](./plugin-system.md) で詳しく説明しています。_namespace-dsl.md_ では、プラグインを追加した結果として el/rel 名前空間がどのように組み立てられるかに焦点を当てます。
-
-## 名前空間システムの実装
-
-### 名前空間オブジェクトの構築
-
-`el` と `rel` は、登録されたプラグインから動的に構築される「複合名前空間オブジェクト」です：
+`el` and `rel` are "composite namespace objects" dynamically constructed from registered plugins:
 
 ```typescript
 /**
  * Namespace Builder
  * 
- * プラグイン配列から el と rel を構築する
+ * Constructs el and rel from plugin array
  */
 class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   private plugins: TPlugins
@@ -234,12 +161,14 @@ class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
   buildElementNamespace(
     symbols: Symbols,
-    layout: LayoutContext
+    theme: Theme,
+    icons: BuildIconNamespace<TPlugins>
   ): BuildElementNamespace<TPlugins> {
     const namespace = {} as any
     for (const plugin of this.plugins) {
       if (plugin.createSymbolFactory) {
-        namespace[plugin.name] = plugin.createSymbolFactory(symbols, layout)
+        const pluginIcons = icons[plugin.name] || {}
+        namespace[plugin.name] = plugin.createSymbolFactory(symbols, theme, pluginIcons)
       }
     }
     return namespace
@@ -247,12 +176,14 @@ class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 
   buildRelationshipNamespace(
     relationships: Relationships,
-    layout: LayoutContext
+    theme: Theme,
+    icons: BuildIconNamespace<TPlugins>
   ): BuildRelationshipNamespace<TPlugins> {
     const namespace = {} as any
     for (const plugin of this.plugins) {
       if (plugin.createRelationshipFactory) {
-        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, layout)
+        const pluginIcons = icons[plugin.name] || {}
+        namespace[plugin.name] = plugin.createRelationshipFactory(relationships, theme, pluginIcons)
       }
     }
     return namespace
@@ -260,13 +191,13 @@ class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
 }
 ```
 
-### 型ユーティリティ
+### Type Utilities
 
-プラグイン配列から名前空間の型を自動生成します：
+Automatically generate namespace types from plugin arrays:
 
 ```typescript
 /**
- * プラグイン配列から ElementNamespace 型を生成
+ * Generate ElementNamespace type from plugin array
  */
 type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
   [K in TPlugins[number]['name']]: ReturnType<
@@ -275,7 +206,7 @@ type BuildElementNamespace<TPlugins extends readonly DiagramPlugin[]> = {
 }
 
 /**
- * プラグイン配列から RelationshipNamespace 型を生成
+ * Generate RelationshipNamespace type from plugin array
  */
 type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]> = {
   [K in TPlugins[number]['name']]: ReturnType<
@@ -284,9 +215,9 @@ type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]> = {
 }
 ```
 
-**結果の型の例**:
+**Example of resulting types**:
 ```typescript
-// UMLPlugin と CorePlugin を登録した場合
+// When UMLPlugin and CorePlugin are registered
 type ElementNamespace = {
   uml: {
     actor: (label: string) => SymbolId
@@ -315,74 +246,77 @@ type RelationshipNamespace = {
 
 ## TypeDiagram API
 
-### エントリポイント
+### Entry Point
 
-`TypeDiagram` は図の作成を開始するエントリポイントです。CorePlugin がデフォルトで適用されるため、基本図形（circle, rectangle, ellipse 等）がすぐに利用可能です。
+`TypeDiagram` is the entry point for starting diagram creation. Since CorePlugin is applied by default, basic shapes (circle, rectangle, ellipse, etc.) are immediately available.
 
-**メソッドチェーンでの使用**:
+**Usage with method chaining**:
 ```typescript
 TypeDiagram(titleOrInfo: string | DiagramInfo)
-  .use(...plugins: DiagramPlugin[])     // プラグインの追加
-  .theme(theme: Theme)                   // テーマの設定（オプション）
-  .build(({ el, rel, hint }) => { ... })    // 図の定義
-  .render(outputPath: string)            // SVG ファイルの出力
+  .use(...plugins: DiagramPlugin[])     // Add plugins
+  .theme(theme: Theme)                   // Set theme (optional)
+  .build(({ el, rel, hint, icon }) => { ... })    // Define diagram
+  .render(outputPath: string)            // Output SVG file
 ```
 
-### 内部処理フロー
+### Internal Processing Flow
 
-`TypeDiagram` および `DiagramBuilder` 内部では以下の処理が行われます：
+Inside `TypeDiagram` and `DiagramBuilder`, the following processes occur:
 
-1. **初期化 (`TypeDiagram()`)**
-   - DiagramBuilder インスタンスを作成
-   - CorePlugin がデフォルトで自動登録される
+1. **Initialization (`TypeDiagram()`)**
+   - Create DiagramBuilder instance
+   - CorePlugin is automatically registered by default
 
-2. **プラグイン追加 (`.use()`)**
-   - 追加のプラグインを登録
-   - プラグインは配列として蓄積される
+2. **Add plugins (`.use()`)**
+   - Register additional plugins
+   - Plugins are accumulated as an array
 
-3. **テーマ設定 (`.theme()`)** - オプション
-   - カスタムテーマを設定
+3. **Set theme (`.theme()`)** - Optional
+   - Set custom theme
 
-4. **ビルド (`.build(callback)`)**
-   - `Symbols` と `Relationships` インスタンスを作成
-   - レイアウト専用の `LayoutContext` を生成
-   - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成
-   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout` を渡す
-   - プラグインごとのファクトリが `Symbols` / `Relationships` を経由して要素を登録
-   - ユーザーが提供したコールバック関数を実行
-   - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
-   - DiagramSymbol を実際に作成し、配列の先頭に追加
-   - レンダリング可能なオブジェクトを返す
+4. **Build (`.build(callback)`)**
+   - Create `Symbols` and `Relationships` instances
+   - Generate layout-specific `LayoutContext`
+   - Generate ID for DiagramSymbol (special Symbol representing the entire diagram)
+   - Use `NamespaceBuilder` to construct `icon` namespace (calling each plugin's `registerIcons`)
+   - Use `NamespaceBuilder` to construct `el` and `rel`, passing `symbols`/`relationships` instances, `layout`, and `icons` to each plugin's `createSymbolFactory/RelationshipFactory`
+   - Plugin-specific factories register elements via `Symbols` / `Relationships`
+   - Execute user-provided callback function
+   - Calls like `el.uml.actor()` or `icon.uml.iconName()` add Symbol/Relationship to Symbols/Relationships
+   - Actually create DiagramSymbol and add it to the beginning of the array
+   - Return renderable object
 
-5. **レンダリング (`.render()`)**
-   - テーマの適用: すべての Symbol と Relationship にテーマを適用
-   - レイアウト計算: LayoutContext が制約を解決して各 Symbol の位置とサイズを決定
-   - SVG 生成: すべての Symbol と Relationship を SVG として出力
-   - 出力: 
-     - 文字列の場合: ファイルパスとして SVG を保存
-     - `import.meta` の場合: 自動的に対応する .svg パスへ保存
-     - DOM Element の場合: innerHTML に SVG を設定（ブラウザ環境）
+5. **Rendering (`.render()`)**
+   - Apply theme: Apply theme to all Symbols and Relationships
+   - Layout calculation: LayoutContext resolves constraints to determine position and size of each Symbol
+   - SVG generation: Output all Symbols and Relationships as SVG
+   - Output:
+     - If string: Save SVG to file path
+     - If `import.meta`: Automatically save to corresponding .svg path
+     - If DOM Element: Set SVG to innerHTML (browser environment)
 
-## 拡張性
+## Extensibility
 
-Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意の `DiagramPlugin` を登録することで拡張されます。プラグインそのものの作り方（クラス構成、ID 設計、TypeScript パターンなど）は [Plugin System ドキュメント](./plugin-system.md) に詳しい手順がありますので、ここでは仕組みの要点だけをまとめます。
+Namespace DSL is extended by registering any `DiagramPlugin` in addition to the default shapes from CorePlugin. For how to create plugins themselves (class structure, ID design, TypeScript patterns, etc.), detailed procedures are available in the [Plugin System documentation](./plugin-system.md), so here we only summarize the key points of the mechanism.
 
-- `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` として追加される
-- 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
-- ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
-- レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
-- プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
+- `TypeDiagram().use(MyPlugin)` adds namespaces as `el.myplugin` / `rel.myplugin` / `icon.myplugin`
+- Each plugin registers Symbol/Relationship via `Symbols` / `Relationships`
+- Registering icons through `registerIcons` makes them available as `icon.myplugin.iconName()`
+- IDs are automatically generated within `Symbols.register()` / `Relationships.register()`
+- Layout variables (`LayoutBound`) are generated with `layout.variables.createBound()` and injected into constructors
+- Plugin-specific hints and size adjustments can also be applied through the same LayoutContext
 
-**プラグインの実装方法（手順、コード例、TypeScript テクニック）は [plugin-system.md](./plugin-system.md) を参照してください。**
+**For plugin implementation methods (procedures, code examples, TypeScript techniques), please refer to [plugin-system.md](./plugin-system.md).**
 
-## まとめ
+## Summary
 
-Namespace-Based DSL Architecture により、以下が実現されています：
+The Namespace-Based DSL Architecture achieves the following:
 
-- ✅ **強力な型推論**: IntelliSense による完全な補完サポート
-- ✅ **プラグインベース**: 拡張可能なアーキテクチャ
-- ✅ **型安全性**: `SymbolId` / `RelationshipId` による型レベルの識別
-- ✅ **可読性**: デバッグしやすい ID 命名規則
-- ✅ **保守性**: 名前空間による責務の明確化
-- ✅ **拡張性**: 新しいプラグインの追加が容易
-- ✅ **直感的な API**: `el.namespace.method()` という自然な記述
+- ✅ **Powerful type inference**: Complete completion support with IntelliSense
+- ✅ **Plugin-based**: Extensible architecture
+- ✅ **Type safety**: Type-level identification with `SymbolId` / `RelationshipId` / `IconMeta`
+- ✅ **Readability**: Debuggable ID naming conventions
+- ✅ **Maintainability**: Clear responsibilities through namespaces
+- ✅ **Extensibility**: Easy addition of new plugins
+- ✅ **Intuitive API**: Natural notation like `el.namespace.method()` / `icon.namespace.iconName()`
+- ✅ **Icon support**: Type-safe icon references through plugin-specific icon namespaces
