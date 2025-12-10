@@ -11,7 +11,7 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { LayoutBounds } from "../dist/layout/bounds"
+import type { LayoutBounds } from "../dist/core/bounds"
 import type { ConstraintsBuilder } from "../dist/hint/hints"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"

@@ -1,6 +1,7 @@
 // src/core/index.ts
 export type {
   VariableId,
+  BoundId,
   LayoutConstraintId,
   ILayoutConstraint,
   ILayoutVariable,
@@ -11,3 +12,15 @@ export type {
   ISymbol,
   ISymbolCharacs,
 } from "./symbols"
+
+export type {
+  Bounds,
+  BoundsType,
+  ContainerBounds,
+  ItemBounds,
+  LayoutBounds,
+  TypedBounds,
+  BoundsMap,
+} from "./bounds"
+
+export { createBoundId, getBoundsValues } from "./bounds"

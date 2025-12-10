@@ -3,12 +3,17 @@ import type {
   LayoutBounds,
   ContainerBounds,
   ItemBounds,
-} from "../layout"
+} from "./bounds"
 
 /**
  * VariableId: レイアウト変数の識別子
  */
 export type VariableId = string
+
+/**
+ * BoundId: Boundsの識別子
+ */
+export type BoundId = string
 
 /**
  * LayoutConstraintId: レイアウト制約の識別子

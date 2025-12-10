@@ -1,14 +1,3 @@
-export type {
-  BoundId,
-  Bounds,
-  BoundsType,
-  ContainerBounds,
-  ItemBounds,
-  LayoutBounds,
-  TypedBounds,
-  BoundsMap,
-} from "./bounds"
-export { createBoundId, getBoundsValues } from "./bounds"
 export { ConstraintsBuilder, type Term } from "./constraints_builder"
 export {
   LayoutSolver,
@@ -17,6 +6,22 @@ export {
   type SuggestHandleFactory,
   LayoutVariable,
 } from "./layout_solver"
-export type { VariableId, LayoutConstraintId, ILayoutConstraint, ILayoutVariable, SuggestHandle, SuggestHandleStrength } from "../core/symbols"
+export type { 
+  VariableId, 
+  BoundId, 
+  LayoutConstraintId, 
+  ILayoutConstraint, 
+  ILayoutVariable, 
+  SuggestHandle, 
+  SuggestHandleStrength,
+  Bounds,
+  BoundsType,
+  ContainerBounds,
+  ItemBounds,
+  LayoutBounds,
+  TypedBounds,
+  BoundsMap,
+} from "../core"
+export { createBoundId, getBoundsValues } from "../core"
 export { LayoutVariables } from "./layout_variables"
 export type { LayoutConstraintTarget } from "./layout_constraint_target"

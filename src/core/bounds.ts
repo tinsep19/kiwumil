@@ -1,10 +1,8 @@
-import type { LayoutVariable } from "./layout_solver"
-
-const BOUND_ID_BRAND = Symbol("BoundId")
-export type BoundId = string & { readonly [BOUND_ID_BRAND]: true }
+import type { ILayoutVariable } from "./symbols"
+import type { BoundId } from "./symbols"
 
 export function createBoundId(value: string): BoundId {
-  return value as BoundId
+  return value
 }
 
 /**
@@ -22,14 +20,14 @@ export type BoundsType = "layout" | "container" | "item"
 export interface Bounds {
   readonly boundId: BoundId
   readonly type: BoundsType
-  readonly x: LayoutVariable
-  readonly y: LayoutVariable
-  readonly width: LayoutVariable
-  readonly height: LayoutVariable
-  readonly right: LayoutVariable
-  readonly bottom: LayoutVariable
-  readonly centerX: LayoutVariable
-  readonly centerY: LayoutVariable
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable
+  readonly bottom: ILayoutVariable
+  readonly centerX: ILayoutVariable
+  readonly centerY: ILayoutVariable
 }
 
 /**

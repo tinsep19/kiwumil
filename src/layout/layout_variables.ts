@@ -8,7 +8,7 @@ import {
   type ContainerBounds,
   type ItemBounds,
   type BoundsMap,
-} from "./bounds"
+} from "../core"
 
 // 互換性のため既存の export を維持
 export type { LayoutVariable }

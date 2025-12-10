@@ -1,7 +1,8 @@
 import * as kiwi from "@lume/kiwi"
 import type { LayoutVariable } from "./layout_solver"
+import type { ILayoutVariable } from "../core"
 
-export type Term = [number, LayoutVariable | number]
+export type Term = [number, LayoutVariable | ILayoutVariable | number]
 
 interface PendingConstraint {
   lhs?: Term[]
@@ -141,7 +142,8 @@ export class ConstraintsBuilder {
         continue
       }
 
-      const kiwiVar = operand.variable
+      // operand is ILayoutVariable or LayoutVariable, both have .variable property
+      const kiwiVar = operand.variable as kiwi.Variable
       if (coefficient === 1) {
         args.push(kiwiVar)
       } else {
