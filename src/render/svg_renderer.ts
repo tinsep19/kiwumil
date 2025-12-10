@@ -33,14 +33,16 @@ export class SvgRenderer {
   }
 
   private calculateSymbolZIndex(symbol: SymbolBase): number {
-    const nestLevel = symbol.nestLevel
+    // Read z from layout.z via getBoundsValues, default to 0 if not finite
+    const bounds = getBoundsValues(symbol.layout)
+    const z = Number.isFinite(bounds.z) ? bounds.z : 0
 
     if (symbol.constructor.name === "SystemBoundarySymbol") {
       // Boundary は背景（ネストレベルが深いほど上に）
-      return nestLevel * 100 - 100
+      return z * 100 - 100
     } else {
       // 通常のシンボルは前景
-      return nestLevel * 100 + 50
+      return z * 100 + 50
     }
   }
 
@@ -89,7 +91,7 @@ export class SvgRenderer {
         console.warn(
           `[SvgRenderer] Abnormal bounds detected for symbol:`,
           `id=${symbol.id}, label="${label}",`,
-          `bounds={x:${bounds.x}, y:${bounds.y}, width:${bounds.width}, height:${bounds.height}}`
+          `bounds={x:${bounds.x}, y:${bounds.y}, width:${bounds.width}, height:${bounds.height}, z:${bounds.z}}`
         )
       }
     }

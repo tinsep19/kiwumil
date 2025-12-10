@@ -124,16 +124,9 @@ export class HintFactory {
 
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]) {
     const containerId = toSymbolId(container)
-    const containerSymbol = this.symbols.findSymbolById(containerId)
-    if (containerSymbol) {
-      const containerNestLevel = containerSymbol.nestLevel
-      for (const childId of childIds) {
-        const childSymbol = this.symbols.findSymbolById(toSymbolId(childId))
-        if (childSymbol) {
-          childSymbol.nestLevel = containerNestLevel + 1
-        }
-      }
-    }
+    // Note: nestLevel mutations removed. Depth handling now done via layout.z constraints
+    // which should be set by hints.enclose() implementation with z-based constraints.
+    // TODO: Verify that hints.enclose() adds proper z constraints for container/child relationships
 
     const containerTarget = this.resolveConstraintTarget(containerId)
     if (!containerTarget) return

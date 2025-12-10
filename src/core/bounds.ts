@@ -28,6 +28,7 @@ export interface Bounds {
   readonly bottom: ILayoutVariable
   readonly centerX: ILayoutVariable
   readonly centerY: ILayoutVariable
+  readonly z: ILayoutVariable
 }
 
 /**
@@ -73,6 +74,7 @@ export function getBoundsValues(bounds: Bounds): {
   bottom: number
   centerX: number
   centerY: number
+  z: number
 } {
   const rawX = bounds.x.value()
   const rawY = bounds.y.value()
@@ -82,6 +84,7 @@ export function getBoundsValues(bounds: Bounds): {
   const rawBottom = bounds.bottom.value()
   const rawCenterX = bounds.centerX.value()
   const rawCenterY = bounds.centerY.value()
+  const rawZ = bounds.z.value()
 
   // NaN や Infinity を検出してログ出力
   const hasInvalidValues =
@@ -92,7 +95,8 @@ export function getBoundsValues(bounds: Bounds): {
     !Number.isFinite(rawRight) ||
     !Number.isFinite(rawBottom) ||
     !Number.isFinite(rawCenterX) ||
-    !Number.isFinite(rawCenterY)
+    !Number.isFinite(rawCenterY) ||
+    !Number.isFinite(rawZ)
 
   if (hasInvalidValues) {
     console.warn(
@@ -106,6 +110,7 @@ export function getBoundsValues(bounds: Bounds): {
         bottom: rawBottom,
         centerX: rawCenterX,
         centerY: rawCenterY,
+        z: rawZ,
       }
     )
   }
@@ -129,5 +134,6 @@ export function getBoundsValues(bounds: Bounds): {
     bottom: rawBottom,
     centerX: rawCenterX,
     centerY: rawCenterY,
+    z: rawZ,
   }
 }

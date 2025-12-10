@@ -77,8 +77,9 @@ export class GridBuilder {
     const containerTarget = this.hint.getConstraintTarget(this.container)
     if (!containerTarget) return
 
-    // metadata 設定（nestLevel）
-    this.applyContainerMetadata(children)
+    // Note: Depth metadata (nestLevel) is no longer applied here.
+    // Z-depth constraints should be handled by hints.encloseGrid via layout.z constraints.
+    // TODO: Verify that hints.encloseGrid adds proper z constraints for container/child relationships
 
     // 制約を適用
     this.hint
@@ -86,17 +87,5 @@ export class GridBuilder {
       .hints.encloseGrid(containerTarget, matrixTargets, this.options)
   }
 
-  private applyContainerMetadata(children: SymbolId[]): void {
-    const container = this.hint.getSymbols().find((s) => s.id === this.container)
-    if (!container) return
-
-    const containerNestLevel = container.nestLevel
-
-    for (const childId of children) {
-      const child = this.hint.getSymbols().find((s) => s.id === childId)
-      if (child) {
-        child.nestLevel = containerNestLevel + 1
-      }
-    }
-  }
+  // Removed: applyContainerMetadata method that mutated nestLevel
 }
