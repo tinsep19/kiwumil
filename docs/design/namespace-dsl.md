@@ -34,6 +34,14 @@ rel (Relationship Namespace)
 │   └── ...
 └── [plugin] (他のプラグイン)
     └── ...
+
+icon (Icon Namespace)
+├── core (CorePlugin)
+│   └── [icons]
+├── uml (UMLPlugin)
+│   └── [icons]
+└── [plugin] (他のプラグイン)
+    └── [icons]
 ```
 
 ## 使用例
@@ -45,7 +53,7 @@ import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
 TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     // UML Plugin の名前空間を使用
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
@@ -66,7 +74,7 @@ import { TypeDiagram } from 'kiwumil'
 
 // CorePlugin はデフォルトで適用されています
 TypeDiagram("Simple Diagram")
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
     
@@ -84,7 +92,7 @@ import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
 TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     // CorePlugin の名前空間（デフォルトで利用可能）
     const circle = el.core.circle("Circle")
     
@@ -241,7 +249,7 @@ type RelationshipNamespace = {
 TypeDiagram(titleOrInfo: string | DiagramInfo)
   .use(...plugins: DiagramPlugin[])     // プラグインの追加
   .theme(theme: Theme)                   // テーマの設定（オプション）
-  .build(({ el, rel, hint }) => { ... })    // 図の定義
+  .build(({ el, rel, hint, icon }) => { ... })    // 図の定義
   .render(outputPath: string)            // SVG ファイルの出力
 ```
 
@@ -264,10 +272,11 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
    - `Symbols` と `Relationships` インスタンスを作成
    - レイアウト専用の `LayoutContext` を生成
    - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成
-   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout` を渡す
+   - `NamespaceBuilder` を使って `icon` 名前空間を構築（各プラグインの `registerIcons` を呼び出し）
+   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout`、および `icons` を渡す
    - プラグインごとのファクトリが `Symbols` / `Relationships` を経由して要素を登録
    - ユーザーが提供したコールバック関数を実行
-   - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
+   - `el.uml.actor()` や `icon.uml.iconName()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
    - DiagramSymbol を実際に作成し、配列の先頭に追加
    - レンダリング可能なオブジェクトを返す
 
@@ -284,8 +293,9 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
 
 Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意の `DiagramPlugin` を登録することで拡張されます。プラグインそのものの作り方（クラス構成、ID 設計、TypeScript パターンなど）は [Plugin System ドキュメント](./plugin-system.md) に詳しい手順がありますので、ここでは仕組みの要点だけをまとめます。
 
-- `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` として追加される
+- `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` / `icon.myplugin` として追加される
 - 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
+- `registerIcons` を通じてアイコンを登録すると `icon.myplugin.iconName()` として利用可能になる
 - ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
 - レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
 - プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
@@ -298,8 +308,9 @@ Namespace-Based DSL Architecture により、以下が実現されています�
 
 - ✅ **強力な型推論**: IntelliSense による完全な補完サポート
 - ✅ **プラグインベース**: 拡張可能なアーキテクチャ
-- ✅ **型安全性**: `SymbolId` / `RelationshipId` による型レベルの識別
+- ✅ **型安全性**: `SymbolId` / `RelationshipId` / `IconMeta` による型レベルの識別
 - ✅ **可読性**: デバッグしやすい ID 命名規則
 - ✅ **保守性**: 名前空間による責務の明確化
 - ✅ **拡張性**: 新しいプラグインの追加が容易
-- ✅ **直感的な API**: `el.namespace.method()` という自然な記述
+- ✅ **直感的な API**: `el.namespace.method()` / `icon.namespace.iconName()` という自然な記述
+- ✅ **アイコンサポート**: プラグインごとのアイコン名前空間による型安全なアイコン参照
