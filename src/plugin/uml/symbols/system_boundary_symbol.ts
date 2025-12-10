@@ -1,6 +1,6 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../model"
+import type { Point } from "../../../core/symbols"
 import { getBoundsValues } from "../../../layout"
 import type { ContainerBounds, ConstraintsBuilder } from "../../../layout"
 import type { Theme } from "../../../theme"

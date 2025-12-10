@@ -2,7 +2,7 @@
 import type { ConstraintsBuilder } from "../../../layout"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../model"
+import type { Point } from "../../../core/symbols"
 import { getBoundsValues } from "../../../layout"
 
 const DEFAULT_PADDING_X = 12

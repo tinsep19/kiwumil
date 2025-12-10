@@ -3,32 +3,12 @@ import type {
   LayoutBounds,
   ContainerBounds,
   ItemBounds,
-  ILayoutVariable,
   LayoutConstraint,
   ConstraintSpec,
   BoundsType,
 } from "../layout"
-import type { SymbolId, Point } from "./types"
+import type { SymbolId, Point, ISymbol, ISymbolCharacs, ILayoutVariable } from "../core/symbols"
 import type { SymbolBase } from "./symbol_base"
-
-/**
- * ISymbol: DSL でユーザーが触れる最小限のシンボルインターフェース
- */
-export interface ISymbol {
-  id: SymbolId
-  render(): string // 旧 toSVG の名前変更
-  getConnectionPoint(src: Point): Point
-}
-
-/**
- * ISymbolCharacs: シンボルに付随するレイアウト情報群
- * 必須で id と layout は含む。その他の key は ContainerBounds | ItemBounds | ILayoutVariable
- */
-export type ISymbolCharacs = {
-  id: SymbolId
-  layout: LayoutBounds
-  [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | ILayoutVariable
-}
 
 /**
  * SymbolRegistration: register の戻り値型

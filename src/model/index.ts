@@ -4,9 +4,6 @@ export { RelationshipBase, type RelationshipBaseOptions } from "./relationship_b
 export { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 export { Symbols } from "./symbols"
 export type { DiagramInfo } from "./diagram_info"
-export type {
-  Point,
-  RelationshipId,
-  SymbolId,
-} from "./types"
+export type { RelationshipId } from "./types"
+export type { Point, SymbolId } from "../core/symbols"
 export { LayoutContext } from "./layout_context"

@@ -1,6 +1,6 @@
 // src/hint/grid_builder.ts
 
-import type { SymbolId } from "../model"
+import type { SymbolId } from "../core/symbols"
 import type { HintFactory } from "../dsl"
 import { isRectMatrix, toSymbolId, type SymbolOrId } from "../dsl"
 

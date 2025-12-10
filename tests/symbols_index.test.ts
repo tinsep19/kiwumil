@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "bun:test"
 import { LayoutContext } from "@/model"
 import { Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"
-import type { SymbolId } from "@/model/types"
+import type { SymbolId } from "@/core/symbols"
 import type { SymbolRegistration } from "@/model/symbols"
 
 describe("Symbols Index Map", () => {

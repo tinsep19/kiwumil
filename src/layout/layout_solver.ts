@@ -2,18 +2,11 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
-
-export type VariableId = string
+import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle } from "../core/symbols"
 
 export type ConstraintSpec = (builder: ConstraintsBuilder) => void
 
-export interface ILayoutVariable<T = kiwi.Variable> {
-  id: VariableId
-  value(): number
-  variable: T
-}
-
-export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
+export class LayoutVariable implements ILayoutVariable {
   constructor(
     public readonly id: VariableId,
     public readonly variable: kiwi.Variable
@@ -31,14 +24,6 @@ export type LayoutConstraintId = string & { readonly [LAYOUT_CONSTRAINT_ID]: tru
 export interface LayoutConstraint {
   id: LayoutConstraintId
   rawConstraints: kiwi.Constraint[]
-}
-
-export type SuggestHandleStrength = "strong" | "medium" | "weak"
-
-export interface SuggestHandle {
-  suggest(value: number): void
-  strength(): SuggestHandleStrength
-  dispose(): void
 }
 
 /**

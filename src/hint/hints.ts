@@ -1,6 +1,6 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
-import type { SymbolId } from "../model"
+import type { SymbolId } from "../core/symbols"
 import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutConstraintTarget, type LayoutVariable } from "../layout"
 
 type LayoutSymbolId = SymbolId

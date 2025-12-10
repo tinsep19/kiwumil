@@ -1,7 +1,7 @@
 // src/model/diagram_symbol.ts
 import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
-import type { Point } from "./types"
+import type { Point } from "../core/symbols"
 import type { DiagramInfo } from "./diagram_info"
 import type { ContainerBounds, ConstraintsBuilder } from "../layout"
 import { getBoundsValues } from "../layout"

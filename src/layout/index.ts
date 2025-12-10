@@ -15,12 +15,9 @@ export {
   type ConstraintSpec,
   type LayoutConstraint,
   type LayoutConstraintId,
-  type SuggestHandle,
   type SuggestHandleFactory,
-  type SuggestHandleStrength,
-  type VariableId,
-  type ILayoutVariable,
   LayoutVariable,
 } from "./layout_solver"
+export type { VariableId, ILayoutVariable, SuggestHandle, SuggestHandleStrength } from "../core/symbols"
 export { LayoutVariables } from "./layout_variables"
 export type { LayoutConstraintTarget } from "./layout_constraint_target"

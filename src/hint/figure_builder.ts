@@ -1,6 +1,6 @@
 // src/hint/figure_builder.ts
 
-import type { SymbolId } from "../model"
+import type { SymbolId } from "../core/symbols"
 import type { HintFactory, SymbolOrId } from "../dsl"
 import { toSymbolId } from "../dsl"
 

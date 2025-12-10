@@ -1,8 +1,7 @@
 // src/model/symbol_base.ts
-import type { SymbolId, Point } from "./types"
+import type { SymbolId, Point, ISymbol } from "../core/symbols"
 import type { Theme } from "../theme"
 import type { ConstraintsBuilder, LayoutBounds } from "../layout"
-import type { ISymbol } from "./symbols"
 
 export interface SymbolBaseOptions {
   id: SymbolId
