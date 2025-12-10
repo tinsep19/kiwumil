@@ -1,5 +1,7 @@
 # Namespace-Based DSL Architecture
 
+[English](./namespace-dsl.md) | 日本語
+
 ## 概要
 
 kiwumil は、プラグインごとの名前空間を持つ型安全な DSL によって図の作成を行います。各プラグインは独自の Symbol と Relationship を提供し、IntelliSense によって補完される直感的な API を実現しています。
@@ -34,6 +36,14 @@ rel (Relationship Namespace)
 │   └── ...
 └── [plugin] (他のプラグイン)
     └── ...
+
+icon (Icon Namespace)
+├── core (CorePlugin)
+│   └── [icons]
+├── uml (UMLPlugin)
+│   └── [icons]
+└── [plugin] (他のプラグイン)
+    └── [icons]
 ```
 
 ## 使用例
@@ -45,7 +55,7 @@ import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
 TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     // UML Plugin の名前空間を使用
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
@@ -66,7 +76,7 @@ import { TypeDiagram } from 'kiwumil'
 
 // CorePlugin はデフォルトで適用されています
 TypeDiagram("Simple Diagram")
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
     
@@ -84,7 +94,7 @@ import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
 TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
-  .build(({ el, rel, hint }) => {
+  .build(({ el, rel, hint, icon }) => {
     // CorePlugin の名前空間（デフォルトで利用可能）
     const circle = el.core.circle("Circle")
     
@@ -101,26 +111,6 @@ TypeDiagram("Mixed Diagram")
   .render("output.svg")
 ```
 
-### DiagramInfo とテーマを使用
-
-```typescript
-import { TypeDiagram, UMLPlugin, DarkTheme } from 'kiwumil'
-
-TypeDiagram({
-  title: "E-Commerce System",
-  createdAt: "2025-11-14",
-  author: "Architecture Team"
-})
-  .use(UMLPlugin)
-  .theme(DarkTheme)
-  .build(({ el, rel, hint }) => {
-    const user = el.uml.actor("User")
-    const cart = el.uml.usecase("Shopping Cart")
-    rel.uml.associate(user, cart)
-  })
-  .render("output.svg")
-```
-
 ## アーキテクチャの特徴
 
 ### 完全な型安全性
@@ -131,69 +121,6 @@ TypeScript の型システムを最大限活用し、以下を実現していま
 - **メソッドの補完**: `el.uml.` と入力すると、UML プラグインが提供する全メソッドが表示
 - **型エラーの早期検出**: 存在しないメソッドや間違った引数型はコンパイル時にエラーとして検出
 - **SymbolId / RelationshipId による型安全性**: Symbol と Relationship は一意な ID で識別され、型レベルで区別される
-
-## コア型定義
-
-### SymbolId と RelationshipId
-
-Symbol と Relationship はそれぞれ一意な ID で識別されます：
-
-```typescript
-/**
- * Symbol の一意識別子
- * 形式: `${namespace}:${symbolName}/${index}`
- * 例: "uml:actor/0", "uml:usecase/1", "core:rectangle/0"
- */
-type SymbolId = string & { readonly __brand: 'SymbolId' }
-
-/**
- * Relationship の一意識別子
- * 形式: `${namespace}:${relationshipName}/${index}`
- * 例: "uml:association/0", "uml:include/1", "core:arrow/0"
- */
-type RelationshipId = string & { readonly __brand: 'RelationshipId' }
-```
-
-**ID の命名規則の利点**:
-- デバッグ時にどのプラグインで生成されたかが一目でわかる
-- Symbol/Relationship の種類が明確
-- プラグイン間で ID が衝突しない
-- ログやエラーメッセージでの可読性が向上
-- インデックスベースの採番により、生成順序が追跡可能
-
-### SymbolBase と RelationshipBase
-
-Symbol / Relationship はそれぞれオプションオブジェクトを受け取る構造になっています：
-
-```typescript
-interface SymbolBaseOptions {
-  id: SymbolId
-  layoutBounds: LayoutBound
-  theme: Theme
-}
-
-abstract class SymbolBase {
-  constructor(options: SymbolBaseOptions) { ... }
-
-  getLayoutBounds(): LayoutBound
-  abstract toSVG(): string
-  abstract getConnectionPoint(from: Point): Point
-}
-
-interface RelationshipBaseOptions {
-  id: RelationshipId
-  from: SymbolId
-  to: SymbolId
-  theme: Theme
-}
-
-abstract class RelationshipBase {
-  constructor(options: RelationshipBaseOptions) { ... }
-
-  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number
-  abstract toSVG(symbols: Map<SymbolId, SymbolBase>): string
-}
-```
 
 ## プラグインインターフェース
 
@@ -328,7 +255,7 @@ type RelationshipNamespace = {
 TypeDiagram(titleOrInfo: string | DiagramInfo)
   .use(...plugins: DiagramPlugin[])     // プラグインの追加
   .theme(theme: Theme)                   // テーマの設定（オプション）
-  .build(({ el, rel, hint }) => { ... })    // 図の定義
+  .build(({ el, rel, hint, icon }) => { ... })    // 図の定義
   .render(outputPath: string)            // SVG ファイルの出力
 ```
 
@@ -351,10 +278,11 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
    - `Symbols` と `Relationships` インスタンスを作成
    - レイアウト専用の `LayoutContext` を生成
    - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成
-   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout` を渡す
+   - `NamespaceBuilder` を使って `icon` 名前空間を構築（各プラグインの `registerIcons` を呼び出し）
+   - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout`、および `icons` を渡す
    - プラグインごとのファクトリが `Symbols` / `Relationships` を経由して要素を登録
    - ユーザーが提供したコールバック関数を実行
-   - `el.uml.actor()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
+   - `el.uml.actor()` や `icon.uml.iconName()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
    - DiagramSymbol を実際に作成し、配列の先頭に追加
    - レンダリング可能なオブジェクトを返す
 
@@ -371,8 +299,9 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
 
 Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意の `DiagramPlugin` を登録することで拡張されます。プラグインそのものの作り方（クラス構成、ID 設計、TypeScript パターンなど）は [Plugin System ドキュメント](./plugin-system.md) に詳しい手順がありますので、ここでは仕組みの要点だけをまとめます。
 
-- `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` として追加される
+- `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` / `icon.myplugin` として追加される
 - 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
+- `registerIcons` を通じてアイコンを登録すると `icon.myplugin.iconName()` として利用可能になる
 - ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
 - レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
 - プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
@@ -385,8 +314,9 @@ Namespace-Based DSL Architecture により、以下が実現されています�
 
 - ✅ **強力な型推論**: IntelliSense による完全な補完サポート
 - ✅ **プラグインベース**: 拡張可能なアーキテクチャ
-- ✅ **型安全性**: `SymbolId` / `RelationshipId` による型レベルの識別
+- ✅ **型安全性**: `SymbolId` / `RelationshipId` / `IconMeta` による型レベルの識別
 - ✅ **可読性**: デバッグしやすい ID 命名規則
 - ✅ **保守性**: 名前空間による責務の明確化
 - ✅ **拡張性**: 新しいプラグインの追加が容易
-- ✅ **直感的な API**: `el.namespace.method()` という自然な記述
+- ✅ **直感的な API**: `el.namespace.method()` / `icon.namespace.iconName()` という自然な記述
+- ✅ **アイコンサポート**: プラグインごとのアイコン名前空間による型安全なアイコン参照
