@@ -24,3 +24,5 @@ export type {
 } from "./bounds"
 
 export { createBoundId, getBoundsValues } from "./bounds"
+
+export type { Term, IConstraintsBuilder } from "./constraints_builder"

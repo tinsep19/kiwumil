@@ -1,30 +1,11 @@
 import * as kiwi from "@lume/kiwi"
 import type { LayoutVariable } from "./layout_solver"
-import type { ILayoutVariable } from "../core"
-
-export type Term = [number, ILayoutVariable | number]
+import type { ILayoutVariable, Term, IConstraintsBuilder } from "../core"
 
 interface PendingConstraint {
   lhs?: Term[]
   rhs?: Term[]
   op?: kiwi.Operator
-}
-
-/**
- * IConstraintsBuilder: Constraint builder interface
- */
-export interface IConstraintsBuilder {
-  expr(...lhs: Term[]): this
-  eq(...rhs: Term[]): this
-  ge(...rhs: Term[]): this
-  le(...rhs: Term[]): this
-  eq0(): this
-  ge0(): this
-  le0(): this
-  required(): this
-  strong(): this
-  medium(): this
-  weak(): this
 }
 
 /**

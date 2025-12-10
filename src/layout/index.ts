@@ -1,4 +1,4 @@
-export { ConstraintsBuilder, type Term, type IConstraintsBuilder } from "./constraints_builder"
+export { ConstraintsBuilder } from "./constraints_builder"
 export {
   LayoutSolver,
   type ConstraintSpec,
@@ -21,6 +21,8 @@ export type {
   LayoutBounds,
   TypedBounds,
   BoundsMap,
+  Term,
+  IConstraintsBuilder,
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"
 export { LayoutVariables } from "./layout_variables"
