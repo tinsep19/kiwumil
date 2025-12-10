@@ -9,7 +9,7 @@ export interface ILayoutSolver {
   /**
    * Create a layout variable
    */
-  createLayoutVariable(id: VariableId): ILayoutVariable
+  createVariable(id: VariableId): ILayoutVariable
 
   /**
    * Update variables

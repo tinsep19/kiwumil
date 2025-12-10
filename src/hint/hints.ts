@@ -54,7 +54,7 @@ export class Hints {
     const fullName = `hint:${baseName}_${suffix}`
     
     // Create the variable using LayoutSolver's public API
-    const variable = this.solver.createLayoutVariable(fullName)
+    const variable = this.solver.createVariable(fullName)
     
     const hintVariable: HintVariable = {
       variable,

@@ -34,7 +34,7 @@ export class LayoutSolver implements ILayoutSolver {
   /**
    * Create a LayoutVariable
    */
-  createLayoutVariable(id: VariableId): LayoutVariable {
+  createVariable(id: VariableId): LayoutVariable {
     const variable = new kiwi.Variable(id)
     return new LayoutVariable(id, variable)
   }

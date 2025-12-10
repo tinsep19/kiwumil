@@ -28,7 +28,7 @@ export class LayoutVariables {
   }
 
   createVariable(name: string): ILayoutVariable {
-    return this.solver.createLayoutVariable(name)
+    return this.solver.createVariable(name)
   }
 
   /**
