@@ -11,6 +11,44 @@ Kiwumil のレイアウトシステムは、Cassowary アルゴリズムを使�
 
 ## アーキテクチャ
 
+### 型とインターフェースの配置
+
+Kiwumil は `src/core` モジュールで公開インターフェースを集約し、アーキテクチャの境界を明確化しています。
+
+**`src/core/`** - 公開コアインターフェース:
+- `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `ILayoutVariable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
+- `bounds.ts`: `BoundId`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
+- `constraints_builder.ts`: `IConstraintsBuilder`, `Term`, `ConstraintSpec`
+- `layout_solver.ts`: `ILayoutSolver`
+- `hint_target.ts`: `HintTarget`
+
+**`src/model/`** - モデル層実装:
+- `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
+- `LayoutVariables` (moved from `src/layout`)
+
+**`src/layout/`** - レイアウトエンジン実装:
+- `LayoutSolver` (implements `ILayoutSolver`)
+- `ConstraintsBuilder` (implements `IConstraintsBuilder`)
+- `LayoutContext`
+
+### システム構成図
+
+```
+┌────────────────────────────────────────────────────────┐
+│                    src/core (公開API)                  │
+│  - ILayoutSolver, IConstraintsBuilder, ILayoutVariable │
+│  - LayoutBounds, ConstraintSpec, HintTarget           │
+└────────────────────────────────────────────────────────┘
+         ▲                                    ▲
+         │                                    │
+┌────────┴──────────┐              ┌─────────┴──────────┐
+│   src/model       │              │   src/layout       │
+│  - SymbolBase     │              │  - LayoutSolver    │
+│  - LayoutVariables│──────────────▶  - ConstraintsBuilder│
+│  (solver接続)     │              │  (実装層)          │
+└───────────────────┘              └────────────────────┘
+```
+
 ### システム構成図
 
 ```
@@ -61,20 +99,15 @@ export class LayoutContext {
 
 #### LayoutVariables（変数管理）
 
-kiwi の Variable/Constraint 生成を担う薄い層。
+kiwi の Variable/Constraint 生成を担う薄い層。`src/model` に配置され、`ILayoutSolver` インターフェースを通じてレイアウトソルバーを利用します。
 
 ```typescript
 export class LayoutVariables {
-  createVar(name: string): LayoutVariable
-  createBound(id: SymbolId | SymbolId): Bounds
-  expression(terms: LayoutTerm[], constant?: number): kiwi.Expression
-  addConstraint(
-    lhs: LayoutExpressionInput,
-    op: LayoutConstraintOperator,
-    rhs: LayoutExpressionInput,
-    strength: LayoutConstraintStrength
-  ): kiwi.Constraint
-  valueOf(variable: LayoutVariable): number
+  private readonly solver: ILayoutSolver
+  
+  createVariable(id: VariableId): ILayoutVariable
+  createBound(id: SymbolId): LayoutBounds
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): ILayoutConstraint
 }
 ```
 
@@ -105,20 +138,25 @@ export class LayoutConstraints {
 
 ### Bounds の定義
 
-Bounds はインターフェースとして定義され、すべてのプロパティが事前に作成されます。
+Bounds はインターフェースとして `src/core/bounds.ts` に定義され、すべてのプロパティが `ILayoutVariable` インターフェースを使用します。
 
 ```typescript
 export interface Bounds {
   readonly type: BoundsType  // "layout" | "container" | "item"
-  readonly x: LayoutVariable
-  readonly y: LayoutVariable
-  readonly width: LayoutVariable
-  readonly height: LayoutVariable
-  readonly right: LayoutVariable    // 派生変数: x + width
-  readonly bottom: LayoutVariable   // 派生変数: y + height
-  readonly centerX: LayoutVariable  // 派生変数: x + width * 0.5
-  readonly centerY: LayoutVariable  // 派生変数: y + height * 0.5
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable    // 派生変数: x + width
+  readonly bottom: ILayoutVariable   // 派生変数: y + height
+  readonly centerX: ILayoutVariable  // 派生変数: x + width * 0.5
+  readonly centerY: ILayoutVariable  // 派生変数: y + height * 0.5
 }
+
+export type BoundId = string
+export type LayoutBounds = Bounds & { type: 'layout' }
+export type ContainerBounds = Bounds & { type: 'container' }
+export type ItemBounds = Bounds & { type: 'item' }
 ```
 
 ### 派生変数の実装
@@ -178,12 +216,13 @@ Symbol は図の要素（ノード）を表現する基底クラスです。
 export abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
-  protected readonly layoutBounds: Bounds
+  protected readonly layoutBounds: LayoutBounds
   bounds?: { x: number; y: number; width: number; height: number }
 
-  constructor(id: SymbolId, label: string, layoutBounds: Bounds)
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBounds)
   
-  getLayoutBounds(): Bounds
+  getLayoutBounds(): LayoutBounds
+  ensureLayoutBounds(builder: IConstraintsBuilder): void
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
 }
@@ -599,18 +638,22 @@ SymbolBase および ContainerSymbolBase は、LayoutBound をコンストラク
 export abstract class SymbolBase {
   readonly id: SymbolId
   readonly label: string
-  protected readonly layoutBounds: LayoutBound
+  protected readonly layoutBounds: LayoutBounds
   // 後方互換性のため残されているが、layoutBounds を使用することを推奨
   bounds?: { x: number; y: number; width: number; height: number }
 
-  constructor(id: SymbolId, label: string, layoutBounds: LayoutBound) {
+  constructor(id: SymbolId, label: string, layoutBounds: LayoutBounds) {
     this.id = id
     this.label = label
     this.layoutBounds = layoutBounds
   }
 
-  getLayoutBounds(): LayoutBound {
+  getLayoutBounds(): LayoutBounds {
     return this.layoutBounds
+  }
+  
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+    // 各シンボルが固有の制約を追加
   }
 
   // toSVG や getConnectionPoint 内で layoutBounds を使用

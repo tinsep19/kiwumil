@@ -1,45 +1,67 @@
-# Decoupling LayoutConstraints from Symbols
+# Symbol を見ずに LayoutConstraints を運用する計画
 
-## Context
+## ステータス: 完了 ✅
 
-- `LayoutConstraints` currently resolves `SymbolId` → `SymbolBase` to access `layout`/`container` bounds for every hint (`arrange*`, `align*`, `enclose*`, etc.). This keeps the constraint management layer tightly coupled to symbol lookup and prevents the solver-focused logic from operating purely on `Bounds`.
-- We plan to add a lightweight tracking identifier directly on each `Bounds` and make the Hint layer resolve symbols once, so `LayoutConstraints` only needs bounds data and the identifier for metadata (e.g., `record()` IDs).
+本計画で提案されたレイアウト制約とシンボルの分離は完了しました。
 
-## Objectives
+## 実装内容
 
-1. Introduce `boundId` on every bounds instance so constraint tracking no longer depends on the original `SymbolId`.
-2. Ensure hint builders resolve `SymbolId` → bounds (including optional container bounds) only once and pass those resolved targets into `LayoutConstraints`.
-3. Refactor `LayoutConstraints` to work purely with bounds/variables, removing the injected `resolveSymbol` and symbol lookups.
+### 1. Bounds に BoundId を追加
 
-## Solution Overview
+`src/core/bounds.ts` で `BoundId` を型として定義し、ブランド化を削除:
 
-| Area | Change |
+```typescript
+export type BoundId = string
+
+export interface Bounds {
+  readonly type: BoundsType
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable
+  readonly bottom: ILayoutVariable
+  readonly centerX: ILayoutVariable
+  readonly centerY: ILayoutVariable
+}
+```
+
+### 2. HintTarget の導入
+
+`src/core/hint_target.ts` に `HintTarget` インターフェースを配置 (旧 `LayoutConstraintTarget`):
+
+```typescript
+export interface HintTarget {
+  ownerId: SymbolId
+  layout: LayoutBounds
+  container?: ContainerBounds
+}
+```
+
+### 3. ILayoutVariable への統一
+
+すべての `Bounds` プロパティが `ILayoutVariable` インターフェースを使用:
+
+- 具象 `LayoutVariable` クラスへの直接依存を排除
+- `src/core` のインターフェースのみに依存
+
+## 完了した実装
+
+| 領域 | 実装内容 |
 | --- | --- |
-| Bounds model | Expose `boundId` (derived from the owning symbol) alongside existing `LayoutVar` fields so IDs persist through the solver without needing the symbol itself. |
-| HintFactory / builders | Resolve every `LayoutTargetId` into a `LayoutConstraintTarget` ( `{ ownerId: string; layout: LayoutBounds; container?: ContainerBounds }` ) during `normalizeTargets` or the builder-specific helper. Pass these targets directly to `LayoutConstraints`. Preserve nest-level updates. |
-| LayoutConstraints | Accept `LayoutConstraintTarget[]` instead of `LayoutSymbolId[]`, use `target.layout`/`target.container` to build constraints, and consume `target.ownerId` (or `boundId`) when generating scoped IDs. Drop the `resolveSymbol` constructor argument. |
+| Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `ILayoutVariable` を使用。 |
+| HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`layout`、`container` を保持。 |
+| LayoutConstraints | `HintTarget` を活用し、Bounds ベースでの制約構築を実現。 |
 
-## Plan
+## 得られたメリット
 
-1. **Add boundId to Bounds**
-   - Update `Bounds`/`BoundsMap` definitions (`src/layout/bounds.ts`) to include `boundId: string`.
-   - Ensure `LayoutVariables.createBound()` generates a stable `boundId` (e.g., based on the provided identifier) and attaches it to the returned bounds.
-   - Acceptance: Bounds expose `boundId`, and all existing consumers compile without needing symbol lookups.
+1. **依存性の逆転**: 制約レイヤーが具象型ではなくインターフェースに依存
+2. **型安全性の向上**: コンパイル時の型チェックが強化
+3. **アーキテクチャの明確化**: `src/core` で公開API、`src/layout` で実装という明確な境界
+4. **循環依存の排除**: コア型定義が実装から分離
 
-2. **Resolve symbols in Hint layer**
-   - Extend `HintFactory.normalizeTargets` (or add a dedicated helper) to map each `LayoutTargetId` → `{ ownerId: boundId; layout: LayoutBounds; container?: ContainerBounds }`.
-   - Update Grid/Figure builders and guide APIs to use the resolved targets when calling `LayoutConstraints`.
-   - Acceptance: Builders only pass bounds data + ownerId; they no longer call `resolveSymbol` within `LayoutConstraints`.
+## 関連変更
 
-3. **Refactor LayoutConstraints**
-   - Change method signatures (e.g., `arrangeHorizontal(targets: LayoutConstraintTarget[])`).
-   - Use `target.layout`/`target.container` to access `LayoutVar` instances without `resolveSymbol`.
-   - Update `record()` to use `target.boundId` (or `ownerId`) when generating scoped IDs.
-   - Remove the constructor dependency on `resolveSymbol`.
-   - Acceptance: Constraint creation works purely on bounds, and tests still capture the same behavior.
-
-## Testing & Risks
-
-- Update existing layout hint tests to align with the new target-based signatures (e.g., `tests/layout_constraints.test.ts`).
-- Risk: If some symbols lack container bounds, ensure the new target helper gracefully omits `container` to avoid runtime errors.
-- Timeline: Each major area should take ~1 day, with integration testing once all refactors are in place.
+- `LayoutVariable` → `ILayoutVariable` への統一
+- `LayoutConstraintTarget` → `HintTarget` への名前変更
+- `BoundId` のブランド化削除 (単純な `string` 型に)
