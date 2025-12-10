@@ -1,6 +1,8 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
-import { LayoutVariables, type LayoutVariable, LayoutSolver, type LayoutConstraint, type ConstraintSpec } from "../layout"
+import type { ILayoutVariable, ILayoutConstraint, ConstraintSpec, ILayoutSolver } from "../core"
+import { LayoutSolver } from "../layout"
+import { LayoutVariables } from "./layout_variables"
 import { Hints } from "../hint"
 
 export class LayoutContext {
@@ -24,9 +26,9 @@ export class LayoutContext {
    * Create a constraint with an ID using a callback pattern
    * @param id Constraint identifier
    * @param spec Builder callback function
-   * @returns LayoutConstraint with id and rawConstraints
+   * @returns ILayoutConstraint with id
    */
-  createConstraint(id: string, spec: ConstraintSpec): LayoutConstraint {
+  createConstraint(id: string, spec: ConstraintSpec): ILayoutConstraint {
     return this.solver.createConstraint(id, spec)
   }
 
@@ -36,7 +38,7 @@ export class LayoutContext {
     // No longer need to populate the deprecated bounds property
   }
 
-  valueOf(variable: LayoutVariable): number {
+  valueOf(variable: ILayoutVariable): number {
     return this.variables.valueOf(variable)
   }
 }

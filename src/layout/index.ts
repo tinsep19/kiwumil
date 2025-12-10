@@ -27,7 +27,7 @@ export type {
   ILayoutSolver,
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"
-export { LayoutVariables } from "./layout_variables"
+export { LayoutVariables } from "../model"
 
 // For backward compatibility, re-export HintTarget as LayoutConstraintTarget
 export type { HintTarget as LayoutConstraintTarget } from "../core"
