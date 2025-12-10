@@ -1,6 +1,6 @@
 // src/render/svg_renderer.ts
 import type { RelationshipBase, SymbolBase } from "../model"
-import type { SymbolId } from "../core/symbols"
+import type { SymbolId } from "../core"
 import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model"
 import { getBoundsValues } from "../layout"

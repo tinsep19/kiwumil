@@ -2,7 +2,7 @@
 import type { IConstraintsBuilder } from "../../../layout"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../core/symbols"
+import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../layout"
 
 export interface ActorSymbolOptions extends SymbolBaseOptions {

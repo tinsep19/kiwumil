@@ -1,6 +1,9 @@
-// src/core/layout_solver.ts
-import type { VariableId, ILayoutVariable, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory } from "./symbols"
-import type { ConstraintSpec } from "./constraints_builder"
+// src/core/solver.ts
+// レイアウトソルバーのインターフェース
+
+import type { VariableId, LayoutConstraintId } from "./types"
+import type { ILayoutVariable, ISuggestHandleFactory } from "./layout_variable"
+import type { ILayoutConstraint, ConstraintSpec } from "./constraint"
 
 /**
  * ILayoutSolver: Layout solver interface

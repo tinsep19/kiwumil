@@ -1,6 +1,6 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
-import type { SymbolId } from "../core/symbols"
+import type { SymbolId } from "../core"
 import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, IConstraintsBuilder, type LayoutVariable } from "../layout"
 import type { HintTarget } from "../core"
 

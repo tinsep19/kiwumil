@@ -1,5 +1,5 @@
-import type { ILayoutVariable } from "./symbols"
-import type { BoundId } from "./symbols"
+import type { BoundId } from "./types"
+import type { ILayoutVariable } from "./layout_variable"
 
 export function createBoundId(value: string): BoundId {
   return value

@@ -3,7 +3,7 @@
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
 import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
-import type { ConstraintSpec } from "../core/constraints_builder"
+import type { ConstraintSpec } from "../core"
 
 export class LayoutVariable implements ILayoutVariable {
   constructor(

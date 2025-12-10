@@ -1,19 +1,40 @@
 // src/core/index.ts
+// 基本型
 export type {
+  SymbolId,
+  Point,
   VariableId,
   BoundId,
   LayoutConstraintId,
-  ILayoutConstraint,
+} from "./types"
+
+// シンボル
+export type {
+  ISymbol,
+  ISymbolCharacs,
+} from "./symbol"
+
+// レイアウト変数
+export type {
   ILayoutVariable,
   ConstraintStrength,
   ISuggestHandle,
   ISuggestHandleFactory,
-  SymbolId,
-  Point,
-  ISymbol,
-  ISymbolCharacs,
-} from "./symbols"
+} from "./layout_variable"
 
+// 制約
+export type {
+  ILayoutConstraint,
+  Term,
+  IConstraintsBuilder,
+  ConstraintSpec,
+  HintTarget,
+} from "./constraint"
+
+// ソルバー
+export type { ILayoutSolver } from "./solver"
+
+// 境界
 export type {
   Bounds,
   BoundsType,
@@ -25,9 +46,3 @@ export type {
 } from "./bounds"
 
 export { createBoundId, getBoundsValues } from "./bounds"
-
-export type { Term, IConstraintsBuilder, ConstraintSpec } from "./constraints_builder"
-
-export type { HintTarget } from "./hint_target"
-
-export type { ILayoutSolver } from "./layout_solver"
