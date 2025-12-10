@@ -3,6 +3,8 @@ export {
   LayoutSolver,
   type LayoutConstraint,
   LayoutVariable,
+  isLayoutVariable,
+  isBrandedKiwi,
 } from "./layout_solver"
 export type { 
   VariableId, 

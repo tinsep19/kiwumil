@@ -5,6 +5,31 @@ import { ConstraintsBuilder } from "./constraints_builder"
 import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
 import type { ConstraintSpec } from "../core"
 
+/**
+ * Unique symbol used to brand objects created by LayoutSolver
+ * @internal
+ */
+const KIWI_BRAND: unique symbol = Symbol("KIWI_BRAND")
+
+/**
+ * Brand an object as created by our kiwi wrapper
+ * @internal
+ */
+function brandAsKiwi(obj: unknown): void {
+  if (obj && typeof obj === "object") {
+    ;(obj as any)[KIWI_BRAND] = true
+  }
+}
+
+/**
+ * Check if an object has been branded by our kiwi wrapper
+ * @param obj Object to check
+ * @returns true if the object has been branded
+ */
+export function isBrandedKiwi(obj: unknown): boolean {
+  return !!(obj && typeof obj === "object" && (obj as any)[KIWI_BRAND])
+}
+
 export class LayoutVariable implements ILayoutVariable {
   constructor(
     public readonly id: VariableId,
@@ -36,7 +61,9 @@ export class LayoutSolver implements ILayoutSolver {
    */
   createVariable(id: VariableId): LayoutVariable {
     const variable = new kiwi.Variable(id)
-    return new LayoutVariable(id, variable)
+    const layoutVariable = new LayoutVariable(id, variable)
+    brandAsKiwi(layoutVariable)
+    return layoutVariable
   }
 
   /**
@@ -55,10 +82,12 @@ export class LayoutSolver implements ILayoutSolver {
   createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint {
     const builder = new ConstraintsBuilder(this.solver)
     spec(builder)
-    return {
+    const constraint = {
       id,
       rawConstraints: builder.getRawConstraints(),
     }
+    brandAsKiwi(constraint)
+    return constraint
   }
 
   /**
@@ -123,5 +152,14 @@ class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
     this.solver.addEditVariable(this.variable.variable, strength)
     return new SuggestHandleImpl(this.solver, this.variable, label)
   }
+}
+
+/**
+ * Check if a value is a LayoutVariable created by LayoutSolver
+ * @param v Value to check
+ * @returns true if v is a branded LayoutVariable
+ */
+export function isLayoutVariable(v: unknown): v is LayoutVariable {
+  return isBrandedKiwi(v)
 }
 
