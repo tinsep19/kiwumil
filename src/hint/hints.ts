@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { SymbolId } from "../core/symbols"
-import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, ConstraintsBuilder, type LayoutVariable } from "../layout"
+import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, IConstraintsBuilder, type LayoutVariable } from "../layout"
 import type { HintTarget } from "../core"
 
 type LayoutSymbolId = SymbolId
@@ -79,7 +79,7 @@ export class Hints {
 
   withSymbol(
     symbolId: LayoutSymbolId,
-    build: (builder: ConstraintsBuilder) => void
+    build: (builder: IConstraintsBuilder) => void
   ) {
     const constraint = this.solver.createConstraint(
       this.createSymbolScopedId(symbolId).toString(),

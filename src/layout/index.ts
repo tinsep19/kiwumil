@@ -1,7 +1,6 @@
 export { ConstraintsBuilder } from "./constraints_builder"
 export {
   LayoutSolver,
-  type ConstraintSpec,
   type LayoutConstraint,
   LayoutVariable,
 } from "./layout_solver"
@@ -11,8 +10,8 @@ export type {
   LayoutConstraintId, 
   ILayoutConstraint, 
   ILayoutVariable, 
-  SuggestHandle, 
-  SuggestHandleStrength,
+  ISuggestHandle, 
+  ConstraintStrength,
   ISuggestHandleFactory,
   Bounds,
   BoundsType,
@@ -23,6 +22,7 @@ export type {
   BoundsMap,
   Term,
   IConstraintsBuilder,
+  ConstraintSpec,
   HintTarget,
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"

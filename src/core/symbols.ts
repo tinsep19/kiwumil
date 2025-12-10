@@ -37,26 +37,26 @@ export interface ILayoutVariable {
 }
 
 /**
- * SuggestHandleStrength: サジェストハンドルの強度
+ * ConstraintStrength: 制約の強度
  */
-export type SuggestHandleStrength = "strong" | "medium" | "weak"
+export type ConstraintStrength = "required" | "strong" | "medium" | "weak"
 
 /**
- * SuggestHandle: レイアウト変数への値の提案を行うハンドル
+ * ISuggestHandle: レイアウト変数への値の提案を行うハンドル
  */
-export interface SuggestHandle {
+export interface ISuggestHandle {
   suggest(value: number): void
-  strength(): SuggestHandleStrength
+  strength(): ConstraintStrength
   dispose(): void
 }
 
 /**
- * ISuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
+ * ISuggestHandleFactory: ISuggestHandleを作成するファクトリインターフェース
  */
 export interface ISuggestHandleFactory {
-  strong(): SuggestHandle
-  medium(): SuggestHandle
-  weak(): SuggestHandle
+  strong(): ISuggestHandle
+  medium(): ISuggestHandle
+  weak(): ISuggestHandle
 }
 
 /**

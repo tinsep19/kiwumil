@@ -2,9 +2,8 @@
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"
-import type { VariableId, ILayoutVariable, SuggestHandleStrength, SuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory } from "../core/symbols"
-
-export type ConstraintSpec = (builder: ConstraintsBuilder) => void
+import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory } from "../core/symbols"
+import type { ConstraintSpec } from "../core/constraints_builder"
 
 export class LayoutVariable implements ILayoutVariable {
   constructor(
@@ -71,13 +70,13 @@ export class LayoutSolver {
 }
 
 /** @internal */
-class SuggestHandleImpl implements SuggestHandle {
+class SuggestHandleImpl implements ISuggestHandle {
   private disposed = false
 
   constructor(
     private readonly solver: kiwi.Solver,
     private readonly variable: LayoutVariable,
-    private readonly label: SuggestHandleStrength
+    private readonly label: ConstraintStrength
   ) {}
 
   suggest(value: number): void {
@@ -85,7 +84,7 @@ class SuggestHandleImpl implements SuggestHandle {
     this.solver.suggestValue(this.variable.variable, value)
   }
 
-  strength(): SuggestHandleStrength {
+  strength(): ConstraintStrength {
     return this.label
   }
 
@@ -108,19 +107,19 @@ class SuggestHandleImpl implements SuggestHandle {
 class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
   constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVariable) {}
 
-  strong(): SuggestHandle {
+  strong(): ISuggestHandle {
     return this.createHandle("strong", kiwi.Strength.strong)
   }
 
-  medium(): SuggestHandle {
+  medium(): ISuggestHandle {
     return this.createHandle("medium", kiwi.Strength.medium)
   }
 
-  weak(): SuggestHandle {
+  weak(): ISuggestHandle {
     return this.createHandle("weak", kiwi.Strength.weak)
   }
 
-  private createHandle(label: SuggestHandleStrength, strength: number): SuggestHandle {
+  private createHandle(label: ConstraintStrength, strength: number): ISuggestHandle {
     this.solver.addEditVariable(this.variable.variable, strength)
     return new SuggestHandleImpl(this.solver, this.variable, label)
   }

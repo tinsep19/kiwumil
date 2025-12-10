@@ -7,6 +7,11 @@ import type { ILayoutVariable } from "./symbols"
 export type Term = [number, ILayoutVariable | number]
 
 /**
+ * ConstraintSpec: Callback function that builds constraints using IConstraintsBuilder
+ */
+export type ConstraintSpec = (builder: IConstraintsBuilder) => void
+
+/**
  * IConstraintsBuilder: Constraint builder interface
  */
 export interface IConstraintsBuilder {

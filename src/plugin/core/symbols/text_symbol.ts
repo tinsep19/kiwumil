@@ -1,5 +1,5 @@
 // src/plugin/core/symbols/text_symbol.ts
-import type { ConstraintsBuilder } from "../../../layout"
+import type { IConstraintsBuilder } from "../../../layout"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core/symbols"
@@ -76,7 +76,7 @@ export class TextSymbol extends SymbolBase {
     }
   }
 
-  ensureLayoutBounds(_builder: ConstraintsBuilder): void {
+  ensureLayoutBounds(_builder: IConstraintsBuilder): void {
     // text symbols currently do not contribute additional constraints
   }
 

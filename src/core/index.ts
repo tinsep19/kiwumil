@@ -5,8 +5,8 @@ export type {
   LayoutConstraintId,
   ILayoutConstraint,
   ILayoutVariable,
-  SuggestHandleStrength,
-  SuggestHandle,
+  ConstraintStrength,
+  ISuggestHandle,
   ISuggestHandleFactory,
   SymbolId,
   Point,
@@ -26,6 +26,6 @@ export type {
 
 export { createBoundId, getBoundsValues } from "./bounds"
 
-export type { Term, IConstraintsBuilder } from "./constraints_builder"
+export type { Term, IConstraintsBuilder, ConstraintSpec } from "./constraints_builder"
 
 export type { HintTarget } from "./hint_target"

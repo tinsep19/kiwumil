@@ -1,5 +1,6 @@
 // src/layout/layout_variables.ts
-import { LayoutSolver, type LayoutVariable, type ConstraintSpec, type LayoutConstraint } from "./layout_solver"
+import { LayoutSolver, type LayoutVariable, type LayoutConstraint } from "./layout_solver"
+import type { ConstraintSpec } from "../core"
 import {
   createBoundId,
   type Bounds,
