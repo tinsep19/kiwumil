@@ -1,6 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { LayoutVariable } from "./layout_solver"
 import type { ILayoutVariable, Term, IConstraintsBuilder } from "../core"
+import { isBrandedKiwi } from "./layout_solver"
 
 interface PendingConstraint {
   lhs?: Term[]
@@ -138,6 +139,11 @@ export class ConstraintsBuilder implements IConstraintsBuilder {
       if (typeof operand === "number") {
         args.push(coefficient * operand)
         continue
+      }
+
+      // Validate that operand is a branded LayoutVariable
+      if (!isBrandedKiwi(operand)) {
+        throw new Error("ConstraintsBuilder: operand is not a LayoutVariable created by LayoutSolver")
       }
 
       // operand is ILayoutVariable, which has .variable property

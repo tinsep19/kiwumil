@@ -1,4 +1,4 @@
-import { LayoutVariables, LayoutSolver } from "@/layout"
+import { LayoutVariables, LayoutSolver, isLayoutVariable } from "@/layout"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
@@ -132,5 +132,22 @@ describe("LayoutVariables", () => {
     solver.updateVariables()
 
     expect(variables.valueOf(x)).toBeCloseTo(42)
+  })
+
+  test("isLayoutVariable correctly identifies branded variables", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+    const x = variables.createVar("x")
+
+    // Should return true for branded LayoutVariable
+    expect(isLayoutVariable(x)).toBe(true)
+
+    // Should return false for non-branded objects
+    expect(isLayoutVariable(null)).toBe(false)
+    expect(isLayoutVariable(undefined)).toBe(false)
+    expect(isLayoutVariable(42)).toBe(false)
+    expect(isLayoutVariable("string")).toBe(false)
+    expect(isLayoutVariable({})).toBe(false)
+    expect(isLayoutVariable({ id: "fake", value: () => 0 })).toBe(false)
   })
 })

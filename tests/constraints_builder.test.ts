@@ -84,4 +84,22 @@ describe("ConstraintsBuilder", () => {
 
     expect(vars.valueOf(y)).toBeCloseTo((2 * 10 + 7) / 3)
   })
+
+  test("buildExpression throws error for unbranded variables", () => {
+    const solver = new LayoutSolver()
+    const vars = new LayoutVariables(solver)
+    
+    // Create a fake variable that looks like ILayoutVariable but isn't branded
+    const fakeVariable = {
+      id: "fake:var",
+      value: () => 0,
+      variable: new kiwi.Variable("fake"),
+    }
+
+    expect(() => {
+      solver.createConstraint("test-invalid", (builder) => {
+        builder.expr([1, fakeVariable as any]).eq([1, 1]).strong()
+      })
+    }).toThrow("ConstraintsBuilder: operand is not a LayoutVariable created by LayoutSolver")
+  })
 })
