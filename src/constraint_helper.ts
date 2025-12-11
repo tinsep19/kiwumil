@@ -160,10 +160,14 @@ export class ConstraintHelper {
     }
 
     for (let i = 0; i < vars.length - 1; i++) {
-      this.builder
-        .expr([1, vars[i]])
-        .eq([1, vars[i + 1]])
-        [strength]()
+      const current = vars[i]
+      const next = vars[i + 1]
+      if (current && next) {
+        this.builder
+          .expr([1, current])
+          .eq([1, next])
+          [strength]()
+      }
     }
 
     return this
