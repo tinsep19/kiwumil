@@ -13,7 +13,6 @@ export abstract class SymbolBase implements ISymbol {
   readonly id: SymbolId
   readonly layout: LayoutBounds
   protected readonly theme: Theme
-  nestLevel: number = 0
 
   constructor(options: SymbolBaseOptions) {
     this.id = options.id

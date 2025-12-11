@@ -1,7 +1,7 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
-import { getBoundsValues } from "../../../layout"
+import { getBoundsValues, ConstraintHelper } from "../../../layout"
 import type { ContainerBounds, IConstraintsBuilder } from "../../../layout"
 import type { Theme } from "../../../theme"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
@@ -103,6 +103,11 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
       return
     }
     const bounds = this.layout
+    const helper = new ConstraintHelper(builder)
+    
+    // Align z values between layout and container
+    helper.align(bounds.z, this.container.z).required()
+    
     builder.expr([1, bounds.width]).ge([this.defaultWidth, 1]).weak()
     builder.expr([1, bounds.height]).ge([this.defaultHeight, 1]).weak()
     this.constraintsApplied = true

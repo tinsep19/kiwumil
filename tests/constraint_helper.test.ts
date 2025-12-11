@@ -1,6 +1,6 @@
 import { describe, test, expect } from "bun:test"
 import { LayoutSolver, LayoutVariables } from "@/layout"
-import { ConstraintHelper } from "@/constraint_helper"
+import { ConstraintHelper } from "@/layout"
 import type { LayoutBounds } from "@/core"
 
 describe("ConstraintHelper", () => {

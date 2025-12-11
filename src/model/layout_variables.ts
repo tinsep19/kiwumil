@@ -41,6 +41,7 @@ export class LayoutVariables {
   /**
    * Bounds を生成する factory メソッド
    * すべての computed properties (right, bottom, centerX, centerY) も作成し、制約を設定する
+   * z変数も作成し、デフォルト値0を設定する
    * @param prefix 変数名のプレフィックス
    * @param type レイアウトの種類 (デフォルト: "layout")
    */
@@ -62,6 +63,9 @@ export class LayoutVariables {
     const centerX = this.createVariable(`${prefix}.centerX`)
     const centerY = this.createVariable(`${prefix}.centerY`)
 
+    // z (depth) 変数を作成し、デフォルト値を0に設定
+    const z = this.createVariable(`${prefix}.z`)
+
     this.solver.createConstraint(`${boundId}:computed`, (builder) => {
       builder
         .expr([1, right])
@@ -79,6 +83,12 @@ export class LayoutVariables {
         .expr([1, centerY])
         .eq([1, y], [0.5, height])
         .strong()
+      // z のデフォルト値を0に設定 (弱制約)
+      // enclose hints によってこの値は上書きされることがある
+      builder
+        .expr([1, z])
+        .eq([0, 1])
+        .weak()
     })
 
     return {
@@ -92,6 +102,7 @@ export class LayoutVariables {
       bottom,
       centerX,
       centerY,
+      z,
     } as BoundsMap[Type]
   }
 

@@ -30,6 +30,7 @@ export type {
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"
 export { LayoutVariables } from "../model"
+export { ConstraintHelper } from "./constraint_helper"
 
 // For backward compatibility, re-export HintTarget as LayoutConstraintTarget
 export type { HintTarget as LayoutConstraintTarget } from "../core"
