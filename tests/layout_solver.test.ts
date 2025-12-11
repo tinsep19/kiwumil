@@ -88,7 +88,7 @@ describe("Layout pipeline", () => {
       }
     )
     // Register constraints manually since we removed registerContainerConstraints
-    context.hints.withSymbol(diagram.id, (builder) => {
+    context.createConstraint(`constraints/${diagram.id}`, (builder) => {
       diagram.ensureLayoutBounds(builder)
     })
     context.solveAndApply([...symbols.getAllSymbols(), diagram])

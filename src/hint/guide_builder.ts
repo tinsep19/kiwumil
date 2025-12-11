@@ -1,7 +1,6 @@
 // src/hint/guide_builder.ts
 import type { SymbolBase, LayoutContext } from "../model"
-import type { SymbolId, Term, HintTarget } from "../core"
-import type { LayoutVariable } from "@/layout"
+import type { SymbolId, Term, HintTarget, ILayoutVariable } from "../core"
 
 type LayoutTargetId = SymbolId
 
@@ -10,7 +9,7 @@ type LayoutTargetId = SymbolId
  * X軸（水平方向）のガイドビルダー
  */
 export interface GuideBuilderX {
-  readonly x: LayoutVariable
+  readonly x: ILayoutVariable
   alignLeft(...symbolIds: LayoutTargetId[]): this
   alignRight(...symbolIds: LayoutTargetId[]): this
   alignCenter(...symbolIds: LayoutTargetId[]): this
@@ -25,7 +24,7 @@ export interface GuideBuilderX {
  * Y軸（垂直方向）のガイドビルダー
  */
 export interface GuideBuilderY {
-  readonly y: LayoutVariable
+  readonly y: ILayoutVariable
   alignTop(...symbolIds: LayoutTargetId[]): this
   alignBottom(...symbolIds: LayoutTargetId[]): this
   alignCenter(...symbolIds: LayoutTargetId[]): this
@@ -42,9 +41,9 @@ type Axis = "x" | "y"
  * axis パラメータによって X軸 または Y軸 の振る舞いを切り替える
  */
 export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
-  readonly x!: LayoutVariable
-  readonly y!: LayoutVariable
-  private readonly guideVar: LayoutVariable
+  readonly x!: ILayoutVariable
+  readonly y!: ILayoutVariable
+  private readonly guideVar: ILayoutVariable
   private readonly alignedSymbols = new Set<LayoutTargetId>()
   private hasFollowConstraint = false
 

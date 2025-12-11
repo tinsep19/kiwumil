@@ -3,7 +3,7 @@ import type { SymbolBase } from "./"
 import type { ILayoutVariable, ILayoutConstraint, ConstraintSpec, ILayoutSolver } from "../core"
 import { LayoutSolver } from "../layout"
 import { LayoutVariables } from "./layout_variables"
-import { Hints } from "../hint"
+import { Hints } from "./hints"
 
 export class LayoutContext {
   private readonly solver: LayoutSolver
