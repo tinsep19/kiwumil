@@ -3,8 +3,9 @@ import type { DiagramPlugin } from "./diagram_plugin"
 import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
-import type { RelationshipId, SymbolBase } from "../model"
+import type { RelationshipId } from "../model"
 import type { IconMeta } from "../icon"
+import type { ISymbolCharacs } from "../core"
 
 export type PluginIcons = Record<string, () => IconMeta | null>
 
@@ -16,7 +17,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
       symbols: Symbols,
       theme: Theme,
       icons: Record<string, () => IconMeta | null>
-    ) => Record<string, (...args: any[]) => SymbolBase>
+    ) => Record<string, (...args: any[]) => ISymbolCharacs>
   }
 >
 
