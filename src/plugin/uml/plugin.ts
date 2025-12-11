@@ -13,6 +13,7 @@ import {
 import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import type { Theme } from "../../theme"
+import type { IContainerSymbolCharacs } from "../../core"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
 
 /**
@@ -76,9 +77,9 @@ export const UMLPlugin = {
       /**
        * System Boundary Symbol を作成
        * @param label - System Boundary のラベル
-       * @returns 生成された SystemBoundary の ISymbolCharacs
+       * @returns 生成された SystemBoundary の IContainerSymbolCharacs
        */
-      systemBoundary(label: string) {
+      systemBoundary(label: string): IContainerSymbolCharacs {
         return symbols.register(plugin, "systemBoundary", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const container = r.createBounds("container", "container")
@@ -95,7 +96,7 @@ export const UMLPlugin = {
             boundary.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).characs
+        }).characs as IContainerSymbolCharacs
       },
     }
   },

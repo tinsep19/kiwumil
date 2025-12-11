@@ -11,7 +11,7 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { LayoutBounds, IConstraintsBuilder, ISymbolCharacs } from "../dist/core"
+import type { LayoutBounds, IConstraintsBuilder, ISymbolCharacs, IContainerSymbolCharacs } from "../dist/core"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 import {
@@ -122,7 +122,7 @@ TypeDiagram("UML Plugin")
     const user = el.uml.actor("User")
     expectType<ISymbolCharacs>(user)
     const boundary = el.uml.systemBoundary("System")
-    expectType<ISymbolCharacs>(boundary)
+    expectType<IContainerSymbolCharacs>(boundary)
 
     const _relUml = rel.uml
     expectAssignable<object>(_relUml)

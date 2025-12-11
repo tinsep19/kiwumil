@@ -1,6 +1,6 @@
 // src/dsl/symbol_helpers.ts
 import type { ContainerSymbol } from "../model"
-import type { SymbolId, ISymbolCharacs } from "../core"
+import type { SymbolId, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
 
 /**
  * ISymbolCharacs or SymbolId union for DSL helpers.
@@ -8,9 +8,9 @@ import type { SymbolId, ISymbolCharacs } from "../core"
 export type SymbolOrId = ISymbolCharacs | SymbolId
 
 /**
- * ContainerSymbol (which extends ISymbolCharacs with container property) or its ID type.
+ * IContainerSymbolCharacs (which extends ISymbolCharacs with container property) or its ID type.
  */
-export type ContainerSymbolOrId = (ISymbolCharacs & { container: unknown }) | SymbolId
+export type ContainerSymbolOrId = IContainerSymbolCharacs | SymbolId
 
 /**
  * Resolve a symbol identifier from ISymbolCharacs or SymbolId.
