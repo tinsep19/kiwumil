@@ -1,12 +1,6 @@
-import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { IConstraintsBuilder, ILayoutSolver, ILayoutConstraint, ILayoutVariable } from "../core"
 import type { HintTarget } from "../core"
-
-// Internal type that extends ILayoutConstraint with rawConstraints for internal use
-interface LayoutConstraintWithRaw extends ILayoutConstraint {
-  rawConstraints: kiwi.Constraint[]
-}
 
 export interface HintVariableOptions {
   /** 
@@ -32,8 +26,6 @@ export interface HintVariable {
 
 export class Hints {
   private readonly constraints: ILayoutConstraint[] = []
-  private counter = 0
-  private readonly symbolCounter = new Map<string, number>()
   private readonly hintVariables: HintVariable[] = []
   private hintVarCounter = 0
 
@@ -315,18 +307,15 @@ export class Hints {
     const rowGap = options?.rowGap ?? this.theme.defaultStyleSet.verticalGap
     const colGap = options?.colGap ?? this.theme.defaultStyleSet.horizontalGap
 
-    const raws: kiwi.Constraint[] = []
-
     // 各行を水平配置
     for (const row of matrix) {
-      const rowRaws = this.createArrangeHorizontalConstraints(row, colGap)
-      raws.push(...rowRaws)
+      const constraint = this.createArrangeHorizontalConstraints(row, colGap)
+      this.constraints.push(constraint)
     }
 
     // 各列を垂直配置
     const numCols = matrix[0]?.length ?? 0
     if (numCols === 0) {
-      this.record(raws, container.boundId)
       return
     }
 
@@ -335,11 +324,9 @@ export class Hints {
         .map((row) => row[col])
         .filter((target): target is HintTarget => Boolean(target))
       if (column.length === 0) continue
-      const colRaws = this.createArrangeVerticalConstraints(column, rowGap)
-      raws.push(...colRaws)
+      const constraint = this.createArrangeVerticalConstraints(column, rowGap)
+      this.constraints.push(constraint)
     }
-
-    this.record(raws, container.boundId)
   }
 
   /**
@@ -362,12 +349,10 @@ export class Hints {
     // 2. 行ごとの配置制約（Strong）
     const rowGap = options?.rowGap ?? this.theme.defaultStyleSet.verticalGap
 
-    const raws: kiwi.Constraint[] = []
-
     // 各行を水平配置
     for (const row of rows) {
-      const rowRaws = this.createArrangeHorizontalConstraints(row)
-      raws.push(...rowRaws)
+      const constraint = this.createArrangeHorizontalConstraints(row)
+      this.constraints.push(constraint)
     }
 
     // 各行の先頭（または中央/右）を縦配置
@@ -375,28 +360,26 @@ export class Hints {
       .map((row) => row[0])
       .filter((target): target is HintTarget => Boolean(target))
     if (anchors.length > 0) {
-      const anchorRaws = this.createArrangeVerticalConstraints(anchors, rowGap)
-      raws.push(...anchorRaws)
+      const constraint = this.createArrangeVerticalConstraints(anchors, rowGap)
+      this.constraints.push(constraint)
     }
 
     // Alignment 対応（将来実装）
     if (options?.align === "center") {
-      const alignRaws = this.createAlignCenterXConstraints(children)
-      raws.push(...alignRaws)
+      const constraint = this.createAlignCenterXConstraints(children)
+      if (constraint) this.constraints.push(constraint)
     } else if (options?.align === "right") {
-      const alignRaws = this.createAlignRightConstraints(children)
-      raws.push(...alignRaws)
+      const constraint = this.createAlignRightConstraints(children)
+      if (constraint) this.constraints.push(constraint)
     }
-
-    this.record(raws, container.boundId)
   }
 
   private createArrangeHorizontalConstraints(
     targets: HintTarget[],
     gap?: number
-  ): kiwi.Constraint[] {
+  ): ILayoutConstraint {
     const actualGap = gap ?? this.theme.defaultStyleSet.horizontalGap
-    const constraint = this.solver.createConstraint("constraints/arrangeHorizontal", (builder) => {
+    return this.solver.createConstraint("constraints/arrangeHorizontal", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
         const next = targets[i + 1]!
@@ -412,17 +395,15 @@ export class Hints {
           )
           .strong()
       }
-    }) as LayoutConstraintWithRaw
-
-    return constraint.rawConstraints
+    })
   }
 
   private createArrangeVerticalConstraints(
     targets: HintTarget[],
     gap?: number
-  ): kiwi.Constraint[] {
+  ): ILayoutConstraint {
     const actualGap = gap ?? this.theme.defaultStyleSet.verticalGap
-    const constraint = this.solver.createConstraint("constraints/arrangeVertical", (builder) => {
+    return this.solver.createConstraint("constraints/arrangeVertical", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
         const next = targets[i + 1]!
@@ -438,16 +419,14 @@ export class Hints {
           )
           .strong()
       }
-    }) as LayoutConstraintWithRaw
-
-    return constraint.rawConstraints
+    })
   }
 
-  private createAlignCenterXConstraints(targets: HintTarget[]): kiwi.Constraint[] {
-    if (targets.length < 2) return []
+  private createAlignCenterXConstraints(targets: HintTarget[]): ILayoutConstraint | null {
+    if (targets.length < 2) return null
 
     const firstBounds = targets[0]!.layout
-    const constraint = this.solver.createConstraint("constraints/alignCenterX", (builder) => {
+    return this.solver.createConstraint("constraints/alignCenterX", (builder) => {
       for (let i = 1; i < targets.length; i++) {
         const currentBounds = targets[i]!.layout
 
@@ -456,16 +435,14 @@ export class Hints {
           .eq([1, firstBounds.x], [0.5, firstBounds.width])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
-
-    return constraint.rawConstraints
+    })
   }
 
-  private createAlignRightConstraints(targets: HintTarget[]): kiwi.Constraint[] {
-    if (targets.length < 2) return []
+  private createAlignRightConstraints(targets: HintTarget[]): ILayoutConstraint | null {
+    if (targets.length < 2) return null
 
     const firstBounds = targets[0]!.layout
-    const constraint = this.solver.createConstraint("constraints/alignRight", (builder) => {
+    return this.solver.createConstraint("constraints/alignRight", (builder) => {
       for (let i = 1; i < targets.length; i++) {
         const currentBounds = targets[i]!.layout
 
@@ -474,30 +451,9 @@ export class Hints {
           .eq([1, firstBounds.x], [1, firstBounds.width])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
-
-    return constraint.rawConstraints
+    })
   }
 
-  private record(raws: kiwi.Constraint[], ownerId?: string) {
-    if (raws.length === 0) return
-    const constraint: LayoutConstraintWithRaw = {
-      id: ownerId ? this.createSymbolScopedId(ownerId) : this.createId(),
-      rawConstraints: raws,
-    }
-    this.constraints.push(constraint)
-  }
-
-  private createId(): string {
-    return `constraints/${this.counter++}`
-  }
-
-  private createSymbolScopedId(ownerId: string): string {
-    const base = String(ownerId)
-    const next = this.symbolCounter.get(base) ?? 0
-    this.symbolCounter.set(base, next + 1)
-    return `constraints/${base}/${next}`
-  }
 }
 
 export { ConstraintsBuilder } from "../layout"
