@@ -1,10 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
-import type { SymbolId } from "../core"
 import type { IConstraintsBuilder, ILayoutSolver, ILayoutConstraint, ILayoutVariable } from "../core"
 import type { HintTarget } from "../core"
-
-type LayoutSymbolId = SymbolId
 
 // Internal type that extends ILayoutConstraint with rawConstraints for internal use
 interface LayoutConstraintWithRaw extends ILayoutConstraint {
@@ -80,17 +77,6 @@ export class Hints {
 
   list(): ILayoutConstraint[] {
     return [...this.constraints]
-  }
-
-  withSymbol(
-    symbolId: LayoutSymbolId,
-    build: (builder: IConstraintsBuilder) => void
-  ) {
-    const constraint = this.solver.createConstraint(
-      this.createSymbolScopedId(symbolId).toString(),
-      build
-    )
-    this.constraints.push(constraint)
   }
 
   arrangeHorizontal(
