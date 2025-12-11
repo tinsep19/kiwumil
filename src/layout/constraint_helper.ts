@@ -1,8 +1,8 @@
-// src/constraint_helper.ts
+// src/layout/constraint_helper.ts
 // ConstraintHelper: IConstraintsBuilder をラップして高水準のチェーン API を提供
 
-import type { IConstraintsBuilder, ILayoutVariable } from "./core"
-import type { LayoutBounds, ItemBounds } from "./core"
+import type { IConstraintsBuilder, ILayoutVariable } from "../core"
+import type { LayoutBounds, ItemBounds } from "../core"
 
 /**
  * 制約の強度を設定するためのビルダーインターフェース

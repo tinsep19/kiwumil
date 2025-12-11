@@ -1,12 +1,11 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
-import { getBoundsValues } from "../../../layout"
+import { getBoundsValues, ConstraintHelper } from "../../../layout"
 import type { ContainerBounds, IConstraintsBuilder } from "../../../layout"
 import type { Theme } from "../../../theme"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { ContainerSymbol, type ContainerPadding } from "../../../model"
-import { ConstraintHelper } from "../../../constraint_helper"
 
 export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
   label: string

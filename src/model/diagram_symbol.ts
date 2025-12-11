@@ -4,10 +4,9 @@ import type { Theme } from "../theme"
 import type { Point } from "../core"
 import type { DiagramInfo } from "./diagram_info"
 import type { ContainerBounds, IConstraintsBuilder } from "../layout"
-import { getBoundsValues } from "../layout"
+import { getBoundsValues, ConstraintHelper } from "../layout"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
-import { ConstraintHelper } from "../constraint_helper"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
