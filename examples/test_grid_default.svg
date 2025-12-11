@@ -5,7 +5,7 @@
      viewBox="0 0 200 150">
   <rect width="100%" height="100%" fill="white"/>
   
-      <g id="__diagram__">
+      <g id="__builtin__:diagram/0">
         <!-- Title -->
         <text x="100" y="30" 
               text-anchor="middle" 
@@ -19,15 +19,15 @@
       </g>
     
 
-      <g id="core:rectangle/0">
+      <g id="core:rectangle/1">
         <!-- Rectangle -->
-        <rect x="40" y="75" width="120" height="50" 
+        <rect x="40" y="75" width="-30" height="-20" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="105" 
+        <text x="25" y="70" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -37,15 +37,15 @@
       </g>
     
 
-      <g id="core:rectangle/1">
+      <g id="core:rectangle/2">
         <!-- Rectangle -->
-        <rect x="190" y="75" width="-30" height="50" 
+        <rect x="40" y="75" width="120" height="-20" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="175" y="105" 
+        <text x="100" y="70" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -55,15 +55,15 @@
       </g>
     
 
-      <g id="core:rectangle/2">
+      <g id="core:rectangle/3">
         <!-- Rectangle -->
-        <rect x="40" y="145" width="120" height="-20" 
+        <rect x="40" y="75" width="-30" height="50" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="140" 
+        <text x="25" y="105" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -73,15 +73,15 @@
       </g>
     
 
-      <g id="core:rectangle/3">
+      <g id="core:rectangle/4">
         <!-- Rectangle -->
-        <rect x="190" y="145" width="-30" height="-20" 
+        <rect x="40" y="75" width="120" height="50" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="175" y="140" 
+        <text x="100" y="105" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
