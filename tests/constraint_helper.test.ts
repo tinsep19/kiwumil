@@ -43,7 +43,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-enclose", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.enclose(container, [child]).padding(10).required()
+      helper.enclose(container).childs(child).padding(10).required()
     })
 
     solver.updateVariables()
@@ -53,7 +53,7 @@ describe("ConstraintHelper", () => {
     expect(variables.valueOf(child.y)).toBeGreaterThanOrEqual(10)
   })
 
-  test("arrange should create margin constraint", () => {
+  test("arrange horizontal should create margin constraint", () => {
     const solver = new LayoutSolver()
     const variables = new LayoutVariables(solver)
     const prev = createTestBounds(variables, "prev")
@@ -66,7 +66,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-arrange", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.arrange(prev, next).margin(20).medium()
+      helper.arrange(prev, next).margin(20).horizontal().medium()
     })
 
     solver.updateVariables()
@@ -99,7 +99,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-enclose-multi", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.enclose(container, [child1, child2]).padding(10).required()
+      helper.enclose(container).childs(child1, child2).padding(10).required()
     })
 
     solver.updateVariables()
@@ -189,13 +189,73 @@ describe("ConstraintHelper", () => {
       const helper = new ConstraintHelper(builder)
       
       helper.setSize(container, 200, 150).weak()
-      helper.enclose(container, [child1, child2]).padding(10).strong()
-      helper.arrange(child1, child2).margin(20).medium()
+      helper.enclose(container).childs(child1, child2).padding(10).strong()
+      helper.arrange(child1, child2).margin(20).horizontal().medium()
       helper.align(layout.x, container.x, item1.x, item2.x).required()
     })
 
     solver.updateVariables()
     // If no errors, the API works as expected
     expect(true).toBe(true)
+  })
+
+  test("arrange with multiple elements horizontal", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+    const x1 = createTestBounds(variables, "x1")
+    const x2 = createTestBounds(variables, "x2")
+    const x3 = createTestBounds(variables, "x3")
+
+    solver.createConstraint("test-x1", (builder) => {
+      builder.expr([1, x1.x]).eq([0, 1]).strong()
+      builder.expr([1, x1.width]).eq([50, 1]).strong()
+    })
+
+    solver.createConstraint("test-x2-width", (builder) => {
+      builder.expr([1, x2.width]).eq([60, 1]).strong()
+    })
+
+    solver.createConstraint("test-arrange-multi", (builder) => {
+      const helper = new ConstraintHelper(builder)
+      helper.arrange(x1, x2, x3).margin(10).horizontal().medium()
+    })
+
+    solver.updateVariables()
+    
+    // x2.x should be >= x1.x + x1.width + 10 = 0 + 50 + 10 = 60
+    expect(variables.valueOf(x2.x)).toBeGreaterThanOrEqual(60 - 0.01)
+    // x3.x should be >= x2.x + x2.width + 10
+    const expectedX3 = variables.valueOf(x2.x) + variables.valueOf(x2.width) + 10
+    expect(variables.valueOf(x3.x)).toBeGreaterThanOrEqual(expectedX3 - 0.01)
+  })
+
+  test("arrange with multiple elements vertical", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+    const x1 = createTestBounds(variables, "x1")
+    const x2 = createTestBounds(variables, "x2")
+    const x3 = createTestBounds(variables, "x3")
+
+    solver.createConstraint("test-x1", (builder) => {
+      builder.expr([1, x1.y]).eq([0, 1]).strong()
+      builder.expr([1, x1.height]).eq([40, 1]).strong()
+    })
+
+    solver.createConstraint("test-x2-height", (builder) => {
+      builder.expr([1, x2.height]).eq([50, 1]).strong()
+    })
+
+    solver.createConstraint("test-arrange-multi-vertical", (builder) => {
+      const helper = new ConstraintHelper(builder)
+      helper.arrange(x1, x2, x3).margin(15).vertical().medium()
+    })
+
+    solver.updateVariables()
+    
+    // x2.y should be >= x1.y + x1.height + 15 = 0 + 40 + 15 = 55
+    expect(variables.valueOf(x2.y)).toBeGreaterThanOrEqual(55 - 0.01)
+    // x3.y should be >= x2.y + x2.height + 15
+    const expectedY3 = variables.valueOf(x2.y) + variables.valueOf(x2.height) + 15
+    expect(variables.valueOf(x3.y)).toBeGreaterThanOrEqual(expectedY3 - 0.01)
   })
 })

@@ -55,25 +55,30 @@ class SetSizeBuilder implements StrengthBuilder {
 }
 
 /**
- * Enclose 操作のビルダー
+ * Enclose の padding 設定ビルダー
  */
-class EncloseBuilder {
-  private paddingValue: number | ILayoutVariable = 0
-
+class EnclosePaddingBuilder {
   constructor(
     private readonly builder: IConstraintsBuilder,
     private readonly container: LayoutBounds,
-    private readonly children: LayoutBounds[]
+    private readonly children: LayoutBounds[],
+    private readonly paddingValue: number | ILayoutVariable
   ) {}
 
-  padding(value: number | ILayoutVariable): StrengthBuilder {
-    this.paddingValue = value
-    return {
-      weak: () => this.applyConstraints('weak'),
-      medium: () => this.applyConstraints('medium'),
-      strong: () => this.applyConstraints('strong'),
-      required: () => this.applyConstraints('required'),
-    }
+  weak(): void {
+    this.applyConstraints('weak')
+  }
+
+  medium(): void {
+    this.applyConstraints('medium')
+  }
+
+  strong(): void {
+    this.applyConstraints('strong')
+  }
+
+  required(): void {
+    this.applyConstraints('required')
   }
 
   private applyConstraints(strength: 'weak' | 'medium' | 'strong' | 'required'): void {
@@ -106,33 +111,116 @@ class EncloseBuilder {
 }
 
 /**
- * Arrange 操作のビルダー
+ * Enclose 操作のビルダー
  */
-class ArrangeBuilder {
-  private marginValue: number | ILayoutVariable = 0
-
+class EncloseBuilder {
   constructor(
     private readonly builder: IConstraintsBuilder,
-    private readonly prev: LayoutBounds | ItemBounds,
-    private readonly next: LayoutBounds | ItemBounds
+    private readonly container: LayoutBounds
   ) {}
 
-  margin(value: number | ILayoutVariable): StrengthBuilder {
-    this.marginValue = value
-    return {
-      weak: () => this.applyConstraints('weak'),
-      medium: () => this.applyConstraints('medium'),
-      strong: () => this.applyConstraints('strong'),
-      required: () => this.applyConstraints('required'),
-    }
+  childs(...children: LayoutBounds[]): EncloseChildsBuilder {
+    return new EncloseChildsBuilder(this.builder, this.container, children)
+  }
+}
+
+/**
+ * Enclose の childs 設定ビルダー
+ */
+class EncloseChildsBuilder {
+  constructor(
+    private readonly builder: IConstraintsBuilder,
+    private readonly container: LayoutBounds,
+    private readonly children: LayoutBounds[]
+  ) {}
+
+  padding(value: number | ILayoutVariable): EnclosePaddingBuilder {
+    return new EnclosePaddingBuilder(this.builder, this.container, this.children, value)
+  }
+}
+
+/**
+ * Arrange の方向設定ビルダー
+ */
+class ArrangeDirectionBuilder implements StrengthBuilder {
+  constructor(
+    private readonly builder: IConstraintsBuilder,
+    private readonly elements: (LayoutBounds | ItemBounds)[],
+    private readonly marginValue: number | ILayoutVariable,
+    private readonly direction: 'horizontal' | 'vertical'
+  ) {}
+
+  weak(): void {
+    this.applyConstraints('weak')
+  }
+
+  medium(): void {
+    this.applyConstraints('medium')
+  }
+
+  strong(): void {
+    this.applyConstraints('strong')
+  }
+
+  required(): void {
+    this.applyConstraints('required')
   }
 
   private applyConstraints(strength: 'weak' | 'medium' | 'strong' | 'required'): void {
-    // Horizontal arrangement: next.x >= prev.x + prev.width + margin
-    this.builder
-      .expr([1, this.next.x])
-      .ge([1, this.prev.x], [1, this.prev.width], [1, this.marginValue])
-      [strength]()
+    for (let i = 0; i < this.elements.length - 1; i++) {
+      const prev = this.elements[i]
+      const next = this.elements[i + 1]
+      if (!prev || !next) continue
+
+      if (this.direction === 'horizontal') {
+        // next.x >= prev.x + prev.width + margin
+        // Equivalently: prev.right + margin = next.left
+        this.builder
+          .expr([1, next.x])
+          .ge([1, prev.x], [1, prev.width], [1, this.marginValue])
+          [strength]()
+      } else {
+        // next.y >= prev.y + prev.height + margin
+        // Equivalently: prev.bottom + margin = next.top
+        this.builder
+          .expr([1, next.y])
+          .ge([1, prev.y], [1, prev.height], [1, this.marginValue])
+          [strength]()
+      }
+    }
+  }
+}
+
+/**
+ * Arrange の margin 設定ビルダー
+ */
+class ArrangeMarginBuilder {
+  constructor(
+    private readonly builder: IConstraintsBuilder,
+    private readonly elements: (LayoutBounds | ItemBounds)[],
+    private readonly marginValue: number | ILayoutVariable
+  ) {}
+
+  horizontal(): ArrangeDirectionBuilder {
+    return new ArrangeDirectionBuilder(this.builder, this.elements, this.marginValue, 'horizontal')
+  }
+
+  vertical(): ArrangeDirectionBuilder {
+    return new ArrangeDirectionBuilder(this.builder, this.elements, this.marginValue, 'vertical')
+  }
+}
+
+/**
+ * Arrange 操作のビルダー
+ */
+class ArrangeBuilder {
+  constructor(
+    private readonly builder: IConstraintsBuilder,
+    private readonly elements: (LayoutBounds | ItemBounds)[]
+  ) {}
+
+  margin(value: number | ILayoutVariable): ArrangeMarginBuilder {
+    return new ArrangeMarginBuilder(this.builder, this.elements, value)
   }
 }
 
@@ -228,37 +316,35 @@ export class ConstraintHelper {
    * - child.y >= container.y + padding
    * 
    * @param container - コンテナの LayoutBounds
-   * @param children - 子要素の LayoutBounds の配列
-   * @returns padding と制約の強度を設定するビルダー
+   * @returns childs と padding と制約の強度を設定するビルダー
    * 
    * @example
-   * helper.enclose(container, [child1, child2]).padding(10).strong()
+   * helper.enclose(container).childs(child1, child2).padding(10).strong()
    */
-  enclose(
-    container: LayoutBounds,
-    children: LayoutBounds[]
-  ): EncloseBuilder {
-    return new EncloseBuilder(this.builder, container, children)
+  enclose(container: LayoutBounds): EncloseBuilder {
+    return new EncloseBuilder(this.builder, container)
   }
 
   /**
-   * 隣接要素間の隙間（margin）を設定する
+   * 複数要素間の隙間（margin）と配置方向を設定する
    * 
    * 水平配置の制約を生成:
-   * - next.x >= prev.x + prev.width + margin
+   * - x1.right + margin = x2.left (x2.x >= x1.x + x1.width + margin)
+   * - x2.right + margin = x3.left (x3.x >= x2.x + x2.width + margin)
    * 
-   * @param prev - 前の要素の LayoutBounds または ItemBounds
-   * @param next - 次の要素の LayoutBounds または ItemBounds
-   * @returns margin と制約の強度を設定するビルダー
+   * 垂直配置の制約を生成:
+   * - x1.bottom + margin = x2.top (x2.y >= x1.y + x1.height + margin)
+   * - x2.bottom + margin = x3.top (x3.y >= x2.y + x2.height + margin)
+   * 
+   * @param elements - 配置する要素の LayoutBounds または ItemBounds（可変長引数）
+   * @returns margin と方向と制約の強度を設定するビルダー
    * 
    * @example
-   * helper.arrange(child1, child2).margin(20).medium()
+   * helper.arrange(x1, x2, x3).margin(20).horizontal().medium()
+   * helper.arrange(x1, x2, x3).margin(20).vertical().medium()
    */
-  arrange(
-    prev: LayoutBounds | ItemBounds,
-    next: LayoutBounds | ItemBounds
-  ): ArrangeBuilder {
-    return new ArrangeBuilder(this.builder, prev, next)
+  arrange(...elements: (LayoutBounds | ItemBounds)[]): ArrangeBuilder {
+    return new ArrangeBuilder(this.builder, elements)
   }
 
   /**
