@@ -1,10 +1,15 @@
 import * as kiwi from "@lume/kiwi"
 import type { Theme } from "../theme"
 import type { SymbolId } from "../core"
-import { LayoutSolver, type LayoutConstraintId, type LayoutConstraint, IConstraintsBuilder, type LayoutVariable } from "../layout"
+import type { IConstraintsBuilder, ILayoutSolver, ILayoutConstraint, ILayoutVariable } from "../core"
 import type { HintTarget } from "../core"
 
 type LayoutSymbolId = SymbolId
+
+// Internal type that extends ILayoutConstraint with rawConstraints for internal use
+interface LayoutConstraintWithRaw extends ILayoutConstraint {
+  rawConstraints: kiwi.Constraint[]
+}
 
 export interface HintVariableOptions {
   /** 
@@ -21,22 +26,22 @@ export interface HintVariableOptions {
 
 export interface HintVariable {
   /** The created LayoutVariable */
-  variable: LayoutVariable
+  variable: ILayoutVariable
   /** Full variable name with hint: prefix */
   name: string
   /** Constraint IDs associated with this hint variable (if any) */
-  constraintIds: LayoutConstraintId[]
+  constraintIds: string[]
 }
 
 export class Hints {
-  private readonly constraints: LayoutConstraint[] = []
+  private readonly constraints: ILayoutConstraint[] = []
   private counter = 0
   private readonly symbolCounter = new Map<string, number>()
   private readonly hintVariables: HintVariable[] = []
   private hintVarCounter = 0
 
   constructor(
-    private readonly solver: LayoutSolver,
+    private readonly solver: ILayoutSolver,
     private readonly theme: Theme
   ) {}
 
@@ -73,7 +78,7 @@ export class Hints {
     return [...this.hintVariables]
   }
 
-  list(): LayoutConstraint[] {
+  list(): ILayoutConstraint[] {
     return [...this.constraints]
   }
 
@@ -104,7 +109,7 @@ export class Hints {
           .eq([1, aBounds.x], [1, aBounds.width], [gap, 1])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -122,7 +127,7 @@ export class Hints {
           .eq([1, aBounds.y], [1, aBounds.height], [gap, 1])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -136,7 +141,7 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.x]).eq([1, refBounds.x]).strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -153,7 +158,7 @@ export class Hints {
           .eq([1, refBounds.x], [1, refBounds.width])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -167,7 +172,7 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.y]).eq([1, refBounds.y]).strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -184,7 +189,7 @@ export class Hints {
           .eq([1, refBounds.y], [1, refBounds.height])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -207,7 +212,7 @@ export class Hints {
           )
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -230,7 +235,7 @@ export class Hints {
           )
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -244,7 +249,7 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.width]).eq([1, refBounds.width]).strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -258,7 +263,7 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.height]).eq([1, refBounds.height]).strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -298,7 +303,7 @@ export class Hints {
           .ge([1, containerBounds.z], [1, 1])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     this.record(constraint.rawConstraints)
   }
@@ -421,7 +426,7 @@ export class Hints {
           )
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     return constraint.rawConstraints
   }
@@ -447,7 +452,7 @@ export class Hints {
           )
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     return constraint.rawConstraints
   }
@@ -465,7 +470,7 @@ export class Hints {
           .eq([1, firstBounds.x], [0.5, firstBounds.width])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     return constraint.rawConstraints
   }
@@ -483,29 +488,29 @@ export class Hints {
           .eq([1, firstBounds.x], [1, firstBounds.width])
           .strong()
       }
-    })
+    }) as LayoutConstraintWithRaw
 
     return constraint.rawConstraints
   }
 
   private record(raws: kiwi.Constraint[], ownerId?: string) {
     if (raws.length === 0) return
-    const constraint: LayoutConstraint = {
+    const constraint: LayoutConstraintWithRaw = {
       id: ownerId ? this.createSymbolScopedId(ownerId) : this.createId(),
       rawConstraints: raws,
     }
     this.constraints.push(constraint)
   }
 
-  private createId(): LayoutConstraintId {
-    return `constraints/${this.counter++}` as LayoutConstraintId
+  private createId(): string {
+    return `constraints/${this.counter++}`
   }
 
-  private createSymbolScopedId(ownerId: string): LayoutConstraintId {
+  private createSymbolScopedId(ownerId: string): string {
     const base = String(ownerId)
     const next = this.symbolCounter.get(base) ?? 0
     this.symbolCounter.set(base, next + 1)
-    return `constraints/${base}/${next}` as LayoutConstraintId
+    return `constraints/${base}/${next}`
   }
 }
 
