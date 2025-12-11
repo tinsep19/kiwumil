@@ -14,9 +14,8 @@ export type ContainerSymbolOrId = IContainerSymbolCharacs | SymbolId
 
 /**
  * Resolve a symbol identifier from ISymbolCharacs or SymbolId.
+ * Also accepts IContainerSymbolCharacs since it extends ISymbolCharacs.
  */
-export function toSymbolId(symbol: SymbolOrId): SymbolId
-export function toSymbolId(symbol: ContainerSymbolOrId): SymbolId
-export function toSymbolId(symbol: SymbolOrId | ContainerSymbolOrId): SymbolId {
+export function toSymbolId(symbol: SymbolOrId): SymbolId {
   return typeof symbol === "string" ? symbol : symbol.id
 }
