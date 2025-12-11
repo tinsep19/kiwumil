@@ -128,11 +128,7 @@ class ArrangeBuilder {
   }
 
   private applyConstraints(strength: 'weak' | 'medium' | 'strong' | 'required'): void {
-    // 自動検出: prev.right と next.x の関係で horizontal、prev.bottom と next.y で vertical
-    // ここでは簡易的に、まず horizontal を試み、必要なら vertical も追加
-    // 実装としては、両方の制約を生成する（水平と垂直の配置両方をサポート）
-    
-    // Horizontal: next.x >= prev.x + prev.width + margin
+    // Horizontal arrangement: next.x >= prev.x + prev.width + margin
     this.builder
       .expr([1, this.next.x])
       .ge([1, this.prev.x], [1, this.prev.width], [1, this.marginValue])
