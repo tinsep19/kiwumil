@@ -7,6 +7,7 @@ import type { ContainerBounds, IConstraintsBuilder } from "../layout"
 import { getBoundsValues } from "../layout"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
 import { ContainerPadding, ContainerSymbol } from "./container_symbol"
+import { ConstraintHelper } from "../constraint_helper"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
@@ -75,6 +76,11 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       return
     }
     const bounds = this.layout
+    const helper = new ConstraintHelper(builder)
+    
+    // Align z values between layout and container
+    helper.align(bounds.z, this.container.z).required()
+    
     builder.expr([1, bounds.x]).eq([0, 1]).strong()
     builder.expr([1, bounds.y]).eq([0, 1]).strong()
     builder.expr([1, bounds.width]).ge([200, 1]).weak()
