@@ -78,6 +78,9 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     const bounds = this.layout
     const helper = new ConstraintHelper(builder)
     
+    // Fix DiagramSymbol's z to 0 (required)
+    builder.expr([1, bounds.z]).eq([0, 1]).required()
+    
     // Align z values between layout and container
     helper.align(bounds.z, this.container.z).required()
     

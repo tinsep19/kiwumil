@@ -291,6 +291,12 @@ export class Hints {
           .expr([1, containerBounds.y], [1, containerBounds.height])
           .ge([1, childBounds.y], [1, childBounds.height])
           .required()
+        
+        // Z-index depth constraint: child.z >= container.z + 1
+        builder
+          .expr([1, childBounds.z])
+          .ge([1, containerBounds.z], [1, 1])
+          .strong()
       }
     })
 
@@ -311,7 +317,7 @@ export class Hints {
   ): void {
     const children = matrix.flat()
 
-    // 1. enclose 制約（Required）
+    // 1. enclose 制約（Required）+ z-index depth constraints
     this.enclose(container, children)
 
     // 2. Grid 配置制約（Strong）
@@ -359,7 +365,7 @@ export class Hints {
   ): void {
     const children = rows.flat()
 
-    // 1. enclose 制約（Required）
+    // 1. enclose 制約（Required）+ z-index depth constraints
     this.enclose(container, children)
 
     // 2. 行ごとの配置制約（Strong）
