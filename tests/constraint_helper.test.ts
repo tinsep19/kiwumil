@@ -13,9 +13,9 @@ describe("ConstraintHelper", () => {
     const variables = new LayoutVariables(solver)
     const bounds = createTestBounds(variables, "test")
 
-    const constraint = solver.createConstraint("test-setSize", (builder) => {
+    solver.createConstraint("test-setSize", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.setSize(bounds, 100, 50, "strong")
+      helper.setSize(bounds, 100, 50).strong()
     })
 
     solver.updateVariables()
@@ -43,7 +43,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-enclose", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.enclose(container, child, 10, "required")
+      helper.enclose(container, [child]).padding(10).required()
     })
 
     solver.updateVariables()
@@ -53,7 +53,7 @@ describe("ConstraintHelper", () => {
     expect(variables.valueOf(child.y)).toBeGreaterThanOrEqual(10)
   })
 
-  test("arrange horizontal should create margin constraint", () => {
+  test("arrange should create margin constraint", () => {
     const solver = new LayoutSolver()
     const variables = new LayoutVariables(solver)
     const prev = createTestBounds(variables, "prev")
@@ -64,9 +64,9 @@ describe("ConstraintHelper", () => {
       builder.expr([1, prev.width]).eq([50, 1]).strong()
     })
 
-    solver.createConstraint("test-arrange-horizontal", (builder) => {
+    solver.createConstraint("test-arrange", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.arrange("horizontal", prev, next, 20, "medium")
+      helper.arrange(prev, next).margin(20).medium()
     })
 
     solver.updateVariables()
@@ -76,27 +76,39 @@ describe("ConstraintHelper", () => {
     expect(variables.valueOf(next.x)).toBeGreaterThanOrEqual(expectedMinX - 0.01)
   })
 
-  test("arrange vertical should create margin constraint", () => {
+  test("enclose should support multiple children", () => {
     const solver = new LayoutSolver()
     const variables = new LayoutVariables(solver)
-    const prev = createTestBounds(variables, "prev")
-    const next = createTestBounds(variables, "next")
+    const container = createTestBounds(variables, "container")
+    const child1 = createTestBounds(variables, "child1")
+    const child2 = createTestBounds(variables, "child2")
 
-    solver.createConstraint("test-prev", (builder) => {
-      builder.expr([1, prev.y]).eq([0, 1]).strong()
-      builder.expr([1, prev.height]).eq([40, 1]).strong()
+    solver.createConstraint("test-container-size", (builder) => {
+      builder.expr([1, container.width]).eq([200, 1]).strong()
+      builder.expr([1, container.height]).eq([150, 1]).strong()
+      builder.expr([1, container.x]).eq([0, 1]).strong()
+      builder.expr([1, container.y]).eq([0, 1]).strong()
     })
 
-    solver.createConstraint("test-arrange-vertical", (builder) => {
+    solver.createConstraint("test-children-size", (builder) => {
+      builder.expr([1, child1.width]).eq([80, 1]).strong()
+      builder.expr([1, child1.height]).eq([50, 1]).strong()
+      builder.expr([1, child2.width]).eq([80, 1]).strong()
+      builder.expr([1, child2.height]).eq([50, 1]).strong()
+    })
+
+    solver.createConstraint("test-enclose-multi", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.arrange("vertical", prev, next, 15, "medium")
+      helper.enclose(container, [child1, child2]).padding(10).required()
     })
 
     solver.updateVariables()
     
-    // next.y should be >= prev.y + prev.height + 15
-    const expectedMinY = variables.valueOf(prev.y) + variables.valueOf(prev.height) + 15
-    expect(variables.valueOf(next.y)).toBeGreaterThanOrEqual(expectedMinY - 0.01)
+    // Both children should be at least 10 pixels from container edges
+    expect(variables.valueOf(child1.x)).toBeGreaterThanOrEqual(10)
+    expect(variables.valueOf(child1.y)).toBeGreaterThanOrEqual(10)
+    expect(variables.valueOf(child2.x)).toBeGreaterThanOrEqual(10)
+    expect(variables.valueOf(child2.y)).toBeGreaterThanOrEqual(10)
   })
 
   test("align should create equality constraints between variables", () => {
@@ -112,7 +124,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-align", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.align([bounds1.x, bounds2.x, bounds3.x], "medium")
+      helper.align(bounds1.x, bounds2.x, bounds3.x).medium()
     })
 
     solver.updateVariables()
@@ -130,7 +142,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-align-single", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helper.align([bounds.x], "medium")
+      helper.align(bounds.x).medium()
     })
 
     // Should not throw and solver should work normally
@@ -138,36 +150,19 @@ describe("ConstraintHelper", () => {
     expect(true).toBe(true)
   })
 
-  test("methods should be chainable", () => {
+  test("setSize with different strength levels", () => {
     const solver = new LayoutSolver()
     const variables = new LayoutVariables(solver)
-    const container = createTestBounds(variables, "container")
-    const child1 = createTestBounds(variables, "child1")
-    const child2 = createTestBounds(variables, "child2")
+    const bounds = createTestBounds(variables, "test")
 
-    solver.createConstraint("test-child-sizes", (builder) => {
-      builder.expr([1, child1.width]).eq([80, 1]).strong()
-      builder.expr([1, child1.height]).eq([50, 1]).strong()
-      builder.expr([1, child2.width]).eq([80, 1]).strong()
-      builder.expr([1, child2.height]).eq([50, 1]).strong()
-    })
-
-    let helperInstance: ConstraintHelper | null = null
-    solver.createConstraint("test-chaining", (builder) => {
+    solver.createConstraint("test-setSize-weak", (builder) => {
       const helper = new ConstraintHelper(builder)
-      helperInstance = helper
-      
-      const result = helper
-        .setSize(container, 200, 150)
-        .enclose(container, child1, 10)
-        .arrange("horizontal", child1, child2, 20)
-        .align([child1.centerY, child2.centerY])
-
-      expect(result).toBe(helper)
+      helper.setSize(bounds, 100, 50).weak()
     })
 
     solver.updateVariables()
-    expect(helperInstance).not.toBeNull()
+    expect(variables.valueOf(bounds.width)).toBeCloseTo(100)
+    expect(variables.valueOf(bounds.height)).toBeCloseTo(50)
   })
 
   test("builder property should expose underlying IConstraintsBuilder", () => {
@@ -178,5 +173,29 @@ describe("ConstraintHelper", () => {
       const helper = new ConstraintHelper(builder)
       expect(helper.builder).toBe(builder)
     })
+  })
+
+  test("usage example from comment should work", () => {
+    const solver = new LayoutSolver()
+    const variables = new LayoutVariables(solver)
+    const container = createTestBounds(variables, "container")
+    const child1 = createTestBounds(variables, "child1")
+    const child2 = createTestBounds(variables, "child2")
+    const layout = createTestBounds(variables, "layout")
+    const item1 = createTestBounds(variables, "item1")
+    const item2 = createTestBounds(variables, "item2")
+
+    solver.createConstraint("test-usage-example", (builder) => {
+      const helper = new ConstraintHelper(builder)
+      
+      helper.setSize(container, 200, 150).weak()
+      helper.enclose(container, [child1, child2]).padding(10).strong()
+      helper.arrange(child1, child2).margin(20).medium()
+      helper.align(layout.x, container.x, item1.x, item2.x).required()
+    })
+
+    solver.updateVariables()
+    // If no errors, the API works as expected
+    expect(true).toBe(true)
   })
 })
