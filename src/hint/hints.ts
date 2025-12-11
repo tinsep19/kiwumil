@@ -95,9 +95,9 @@ export class Hints {
           .eq([1, aBounds.x], [1, aBounds.width], [gap, 1])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   arrangeVertical(targets: HintTarget[], gap = this.theme.defaultStyleSet.verticalGap) {
@@ -113,9 +113,9 @@ export class Hints {
           .eq([1, aBounds.y], [1, aBounds.height], [gap, 1])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignLeft(targets: HintTarget[]) {
@@ -127,9 +127,9 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.x]).eq([1, refBounds.x]).strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignRight(targets: HintTarget[]) {
@@ -144,9 +144,9 @@ export class Hints {
           .eq([1, refBounds.x], [1, refBounds.width])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignTop(targets: HintTarget[]) {
@@ -158,9 +158,9 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.y]).eq([1, refBounds.y]).strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignBottom(targets: HintTarget[]) {
@@ -175,9 +175,9 @@ export class Hints {
           .eq([1, refBounds.y], [1, refBounds.height])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignCenterX(targets: HintTarget[]) {
@@ -198,9 +198,9 @@ export class Hints {
           )
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignCenterY(targets: HintTarget[]) {
@@ -221,9 +221,9 @@ export class Hints {
           )
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignWidth(targets: HintTarget[]) {
@@ -235,9 +235,9 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.width]).eq([1, refBounds.width]).strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignHeight(targets: HintTarget[]) {
@@ -249,9 +249,9 @@ export class Hints {
         const bounds = target.layout
         builder.expr([1, bounds.height]).eq([1, refBounds.height]).strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   alignSize(targets: HintTarget[]) {
@@ -289,9 +289,9 @@ export class Hints {
           .ge([1, containerBounds.z], [1, 1])
           .strong()
       }
-    }) as LayoutConstraintWithRaw
+    })
 
-    this.record(constraint.rawConstraints)
+    this.constraints.push(constraint)
   }
 
   /**
