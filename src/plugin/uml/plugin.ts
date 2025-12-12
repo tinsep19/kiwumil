@@ -91,7 +91,7 @@ export const UMLPlugin = {
             theme,
           })
           r.setSymbol(boundary)
-          r.setCharacs({ id: symbolId, layout: bound, container })
+          r.setCharacs({ id: symbolId, layout: bound, container } satisfies IContainerSymbolCharacs)
           r.setConstraint((builder) => {
             boundary.ensureLayoutBounds(builder)
           })
