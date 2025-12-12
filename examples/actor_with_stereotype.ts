@@ -6,8 +6,8 @@ TypeDiagram("Actor with Stereotype Example")
   .build(({ el, rel, hint }) => {
     // アクターをstereotypeありとなしで作成
     const user = el.uml.actor("User")
-    const admin = el.uml.actor("Administrator", "primary")
-    const guest = el.uml.actor("Guest", "secondary")
+    const admin = el.uml.actor({ label: "Administrator", stereotype: "primary" })
+    const guest = el.uml.actor({ label: "Guest", stereotype: "secondary" })
     
     const login = el.uml.usecase("Login")
     const manage = el.uml.usecase("Manage System")

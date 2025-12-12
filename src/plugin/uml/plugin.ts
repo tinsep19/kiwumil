@@ -36,11 +36,13 @@ export const UMLPlugin = {
     return {
       /**
        * Actor Symbol を作成
-       * @param label - Actor のラベル
-       * @param stereotype - Actor のステレオタイプ（オプション）
+       * @param labelOrOptions - Actor のラベル、またはオプションオブジェクト
        * @returns 生成された Actor の ISymbolCharacs
        */
-      actor(label: string, stereotype?: string) {
+      actor(labelOrOptions: string | { label: string; stereotype?: string }) {
+        const label = typeof labelOrOptions === "string" ? labelOrOptions : labelOrOptions.label
+        const stereotype = typeof labelOrOptions === "string" ? undefined : labelOrOptions.stereotype
+        
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const iconGetter = icons.actor

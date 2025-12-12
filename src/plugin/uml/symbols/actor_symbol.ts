@@ -6,10 +6,27 @@ import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../layout"
 import type { IconMeta } from "../../../icon"
 
+// Icon scaling constants
+const ICON_BASE_SIZE = 60
+const ICON_HEIGHT_RATIO = 0.7
+const ICON_WIDTH_RATIO = 0.8
+
 export interface ActorSymbolOptions extends SymbolBaseOptions {
   label: string
   stereotype?: string
   icon?: IconMeta | null
+}
+
+/**
+ * Escape XML/HTML special characters to prevent XSS
+ */
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;")
 }
 
 export class ActorSymbol extends SymbolBase {
@@ -88,13 +105,13 @@ export class ActorSymbol extends SymbolBase {
     if (this.icon?.raw) {
       // Use icon if available
       // Scale and position the icon to fit in the upper part of the bounds
-      const iconHeight = safeHeight * 0.7
-      const iconWidth = safeWidth * 0.8
+      const iconHeight = safeHeight * ICON_HEIGHT_RATIO
+      const iconWidth = safeWidth * ICON_WIDTH_RATIO
       const iconX = x + (safeWidth - iconWidth) / 2
       const iconY = actorStartY + 5
       
       bodyContent = `
-        <g transform="translate(${iconX}, ${iconY}) scale(${iconWidth / 60}, ${iconHeight / 60})">
+        <g transform="translate(${iconX}, ${iconY}) scale(${iconWidth / ICON_BASE_SIZE}, ${iconHeight / ICON_BASE_SIZE})">
           ${this.icon.raw}
         </g>
       `
@@ -130,11 +147,12 @@ export class ActorSymbol extends SymbolBase {
     // Add stereotype if present (above the actor figure)
     let stereotypeText = ""
     if (this.stereotype) {
+      const escapedStereotype = escapeXml(this.stereotype)
       stereotypeText = `
         <text x="${cx}" y="${y + style.fontSize}" 
               text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
-          &lt;&lt;${this.stereotype}&gt;&gt;
+          &lt;&lt;${escapedStereotype}&gt;&gt;
         </text>
       `
     }
