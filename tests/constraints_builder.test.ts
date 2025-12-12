@@ -1,6 +1,6 @@
 import {
   ConstraintsBuilder,
-  LayoutSolver,
+  KiwiSolver,
 } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 import * as kiwi from "@lume/kiwi"
