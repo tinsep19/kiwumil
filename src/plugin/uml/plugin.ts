@@ -13,6 +13,7 @@ import {
 import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import type { Theme } from "../../theme"
+import type { IContainerSymbolCharacs } from "../../core"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
 
 /**
@@ -30,9 +31,9 @@ export const UMLPlugin = {
       /**
        * Actor Symbol を作成
        * @param label - Actor のラベル
-       * @returns 生成された ActorSymbol
+       * @returns 生成された Actor の ISymbolCharacs
        */
-      actor(label: string): ActorSymbol {
+      actor(label: string) {
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const actor = new ActorSymbol({
@@ -47,15 +48,15 @@ export const UMLPlugin = {
             actor.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).symbol as ActorSymbol
+        }).characs
       },
 
       /**
        * Usecase Symbol を作成
        * @param label - Usecase のラベル
-       * @returns 生成された UsecaseSymbol
+       * @returns 生成された Usecase の ISymbolCharacs
        */
-      usecase(label: string): UsecaseSymbol {
+      usecase(label: string) {
         return symbols.register(plugin, "usecase", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const usecase = new UsecaseSymbol({
@@ -70,15 +71,15 @@ export const UMLPlugin = {
             usecase.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).symbol as UsecaseSymbol
+        }).characs
       },
 
       /**
        * System Boundary Symbol を作成
        * @param label - System Boundary のラベル
-       * @returns 生成された SystemBoundarySymbol
+       * @returns 生成された SystemBoundary の IContainerSymbolCharacs
        */
-      systemBoundary(label: string): SystemBoundarySymbol {
+      systemBoundary(label: string): IContainerSymbolCharacs {
         return symbols.register(plugin, "systemBoundary", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const container = r.createBounds("container", "container")
@@ -90,12 +91,12 @@ export const UMLPlugin = {
             theme,
           })
           r.setSymbol(boundary)
-          r.setCharacs({ id: symbolId, layout: bound, container })
+          r.setCharacs({ id: symbolId, layout: bound, container } satisfies IContainerSymbolCharacs)
           r.setConstraint((builder) => {
             boundary.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).symbol as SystemBoundarySymbol
+        }).characs as IContainerSymbolCharacs
       },
     }
   },

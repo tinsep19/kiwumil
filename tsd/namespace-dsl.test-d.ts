@@ -11,18 +11,13 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { LayoutBounds } from "../dist/core/bounds"
-import type { IConstraintsBuilder } from "../dist/core/constraints_builder"
+import type { LayoutBounds, IConstraintsBuilder, ISymbolCharacs, IContainerSymbolCharacs, ICircleSymbolCharacs } from "../dist/core"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 import {
   toSymbolId,
   type SymbolOrId,
 } from "../dist/dsl/symbol_helpers"
-import { CircleSymbol } from "../dist/plugin/core/symbols/circle_symbol"
-import { TextSymbol } from "../dist/plugin/core/symbols/text_symbol"
-import { ActorSymbol } from "../dist/plugin/uml/symbols/actor_symbol"
-import { SystemBoundarySymbol } from "../dist/plugin/uml/symbols/system_boundary_symbol"
 
 class TestSymbol extends SymbolBase {
   readonly label: string
@@ -65,8 +60,8 @@ const CustomPlugin = {
     const plugin = this.name
 
     return {
-      node(label: string): TestSymbol {
-        const symbol = symbols.register(plugin, "node", (symbolId, r) => {
+      node(label: string) {
+        return symbols.register(plugin, "node", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const testSymbol = new TestSymbol(symbolId, label, bound)
           r.setSymbol(testSymbol)
@@ -75,8 +70,7 @@ const CustomPlugin = {
             testSymbol.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).symbol as TestSymbol
-        return symbol
+        }).characs
       },
     }
   },
@@ -105,9 +99,14 @@ const CustomPlugin = {
 TypeDiagram("Default Core").build(({ el, rel }) => {
   const _core = el.core
   expectAssignable<object>(_core)
-  expectType<CircleSymbol>(el.core.circle("Circle"))
-  expectType<TextSymbol>(el.core.text("Multi\nLine"))
-  expectType<TextSymbol>(el.core.text({ label: "Info object", textAnchor: "start" }))
+  
+  const circle = el.core.circle("Circle")
+  expectType<ICircleSymbolCharacs>(circle)
+  // Verify that r property is accessible
+  expectType<import("../dist/core").ILayoutVariable>(circle.r)
+  
+  expectType<ISymbolCharacs>(el.core.text("Multi\nLine"))
+  expectType<ISymbolCharacs>(el.core.text({ label: "Info object", textAnchor: "start" }))
 
   // @ts-expect-error - UMLPlugin not registered yet
   const _uml = el.uml
@@ -126,9 +125,9 @@ TypeDiagram("UML Plugin")
     expectAssignable<object>(_uml)
 
     const user = el.uml.actor("User")
-    expectType<ActorSymbol>(user)
+    expectType<ISymbolCharacs>(user)
     const boundary = el.uml.systemBoundary("System")
-    expectType<SystemBoundarySymbol>(boundary)
+    expectType<IContainerSymbolCharacs>(boundary)
 
     const _relUml = rel.uml
     expectAssignable<object>(_relUml)
@@ -148,8 +147,8 @@ TypeDiagram("Multiple Plugins")
 
     const user = el.uml.actor("User")
     const node = el.custom.node("Node")
-    expectType<ActorSymbol>(user)
-    expectType<TestSymbol>(node)
+    expectType<ISymbolCharacs>(user)
+    expectType<ISymbolCharacs>(node)
 
     const link = rel.custom.link(user, node)
     expectType<RelationshipId>(link)

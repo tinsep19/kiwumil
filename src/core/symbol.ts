@@ -49,3 +49,19 @@ export type ISymbolCharacs = {
   encloseHints?: EncloseHint[]
   [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | ILayoutVariable | EncloseHint[] | undefined
 }
+
+/**
+ * IContainerSymbolCharacs: container プロパティを持つシンボルの特性
+ * ISymbolCharacs を拡張し、container プロパティを必須にする
+ */
+export interface IContainerSymbolCharacs extends ISymbolCharacs {
+  container: ContainerBounds
+}
+
+/**
+ * ICircleSymbolCharacs: 円形シンボルの特性
+ * ISymbolCharacs を拡張し、半径 r プロパティを必須にする
+ */
+export interface ICircleSymbolCharacs extends ISymbolCharacs {
+  r: ILayoutVariable
+}

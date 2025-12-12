@@ -12,6 +12,8 @@ export type {
 export type {
   ISymbol,
   ISymbolCharacs,
+  IContainerSymbolCharacs,
+  ICircleSymbolCharacs,
 } from "./symbol"
 
 // レイアウト変数

@@ -664,6 +664,72 @@ src/plugin/myplugin/
 
 `DiagramPlugin.name` は `NamespaceBuilder` によってそのまま `el.{name}` / `rel.{name}` のキーとして使用されるため、同じ名前を持つプラグインを複数読み込むと後から登録したものが前者を上書きします。`core` は `TypeDiagram()` が自動で登録するビルトイン名前空間なので、ユーザーのプラグインでは必ず一意な名前を選びましょう。
 
+### 6. シンボル固有のレイアウトプロパティには専用の ISymbolCharacs を定義する
+
+シンボルが独自のレイアウトプロパティを持つ場合（例：円の半径、テキストの ItemBounds など）、専用の characs インターフェースを定義し、`satisfies` で型検証することで、TypeScript のオートコンプリートを活用できます。
+
+**✅ 推奨パターン:**
+
+```typescript
+// 1. 専用の characs インターフェースを定義
+import type { ISymbolCharacs, ILayoutVariable } from "../core"
+
+export interface ICircleSymbolCharacs extends ISymbolCharacs {
+  r: ILayoutVariable  // 円の半径
+}
+
+// 2. Symbol クラスで専用プロパティを受け取る
+export class CircleSymbol extends SymbolBase {
+  readonly r: ILayoutVariable
+
+  constructor(options: CircleSymbolOptions & { r: ILayoutVariable }) {
+    super(options)
+    this.r = options.r
+  }
+}
+
+// 3. プラグインで characs を作成し、satisfies で型検証
+circle(label: string) {
+  return symbols.register(plugin, "circle", (symbolId, r) => {
+    const bound = r.createBounds("layout", "layout")
+    const radius = r.createVariable("r")
+    
+    const circle = new CircleSymbol({
+      id: symbolId,
+      layout: bound,
+      label,
+      r: radius,
+      theme,
+    })
+    
+    r.setSymbol(circle)
+    // satisfies で型検証
+    r.setCharacs({ 
+      id: symbolId, 
+      layout: bound, 
+      r: radius 
+    } satisfies ICircleSymbolCharacs)
+    
+    r.setConstraint((builder) => {
+      circle.ensureLayoutBounds(builder)
+    })
+    return r.build()
+  }).characs as ICircleSymbolCharacs  // 戻り値の型を明示
+}
+```
+
+**利点:**
+- ユーザーは `el.core.circle("Circle").r` で半径変数に型安全にアクセス可能
+- TypeScript のオートコンプリートでプロパティがサジェストされる
+- `satisfies` による型検証で、characs オブジェクトの構造ミスを防げる
+
+**他の例:**
+- `IContainerSymbolCharacs`: `container: ContainerBounds` を持つシンボル（例：SystemBoundary）
+- `ITextSymbolCharacs`: `text: ItemBounds` を持つシンボル（将来的な拡張）
+- `IIconSymbolCharacs`: `icon: ItemBounds` を持つシンボル（将来的な拡張）
+
+---
+
 ## TypeScript の活用
 
 TypeScript の型レベル機能を活用すると、プラグインの実装から DSL の補完まで滑らかに繋げられます。

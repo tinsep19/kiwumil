@@ -1,11 +1,12 @@
 // src/dsl/diagram_plugin.ts
-import type { RelationshipId, SymbolBase, Symbols } from "../model"
+import type { RelationshipId, Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import type { PluginIcons } from "./namespace_types"
+import type { ISymbolCharacs } from "../core"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type SymbolFactoryMap = Record<string, (...args: any[]) => SymbolBase>
+type SymbolFactoryMap = Record<string, (...args: any[]) => ISymbolCharacs>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
 /* eslint-enable @typescript-eslint/no-explicit-any */
 

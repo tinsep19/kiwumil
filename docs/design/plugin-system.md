@@ -655,6 +655,72 @@ src/plugin/myplugin/
 
 `DiagramPlugin.name` は `NamespaceBuilder` によってそのまま `el.{name}` / `rel.{name}` のキーとして使用されるため、同じ名前を持つプラグインを複数読み込むと後から登録したものが前者を上書きします。`core` は `TypeDiagram()` が自動で登録するビルトイン名前空間なので、ユーザーのプラグインでは必ず一意な名前を選びましょう。
 
+### 6. Define Custom ISymbolCharacs for Symbol-Specific Layout Properties
+
+When a symbol has custom layout properties (e.g., circle radius, text ItemBounds), define a dedicated characs interface and validate it with `satisfies` to enable TypeScript autocomplete.
+
+**✅ Recommended Pattern:**
+
+```typescript
+// 1. Define a dedicated characs interface
+import type { ISymbolCharacs, ILayoutVariable } from "../core"
+
+export interface ICircleSymbolCharacs extends ISymbolCharacs {
+  r: ILayoutVariable  // Circle radius
+}
+
+// 2. Symbol class accepts the custom property
+export class CircleSymbol extends SymbolBase {
+  readonly r: ILayoutVariable
+
+  constructor(options: CircleSymbolOptions & { r: ILayoutVariable }) {
+    super(options)
+    this.r = options.r
+  }
+}
+
+// 3. Plugin creates characs and validates with satisfies
+circle(label: string) {
+  return symbols.register(plugin, "circle", (symbolId, r) => {
+    const bound = r.createBounds("layout", "layout")
+    const radius = r.createVariable("r")
+    
+    const circle = new CircleSymbol({
+      id: symbolId,
+      layout: bound,
+      label,
+      r: radius,
+      theme,
+    })
+    
+    r.setSymbol(circle)
+    // Validate structure with satisfies
+    r.setCharacs({ 
+      id: symbolId, 
+      layout: bound, 
+      r: radius 
+    } satisfies ICircleSymbolCharacs)
+    
+    r.setConstraint((builder) => {
+      circle.ensureLayoutBounds(builder)
+    })
+    return r.build()
+  }).characs as ICircleSymbolCharacs  // Explicit return type
+}
+```
+
+**Benefits:**
+- Users can access the radius variable type-safely: `el.core.circle("Circle").r`
+- TypeScript autocomplete suggests the properties
+- Type validation with `satisfies` prevents structural errors in characs objects
+
+**Other Examples:**
+- `IContainerSymbolCharacs`: Symbols with `container: ContainerBounds` (e.g., SystemBoundary)
+- `ITextSymbolCharacs`: Symbols with `text: ItemBounds` (future extension)
+- `IIconSymbolCharacs`: Symbols with `icon: ItemBounds` (future extension)
+
+---
+
 ## TypeScript の活用
 
 TypeScript の型レベル機能を活用すると、プラグインの実装から DSL の補完まで滑らかに繋げられます。
