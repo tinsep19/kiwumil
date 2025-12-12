@@ -11,7 +11,7 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { LayoutBounds, IConstraintsBuilder, ISymbolCharacs, IContainerSymbolCharacs } from "../dist/core"
+import type { LayoutBounds, IConstraintsBuilder, ISymbolCharacs, IContainerSymbolCharacs, ICircleSymbolCharacs } from "../dist/core"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 import {
@@ -99,7 +99,12 @@ const CustomPlugin = {
 TypeDiagram("Default Core").build(({ el, rel }) => {
   const _core = el.core
   expectAssignable<object>(_core)
-  expectType<ISymbolCharacs>(el.core.circle("Circle"))
+  
+  const circle = el.core.circle("Circle")
+  expectType<ICircleSymbolCharacs>(circle)
+  // Verify that r property is accessible
+  expectType<import("../dist/core").ILayoutVariable>(circle.r)
+  
   expectType<ISymbolCharacs>(el.core.text("Multi\nLine"))
   expectType<ISymbolCharacs>(el.core.text({ label: "Info object", textAnchor: "start" }))
 

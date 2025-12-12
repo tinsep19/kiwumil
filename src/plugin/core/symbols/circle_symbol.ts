@@ -1,5 +1,5 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import type { IConstraintsBuilder } from "../../../layout"
+import type { IConstraintsBuilder, ILayoutVariable } from "../../../layout"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
@@ -7,14 +7,17 @@ import { getBoundsValues } from "../../../layout"
 
 export interface CircleSymbolOptions extends SymbolBaseOptions {
   label: string
+  r: ILayoutVariable
 }
 
 export class CircleSymbol extends SymbolBase {
   readonly label: string
+  readonly r: ILayoutVariable
 
   constructor(options: CircleSymbolOptions) {
     super(options)
     this.label = options.label
+    this.r = options.r
   }
 
   getDefaultSize() {
@@ -26,19 +29,19 @@ export class CircleSymbol extends SymbolBase {
 
     const cx = x + width / 2
     const cy = y + height / 2
-    const r = Math.min(width, height) / 2
+    const radius = this.r.value()
 
     const dx = from.x - cx
     const dy = from.y - cy
     const distance = Math.sqrt(dx * dx + dy * dy)
 
     if (distance === 0) {
-      return { x: cx + r, y: cy }
+      return { x: cx + radius, y: cy }
     }
 
     return {
-      x: cx + (dx / distance) * r,
-      y: cy + (dy / distance) * r,
+      x: cx + (dx / distance) * radius,
+      y: cy + (dy / distance) * radius,
     }
   }
 
@@ -47,7 +50,7 @@ export class CircleSymbol extends SymbolBase {
 
     const cx = x + width / 2
     const cy = y + height / 2
-    const r = Math.min(width, height) / 2
+    const radius = this.r.value()
 
     const style = this.theme
       ? getStyleForSymbol(this.theme, "circle")
@@ -66,7 +69,7 @@ export class CircleSymbol extends SymbolBase {
     return `
       <g id="${this.id}">
         <!-- Circle -->
-        <circle cx="${cx}" cy="${cy}" r="${r}" 
+        <circle cx="${cx}" cy="${cy}" r="${radius}" 
                 fill="${style.fillColor}" 
                 stroke="${style.strokeColor}" 
                 stroke-width="${style.strokeWidth}"/>
@@ -83,7 +86,12 @@ export class CircleSymbol extends SymbolBase {
     `
   }
 
-  ensureLayoutBounds(_builder: IConstraintsBuilder): void {
-    // no additional constraints
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+    // r = min(width, height) / 2
+    // Since we can't express min() directly in constraints, we'll use:
+    // r * 2 <= width and r * 2 <= height
+    const { width, height } = this.layout
+    builder.expr([2, this.r]).le([1, width])
+    builder.expr([2, this.r]).le([1, height])
   }
 }

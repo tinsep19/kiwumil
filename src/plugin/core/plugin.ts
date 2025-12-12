@@ -25,24 +25,26 @@ export const CorePlugin = {
       /**
        * Circle Symbol を作成
        * @param label - Circle のラベル
-       * @returns 生成された Circle の ISymbolCharacs
+       * @returns 生成された Circle の ICircleSymbolCharacs
        */
       circle(label: string) {
         return symbols.register(plugin, "circle", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
+          const radius = r.createVariable("r")
           const circle = new CircleSymbol({
             id: symbolId,
             layout: bound,
             label,
+            r: radius,
             theme,
           })
           r.setSymbol(circle)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, layout: bound, r: radius } satisfies import("../../core").ICircleSymbolCharacs)
           r.setConstraint((builder) => {
             circle.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).characs
+        }).characs as import("../../core").ICircleSymbolCharacs
       },
 
       /**
