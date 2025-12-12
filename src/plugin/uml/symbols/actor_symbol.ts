@@ -98,46 +98,20 @@ export class ActorSymbol extends SymbolBase {
     const stereotypeHeight = this.stereotype ? style.fontSize + 5 : 0
     const actorStartY = y + stereotypeHeight
     
-    let bodyContent = ""
-    
-    if (this.icon?.raw) {
-      // Use icon if available at fixed size (no scaling)
-      const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
-      const iconY = actorStartY + 5
-      
-      bodyContent = `
-        <g transform="translate(${iconX}, ${iconY})">
-          ${this.icon.raw}
-        </g>
-      `
-    } else {
-      // Fallback to stick figure
-      const headRadius = Math.max(2, safeWidth / 6)
-      const bodyTop = actorStartY + headRadius * 2 + 5
-      const bodyBottom = actorStartY + safeHeight * 0.6
-      const armY = bodyTop + (bodyBottom - bodyTop) * 0.3
-      const legBottom = actorStartY + safeHeight - 15
-      
-      bodyContent = `
-        <!-- Head -->
-        <circle cx="${cx}" cy="${actorStartY + headRadius + 5}" r="${headRadius}" 
-                fill="none" stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
-        <!-- Body -->
-        <line x1="${cx}" y1="${bodyTop}" x2="${cx}" y2="${bodyBottom}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
-        <!-- Arms -->
-        <line x1="${x + 5}" y1="${armY}" x2="${x + safeWidth - 5}" y2="${armY}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
-        <!-- Legs -->
-        <line x1="${cx}" y1="${bodyBottom}" x2="${x + 10}" y2="${legBottom}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        <line x1="${cx}" y1="${bodyBottom}" x2="${x + safeWidth - 10}" y2="${legBottom}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-      `
+    // Icon is required - throw error if not available
+    if (!this.icon?.raw) {
+      throw new Error(`Actor icon is required but not available for symbol ${this.id}`)
     }
+    
+    // Use icon at fixed size (no scaling)
+    const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
+    const iconY = actorStartY + 5
+    
+    const bodyContent = `
+      <g transform="translate(${iconX}, ${iconY})">
+        ${this.icon.raw}
+      </g>
+    `
 
     // Add stereotype if present (above the actor figure)
     let stereotypeText = ""

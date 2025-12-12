@@ -74,7 +74,7 @@ describe("Bounds Validation", () => {
       symbols = new Symbols(context.variables)
     })
 
-    test("should clamp negative width to safe value in SVG output", () => {
+    test("should throw error when icon is not available", () => {
       const bounds = context.variables.createBounds("actor")
 
       // Set negative width
@@ -92,19 +92,12 @@ describe("Bounds Validation", () => {
         label: "TestActor",
         theme: DefaultTheme,
       })
-      const svg = actor.toSVG()
-
-      // Check that SVG doesn't contain negative radius
-      expect(svg).not.toContain('r="-')
-      // Should have positive radius from clamped width
-      expect(svg).toContain('r="')
-      const radiusMatch = svg.match(/r="([^"]+)"/)
-      expect(radiusMatch).toBeTruthy()
-      const radius = parseFloat(radiusMatch![1])
-      expect(radius).toBeGreaterThan(0)
+      
+      // Should throw error when icon is not available
+      expect(() => actor.toSVG()).toThrow("Actor icon is required but not available")
     })
 
-    test("should render with valid positive dimensions for normal bounds", () => {
+    test("should render with icon when provided", () => {
       const bounds = context.variables.createBounds("actor")
 
       context.createConstraint("test-actor-normal", (builder) => {
@@ -115,21 +108,22 @@ describe("Bounds Validation", () => {
       })
       context.solve()
 
+      const mockIcon = {
+        raw: '<svg><circle cx="30" cy="30" r="20"/></svg>'
+      }
+
       const actor = new ActorSymbol({
         id: "test-actor",
         layout: bounds,
         label: "TestActor",
+        icon: mockIcon,
         theme: DefaultTheme,
       })
       const svg = actor.toSVG()
 
-      // Check for valid circle element with positive radius
-      expect(svg).toContain("circle")
-      expect(svg).not.toContain('r="-')
-      const radiusMatch = svg.match(/r="([^"]+)"/)
-      expect(radiusMatch).toBeTruthy()
-      const radius = parseFloat(radiusMatch![1])
-      expect(radius).toBeGreaterThanOrEqual(2) // Minimum clamped value
+      // Check that icon is embedded
+      expect(svg).toContain("translate(")
+      expect(svg).toContain(mockIcon.raw)
     })
   })
 
