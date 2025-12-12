@@ -36,8 +36,8 @@
 ```typescript
 // Before (分散)
 import type { SymbolId } from "../model/types"
-import type { ILayoutVariable } from "../layout"
-import type { LayoutBounds } from "../layout/bounds"
+import type { ILayoutVariable } from "../kiwi"
+import type { LayoutBounds } from "../kiwi/bounds"
 
 // After (集約)
 import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
