@@ -46,8 +46,7 @@ export type EncloseHint = EncloseZHint
 export type ISymbolCharacs = {
   id: SymbolId
   layout: LayoutBounds
-  encloseHints?: EncloseHint[]
-  [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | ILayoutVariable | EncloseHint[] | undefined
+  [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | ILayoutVariable | undefined
 }
 
 /**
