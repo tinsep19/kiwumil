@@ -19,7 +19,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 - `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `ILayoutVariable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
 - `bounds.ts`: `BoundId`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
 - `constraints_builder.ts`: `IConstraintsBuilder`, `Term`, `ConstraintSpec`
-- `layout_solver.ts`: `IKiwiSolver`
+- `layout_solver.ts`: `ILayoutSolver`
 - `hint_target.ts`: `HintTarget`
 
 **`src/model/`** - モデル層実装:
@@ -27,7 +27,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 - `LayoutVariables` (moved from `src/kiwi`)
 
 **`src/kiwi/`** - レイアウトエンジン実装:
-- `KiwiSolver` (implements `IKiwiSolver`)
+- `KiwiSolver` (implements `ILayoutSolver`)
 - `ConstraintsBuilder` (implements `IConstraintsBuilder`)
 - `LayoutContext`
 
@@ -36,7 +36,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 ```
 ┌────────────────────────────────────────────────────────┐
 │                    src/core (公開API)                  │
-│  - IKiwiSolver, IConstraintsBuilder, ILayoutVariable │
+│  - ILayoutSolver, IConstraintsBuilder, ILayoutVariable │
 │  - LayoutBounds, ConstraintSpec, HintTarget           │
 └────────────────────────────────────────────────────────┘
          ▲                                    ▲
@@ -99,11 +99,11 @@ export class LayoutContext {
 
 #### LayoutVariables（変数管理）
 
-kiwi の Variable/Constraint 生成を担う薄い層。`src/model` に配置され、`IKiwiSolver` インターフェースを通じてレイアウトソルバーを利用します。
+kiwi の Variable/Constraint 生成を担う薄い層。`src/model` に配置され、`ILayoutSolver` インターフェースを通じてレイアウトソルバーを利用します。
 
 ```typescript
 export class LayoutVariables {
-  private readonly solver: IKiwiSolver
+  private readonly solver: ILayoutSolver
   
   createVariable(id: VariableId): ILayoutVariable
   createBound(id: SymbolId): LayoutBounds

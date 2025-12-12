@@ -24,7 +24,7 @@
 - `IConstraintsBuilder`, `Term`, `ConstraintSpec`
 
 **`src/core/layout_solver.ts`**:
-- `IKiwiSolver`
+- `ILayoutSolver`
 
 **`src/core/hint_target.ts`**:
 - `HintTarget`
@@ -57,7 +57,7 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 
 **`src/kiwi/`** (レイアウトエンジン):
 - `KiwiSolver`, `ConstraintsBuilder` の具象実装
-- `IKiwiSolver`, `IConstraintsBuilder` を実装
+- `ILayoutSolver`, `IConstraintsBuilder` を実装
 - `src/core` のインターフェースに依存
 
 ### 4. 循環依存の排除
