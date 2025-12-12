@@ -1,9 +1,9 @@
 // src/plugin/uml/symbols/usecase_symbol.ts
-import type { IConstraintsBuilder } from "../../../layout"
+import type { IConstraintsBuilder } from "../../../core"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
-import { getBoundsValues } from "../../../layout"
+import { getBoundsValues } from "../../../core"
 
 export interface UsecaseSymbolOptions extends SymbolBaseOptions {
   label: string
