@@ -1,4 +1,5 @@
-import { LayoutVariables, LayoutSolver, isLayoutVariable } from "@/layout"
+import { LayoutSolver, isLayoutVariable } from "@/layout"
+import { LayoutVariables } from "@/model"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {

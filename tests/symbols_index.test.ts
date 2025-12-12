@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test"
 import { LayoutContext } from "@/model"
+import { LayoutSolver } from "@/layout"
 import { Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 import type { SymbolId } from "@/core/symbols"
@@ -10,7 +11,8 @@ describe("Symbols Index Map", () => {
   let symbols: Symbols
 
   beforeEach(() => {
-    context = new LayoutContext(DefaultTheme)
+    const solver = new LayoutSolver()
+    context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
   })
 

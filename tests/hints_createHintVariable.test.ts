@@ -1,5 +1,6 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "@/model"
+import { LayoutSolver } from "@/layout"
 import { DefaultTheme } from "@/theme"
 import { LayoutVariable } from "@/layout"
 
@@ -7,7 +8,8 @@ describe("Hints.createHintVariable", () => {
   let context: LayoutContext
 
   beforeEach(() => {
-    context = new LayoutContext(DefaultTheme)
+    const solver = new LayoutSolver()
+    context = new LayoutContext(solver, DefaultTheme)
   })
 
   test("creates a variable with automatic prefix", () => {

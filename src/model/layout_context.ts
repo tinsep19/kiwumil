@@ -1,19 +1,19 @@
+// src/model/layout_context.ts
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
 import type { ILayoutVariable, ILayoutConstraint, ConstraintSpec, ILayoutSolver } from "../core"
-import { LayoutSolver } from "../layout/layout_solver"
 import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
 
 export class LayoutContext {
-  private readonly solver: LayoutSolver
+  private readonly solver: ILayoutSolver
   readonly variables: LayoutVariables
   readonly hints: Hints
   readonly theme: Theme
 
-  constructor(theme: Theme) {
+  constructor(solver: ILayoutSolver, theme: Theme) {
+    this.solver = solver
     this.theme = theme
-    this.solver = new LayoutSolver()
     this.variables = new LayoutVariables(this.solver)
     this.hints = new Hints(this.solver, theme)
   }

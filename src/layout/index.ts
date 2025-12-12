@@ -29,7 +29,8 @@ export type {
   ILayoutSolver,
 } from "../core"
 export { createBoundId, getBoundsValues } from "../core"
-export { LayoutVariables } from "../model"
+// Note: LayoutVariables export removed to avoid circular dependency
+// Import directly from "@/model" instead
 
 // For backward compatibility, re-export HintTarget as LayoutConstraintTarget
 export type { HintTarget as LayoutConstraintTarget } from "../core"

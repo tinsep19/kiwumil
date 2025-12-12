@@ -1,5 +1,6 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext, Symbols } from "@/model"
+import { LayoutSolver } from "@/layout"
 import { DefaultTheme } from "@/theme"
 import { HintFactory } from "@/dsl"
 import { RectangleSymbol } from "@/plugin/core"
@@ -11,7 +12,8 @@ describe("HintFactory with Hints integration", () => {
   const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
-    context = new LayoutContext(DefaultTheme)
+    const solver = new LayoutSolver()
+    context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
     hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
   })
