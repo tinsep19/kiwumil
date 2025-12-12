@@ -13,8 +13,8 @@ const LAYERS = {
   model: 2,
   hint: 2,
   plugin: 3,
+  render: 3,
   dsl: 4,
-  render: 4
 }
 
 // 許可された依存関係マップ
@@ -24,11 +24,11 @@ const ALLOWED_DEPENDENCIES = {
   theme: ["core"],
   icon: ["core"],
   utils: ["core"],
-  model: ["core", "layout", "theme", "icon", "utils"],
-  hint: ["core", "layout", "model"],
-  plugin: ["core", "layout", "theme", "icon", "utils", "model", "hint"],
-  dsl: ["core", "layout", "theme", "icon", "utils", "model", "hint", "plugin"],
-  render: ["core", "layout", "theme", "icon", "utils", "model", "plugin"]
+  model: ["core", "theme", "icon", "utils"],
+  hint: ["core", "model"],
+  plugin: ["core", "theme", "icon", "utils", "model", "hint"],
+  render: ["core", "theme", "icon", "utils", "model", "plugin"],
+  dsl: ["core", "layout", "theme", "icon", "utils", "model", "hint", "plugin", "render"]
 }
 
 /**

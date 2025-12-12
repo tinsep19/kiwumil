@@ -33,9 +33,9 @@ files: [
 ### 1. アーキテクチャレイヤーの定義
 
 ```
-Layer 4: DSL/UI     (dsl/, render/)
+Layer 4: DSL        (dsl/)
    ↓
-Layer 3: Plugins    (plugin/)
+Layer 3: Plugins    (plugin/, render/)
    ↓  
 Layer 2: Model      (model/, hint/)
    ↓
@@ -60,8 +60,8 @@ Layer 1: Core       (core/, layout/, theme/, icon/, utils/)
 #### Plugin Layer (Layer 3)
 - `plugin/`: 下位レイヤーすべてに依存可能
 
-#### DSL/UI Layer (Layer 4)
-- `dsl/`, `render/`: 全レイヤーに依存可能
+#### DSL Layer (Layer 4)
+- `dsl/`: 全レイヤーに依存可能（layout/ への依存は DSL のみ許可）
 
 ### 3. 改善されたESLintルール設計
 
@@ -75,11 +75,11 @@ const LAYER_RULES = {
   'theme/**': ['core/**'], 
   'icon/**': ['core/**'],
   'utils/**': ['core/**'],
-  'model/**': ['core/**', 'layout/**', 'theme/**'],
-  'hint/**': ['core/**', 'layout/**', 'model/**'],
-  'plugin/**': ['core/**', 'layout/**', 'theme/**', 'model/**', 'hint/**'],
-  'dsl/**': ['core/**', 'layout/**', 'theme/**', 'model/**', 'hint/**', 'plugin/**'],
-  'render/**': ['core/**', 'layout/**', 'theme/**', 'model/**', 'plugin/**']
+  'model/**': ['core/**', 'theme/**'],
+  'hint/**': ['core/**', 'model/**'],
+  'plugin/**': ['core/**', 'theme/**', 'model/**', 'hint/**'],
+  'render/**': ['core/**', 'theme/**', 'model/**', 'plugin/**'],
+  'dsl/**': ['core/**', 'layout/**', 'theme/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
 }
 ```
 
