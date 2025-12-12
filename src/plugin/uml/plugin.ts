@@ -10,7 +10,7 @@ import {
   Generalize,
   Include,
 } from "./relationships"
-import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
+import type { DiagramPlugin, PluginIcons, Relationships, Symbols, Icons } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import type { Theme } from "../../theme"
 import type { IContainerSymbolCharacs } from "../../core"
@@ -24,22 +24,32 @@ import { toSymbolId, type SymbolOrId } from "../../dsl"
 export const UMLPlugin = {
   name: "uml",
 
-  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
+  registerIcons(icons: Icons) {
+    icons.createRegistrar("uml", import.meta, (registrar) => {
+      registrar.register("actor", "icons/actor.svg")
+    })
+  },
+
+  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons) {
     const plugin = this.name
 
     return {
       /**
        * Actor Symbol を作成
        * @param label - Actor のラベル
+       * @param stereotype - Actor のステレオタイプ（オプション）
        * @returns 生成された Actor の ISymbolCharacs
        */
-      actor(label: string) {
+      actor(label: string, stereotype?: string) {
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
+          const iconGetter = icons.actor
           const actor = new ActorSymbol({
             id: symbolId,
             layout: bound,
             label,
+            stereotype,
+            icon: iconGetter ? iconGetter() : null,
             theme,
           })
           r.setSymbol(actor)
