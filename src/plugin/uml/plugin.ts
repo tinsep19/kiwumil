@@ -35,9 +35,9 @@ export const UMLPlugin = {
 
     return {
       /**
-       * Actor Symbol を作成
-       * @param labelOrOptions - Actor のラベル、またはオプションオブジェクト
-       * @returns 生成された Actor の ISymbolCharacs
+       * Create Actor Symbol
+       * @param labelOrOptions - Actor label or options object
+       * @returns Generated Actor's ISymbolCharacs
        */
       actor(labelOrOptions: string | { label: string; stereotype?: string }) {
         const label = typeof labelOrOptions === "string" ? labelOrOptions : labelOrOptions.label

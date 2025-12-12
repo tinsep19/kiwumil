@@ -66,4 +66,19 @@ describe("Actor Symbol Options", () => {
         }
       })
   })
+
+  test("should escape XML special characters in label", () => {
+    TypeDiagram("Test")
+      .use(UMLPlugin)
+      .theme(DefaultTheme)
+      .build(({ el }) => {
+        const actor = el.uml.actor("<User & Admin>")
+        const symbol = (el as any).__symbols?.symbols?.get(actor.id)
+        if (symbol) {
+          const svg = symbol.toSVG()
+          expect(svg).toContain("&lt;User &amp; Admin&gt;")
+          expect(svg).not.toContain("<User & Admin>")
+        }
+      })
+  })
 })

@@ -81,7 +81,7 @@ export class ActorSymbol extends SymbolBase {
 
     const cx = x + safeWidth / 2
 
-    // テーマからスタイルを取得
+    // Get style from theme
     const style = this.theme
       ? getStyleForSymbol(this.theme, "actor")
       : {
@@ -96,7 +96,7 @@ export class ActorSymbol extends SymbolBase {
           verticalGap: 50,
         }
 
-    // ステレオタイプがある場合、人形の上にスペースを確保
+    // Reserve space above the figure when stereotype is present
     const stereotypeHeight = this.stereotype ? style.fontSize + 5 : 0
     const actorStartY = y + stereotypeHeight
     
@@ -157,6 +157,8 @@ export class ActorSymbol extends SymbolBase {
       `
     }
 
+    const escapedLabel = escapeXml(this.label)
+    
     return `
       <g id="${this.id}">
         ${stereotypeText}
@@ -165,7 +167,7 @@ export class ActorSymbol extends SymbolBase {
         <text x="${cx}" y="${y + safeHeight}" 
               text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
-          ${this.label}
+          ${escapedLabel}
         </text>
       </g>
     `
