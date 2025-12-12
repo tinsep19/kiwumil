@@ -1,12 +1,9 @@
 import type {
-  LayoutBounds,
-  ContainerBounds,
-  ItemBounds,
   ConstraintSpec,
   BoundsType,
-} from "../layout"
+} from "../core"
 import type { LayoutVariables } from "./layout_variables"
-import type { SymbolId, Point, ISymbol, ISymbolCharacs, ILayoutVariable, ILayoutConstraint } from "../core"
+import type { SymbolId, ISymbol, ISymbolCharacs, ILayoutConstraint } from "../core"
 import type { SymbolBase } from "./symbol_base"
 
 /**

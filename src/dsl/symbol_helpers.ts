@@ -1,5 +1,5 @@
 // src/dsl/symbol_helpers.ts
-import type { ContainerSymbol } from "../model"
+
 import type { SymbolId, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
 
 /**

@@ -5,7 +5,7 @@ import {
   type SymbolBase,
   type SymbolId,
 } from "../../../model"
-import { getBoundsValues } from "../../../layout"
+import { getBoundsValues } from "../../../core"
 
 export class Generalize extends RelationshipBase {
   constructor(options: RelationshipBaseOptions) {
