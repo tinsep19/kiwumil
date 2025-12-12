@@ -79,6 +79,10 @@ export class ActorSymbol extends SymbolBase {
           verticalGap: 50,
         }
 
+    // ステレオタイプがある場合、人形の上にスペースを確保
+    const stereotypeHeight = this.stereotype ? style.fontSize + 5 : 0
+    const actorStartY = y + stereotypeHeight
+    
     let bodyContent = ""
     
     if (this.icon?.raw) {
@@ -87,7 +91,7 @@ export class ActorSymbol extends SymbolBase {
       const iconHeight = safeHeight * 0.7
       const iconWidth = safeWidth * 0.8
       const iconX = x + (safeWidth - iconWidth) / 2
-      const iconY = y + 5
+      const iconY = actorStartY + 5
       
       bodyContent = `
         <g transform="translate(${iconX}, ${iconY}) scale(${iconWidth / 60}, ${iconHeight / 60})">
@@ -97,14 +101,14 @@ export class ActorSymbol extends SymbolBase {
     } else {
       // Fallback to stick figure
       const headRadius = Math.max(2, safeWidth / 6)
-      const bodyTop = y + headRadius * 2 + 5
-      const bodyBottom = y + safeHeight * 0.6
+      const bodyTop = actorStartY + headRadius * 2 + 5
+      const bodyBottom = actorStartY + safeHeight * 0.6
       const armY = bodyTop + (bodyBottom - bodyTop) * 0.3
-      const legBottom = y + safeHeight - 15
+      const legBottom = actorStartY + safeHeight - 15
       
       bodyContent = `
         <!-- Head -->
-        <circle cx="${cx}" cy="${y + headRadius + 5}" r="${headRadius}" 
+        <circle cx="${cx}" cy="${actorStartY + headRadius + 5}" r="${headRadius}" 
                 fill="none" stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
         
         <!-- Body -->
@@ -123,11 +127,11 @@ export class ActorSymbol extends SymbolBase {
       `
     }
 
-    // Add stereotype if present
+    // Add stereotype if present (above the actor figure)
     let stereotypeText = ""
     if (this.stereotype) {
       stereotypeText = `
-        <text x="${cx}" y="${y + safeHeight - 15}" 
+        <text x="${cx}" y="${y + style.fontSize}" 
               text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
           &lt;&lt;${this.stereotype}&gt;&gt;
@@ -137,8 +141,8 @@ export class ActorSymbol extends SymbolBase {
 
     return `
       <g id="${this.id}">
-        ${bodyContent}
         ${stereotypeText}
+        ${bodyContent}
         <!-- Label -->
         <text x="${cx}" y="${y + safeHeight}" 
               text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
