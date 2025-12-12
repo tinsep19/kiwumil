@@ -1,4 +1,4 @@
-// src/layout/layout_solver.ts
+// src/kiwi/layout_solver.ts
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
 import { ConstraintsBuilder } from "./constraints_builder"

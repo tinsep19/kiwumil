@@ -108,7 +108,7 @@ export { SymbolBase } from "./symbol_base"
 export { DiagramSymbol } from "./diagram_symbol"
 
 // ✅ 下位レイヤーからのre-export  
-export type { IKiwiSolver } from "../core"
+export type { ILayoutSolver } from "../core"
 export { getBoundsValues } from "../core"
 ```
 
@@ -138,7 +138,7 @@ export class LayoutContext {
 
 ```typescript
 export class LayoutContext {
-  constructor(solver: IKiwiSolver, theme: Theme) {
+  constructor(solver: ILayoutSolver, theme: Theme) {
     this.solver = solver // 注入された依存
   }
 }
