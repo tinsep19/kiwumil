@@ -48,24 +48,12 @@
     
 
       <g id="uml:actor/5">
-        <!-- Head -->
-        <circle cx="513.3333333333334" cy="93.33333333333333" r="13.333333333333334" 
-                fill="none" stroke="black" stroke-width="2"/>
         
-        <!-- Body -->
-        <line x1="513.3333333333334" y1="106.66666666666667" x2="513.3333333333334" y2="230.00000000000003" 
-              stroke="black" stroke-width="2"/>
         
-        <!-- Arms -->
-        <line x1="478.33333333333337" y1="143.66666666666669" x2="548.3333333333334" y2="143.66666666666669" 
-              stroke="black" stroke-width="2"/>
-        
-        <!-- Legs -->
-        <line x1="513.3333333333334" y1="230.00000000000003" x2="483.33333333333337" y2="318.33333333333337" 
-              stroke="black" stroke-width="2"/>
-        <line x1="513.3333333333334" y1="230.00000000000003" x2="543.3333333333334" y2="318.33333333333337" 
-              stroke="black" stroke-width="2"/>
-        
+      <g transform="translate(483.33333333333337, 80)">
+        <svg><!-- stub for icons/actor.svg --></svg>
+      </g>
+    
         <!-- Label -->
         <text x="513.3333333333334" y="333.33333333333337" 
               text-anchor="middle" font-size="12" font-family="Arial"

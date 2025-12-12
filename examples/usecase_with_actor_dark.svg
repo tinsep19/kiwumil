@@ -30,10 +30,10 @@
       <g id="uml:actor/1">
         
         
-        <g transform="translate(70, 80)">
-          <svg><!-- stub for icons/actor.svg --></svg>
-        </g>
-      
+      <g transform="translate(70, 80)">
+        <svg><!-- stub for icons/actor.svg --></svg>
+      </g>
+    
         <!-- Label -->
         <text x="100" y="125" 
               text-anchor="middle" font-size="12" font-family="Arial"
