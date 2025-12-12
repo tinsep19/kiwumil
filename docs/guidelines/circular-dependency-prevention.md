@@ -8,7 +8,7 @@
 
 ### 問題点
 
-1. **ディレクトリ間re-exportによる循環依存**: `layout/index.ts` が `model` をre-exportし、`model` が `layout` をインポートする循環
+1. **ディレクトリ間re-exportによる循環依存**: `kiwi/index.ts` が `model` をre-exportし、`model` が `kiwi` をインポートする循環
 2. **例外設定の手動管理**: 循環依存回避のためのESLint例外が特定ファイルにハードコード
 3. **依存関係の可視化不足**: どのモジュールがどれに依存しているか把握が困難
 
@@ -168,7 +168,7 @@ beforeEach(() => {
 // eslint-rules/layer-dependency.js
 const LAYERS = {
   core: 1,
-  layout: 1, 
+  kiwi: 1, 
   theme: 1,
   icon: 1,
   utils: 1,
