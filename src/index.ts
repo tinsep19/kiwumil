@@ -14,7 +14,7 @@ export type { SymbolId, RelationshipId } from "./model"
 export type {
   Bounds,
   BoundsType,
-} from "./layout"
+} from "./core"
 
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"

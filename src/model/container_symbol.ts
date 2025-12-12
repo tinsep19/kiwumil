@@ -1,4 +1,4 @@
-import type { ContainerBounds } from "../layout"
+import type { ContainerBounds } from "../core"
 import type { SymbolBase } from "./symbol_base"
 
 export interface ContainerPadding {
