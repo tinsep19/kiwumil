@@ -1,7 +1,7 @@
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
 import type { ILayoutVariable, ILayoutConstraint, ConstraintSpec, ILayoutSolver } from "../core"
-import { LayoutSolver } from "../layout"
+import { LayoutSolver } from "../layout/layout_solver"
 import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
 

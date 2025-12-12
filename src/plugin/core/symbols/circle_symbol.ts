@@ -1,9 +1,9 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import type { IConstraintsBuilder, ILayoutVariable } from "../../../layout"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
+import type { IConstraintsBuilder, ILayoutVariable } from "../../../core"
+import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
-import { getBoundsValues } from "../../../layout"
+import { getBoundsValues } from "../../../core"
 
 export interface CircleSymbolOptions extends SymbolBaseOptions {
   label: string

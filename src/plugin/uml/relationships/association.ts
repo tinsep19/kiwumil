@@ -2,10 +2,10 @@
 import {
   RelationshipBase,
   type RelationshipBaseOptions,
-  type SymbolBase,
-  type SymbolId,
-} from "../../../model"
-import { getBoundsValues } from "../../../layout"
+} from "../../../model/relationship_base"
+import type { SymbolBase } from "../../../model/symbol_base"
+import type { SymbolId } from "../../../core"
+import { getBoundsValues } from "../../../core"
 
 export class Association extends RelationshipBase {
   constructor(options: RelationshipBaseOptions) {
