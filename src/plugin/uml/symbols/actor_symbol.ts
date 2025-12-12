@@ -6,10 +6,8 @@ import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../layout"
 import type { IconMeta } from "../../../icon"
 
-// Icon scaling constants
+// Icon size constant
 const ICON_BASE_SIZE = 60
-const ICON_HEIGHT_RATIO = 0.7
-const ICON_WIDTH_RATIO = 0.8
 
 export interface ActorSymbolOptions extends SymbolBaseOptions {
   label: string
@@ -103,15 +101,12 @@ export class ActorSymbol extends SymbolBase {
     let bodyContent = ""
     
     if (this.icon?.raw) {
-      // Use icon if available
-      // Scale and position the icon to fit in the upper part of the bounds
-      const iconHeight = safeHeight * ICON_HEIGHT_RATIO
-      const iconWidth = safeWidth * ICON_WIDTH_RATIO
-      const iconX = x + (safeWidth - iconWidth) / 2
+      // Use icon if available at fixed size (no scaling)
+      const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
       const iconY = actorStartY + 5
       
       bodyContent = `
-        <g transform="translate(${iconX}, ${iconY}) scale(${iconWidth / ICON_BASE_SIZE}, ${iconHeight / ICON_BASE_SIZE})">
+        <g transform="translate(${iconX}, ${iconY})">
           ${this.icon.raw}
         </g>
       `

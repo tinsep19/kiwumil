@@ -34,7 +34,7 @@
       <g id="uml:actor/1">
         
         
-        <g transform="translate(52, 80) scale(1.6, 0.5833333333333334)">
+        <g transform="translate(70, 80)">
           <svg><!-- stub for icons/actor.svg --></svg>
         </g>
       
@@ -56,7 +56,7 @@
         </text>
       
         
-        <g transform="translate(52, 97) scale(1.6, 0.5833333333333334)">
+        <g transform="translate(70, 97)">
           <svg><!-- stub for icons/actor.svg --></svg>
         </g>
       
@@ -78,7 +78,7 @@
         </text>
       
         
-        <g transform="translate(52, 197) scale(1.6, 0.5833333333333334)">
+        <g transform="translate(70, 197)">
           <svg><!-- stub for icons/actor.svg --></svg>
         </g>
       
