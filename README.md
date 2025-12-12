@@ -300,6 +300,37 @@ Kiwi（制約ソルバ）と UML（構造表現）を融合した、
 
 ---
 
+## 🛠️ 開発ガイド
+
+### アーキテクチャと循環依存防止
+
+プロジェクトは循環依存を防止するためのレイヤーベース設計を採用しています：
+
+```
+Layer 4: DSL/UI     (dsl/, render/)
+Layer 3: Plugins    (plugin/)  
+Layer 2: Model      (model/, hint/)
+Layer 1: Core       (core/, layout/, theme/, icon/, utils/)
+```
+
+詳細は [循環依存防止ガイドライン](docs/guidelines/circular-dependency-prevention.md) をご覧ください。
+
+### テスト実行
+
+```bash
+bun run test        # テスト実行
+bun run lint        # リント実行
+bun run test:types  # 型定義テスト
+```
+
+### ドキュメント
+
+- [設計ドキュメント](docs/design/) - アーキテクチャと設計思想
+- [開発ログ](docs/devlog/) - 実装の経緯と技術的判断
+- [ガイドライン](docs/guidelines/) - 開発ルールとベストプラクティス
+
+---
+
 ## 🧾 ライセンス
 
 MIT License

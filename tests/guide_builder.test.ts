@@ -1,5 +1,6 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "@/model"
+import { LayoutSolver } from "@/layout"
 import { getBoundsValues } from "@/layout"
 import { ActorSymbol } from "@/plugin/uml"
 import { HintFactory, Symbols } from "@/dsl"
@@ -12,7 +13,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
   const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
-    context = new LayoutContext(DefaultTheme)
+    const solver = new LayoutSolver()
+    context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
     hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
   })

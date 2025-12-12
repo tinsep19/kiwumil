@@ -5,6 +5,7 @@ import { SvgRenderer } from "../render"
 import { DiagramSymbol, Symbols, LayoutContext } from "../model"
 import type { DiagramInfo, SymbolBase } from "../model"
 import { CorePlugin } from "../plugin"
+import { LayoutSolver } from "../layout"
 import { convertMetaUrlToSvgPath } from "../utils"
 import type { DiagramPlugin } from "./diagram_plugin"
 import type { Theme } from "../theme"
@@ -77,7 +78,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
    * @returns レンダリング可能な図オブジェクト
    */
   build(callback: IntelliSenseBlock<TPlugins>) {
-    const context = new LayoutContext(this.currentTheme)
+    const solver = new LayoutSolver()
+    const context = new LayoutContext(solver, this.currentTheme)
     const symbols = new Symbols(context.variables)
     const relationships = new Relationships()
 

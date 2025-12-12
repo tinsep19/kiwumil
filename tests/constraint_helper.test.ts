@@ -1,5 +1,6 @@
 import { describe, test, expect } from "bun:test"
-import { LayoutSolver, LayoutVariables } from "@/layout"
+import { LayoutSolver } from "@/layout"
+import { LayoutVariables } from "@/model"
 import { ConstraintHelper } from "@/hint"
 import type { LayoutBounds } from "@/core"
 

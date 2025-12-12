@@ -3,7 +3,7 @@ import type { SymbolBase } from "./symbol_base"
 import type { SymbolId } from "../core"
 import type { RelationshipId } from "./types"
 import type { Theme } from "../theme"
-import { getBoundsValues } from "../layout"
+import { getBoundsValues } from "../core"
 
 export interface RelationshipBaseOptions {
   id: RelationshipId

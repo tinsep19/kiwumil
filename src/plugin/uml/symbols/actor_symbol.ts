@@ -1,9 +1,9 @@
 // src/plugin/uml/symbols/actor_symbol.ts
-import type { IConstraintsBuilder } from "../../../layout"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
+import type { IConstraintsBuilder } from "../../../core"
+import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
-import { getBoundsValues } from "../../../layout"
+import { getBoundsValues } from "../../../core"
 import type { IconMeta } from "../../../icon"
 
 // Icon size constant

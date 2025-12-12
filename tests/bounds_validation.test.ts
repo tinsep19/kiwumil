@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test"
 import { LayoutContext } from "@/model"
+import { LayoutSolver } from "@/layout"
 import { getBoundsValues } from "@/layout"
 import { ActorSymbol, UsecaseSymbol } from "@/plugin/uml"
 import { Symbols } from "@/dsl"
@@ -11,7 +12,8 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      context = new LayoutContext(DefaultTheme)
+      const solver = new LayoutSolver()
+      context = new LayoutContext(solver, DefaultTheme)
       symbols = new Symbols(context.variables)
     })
 
@@ -70,7 +72,8 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      context = new LayoutContext(DefaultTheme)
+      const solver = new LayoutSolver()
+      context = new LayoutContext(solver, DefaultTheme)
       symbols = new Symbols(context.variables)
     })
 
@@ -132,7 +135,8 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      context = new LayoutContext(DefaultTheme)
+      const solver = new LayoutSolver()
+      context = new LayoutContext(solver, DefaultTheme)
       symbols = new Symbols(context.variables)
     })
 

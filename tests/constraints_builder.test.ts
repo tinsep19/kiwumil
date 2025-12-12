@@ -1,8 +1,8 @@
 import {
   ConstraintsBuilder,
   LayoutSolver,
-  LayoutVariables,
 } from "@/layout"
+import { LayoutVariables } from "@/model"
 import * as kiwi from "@lume/kiwi"
 
 describe("ConstraintsBuilder", () => {

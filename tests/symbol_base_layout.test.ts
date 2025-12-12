@@ -1,5 +1,6 @@
 import { SymbolBase } from "@/model"
-import { LayoutVariables, LayoutSolver, ConstraintsBuilder, LayoutBounds } from "@/layout"
+import { LayoutSolver, ConstraintsBuilder, LayoutBounds } from "@/layout"
+import { LayoutVariables } from "@/model"
 import type { Point } from "@/core/symbols"
 import { DefaultTheme } from "@/theme"
 

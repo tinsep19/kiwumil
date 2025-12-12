@@ -1,5 +1,6 @@
 import { describe, beforeEach, test, expect } from "bun:test"
 import { LayoutContext } from "@/model"
+import { LayoutSolver } from "@/layout"
 import { HintFactory, Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 import { ActorSymbol, SystemBoundarySymbol } from "@/plugin/uml"
@@ -11,7 +12,8 @@ describe("LayoutConstraints metadata", () => {
   const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
-    context = new LayoutContext(DefaultTheme)
+    const solver = new LayoutSolver()
+    context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
     hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
   })
