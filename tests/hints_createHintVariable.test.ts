@@ -1,13 +1,13 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "../src/model"
-import { LayoutSolver, isLayoutVariable } from "../src/layout"
+import { KiwiSolver, isLayoutVariable } from "../src/kiwi"
 import { DefaultTheme } from "../src/theme"
 
 describe("Hints.createHintVariable", () => {
   let context: LayoutContext
 
   beforeEach(() => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
   })
 

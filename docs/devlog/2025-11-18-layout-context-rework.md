@@ -1,7 +1,7 @@
 # 2025-11-18 LayoutContext リワーク
 
 ## 背景
-- 従来は `LayoutVariableContext` にヒント情報 (LayoutHint) を貯め、`LayoutSolver.solve()` 内でまとめて制約を追加していた。
+- 従来は `LayoutVariableContext` にヒント情報 (LayoutHint) を貯め、`KiwiSolver.solve()` 内でまとめて制約を追加していた。
 - ガイド API 等は既にオンラインで制約を登録しており整合性が取れていなかった。
 
 ## 変更点
@@ -13,7 +13,7 @@
 2. **Symbol / Hint / Solver の更新**
    - `createSymbolFactory` / `createRelationshipFactory`／各 Symbol 実装を `LayoutContext` 注入に対応。シンボル生成時に `layout.constraints` で初期制約をオンライン適用。
    - `HintFactory` / `GuideBuilder` は `LayoutConstraints` を直接呼び出し、`LayoutHint[]` を廃止。`hint.enclose(container: ContainerSymbolId, childIds: SymbolId[])` で型レベルの安全性を確保。
-   - `LayoutSolver` は `layoutContext.solve()` と値の書き戻しのみを担当するシンプルなクラスに置き換え。
+   - `KiwiSolver` は `layoutContext.solve()` と値の書き戻しのみを担当するシンプルなクラスに置き換え。
 
 3. **型・ID の整備**
    - `LayoutConstraintId` (`constraints/${serial}`) をブランド型として導入。
@@ -32,7 +32,7 @@
    - `hint.arrange` / `align` / `enclose` は `SymbolId | ContainerSymbolId` を受け取り、コンテナ入れ子を許容。
    - `LayoutConstraints` に `withSymbol` ビルダー（`expression`/`eq`/`ge` 付き）を導入し、`constraints/${symbolId}/${counter}` 命名でメタデータを管理。既存の `setDefaultSize/setMinSize` を廃止し、シンボル生成時にビルダー経由でサイズ制約を登録。
    - `ContainerSymbolId` / `toContainerSymbolId` をパブリックエクスポートし、`tsd/namespace-dsl` で型テストを回せるようにした（`bun run test:types` 成功）。ブランド化は既存の `generateSymbolId` を通し、追加メソッドを増やさず後段で型変換する方針。
-   - `src/layout/constraint_helpers.ts` を追加し、固定サイズ・最小サイズ・原点アンカー・Bounds expression のヘルパーを提供。Core/UML プラグインや `DiagramSymbol`/`SystemBoundarySymbol` がこれらを使って初期制約を登録するよう統一した。
+   - `src/kiwi/constraint_helpers.ts` を追加し、固定サイズ・最小サイズ・原点アンカー・Bounds expression のヘルパーを提供。Core/UML プラグインや `DiagramSymbol`/`SystemBoundarySymbol` がこれらを使って初期制約を登録するよう統一した。
 
 ## 残タスク / 検討事項
 - ~~`LayoutConstraints` ビルダーを利用する共通ヘルパー整備~~: `constraint_helpers.ts` で固定/最小サイズ・アンカー等の API を提供済み（2025-11-18）。今後はガイド/リレーション向けヘルパー追加など拡張を検討。

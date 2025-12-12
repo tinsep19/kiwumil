@@ -1,15 +1,15 @@
 # 2025-11-21: 責務の最終調整（移行手順 7）
 
 ## 概要
-LayoutVariables, LayoutSolver, LayoutConstraints の責務をさらに明確化するためのリファクタリングを実施。
+LayoutVariables, KiwiSolver, LayoutConstraints の責務をさらに明確化するためのリファクタリングを実施。
 
 ## 背景
-移行手順 1-6 により基本的なアーキテクチャは確立されたが、LayoutVariables の責務が込み入っており、expression() や addConstraint() などのメソッドを持っていた。これらのメソッドは本来 kiwi のラッパーとして LayoutSolver が提供すべき機能である。
+移行手順 1-6 により基本的なアーキテクチャは確立されたが、LayoutVariables の責務が込み入っており、expression() や addConstraint() などのメソッドを持っていた。これらのメソッドは本来 kiwi のラッパーとして KiwiSolver が提供すべき機能である。
 
 ## 実施内容
 
-### 1. LayoutSolver に expression() メソッドを追加
-- `expression(terms, constant)` メソッドを LayoutSolver に移動
+### 1. KiwiSolver に expression() メソッドを追加
+- `expression(terms, constant)` メソッドを KiwiSolver に移動
 - kiwi ラッパーとしての責務を明確化
 
 ### 2. LayoutVariables の簡素化
@@ -47,7 +47,7 @@ LayoutVariables, LayoutSolver, LayoutConstraints の責務をさらに明確化�
 
 ```
 LayoutContext（オーケストレーション）
-  ├── solver: LayoutSolver（所有、ライフサイクル管理）
+  ├── solver: KiwiSolver（所有、ライフサイクル管理）
   ├── vars: LayoutVariables（solver 注入済み）
   └── constraints: LayoutConstraints（vars と solver を両方注入）
 
@@ -56,7 +56,7 @@ LayoutVariables（変数とバウンドの生成・管理）
   - valueOf(): 変数値の取得
   - getSolver(): 注入された solver へのアクセス
 
-LayoutSolver（kiwi ラッパー）
+KiwiSolver（kiwi ラッパー）
   - expression(): 式の作成
   - addConstraint(): 制約の追加
   - removeConstraint(): 制約の削除
@@ -79,9 +79,9 @@ LayoutConstraints（制約生成ロジック）
 ✅ 完全な後方互換性を維持
 
 ## 効果
-1. **明確な責務分離**: 各モジュールが LayoutSolver でできる範囲のことに専念
+1. **明確な責務分離**: 各モジュールが KiwiSolver でできる範囲のことに専念
 2. **vars と constraints の独立性**: 直接の依存関係を排除
-3. **kiwi 依存の一元化**: expression() が LayoutSolver に集約
+3. **kiwi 依存の一元化**: expression() が KiwiSolver に集約
 4. **テスタビリティの向上**: solver のモック化が容易に
 5. **保守性の向上**: 変更の影響範囲が明確
 

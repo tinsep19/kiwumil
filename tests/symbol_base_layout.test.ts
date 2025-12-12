@@ -1,5 +1,5 @@
 import { SymbolBase } from "@/model"
-import { LayoutSolver, ConstraintsBuilder, LayoutBounds } from "@/layout"
+import { KiwiSolver, ConstraintsBuilder, LayoutBounds } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 import type { Point } from "@/core/symbols"
 import { DefaultTheme } from "@/theme"
@@ -52,7 +52,7 @@ class DummySymbolWithConstraints extends SymbolBase {
 
 describe("SymbolBase layout bounds", () => {
   test("initializes layout bounds when provided via constructor", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-1")
     const symbol = new DummySymbol("dummy-1", bounds)
@@ -69,7 +69,7 @@ describe("SymbolBase layout bounds", () => {
   })
 
   test("layout property returns the injected bounds", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-2")
     const symbol = new DummySymbol("dummy-2", bounds)
@@ -78,7 +78,7 @@ describe("SymbolBase layout bounds", () => {
   })
 
   test("ensureLayoutBounds accepts a builder", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-3")
     const symbol = new DummySymbol("dummy-3", bounds)
@@ -92,7 +92,7 @@ describe("SymbolBase layout bounds", () => {
   })
 
   test("ensureLayoutBounds runs custom constraints", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-4")
     const symbol = new DummySymbolWithConstraints("dummy-4", bounds)

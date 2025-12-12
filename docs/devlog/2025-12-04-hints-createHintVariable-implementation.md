@@ -23,7 +23,7 @@
 
 #### 追加したメソッド
 - `createHintVariable(options?: HintVariableOptions): HintVariable`
-  - LayoutSolver の `createLayoutVar()` API を内部で呼び出して変数を生成
+  - KiwiSolver の `createLayoutVar()` API を内部で呼び出して変数を生成
   - 自動プレフィックス `hint:` を付与
   - 自動インクリメントカウンターで重複しない名前を保証
   - 生成した変数を Hints インスタンスで保持（Symbols には登録しない）
@@ -81,7 +81,7 @@ export { ..., type HintVariable, type HintVariableOptions } from "./hints"
 
 ## 設計上のポイント
 
-1. **既存 API の維持**: LayoutSolver の API は変更せず、既存の `createLayoutVar()` を利用
+1. **既存 API の維持**: KiwiSolver の API は変更せず、既存の `createLayoutVar()` を利用
 2. **Symbols との分離**: Hints が作成した変数は Symbols に自動登録しない
 3. **命名規則**: `hint:` プレフィックスで Symbols 管理の変数と区別
 4. **後方互換性**: 既存のコードはすべて動作し続ける
@@ -98,7 +98,7 @@ export { ..., type HintVariable, type HintVariableOptions } from "./hints"
 
 `docs/design/hints-symbols-hintfactory.ja.md` の要件をすべて満たしている：
 
-✅ Hints.createHintVariable() が内部で既存の LayoutSolver API を呼ぶ  
+✅ Hints.createHintVariable() が内部で既存の KiwiSolver API を呼ぶ  
 ✅ 生成した LayoutVariable を Hints インスタンスのスコープで保持  
 ✅ 変数名に自動プレフィックス（hint:）を付与  
 ✅ 生成された変数は Symbols に自動登録されない  

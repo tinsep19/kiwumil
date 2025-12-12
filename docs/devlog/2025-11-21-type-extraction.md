@@ -4,13 +4,13 @@
 
 [docs/draft/kiwi-boundary-refactor.md](../draft/kiwi-boundary-refactor.md) の移行手順 2 を実施。
 
-移行手順 1 で kiwi ラッパーモジュール（`src/layout/kiwi/index.ts`）を作成したが、型定義とブランドシンボルが kiwi モジュール内に配置されていた。これにより将来的に循環依存が発生する可能性があるため、型定義を独立したモジュールに分離する必要があった。
+移行手順 1 で kiwi ラッパーモジュール（`src/kiwi/kiwi/index.ts`）を作成したが、型定義とブランドシンボルが kiwi モジュール内に配置されていた。これにより将来的に循環依存が発生する可能性があるため、型定義を独立したモジュールに分離する必要があった。
 
 ## 実施した作業
 
 ### 1. layout_types.ts の作成
 
-**追加ファイル**: `src/layout/layout_types.ts`
+**追加ファイル**: `src/kiwi/layout_types.ts`
 
 以下の型定義とヘルパー関数を配置：
 
@@ -30,7 +30,7 @@
 
 ### 2. kiwi/index.ts の更新
 
-**変更ファイル**: `src/layout/kiwi/index.ts`
+**変更ファイル**: `src/kiwi/kiwi/index.ts`
 
 #### インポートの変更
 ```typescript
@@ -94,7 +94,7 @@ $ bun run test:types
 
 ### 2. モジュール構造の明確化
 ```
-src/layout/
+src/kiwi/
 ├── layout_types.ts       ← 型定義のみ（kiwi に依存しない基本型）
 ├── kiwi/
 │   └── index.ts          ← kiwi 依存のユーティリティと実装

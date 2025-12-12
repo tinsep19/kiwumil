@@ -52,11 +52,11 @@ export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
 ### 3. 更新されたファイル
 
 #### コア実装
-- `src/layout/layout_solver.ts` - 新しい LayoutVariable クラスと API
-- `src/layout/layout_variables.ts` - createLayoutVariable の使用
-- `src/layout/constraints_builder.ts` - Term 型を LayoutVariable に更新
-- `src/layout/bounds.ts` - Bounds インターフェースを LayoutVariable に更新
-- `src/layout/index.ts` - エクスポートを更新
+- `src/kiwi/layout_solver.ts` - 新しい LayoutVariable クラスと API
+- `src/kiwi/layout_variables.ts` - createLayoutVariable の使用
+- `src/kiwi/constraints_builder.ts` - Term 型を LayoutVariable に更新
+- `src/kiwi/bounds.ts` - Bounds インターフェースを LayoutVariable に更新
+- `src/kiwi/index.ts` - エクスポートを更新
 
 #### ヒント機能
 - `src/hint/hints.ts` - HintVariable を LayoutVariable に更新

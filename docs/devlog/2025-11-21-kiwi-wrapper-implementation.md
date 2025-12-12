@@ -5,7 +5,7 @@
 [docs/draft/kiwi-boundary-refactor.md](../draft/kiwi-boundary-refactor.md) の移行手順 1 を実施。
 
 現状の課題：
-- kiwi.Solver が `src/layout/layout_variables.ts` に散在し、ライフサイクル管理が不明確
+- kiwi.Solver が `src/kiwi/layout_variables.ts` に散在し、ライフサイクル管理が不明確
 - kiwi への依存が複数箇所に分散しており、将来的なテスト・差し替えが困難
 - 変換ロジック（`LayoutExpression` → `kiwi.Expression`）が `LayoutVariables` 内部の private メソッドとして隠蔽されている
 
@@ -13,7 +13,7 @@
 
 ### 1. kiwi ラッパーモジュールの作成
 
-**追加ファイル**: `src/layout/kiwi/index.ts`
+**追加ファイル**: `src/kiwi/kiwi/index.ts`
 
 以下の機能を実装：
 
@@ -39,7 +39,7 @@ kiwi の Operator と Strength を再エクスポートすることで、他の�
 
 これまで `LayoutVariables` 内部の private メソッドだった `toKiwiExpression` を public な関数として公開した。
 
-#### LayoutSolver クラス
+#### KiwiSolver クラス
 kiwi.Solver のラッパークラスとして実装。以下のメソッドを提供：
 - `addConstraint(left, operator, right, strength)`: 制約を追加
 - `removeConstraint(constraint)`: 制約を削除
@@ -49,11 +49,11 @@ kiwi.Solver のラッパークラスとして実装。以下のメソッドを�
 - `updateVariables()`: ソルバーを実行し、すべての変数の値を更新
 - `createConstraintsBuilder()`: 内部 solver から fluent builder を作成
 
-将来的に LayoutContext が LayoutSolver を所有する際の基盤となる。
+将来的に LayoutContext が KiwiSolver を所有する際の基盤となる。
 
 ### 2. layout_variables.ts の更新
 
-**変更ファイル**: `src/layout/layout_variables.ts`
+**変更ファイル**: `src/kiwi/layout_variables.ts`
 
 #### インポートの変更
 ```typescript
@@ -117,11 +117,11 @@ $ bun run test:types
 ## 効果
 
 ### 1. kiwi 依存の集約
-- kiwi への依存が `src/layout/kiwi/index.ts` に集約された
+- kiwi への依存が `src/kiwi/kiwi/index.ts` に集約された
 - 他のモジュールは kiwi モジュールをインポートするだけで済む
 
 ### 2. テスト・差し替えの準備
-- `LayoutSolver` クラスにより、将来的なモック実装が容易になった
+- `KiwiSolver` クラスにより、将来的なモック実装が容易になった
 - `toKiwiExpression` が public 関数となり、個別にテスト可能になった
 
 ### 3. 可読性の向上
@@ -136,7 +136,7 @@ $ bun run test:types
 
 移行手順の次の段階：
 1. ✅ kiwi ラッパーを作成（完了）
-2. 型の切り出し（`src/layout/layout_types.ts` の作成）
+2. 型の切り出し（`src/kiwi/layout_types.ts` の作成）
 3. LayoutVariables を依存注入対応にする
 4. LayoutContext に Solver を移動
 5. LayoutConstraints の責務整理

@@ -1,9 +1,9 @@
-import { LayoutSolver, isLayoutVariable } from "@/layout"
+import { KiwiSolver, isLayoutVariable } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 
 describe("LayoutVariables", () => {
   test("creates branded variables and solves equality constraints", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 
@@ -16,7 +16,7 @@ describe("LayoutVariables", () => {
   })
 
   test("supports expressions combining variables and constants", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const a = variables.createVar("a")
     const b = variables.createVar("b")
@@ -36,7 +36,7 @@ describe("LayoutVariables", () => {
   })
 
   test("createBoundsSet creates multiple bounds with different types", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
 
     const boundsSet = variables.createBoundsSet({
@@ -60,7 +60,7 @@ describe("LayoutVariables", () => {
   })
 
   test("createBoundsSet provides correct type inference", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
 
     const boundsSet = variables.createBoundsSet({
@@ -77,7 +77,7 @@ describe("LayoutVariables", () => {
   })
 
   test("createBoundsSet creates LayoutVar when value is 'variable'", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
 
     const boundsSet = variables.createBoundsSet({
@@ -103,7 +103,7 @@ describe("LayoutVariables", () => {
   })
 
   test("createBoundsSet with variable supports constraint solving", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
 
     const boundsSet = variables.createBoundsSet({
@@ -122,7 +122,7 @@ describe("LayoutVariables", () => {
   })
 
   test("createConstraintsBuilder returns a working ConstraintsBuilder", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 
@@ -136,7 +136,7 @@ describe("LayoutVariables", () => {
   })
 
   test("isLayoutVariable correctly identifies branded variables", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 

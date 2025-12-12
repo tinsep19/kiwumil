@@ -7,8 +7,8 @@
 ## 背景と目的
 Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい（制約を直接作成できるようにしたい）という要望がありました。これに合わせて以下の設計方針を採用します：
 
-- LayoutSolver の既存 API を変更しない（新メソッドは追加しない）。
-- Hints は内部的に既存の LayoutSolver API を使って LayoutVariable（＝ソルバが管理する変数）を生成するが、生成された変数を Symbols に自動登録しない。
+- KiwiSolver の既存 API を変更しない（新メソッドは追加しない）。
+- Hints は内部的に既存の KiwiSolver API を使って LayoutVariable（＝ソルバが管理する変数）を生成するが、生成された変数を Symbols に自動登録しない。
 - HintFactory は LayoutContext を保持せず Hints を保持する。Guide は Hints を経由して変数を得て、その変数と既存 Symbols が管理する Symbol との間で制約を作る。
 - Symbols は旧 LayoutVariables と Variables の責務を一つに併合する（別ハンドル型は定義しない）。
 
@@ -18,7 +18,7 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 
 ## 主要コンポーネントと責務
 
-### LayoutSolver
+### KiwiSolver
 - 既存の変数作成・制約作成・解法 API をそのまま使う（変更は行わない）。
 - 変数（LayoutVariable）と制約（Constraint）の実体を管理する（所有者）。
 - Constraint に creator/tag 等のメタ情報を付与できると望ましい（管理・削除が容易になる）。
@@ -29,7 +29,7 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 - Symbols は Symbol 間の補助的な制約生成メソッドを提供する（ただし Hints の変数は登録対象外）。
 
 ### Hints
-- Hints.createHintVariable(...) などの API で内部的に既存 LayoutSolver の API を呼んで LayoutVariable を生成する。
+- Hints.createHintVariable(...) などの API で内部的に既存 KiwiSolver の API を呼んで LayoutVariable を生成する。
 - 生成された変数は Hints のスコープ（その Hint の生成物）として保持する。Symbols へは登録しない。
 - Hint 固有の制約は solver に登録し、その制約 ID 等を Hints が保持する。
 
@@ -47,7 +47,7 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 ## 生成・接続フロー（例）
 1. Guide が HintFactory に対してヒント（例:「アンカー変数が欲しい」）を要求する。
 2. HintFactory が Hints.createHintVariable を呼ぶ。
-3. Hints は既存の LayoutSolver API を呼び、必要な LayoutVariable を生成する。必要なら Hint 固有の補助制約を solver に登録する。
+3. Hints は既存の KiwiSolver API を呼び、必要な LayoutVariable を生成する。必要なら Hint 固有の補助制約を solver に登録する。
 4. Hints は生成した LayoutVariable を Guide に返す（Symbols には登録しない）。
 5. Guide は Symbols.get("symbolX") で既存 Symbol を参照し、solver の制約作成 API を呼んで Symbol と Hints が作った LayoutVariable を結ぶ制約を作る。
 6. Guide の不要化時に、Guide は自分が作成した制約を削除する。
@@ -55,7 +55,7 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 ---
 
 ## API 注意点（設計上の約束）
-- LayoutSolver の API 変更は行わない。Hints は既存 API をそのまま利用する。
+- KiwiSolver の API 変更は行わない。Hints は既存 API をそのまま利用する。
 - Constraint の生成 API は「変数オブジェクト参照」を受け入れることが前提。もし現実装が名前ベースのみであれば、ラッパーを用意する必要あり。
 - Constraint に creator/tag 情報を付加するオプションがあると管理が容易（どの Hint/Guide が生成したか追跡可能）。
 
@@ -74,7 +74,7 @@ Guide を作成する際に、Guide 側で LayoutVariable を直接扱いたい�
 
 #### Hints クラス (`src/hint/hints.ts`)
 - ✅ `createHintVariable(options?: HintVariableOptions): HintVariable` メソッドを実装
-  - 内部で `LayoutSolver.createLayoutVar()` を呼び出し
+  - 内部で `KiwiSolver.createLayoutVar()` を呼び出し
   - 自動プレフィックス `hint:` を付与
   - カウンターによる自動命名（例: `hint:guide_x_0`, `hint:guide_x_1`）
   - 生成した変数を Hints インスタンスで保持
@@ -142,7 +142,7 @@ console.log(hintVars.map(v => v.name))
 ```
 
 ### 実装の特徴
-1. **既存 API との互換性**: LayoutSolver の API は一切変更していない
+1. **既存 API との互換性**: KiwiSolver の API は一切変更していない
 2. **Symbols との分離**: Hints が作成した変数は Symbols に自動登録されない
 3. **追跡可能性**: `getHintVariables()` で作成した変数を取得可能
 4. **命名規則**: `hint:` プレフィックスで明確に区別

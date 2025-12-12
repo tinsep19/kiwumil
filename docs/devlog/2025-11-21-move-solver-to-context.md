@@ -8,9 +8,9 @@
 
 ## 実施した作業
 
-### 1. LayoutContext に LayoutSolver を追加
+### 1. LayoutContext に KiwiSolver を追加
 
-**変更ファイル**: `src/layout/layout_context.ts`
+**変更ファイル**: `src/kiwi/layout_context.ts`
 
 #### 変更前
 ```typescript
@@ -36,10 +36,10 @@ export class LayoutContext {
 
 #### 変更後
 ```typescript
-import { LayoutSolver } from "./kiwi"
+import { KiwiSolver } from "./kiwi"
 
 export class LayoutContext {
-  private readonly solver: LayoutSolver
+  private readonly solver: KiwiSolver
   readonly vars: LayoutVariables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
@@ -49,7 +49,7 @@ export class LayoutContext {
     resolveSymbol: (id: SymbolId | ContainerSymbolId) => SymbolBase | undefined
   ) {
     this.theme = theme
-    this.solver = new LayoutSolver()
+    this.solver = new KiwiSolver()
     this.variables = new LayoutVariables(this.solver)
     this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
   }
@@ -63,11 +63,11 @@ export class LayoutContext {
 ### 2. 主な変更点
 
 #### solver フィールドの追加
-- **新規**: `private readonly solver: LayoutSolver`
-- LayoutContext が LayoutSolver のインスタンスを所有する
+- **新規**: `private readonly solver: KiwiSolver`
+- LayoutContext が KiwiSolver のインスタンスを所有する
 
 #### コンストラクタの変更
-- LayoutSolver を最初に作成
+- KiwiSolver を最初に作成
 - 作成した solver を LayoutVariables に注入: `new LayoutVariables(this.solver)`
 - これにより、vars と constraints が同じ solver を共有する
 
@@ -78,7 +78,7 @@ export class LayoutContext {
 これにより、solver のライフサイクル管理が LayoutContext に集約された。
 
 #### インポートの追加
-- `import { LayoutSolver } from "./kiwi"` を追加
+- `import { KiwiSolver } from "./kiwi"` を追加
 
 ### 3. テストの実行
 
@@ -105,7 +105,7 @@ $ bun run test:types
 ### 3. 責務の明確化
 ```
 LayoutContext:
-  - LayoutSolver を所有
+  - KiwiSolver を所有
   - solve のタイミングを制御
   - 全体のオーケストレーション
 
@@ -119,7 +119,7 @@ LayoutConstraints:
 ```
 
 ### 4. テスタビリティの向上
-- LayoutContext のテスト時にモック LayoutSolver を注入可能（将来の拡張）
+- LayoutContext のテスト時にモック KiwiSolver を注入可能（将来の拡張）
 - solver の振る舞いを独立してテスト可能
 
 ### 5. 既存コードとの互換性維持
@@ -133,14 +133,14 @@ LayoutConstraints:
 ```
 LayoutContext
   ├── vars: LayoutVariables
-  │     └── solver: LayoutSolver (内部所有)
+  │     └── solver: KiwiSolver (内部所有)
   └── constraints: LayoutConstraints
 ```
 
 ### 変更後
 ```
 LayoutContext
-  ├── solver: LayoutSolver (ContextがSolverを所有)
+  ├── solver: KiwiSolver (ContextがSolverを所有)
   ├── vars: LayoutVariables (Solverを注入)
   └── constraints: LayoutConstraints
 ```

@@ -6,7 +6,7 @@ LayoutBound を class から interface に変更し、LayoutVariables に factor
 
 ## 背景
 
-移行手順 7 により、vars と constraints が完全に独立し、両方とも LayoutSolver を通じて連携する設計になった。しかし、LayoutBound はまだ class として実装されており、vars と solver への依存を保持していた。これをより単純な interface に変更することで、以下のメリットが得られる：
+移行手順 7 により、vars と constraints が完全に独立し、両方とも KiwiSolver を通じて連携する設計になった。しかし、LayoutBound はまだ class として実装されており、vars と solver への依存を保持していた。これをより単純な interface に変更することで、以下のメリットが得られる：
 
 1. **単純化**: LayoutBound は単なる変数のグループとして表現される
 2. **責務の集約**: computed properties の制約生成ロジックを LayoutVariables 内に集約
@@ -31,7 +31,7 @@ export class LayoutBound {
 
   constructor(
     private readonly vars: LayoutVariables,
-    private readonly solver: LayoutSolver,
+    private readonly solver: KiwiSolver,
     x: LayoutVar, y: LayoutVar, width: LayoutVar, height: LayoutVar
   ) { ... }
 

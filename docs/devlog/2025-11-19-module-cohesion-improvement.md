@@ -2,7 +2,7 @@
 
 ## 背景
 
-`src/layout`, `src/core`, `src/model` のモジュール構造をレビューした結果、以下の問題が判明：
+`src/kiwi`, `src/core`, `src/model` のモジュール構造をレビューした結果、以下の問題が判明：
 
 1. **layoutモジュールの内部詳細が外部に漏出**
    - `LayoutVar`, `LayoutConstraintStrength`, `LayoutConstraintOperator` が外部から直接参照されている
@@ -27,7 +27,7 @@
 
 ### 1. LayoutContext にヘルパーメソッドを追加
 
-**変更ファイル**: `src/layout/layout_context.ts`
+**変更ファイル**: `src/kiwi/layout_context.ts`
 
 以下のメソッドを追加：
 - `expressionFromBounds(bounds, terms, constant)`
@@ -39,7 +39,7 @@
 
 ### 2. constraint_helpers.ts の削除
 
-**削除ファイル**: `src/layout/constraint_helpers.ts`
+**削除ファイル**: `src/kiwi/constraint_helpers.ts`
 
 全ての機能を `LayoutContext` に統合したため、このファイルは不要となった。
 

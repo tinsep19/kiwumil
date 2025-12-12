@@ -1,11 +1,11 @@
 import { TextSymbol } from "@/plugin/core"
 import { DefaultTheme } from "@/theme"
-import { LayoutSolver } from "@/layout"
+import { KiwiSolver } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 
 describe("TextSymbol", () => {
   test("calculates default size from multiline text", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBounds("core:text-0")
     const symbol = new TextSymbol({
@@ -21,7 +21,7 @@ describe("TextSymbol", () => {
   })
 
   test("renders tspans for each line including blanks", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBounds("core:text-1")
     const symbol = new TextSymbol({
@@ -49,7 +49,7 @@ describe("TextSymbol", () => {
   })
 
   test("applies text info overrides", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bound = vars.createBounds("core:text-2")
     const symbol = new TextSymbol({

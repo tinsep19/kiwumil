@@ -14,7 +14,7 @@ type ExprTerm = [number, LayoutVar | number];
 
 ```typescript
 class ConstraintBuilder {
-  solver: LayoutSolver;
+  solver: KiwiSolver;
   rawConstraints: RawConstraint[] = [];
   private tmp: Partial<{
     lhs: ExprTerm[];
@@ -23,7 +23,7 @@ class ConstraintBuilder {
     strength: Strength;
   }> = {};
 
-  constructor(solver: LayoutSolver) {
+  constructor(solver: KiwiSolver) {
     this.solver = solver;
   }
 

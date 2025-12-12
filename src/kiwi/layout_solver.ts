@@ -6,7 +6,7 @@ import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, L
 import type { ConstraintSpec } from "../core"
 
 /**
- * Unique symbol used to brand objects created by LayoutSolver
+ * Unique symbol used to brand objects created by KiwiSolver
  * @internal
  */
 const KIWI_BRAND: unique symbol = Symbol("KIWI_BRAND")
@@ -49,7 +49,7 @@ export interface LayoutConstraint extends ILayoutConstraint {
  * kiwi.Solver のラッパークラス
  * ソルバーのライフサイクル管理と操作を集約
  */
-export class LayoutSolver implements ILayoutSolver {
+export class KiwiSolver implements ILayoutSolver {
   private readonly solver: kiwi.Solver
 
   constructor() {
@@ -155,7 +155,7 @@ class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
 }
 
 /**
- * Check if a value is a LayoutVariable created by LayoutSolver
+ * Check if a value is a LayoutVariable created by KiwiSolver
  * @param v Value to check
  * @returns true if v is a branded LayoutVariable
  */

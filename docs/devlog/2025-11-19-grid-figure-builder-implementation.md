@@ -40,7 +40,7 @@ hint.figure(container)
    - `hint.figure()` メソッド追加
    - `getLayoutContext()` / `getSymbols()` ヘルパー追加
 
-5. **src/layout/layout_constraints.ts** - LayoutConstraints 拡張
+5. **src/kiwi/layout_constraints.ts** - LayoutConstraints 拡張
    - `encloseGrid()` メソッド: Grid配置の制約生成
    - `encloseFigure()` メソッド: Figure配置の制約生成
    - プライベートヘルパー:

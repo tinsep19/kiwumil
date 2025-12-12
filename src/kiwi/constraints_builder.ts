@@ -143,7 +143,7 @@ export class ConstraintsBuilder implements IConstraintsBuilder {
 
       // Validate that operand is a branded LayoutVariable
       if (!isBrandedKiwi(operand)) {
-        throw new Error("ConstraintsBuilder: operand is not a LayoutVariable created by LayoutSolver")
+        throw new Error("ConstraintsBuilder: operand is not a LayoutVariable created by KiwiSolver")
       }
 
       // operand is ILayoutVariable, which has .variable property

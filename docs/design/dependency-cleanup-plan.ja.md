@@ -24,7 +24,7 @@
 - `IConstraintsBuilder`, `Term`, `ConstraintSpec`
 
 **`src/core/layout_solver.ts`**:
-- `ILayoutSolver`
+- `IKiwiSolver`
 
 **`src/core/hint_target.ts`**:
 - `HintTarget`
@@ -52,12 +52,12 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 
 **`src/model/`** (ドメインモデル):
 - `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
-- `LayoutVariables` (moved from `src/layout`)
+- `LayoutVariables` (moved from `src/kiwi`)
 - `src/core` のインターフェースに依存
 
-**`src/layout/`** (レイアウトエンジン):
-- `LayoutSolver`, `ConstraintsBuilder` の具象実装
-- `ILayoutSolver`, `IConstraintsBuilder` を実装
+**`src/kiwi/`** (レイアウトエンジン):
+- `KiwiSolver`, `ConstraintsBuilder` の具象実装
+- `IKiwiSolver`, `IConstraintsBuilder` を実装
 - `src/core` のインターフェースに依存
 
 ### 4. 循環依存の排除
@@ -82,7 +82,7 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 1. **アーキテクチャの明確化**
    - コア型定義 (`src/core`)
    - ドメインモデル (`src/model`)  
-   - レイアウトエンジン (`src/layout`)
+   - レイアウトエンジン (`src/kiwi`)
    - プラグイン (`src/plugin`)
 
 2. **型安全性の向上**
@@ -105,4 +105,4 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 
 - `src/core/index.ts` - コア型の一元エクスポート
 - `src/model/index.ts` - モデル層のエクスポート
-- `src/layout/index.ts` - レイアウト層のエクスポート
+- `src/kiwi/index.ts` - レイアウト層のエクスポート

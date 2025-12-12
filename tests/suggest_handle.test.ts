@@ -1,8 +1,8 @@
-import { LayoutSolver } from "@/layout"
+import { KiwiSolver } from "@/kiwi"
 
 describe("SuggestHandle", () => {
   test("propagates suggestions and exposes strength label", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variable = solver.createVariable("suggest:strong")
     const handle = solver.createHandle(variable).strong()
     handle.suggest(48)
@@ -13,7 +13,7 @@ describe("SuggestHandle", () => {
   })
 
   test("prevents reuse after disposal", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variable = solver.createVariable("suggest:dispose")
     const handle = solver.createHandle(variable).strong()
     handle.dispose()

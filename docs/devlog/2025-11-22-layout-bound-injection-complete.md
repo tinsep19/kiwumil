@@ -6,7 +6,7 @@ SymbolBase と ContainerSymbolBase における LayoutBound の immutable 注入
 ## 実施内容
 
 ### 主な変更
-**src/layout/layout_constraints.ts**
+**src/kiwi/layout_constraints.ts**
 - `LayoutConstraints.withSymbol` メソッドを修正
 - シンボルオブジェクトが渡された場合に `symbol.ensureLayoutBounds(builder)` を呼び出すように変更
 - これにより、シンボル側で `buildLayoutConstraints(builder)` をオーバーライドして固有の制約を追加可能に
