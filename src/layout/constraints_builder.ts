@@ -1,6 +1,6 @@
 import * as kiwi from "@lume/kiwi"
-import type { LayoutVariable } from "./layout_solver"
-import type { ILayoutVariable, Term, IConstraintsBuilder } from "../core"
+
+import type { Term, IConstraintsBuilder } from "../core"
 import { isBrandedKiwi } from "./layout_solver"
 
 interface PendingConstraint {

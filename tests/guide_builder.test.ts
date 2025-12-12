@@ -1,7 +1,7 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "@/model"
 import { LayoutSolver } from "@/layout"
-import { getBoundsValues } from "@/layout"
+import { getBoundsValues } from "@/core"
 import { ActorSymbol } from "@/plugin/uml"
 import { HintFactory, Symbols } from "@/dsl"
 import { DefaultTheme } from "@/theme"

@@ -1,5 +1,5 @@
 import type { Theme } from "../theme"
-import type { IConstraintsBuilder, ILayoutSolver, ILayoutConstraint, ILayoutVariable } from "../core"
+import type { ILayoutSolver, ILayoutConstraint, ILayoutVariable } from "../core"
 import type { HintTarget } from "../core"
 
 export interface HintVariableOptions {

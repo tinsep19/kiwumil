@@ -3,7 +3,7 @@ import type { RelationshipBase, SymbolBase } from "../model"
 import type { SymbolId } from "../core"
 import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model"
-import { getBoundsValues } from "../layout"
+import { getBoundsValues } from "../core"
 
 interface RenderElement {
   zIndex: number

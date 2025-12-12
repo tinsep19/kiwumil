@@ -69,7 +69,7 @@ export class FigureBuilder {
     }
 
     const resolvedRows = this.rows.map((row) => row.map(toSymbolId))
-    const children = resolvedRows.flat()
+
     const rowTargets = resolvedRows.map((row) => this.hint.resolveConstraintTargets(row))
     const containerTarget = this.hint.getConstraintTarget(this.container)
     if (!containerTarget) return
