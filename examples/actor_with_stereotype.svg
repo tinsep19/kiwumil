@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     width="200" 
+     height="150" 
+     viewBox="0 0 200 150">
+  <rect width="100%" height="100%" fill="white"/>
+  
+      <g id="__builtin__:diagram/0">
+        <!-- Title -->
+        <text x="100" y="30" 
+              text-anchor="middle" 
+              font-size="18" 
+              font-weight="bold"
+              font-family="Arial"
+              fill="black">
+          Actor with Stereotype Example
+        </text>
+        
+      </g>
+    
+
+      <line x1="160" y1="100" x2="240" y2="100"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="50" y1="25" x2="235.77708763999664" y2="88.81966011250105"
+            stroke="black" stroke-width="2"/>
+    
+
+      <line x1="50" y1="175" x2="235.77708763999664" y2="111.18033988749895"
+            stroke="black" stroke-width="2"/>
+    
+
+      <g id="uml:actor/1">
+        
+        
+      <g transform="translate(70, 80)">
+        <svg><!-- stub for icons/actor.svg --></svg>
+      </g>
+    
+        <!-- Label -->
+        <text x="100" y="125" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          User
+        </text>
+      </g>
+    
+
+      <g id="uml:actor/2">
+        
+        <text x="100" y="87" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          &lt;&lt;primary&gt;&gt;
+        </text>
+      
+        
+      <g transform="translate(70, 97)">
+        <svg><!-- stub for icons/actor.svg --></svg>
+      </g>
+    
+        <!-- Label -->
+        <text x="100" y="125" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          Administrator
+        </text>
+      </g>
+    
+
+      <g id="uml:actor/3">
+        
+        <text x="100" y="187" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          &lt;&lt;secondary&gt;&gt;
+        </text>
+      
+        
+      <g transform="translate(70, 197)">
+        <svg><!-- stub for icons/actor.svg --></svg>
+      </g>
+    
+        <!-- Label -->
+        <text x="100" y="225" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          Guest
+        </text>
+      </g>
+    
+
+      <g id="uml:usecase/4">
+        <!-- Ellipse -->
+        <ellipse cx="280" cy="100" rx="40" ry="25" 
+                 fill="white" stroke="black" stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="280" y="105" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          Login
+        </text>
+      </g>
+    
+
+      <g id="uml:usecase/5">
+        <!-- Ellipse -->
+        <ellipse cx="280" cy="100" rx="40" ry="25" 
+                 fill="white" stroke="black" stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="280" y="105" 
+              text-anchor="middle" font-size="12" font-family="Arial"
+              fill="black">
+          Manage System
+        </text>
+      </g>
+    
+</svg>

@@ -4,17 +4,39 @@ import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../layout"
+import type { IconMeta } from "../../../icon"
+
+// Icon size constant
+const ICON_BASE_SIZE = 60
 
 export interface ActorSymbolOptions extends SymbolBaseOptions {
   label: string
+  stereotype?: string
+  icon?: IconMeta | null
+}
+
+/**
+ * Escape XML/HTML special characters to prevent XSS
+ */
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;")
 }
 
 export class ActorSymbol extends SymbolBase {
   readonly label: string
+  readonly stereotype?: string
+  readonly icon?: IconMeta | null
 
   constructor(options: ActorSymbolOptions) {
     super(options)
     this.label = options.label
+    this.stereotype = options.stereotype
+    this.icon = options.icon
   }
 
   getDefaultSize() {
@@ -56,14 +78,8 @@ export class ActorSymbol extends SymbolBase {
     const safeHeight = Math.max(20, Math.abs(height))
 
     const cx = x + safeWidth / 2
-    // 半径を計算し、最小値でクランプ
-    const headRadius = Math.max(2, safeWidth / 6)
-    const bodyTop = y + headRadius * 2 + 5
-    const bodyBottom = y + safeHeight * 0.6
-    const armY = bodyTop + (bodyBottom - bodyTop) * 0.3
-    const legBottom = y + safeHeight - 15
 
-    // テーマからスタイルを取得
+    // Get style from theme
     const style = this.theme
       ? getStyleForSymbol(this.theme, "actor")
       : {
@@ -78,31 +94,49 @@ export class ActorSymbol extends SymbolBase {
           verticalGap: 50,
         }
 
+    // Reserve space above the figure when stereotype is present
+    const stereotypeHeight = this.stereotype ? style.fontSize + 5 : 0
+    const actorStartY = y + stereotypeHeight
+    
+    // Icon is required - throw error if not available
+    if (!this.icon?.raw) {
+      throw new Error(`Actor icon is required but not available for symbol ${this.id}`)
+    }
+    
+    // Use icon at fixed size (no scaling)
+    const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
+    const iconY = actorStartY + 5
+    
+    const bodyContent = `
+      <g transform="translate(${iconX}, ${iconY})">
+        ${this.icon.raw}
+      </g>
+    `
+
+    // Add stereotype if present (above the actor figure)
+    let stereotypeText = ""
+    if (this.stereotype) {
+      const escapedStereotype = escapeXml(this.stereotype)
+      stereotypeText = `
+        <text x="${cx}" y="${y + style.fontSize}" 
+              text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
+              fill="${style.textColor}">
+          &lt;&lt;${escapedStereotype}&gt;&gt;
+        </text>
+      `
+    }
+
+    const escapedLabel = escapeXml(this.label)
+    
     return `
       <g id="${this.id}">
-        <!-- Head -->
-        <circle cx="${cx}" cy="${y + headRadius + 5}" r="${headRadius}" 
-                fill="none" stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
-        <!-- Body -->
-        <line x1="${cx}" y1="${bodyTop}" x2="${cx}" y2="${bodyBottom}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
-        <!-- Arms -->
-        <line x1="${x + 5}" y1="${armY}" x2="${x + safeWidth - 5}" y2="${armY}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
-        <!-- Legs -->
-        <line x1="${cx}" y1="${bodyBottom}" x2="${x + 10}" y2="${legBottom}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        <line x1="${cx}" y1="${bodyBottom}" x2="${x + safeWidth - 10}" y2="${legBottom}" 
-              stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
-        
+        ${stereotypeText}
+        ${bodyContent}
         <!-- Label -->
         <text x="${cx}" y="${y + safeHeight}" 
               text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
               fill="${style.textColor}">
-          ${this.label}
+          ${escapedLabel}
         </text>
       </g>
     `
