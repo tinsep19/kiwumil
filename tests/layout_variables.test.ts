@@ -1,4 +1,4 @@
-import { KiwiSolver, isLayoutVariable } from "@/kiwi"
+import { KiwiSolver, isKiwiVariable } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 
 describe("LayoutVariables", () => {
@@ -135,20 +135,20 @@ describe("LayoutVariables", () => {
     expect(variables.valueOf(x)).toBeCloseTo(42)
   })
 
-  test("isLayoutVariable correctly identifies branded variables", () => {
+  test("isKiwiVariable correctly identifies branded variables", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const x = variables.createVar("x")
 
-    // Should return true for branded LayoutVariable
-    expect(isLayoutVariable(x)).toBe(true)
+    // Should return true for branded KiwiVariable
+    expect(isKiwiVariable(x)).toBe(true)
 
     // Should return false for non-branded objects
-    expect(isLayoutVariable(null)).toBe(false)
-    expect(isLayoutVariable(undefined)).toBe(false)
-    expect(isLayoutVariable(42)).toBe(false)
-    expect(isLayoutVariable("string")).toBe(false)
-    expect(isLayoutVariable({})).toBe(false)
-    expect(isLayoutVariable({ id: "fake", value: () => 0 })).toBe(false)
+    expect(isKiwiVariable(null)).toBe(false)
+    expect(isKiwiVariable(undefined)).toBe(false)
+    expect(isKiwiVariable(42)).toBe(false)
+    expect(isKiwiVariable("string")).toBe(false)
+    expect(isKiwiVariable({})).toBe(false)
+    expect(isKiwiVariable({ id: "fake", value: () => 0 })).toBe(false)
   })
 })

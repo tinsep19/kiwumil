@@ -22,7 +22,7 @@ describe("SuggestHandle", () => {
     expect(() => handle.suggest(22)).toThrow("SuggestHandle")
   })
 
-  test("throws error when createHandle receives non-LayoutVariable", () => {
+  test("throws error when createHandle receives non-KiwiVariable", () => {
     const solver = new KiwiSolver()
     const fakeVariable = {
       id: "fake:var",
@@ -31,7 +31,7 @@ describe("SuggestHandle", () => {
     }
 
     expect(() => solver.createHandle(fakeVariable as any)).toThrow(
-      "KiwiSolver.createHandle: variable must be a LayoutVariable created by KiwiSolver"
+      "KiwiSolver.createHandle: variable must be a KiwiVariable created by KiwiSolver"
     )
   })
 })

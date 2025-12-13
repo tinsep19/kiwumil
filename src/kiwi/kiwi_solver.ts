@@ -1,7 +1,7 @@
-// src/kiwi/layout_solver.ts
+// src/kiwi/kiwi_solver.ts
 // kiwi 依存を集約するラッパーモジュール
 import * as kiwi from "@lume/kiwi"
-import { ConstraintsBuilder } from "./constraints_builder"
+import { KiwiConstraintBuilder } from "./constraints_builder"
 import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
 import type { ConstraintSpec } from "../core"
 
@@ -30,7 +30,7 @@ export function isBrandedKiwi(obj: unknown): boolean {
   return !!(obj && typeof obj === "object" && (obj as any)[KIWI_BRAND])
 }
 
-export class LayoutVariable implements ILayoutVariable {
+export class KiwiVariable implements ILayoutVariable {
   constructor(
     public readonly id: VariableId,
     public readonly variable: kiwi.Variable
@@ -41,7 +41,7 @@ export class LayoutVariable implements ILayoutVariable {
   }
 }
 
-export interface LayoutConstraint extends ILayoutConstraint {
+export interface KiwiConstraint extends ILayoutConstraint {
   rawConstraints: kiwi.Constraint[]
 }
 
@@ -57,13 +57,13 @@ export class KiwiSolver implements ILayoutSolver {
   }
 
   /**
-   * Create a LayoutVariable
+   * Create a KiwiVariable
    */
-  createVariable(id: VariableId): LayoutVariable {
+  createVariable(id: VariableId): KiwiVariable {
     const variable = new kiwi.Variable(id)
-    const layoutVariable = new LayoutVariable(id, variable)
-    brandAsKiwi(layoutVariable)
-    return layoutVariable
+    const kiwiVariable = new KiwiVariable(id, variable)
+    brandAsKiwi(kiwiVariable)
+    return kiwiVariable
   }
 
   /**
@@ -77,10 +77,10 @@ export class KiwiSolver implements ILayoutSolver {
    * Create a constraint with an ID using a callback pattern
    * @param id Constraint identifier
    * @param spec Builder callback function
-   * @returns LayoutConstraint with id and rawConstraints
+   * @returns KiwiConstraint with id and rawConstraints
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint {
-    const builder = new ConstraintsBuilder(this.solver)
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): KiwiConstraint {
+    const builder = new KiwiConstraintBuilder(this.solver)
     spec(builder)
     const constraint = {
       id,
@@ -94,15 +94,15 @@ export class KiwiSolver implements ILayoutSolver {
    * Fluent edit variable handle を作成
    */
   createHandle(variable: ILayoutVariable): ISuggestHandleFactory {
-    if (!isLayoutVariable(variable)) {
-      throw new Error("KiwiSolver.createHandle: variable must be a LayoutVariable created by KiwiSolver")
+    if (!isKiwiVariable(variable)) {
+      throw new Error("KiwiSolver.createHandle: variable must be a KiwiVariable created by KiwiSolver")
     }
-    return new SuggestHandleFactoryImpl(this.solver, variable)
+    return new KiwiSuggestHandleFactory(this.solver, variable)
   }
 }
 
 /** @internal */
-class SuggestHandleImpl implements ISuggestHandle {
+class KiwiSuggestHandle implements ISuggestHandle {
   private disposed = false
 
   constructor(
@@ -136,7 +136,7 @@ class SuggestHandleImpl implements ISuggestHandle {
 }
 
 /** @internal */
-class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
+class KiwiSuggestHandleFactory implements ISuggestHandleFactory {
   constructor(private readonly solver: kiwi.Solver, private readonly variable: ILayoutVariable) {}
 
   strong(): ISuggestHandle {
@@ -153,16 +153,16 @@ class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
 
   private createHandle(label: ConstraintStrength, strength: number): ISuggestHandle {
     this.solver.addEditVariable(this.variable.variable as kiwi.Variable, strength)
-    return new SuggestHandleImpl(this.solver, this.variable.variable as kiwi.Variable, label)
+    return new KiwiSuggestHandle(this.solver, this.variable.variable as kiwi.Variable, label)
   }
 }
 
 /**
- * Check if a value is a LayoutVariable created by KiwiSolver
+ * Check if a value is a KiwiVariable created by KiwiSolver
  * @param v Value to check
- * @returns true if v is a branded LayoutVariable
+ * @returns true if v is a branded KiwiVariable
  */
-export function isLayoutVariable(v: unknown): v is LayoutVariable {
+export function isKiwiVariable(v: unknown): v is KiwiVariable {
   return (
     isBrandedKiwi(v) &&
     typeof v === "object" &&
