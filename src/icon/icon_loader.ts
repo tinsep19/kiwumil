@@ -58,13 +58,16 @@ export class IconLoader {
       const viewBox = vbMatch ? vbMatch[1] : undefined;
       return { href: id, raw: content, viewBox };
     } catch (e: unknown) {
-      const err: any = e;
-      // If file not found, throw an error to stop execution as requested
-      if (err?.code === 'ENOENT') {
+      // If file not found (Node's ErrnoException), check for code property safely
+      if (typeof e === 'object' && e !== null && 'code' in e && (e as { code?: unknown }).code === 'ENOENT') {
         throw new Error(`Icon file not found: ${rel} resolved to ${filePath}`);
       }
-      // Other errors also should surface
-      throw new Error(`Failed to load icon ${rel}: ${err?.message || String(err)}`);
+      // If it's an Error, use its message
+      if (e instanceof Error) {
+        throw new Error(`Failed to load icon ${rel}: ${e.message}`);
+      }
+      // Fallback for other unknown throwables
+      throw new Error(`Failed to load icon ${rel}: ${String(e)}`);
     }
   }
 
