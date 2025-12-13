@@ -93,7 +93,10 @@ export class KiwiSolver implements ILayoutSolver {
   /**
    * Fluent edit variable handle を作成
    */
-  createHandle(variable: LayoutVariable): ISuggestHandleFactory {
+  createHandle(variable: ILayoutVariable): ISuggestHandleFactory {
+    if (!isLayoutVariable(variable)) {
+      throw new Error("KiwiSolver.createHandle: variable must be a LayoutVariable created by KiwiSolver")
+    }
     return new SuggestHandleFactoryImpl(this.solver, variable)
   }
 }
@@ -104,24 +107,24 @@ class SuggestHandleImpl implements ISuggestHandle {
 
   constructor(
     private readonly solver: kiwi.Solver,
-    private readonly variable: LayoutVariable,
-    private readonly label: ConstraintStrength
+    private readonly variable: kiwi.Variable,
+    private readonly strengthLabel: ConstraintStrength
   ) {}
 
   suggest(value: number): void {
     this.ensureActive()
-    this.solver.suggestValue(this.variable.variable, value)
+    this.solver.suggestValue(this.variable, value)
   }
 
   strength(): ConstraintStrength {
-    return this.label
+    return this.strengthLabel
   }
 
   dispose(): void {
     if (this.disposed) {
       return
     }
-    this.solver.removeEditVariable(this.variable.variable)
+    this.solver.removeEditVariable(this.variable)
     this.disposed = true
   }
 
@@ -134,7 +137,7 @@ class SuggestHandleImpl implements ISuggestHandle {
 
 /** @internal */
 class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
-  constructor(private readonly solver: kiwi.Solver, private readonly variable: LayoutVariable) {}
+  constructor(private readonly solver: kiwi.Solver, private readonly variable: ILayoutVariable) {}
 
   strong(): ISuggestHandle {
     return this.createHandle("strong", kiwi.Strength.strong)
@@ -149,8 +152,8 @@ class SuggestHandleFactoryImpl implements ISuggestHandleFactory {
   }
 
   private createHandle(label: ConstraintStrength, strength: number): ISuggestHandle {
-    this.solver.addEditVariable(this.variable.variable, strength)
-    return new SuggestHandleImpl(this.solver, this.variable, label)
+    this.solver.addEditVariable(this.variable.variable as kiwi.Variable, strength)
+    return new SuggestHandleImpl(this.solver, this.variable.variable as kiwi.Variable, label)
   }
 }
 

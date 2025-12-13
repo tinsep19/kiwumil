@@ -1,4 +1,5 @@
 import { KiwiSolver } from "@/kiwi"
+import * as kiwi from "@lume/kiwi"
 
 describe("SuggestHandle", () => {
   test("propagates suggestions and exposes strength label", () => {
@@ -19,5 +20,18 @@ describe("SuggestHandle", () => {
     handle.dispose()
 
     expect(() => handle.suggest(22)).toThrow("SuggestHandle")
+  })
+
+  test("throws error when createHandle receives non-LayoutVariable", () => {
+    const solver = new KiwiSolver()
+    const fakeVariable = {
+      id: "fake:var",
+      value: () => 0,
+      variable: new kiwi.Variable("fake"),
+    }
+
+    expect(() => solver.createHandle(fakeVariable as any)).toThrow(
+      "KiwiSolver.createHandle: variable must be a LayoutVariable created by KiwiSolver"
+    )
   })
 })
