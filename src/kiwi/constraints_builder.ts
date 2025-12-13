@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 
 import type { Term, IConstraintsBuilder } from "../core"
-import { isBrandedKiwi } from "./layout_solver"
+import { isBrandedKiwi } from "./kiwi_solver"
 
 interface PendingConstraint {
   lhs?: Term[]
