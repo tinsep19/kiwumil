@@ -21,13 +21,13 @@ export type Term = [number, LayoutVariable | number]
  * LhsBuilder: Interface for building left-hand side of constraints
  */
 export interface LhsBuilder {
-  expr(...lhs: Term[]): RhsBuilder
+  expr(...lhs: Term[]): OpRhsBuilder
 }
 
 /**
- * RhsBuilder: Interface for building right-hand side of constraints
+ * OpRhsBuilder: Interface for building operator and right-hand side of constraints
  */
-export interface RhsBuilder {
+export interface OpRhsBuilder {
   eq(...rhs: Term[]): StrengthBuilder
   ge(...rhs: Term[]): StrengthBuilder
   le(...rhs: Term[]): StrengthBuilder
@@ -49,7 +49,7 @@ export interface StrengthBuilder {
 /**
  * LinearConstraintBuilder: Constraint builder interface
  */
-export interface LinearConstraintBuilder extends LhsBuilder, RhsBuilder, StrengthBuilder {}
+export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, StrengthBuilder {}
 
 /**
  * ConstraintSpec: Callback function that builds constraints using LinearConstraintBuilder

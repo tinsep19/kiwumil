@@ -30,7 +30,7 @@ export type {
   Term,
   LinearConstraintBuilder,
   LhsBuilder,
-  RhsBuilder,
+  OpRhsBuilder,
   StrengthBuilder,
   ConstraintSpec,
   HintTarget,
