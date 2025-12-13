@@ -5,7 +5,20 @@
      viewBox="0 0 433.33333333333337 358.33333333333337">
   <rect width="100%" height="100%" fill="white"/>
   <defs>
-<symbol id="uml-actor"><svg><!-- stub for icons/actor.svg --></svg></symbol>
+<symbol id="uml-actor" viewBox="0 0 60 60">
+  <title>Actor icon</title>
+  <g fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Head -->
+    <circle cx="30" cy="12" r="6" />
+    <!-- Body -->
+    <line x1="30" y1="20" x2="30" y2="36" />
+    <!-- Arms -->
+    <line x1="12" y1="24" x2="48" y2="24" />
+    <!-- Legs -->
+    <line x1="30" y1="36" x2="18" y2="52" />
+    <line x1="30" y1="36" x2="42" y2="52" />
+  </g>
+</symbol>
 </defs>
   
       <g id="uml:systemBoundary/1">
@@ -54,7 +67,7 @@
         
         
       <g transform="translate(483.33333333333337, 80)">
-        <svg><!-- stub for icons/actor.svg --></svg>
+        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
       </g>
     
         <!-- Label -->
