@@ -1,7 +1,7 @@
 import * as kiwi from "@lume/kiwi"
 
 import type { Term, IConstraintsBuilder } from "../core"
-import { isBrandedKiwi } from "./layout_solver"
+import { isBrandedKiwi } from "./kiwi_solver"
 
 interface PendingConstraint {
   lhs?: Term[]
@@ -12,7 +12,7 @@ interface PendingConstraint {
 /**
  * Fluent constraint builder inspired by docs/draft/new_constraint_builder.md
  */
-export class ConstraintsBuilder implements IConstraintsBuilder {
+export class KiwiConstraintBuilder implements IConstraintsBuilder {
   readonly rawConstraints: kiwi.Constraint[] = []
   private tmp: PendingConstraint = {}
 
@@ -105,14 +105,14 @@ export class ConstraintsBuilder implements IConstraintsBuilder {
 
   private ensureExpr() {
     if (!this.tmp.lhs) {
-      throw new Error("ConstraintsBuilder: call expr(...) before defining rhs")
+      throw new Error("KiwiConstraintBuilder: call expr(...) before defining rhs")
     }
   }
 
   private finalize(strength: number): this {
     const { lhs, rhs, op } = this.tmp
     if (!lhs || !rhs?.length || !op) {
-      throw new Error("ConstraintsBuilder: incomplete constraint chain")
+      throw new Error("KiwiConstraintBuilder: incomplete constraint chain")
     }
     const constraint = new kiwi.Constraint(
       this.buildExpression(lhs),
@@ -141,9 +141,9 @@ export class ConstraintsBuilder implements IConstraintsBuilder {
         continue
       }
 
-      // Validate that operand is a branded LayoutVariable
+      // Validate that operand is a branded KiwiVariable
       if (!isBrandedKiwi(operand)) {
-        throw new Error("ConstraintsBuilder: operand is not a LayoutVariable created by KiwiSolver")
+        throw new Error("KiwiConstraintBuilder: operand is not a KiwiVariable created by KiwiSolver")
       }
 
       // operand is ILayoutVariable, which has .variable property

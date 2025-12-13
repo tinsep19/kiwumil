@@ -100,6 +100,6 @@ describe("ConstraintsBuilder", () => {
       solver.createConstraint("test-invalid", (builder) => {
         builder.expr([1, fakeVariable as any]).eq([1, 1]).strong()
       })
-    }).toThrow("ConstraintsBuilder: operand is not a LayoutVariable created by KiwiSolver")
+    }).toThrow("KiwiConstraintBuilder: operand is not a KiwiVariable created by KiwiSolver")
   })
 })

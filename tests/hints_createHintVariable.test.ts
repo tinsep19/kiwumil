@@ -1,6 +1,6 @@
 import { describe, test, beforeEach, expect } from "bun:test"
 import { LayoutContext } from "../src/model"
-import { KiwiSolver, isLayoutVariable } from "../src/kiwi"
+import { KiwiSolver, isKiwiVariable } from "../src/kiwi"
 import { DefaultTheme } from "../src/theme"
 
 describe("Hints.createHintVariable", () => {
@@ -15,7 +15,7 @@ describe("Hints.createHintVariable", () => {
     const hintVar = context.hints.createHintVariable()
     
     expect(hintVar.variable).toBeDefined()
-    expect(isLayoutVariable(hintVar.variable)).toBeTrue()
+    expect(isKiwiVariable(hintVar.variable)).toBeTrue()
     expect(hintVar.name).toMatch(/^hint:var_\d+$/)
     expect(hintVar.constraintIds).toEqual([])
   })
