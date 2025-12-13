@@ -106,10 +106,15 @@ export class ActorSymbol extends SymbolBase {
     // Use icon at fixed size (no scaling)
     const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
     const iconY = actorStartY + 5
-    
+
+    // Render icon via <use> referencing the symbol id; fall back to raw svg if href missing
+    const iconSvg = this.icon.href
+      ? `<svg width="${ICON_BASE_SIZE}" height="${ICON_BASE_SIZE}" viewBox="${this.icon.viewBox ?? `0 0 ${ICON_BASE_SIZE} ${ICON_BASE_SIZE}`}" xmlns="http://www.w3.org/2000/svg"><use href="#${this.icon.href}"/></svg>`
+      : (this.icon.raw || '')
+
     const bodyContent = `
       <g transform="translate(${iconX}, ${iconY})">
-        ${this.icon.raw}
+        ${iconSvg}
       </g>
     `
 
