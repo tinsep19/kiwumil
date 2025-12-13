@@ -2,7 +2,12 @@
 import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point } from "../core"
-import type { DiagramInfo } from "./diagram_info"
+export interface DiagramInfo {
+  title: string
+  createdAt?: string
+  author?: string
+}
+
 import type { ContainerBounds, LinearConstraintBuilder } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
