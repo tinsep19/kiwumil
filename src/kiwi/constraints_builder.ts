@@ -145,7 +145,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
         throw new Error("KiwiConstraintBuilder: operand is not a KiwiVariable created by KiwiSolver")
       }
 
-      // operand is ILayoutVariable, which has .variable property
+      // operand is LayoutVariable, which has .variable property
       const kiwiVar = operand.variable as kiwi.Variable
       if (coefficient === 1) {
         args.push(kiwiVar)
