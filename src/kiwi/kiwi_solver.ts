@@ -3,7 +3,7 @@
 import * as kiwi from "@lume/kiwi"
 import { KiwiConstraintBuilder } from "./constraints_builder"
 import { KiwiSuggestHandleFactory } from "./suggest_handle"
-import type { VariableId, ILayoutVariable, ConstraintStrength, ISuggestHandle, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
+import type { VariableId, ILayoutVariable, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
 import type { ConstraintSpec } from "../core"
 
 /**
@@ -98,7 +98,7 @@ export class KiwiSolver implements ILayoutSolver {
     if (!isKiwiVariable(variable)) {
       throw new Error("KiwiSolver.createHandle: variable must be a KiwiVariable created by KiwiSolver")
     }
-    return new KiwiSuggestHandleFactory(this.solver, variable)
+    return new KiwiSuggestHandleFactory(this.solver, variable.variable)
   }
 }
 

@@ -2,7 +2,7 @@
 // Suggest handle implementation for kiwi solver
 
 import * as kiwi from "@lume/kiwi"
-import type { ConstraintStrength, ISuggestHandle, ISuggestHandleFactory, ILayoutVariable } from "../core"
+import type { ConstraintStrength, ISuggestHandle, ISuggestHandleFactory } from "../core"
 
 /** @internal */
 export class KiwiSuggestHandle implements ISuggestHandle {
@@ -40,7 +40,7 @@ export class KiwiSuggestHandle implements ISuggestHandle {
 
 /** @internal */
 export class KiwiSuggestHandleFactory implements ISuggestHandleFactory {
-  constructor(private readonly solver: kiwi.Solver, private readonly variable: ILayoutVariable) {}
+  constructor(private readonly solver: kiwi.Solver, private readonly variable: kiwi.Variable) {}
 
   strong(): ISuggestHandle {
     return this.createHandle("strong", kiwi.Strength.strong)
@@ -55,7 +55,7 @@ export class KiwiSuggestHandleFactory implements ISuggestHandleFactory {
   }
 
   private createHandle(label: ConstraintStrength, strength: number): ISuggestHandle {
-    this.solver.addEditVariable(this.variable.variable as kiwi.Variable, strength)
-    return new KiwiSuggestHandle(this.solver, this.variable.variable as kiwi.Variable, label)
+    this.solver.addEditVariable(this.variable, strength)
+    return new KiwiSuggestHandle(this.solver, this.variable, label)
   }
 }
