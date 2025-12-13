@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconLoader } from "../icon"
+import { IconLoader, IconRegistry } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -143,6 +143,21 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       icon
     )
 
+    // Register available icon SVGs into runtime IconRegistry so renderers can emit <symbol> defs
+    const iconsRegistry = new IconRegistry()
+    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
+      for (const name of loader.list()) {
+        try {
+          const meta = typeof loader.load_sync === 'function' ? loader.load_sync(name) : null
+          if (meta && meta.raw) {
+            iconsRegistry.register(pluginName, name, meta.raw)
+          }
+        } catch (e) {
+          // ignore loader errors for now
+        }
+      }
+    }
+
     const hint = new HintFactory({
       context,
       symbols,
@@ -170,7 +185,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       symbols: allSymbols,
       relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(allSymbols, [...relationshipList], this.currentTheme)
+        const renderer = new SvgRenderer(allSymbols, [...relationshipList], this.currentTheme, iconsRegistry)
 
         if (typeof target === "string") {
           renderer.saveToFile(target)
