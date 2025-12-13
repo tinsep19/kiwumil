@@ -1,6 +1,6 @@
 import * as kiwi from "@lume/kiwi"
 
-import type { Term, IConstraintsBuilder } from "../core"
+import type { Term, LinearConstraintBuilder } from "../core"
 import { isBrandedKiwi } from "./kiwi_solver"
 
 interface PendingConstraint {
@@ -12,7 +12,7 @@ interface PendingConstraint {
 /**
  * Fluent constraint builder inspired by docs/draft/new_constraint_builder.md
  */
-export class KiwiConstraintBuilder implements IConstraintsBuilder {
+export class KiwiConstraintBuilder implements LinearConstraintBuilder {
   readonly rawConstraints: kiwi.Constraint[] = []
   private tmp: PendingConstraint = {}
 
@@ -83,20 +83,20 @@ export class KiwiConstraintBuilder implements IConstraintsBuilder {
     return this
   }
 
-  required(): this {
-    return this.finalize(kiwi.Strength.required)
+  required(): void {
+    this.finalize(kiwi.Strength.required)
   }
 
-  strong(): this {
-    return this.finalize(kiwi.Strength.strong)
+  strong(): void {
+    this.finalize(kiwi.Strength.strong)
   }
 
-  medium(): this {
-    return this.finalize(kiwi.Strength.medium)
+  medium(): void {
+    this.finalize(kiwi.Strength.medium)
   }
 
-  weak(): this {
-    return this.finalize(kiwi.Strength.weak)
+  weak(): void {
+    this.finalize(kiwi.Strength.weak)
   }
 
   getRawConstraints() {
@@ -109,7 +109,7 @@ export class KiwiConstraintBuilder implements IConstraintsBuilder {
     }
   }
 
-  private finalize(strength: number): this {
+  private finalize(strength: number): void {
     const { lhs, rhs, op } = this.tmp
     if (!lhs || !rhs?.length || !op) {
       throw new Error("KiwiConstraintBuilder: incomplete constraint chain")
@@ -123,7 +123,6 @@ export class KiwiConstraintBuilder implements IConstraintsBuilder {
     this.solver.addConstraint(constraint)
     this.rawConstraints.push(constraint)
     this.tmp = {}
-    return this
   }
 
   private buildExpression(terms: Term[]): kiwi.Expression {

@@ -1,7 +1,7 @@
 // src/constraint_helper.ts
-// ConstraintHelper: IConstraintsBuilder をラップして高水準のチェーン API を提供
+// ConstraintHelper: LinearConstraintBuilder をラップして高水準のチェーン API を提供
 
-import type { IConstraintsBuilder, ILayoutVariable } from "./core"
+import type { LinearConstraintBuilder, ILayoutVariable } from "./core"
 import type { LayoutBounds, ItemBounds } from "./core"
 
 /**
@@ -19,7 +19,7 @@ interface StrengthBuilder {
  */
 class SetSizeBuilder implements StrengthBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly bounds: LayoutBounds,
     private readonly width: number | ILayoutVariable,
     private readonly height: number | ILayoutVariable
@@ -59,7 +59,7 @@ class SetSizeBuilder implements StrengthBuilder {
  */
 class EnclosePaddingBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly container: LayoutBounds,
     private readonly children: LayoutBounds[],
     private readonly paddingValue: number | ILayoutVariable
@@ -115,7 +115,7 @@ class EnclosePaddingBuilder {
  */
 class EncloseBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly container: LayoutBounds
   ) {}
 
@@ -129,7 +129,7 @@ class EncloseBuilder {
  */
 class EncloseChildsBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly container: LayoutBounds,
     private readonly children: LayoutBounds[]
   ) {}
@@ -144,7 +144,7 @@ class EncloseChildsBuilder {
  */
 class ArrangeDirectionBuilder implements StrengthBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
     private readonly marginValue: number | ILayoutVariable,
     private readonly direction: 'horizontal' | 'vertical'
@@ -196,7 +196,7 @@ class ArrangeDirectionBuilder implements StrengthBuilder {
  */
 class ArrangeMarginBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
     private readonly marginValue: number | ILayoutVariable
   ) {}
@@ -215,7 +215,7 @@ class ArrangeMarginBuilder {
  */
 class ArrangeBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[]
   ) {}
 
@@ -229,7 +229,7 @@ class ArrangeBuilder {
  */
 class AlignBuilder implements StrengthBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly vars: ILayoutVariable[]
   ) {}
 
@@ -268,7 +268,7 @@ class AlignBuilder implements StrengthBuilder {
 }
 
 /**
- * ConstraintHelper は IConstraintsBuilder をラップし、
+ * ConstraintHelper は LinearConstraintBuilder をラップし、
  * プラグイン／シンボル実装で使いやすい高水準のチェーン API を提供します。
  * 
  * 提供する API:
@@ -279,11 +279,11 @@ class AlignBuilder implements StrengthBuilder {
  */
 export class ConstraintHelper {
   /**
-   * underlying の IConstraintsBuilder への参照
+   * underlying の LinearConstraintBuilder への参照
    */
-  readonly builder: IConstraintsBuilder
+  readonly builder: LinearConstraintBuilder
 
-  constructor(builder: IConstraintsBuilder) {
+  constructor(builder: LinearConstraintBuilder) {
     this.builder = builder
   }
 

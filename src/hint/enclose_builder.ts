@@ -1,7 +1,7 @@
 // src/hint/enclose_builder.ts
 // Enclose 操作のビルダー
 
-import type { IConstraintsBuilder, ILayoutVariable, LayoutBounds } from "../core"
+import type { IConstraintsBuilder, LayoutVariable, LayoutBounds } from "../core"
 import type { StrengthBuilder } from "./strength_builder"
 
 /**
@@ -12,7 +12,7 @@ export class EnclosePaddingBuilder implements StrengthBuilder {
     private readonly builder: IConstraintsBuilder,
     private readonly container: LayoutBounds,
     private readonly children: LayoutBounds[],
-    private readonly paddingValue: number | ILayoutVariable
+    private readonly paddingValue: number | LayoutVariable
   ) {}
 
   weak(): void {
@@ -70,7 +70,7 @@ export class EncloseChildsBuilder {
     private readonly children: LayoutBounds[]
   ) {}
 
-  padding(value: number | ILayoutVariable): EnclosePaddingBuilder {
+  padding(value: number | LayoutVariable): EnclosePaddingBuilder {
     return new EnclosePaddingBuilder(this.builder, this.container, this.children, value)
   }
 }

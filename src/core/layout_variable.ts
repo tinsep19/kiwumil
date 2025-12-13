@@ -4,9 +4,9 @@
 import type { VariableId } from "./types"
 
 /**
- * ILayoutVariable: レイアウト変数のインターフェース
+ * LayoutVariable: レイアウト変数のインターフェース
  */
-export interface ILayoutVariable {
+export interface LayoutVariable {
   id: VariableId
   value(): number
   variable: unknown
@@ -18,19 +18,19 @@ export interface ILayoutVariable {
 export type ConstraintStrength = "required" | "strong" | "medium" | "weak"
 
 /**
- * ISuggestHandle: レイアウト変数への値の提案を行うハンドル
+ * SuggestHandle: レイアウト変数への値の提案を行うハンドル
  */
-export interface ISuggestHandle {
+export interface SuggestHandle {
   suggest(value: number): void
   strength(): ConstraintStrength
   dispose(): void
 }
 
 /**
- * ISuggestHandleFactory: ISuggestHandleを作成するファクトリインターフェース
+ * SuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
  */
-export interface ISuggestHandleFactory {
-  strong(): ISuggestHandle
-  medium(): ISuggestHandle
-  weak(): ISuggestHandle
+export interface SuggestHandleFactory {
+  strong(): SuggestHandle
+  medium(): SuggestHandle
+  weak(): SuggestHandle
 }

@@ -2,8 +2,8 @@
 // レイアウトソルバーのインターフェース
 
 import type { VariableId, LayoutConstraintId } from "./types"
-import type { ILayoutVariable, ISuggestHandleFactory } from "./layout_variable"
-import type { ILayoutConstraint, ConstraintSpec } from "./constraint"
+import type { LayoutVariable, SuggestHandleFactory } from "./layout_variable"
+import type { LayoutConstraint, ConstraintSpec } from "./constraint"
 
 /**
  * ILayoutSolver: Layout solver interface
@@ -12,7 +12,7 @@ export interface ILayoutSolver {
   /**
    * Create a layout variable
    */
-  createVariable(id: VariableId): ILayoutVariable
+  createVariable(id: VariableId): LayoutVariable
 
   /**
    * Update variables
@@ -22,10 +22,10 @@ export interface ILayoutSolver {
   /**
    * Create a constraint with an ID using a callback pattern
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): ILayoutConstraint
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint
 
   /**
    * Create a fluent edit variable handle
    */
-  createHandle(variable: ILayoutVariable): ISuggestHandleFactory
+  createHandle(variable: LayoutVariable): SuggestHandleFactory
 }

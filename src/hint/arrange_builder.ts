@@ -1,7 +1,7 @@
 // src/hint/arrange_builder.ts
 // Arrange 操作のビルダー
 
-import type { IConstraintsBuilder, ILayoutVariable, LayoutBounds, ItemBounds } from "../core"
+import type { LinearConstraintBuilder, ILayoutVariable, LayoutBounds, ItemBounds } from "../core"
 import type { StrengthBuilder } from "./strength_builder"
 
 /**
@@ -9,7 +9,7 @@ import type { StrengthBuilder } from "./strength_builder"
  */
 export class ArrangeDirectionBuilder implements StrengthBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
     private readonly marginValue: number | ILayoutVariable,
     private readonly direction: 'horizontal' | 'vertical'
@@ -61,7 +61,7 @@ export class ArrangeDirectionBuilder implements StrengthBuilder {
  */
 export class ArrangeMarginBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
     private readonly marginValue: number | ILayoutVariable
   ) {}
@@ -80,7 +80,7 @@ export class ArrangeMarginBuilder {
  */
 export class ArrangeBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
+    private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[]
   ) {}
 

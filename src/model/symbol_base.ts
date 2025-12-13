@@ -1,7 +1,7 @@
 // src/model/symbol_base.ts
 import type { SymbolId, Point, ISymbol } from "../core"
 import type { Theme } from "../theme"
-import type { IConstraintsBuilder, LayoutBounds } from "../core"
+import type { LinearConstraintBuilder, LayoutBounds } from "../core"
 
 export interface SymbolBaseOptions {
   id: SymbolId
@@ -22,7 +22,7 @@ export abstract class SymbolBase implements ISymbol {
 
   abstract toSVG(): string
   abstract getConnectionPoint(from: Point): Point
-  abstract ensureLayoutBounds(builder: IConstraintsBuilder): void
+  abstract ensureLayoutBounds(builder: LinearConstraintBuilder): void
 
   /**
    * ISymbol interface implementation - delegates to toSVG()

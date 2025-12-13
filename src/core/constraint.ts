@@ -2,42 +2,59 @@
 // 制約関連のインターフェースと型定義
 
 import type { LayoutConstraintId, BoundId } from "./types"
-import type { ILayoutVariable, ConstraintStrength } from "./layout_variable"
+import type { LayoutVariable, ConstraintStrength } from "./layout_variable"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
 
 /**
- * ILayoutConstraint: レイアウト制約のインターフェース
+ * LayoutConstraint: レイアウト制約のインターフェース
  */
-export interface ILayoutConstraint {
+export interface LayoutConstraint {
   id: LayoutConstraintId
 }
 
 /**
  * Term: Layout constraint term consisting of a coefficient and a variable or constant
  */
-export type Term = [number, ILayoutVariable | number]
+export type Term = [number, LayoutVariable | number]
 
 /**
- * IConstraintsBuilder: Constraint builder interface
+ * LhsBuilder: Interface for building left-hand side of constraints
  */
-export interface IConstraintsBuilder {
-  expr(...lhs: Term[]): this
-  eq(...rhs: Term[]): this
-  ge(...rhs: Term[]): this
-  le(...rhs: Term[]): this
-  eq0(): this
-  ge0(): this
-  le0(): this
-  required(): this
-  strong(): this
-  medium(): this
-  weak(): this
+export interface LhsBuilder {
+  expr(...lhs: Term[]): RhsBuilder
 }
 
 /**
- * ConstraintSpec: Callback function that builds constraints using IConstraintsBuilder
+ * RhsBuilder: Interface for building right-hand side of constraints
  */
-export type ConstraintSpec = (builder: IConstraintsBuilder) => void
+export interface RhsBuilder {
+  eq(...rhs: Term[]): StrengthBuilder
+  ge(...rhs: Term[]): StrengthBuilder
+  le(...rhs: Term[]): StrengthBuilder
+  eq0(): StrengthBuilder
+  ge0(): StrengthBuilder
+  le0(): StrengthBuilder
+}
+
+/**
+ * StrengthBuilder: Interface for setting constraint strength
+ */
+export interface StrengthBuilder {
+  required(): void
+  strong(): void
+  medium(): void
+  weak(): void
+}
+
+/**
+ * LinearConstraintBuilder: Constraint builder interface
+ */
+export interface LinearConstraintBuilder extends LhsBuilder, RhsBuilder, StrengthBuilder {}
+
+/**
+ * ConstraintSpec: Callback function that builds constraints using LinearConstraintBuilder
+ */
+export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
 
 /**
  * HintTarget: 制約適用の対象となるシンボルの境界情報

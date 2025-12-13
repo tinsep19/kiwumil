@@ -18,17 +18,20 @@ export type {
 
 // レイアウト変数
 export type {
-  ILayoutVariable,
+  LayoutVariable,
   ConstraintStrength,
-  ISuggestHandle,
-  ISuggestHandleFactory,
+  SuggestHandle,
+  SuggestHandleFactory,
 } from "./layout_variable"
 
 // 制約
 export type {
-  ILayoutConstraint,
+  LayoutConstraint,
   Term,
-  IConstraintsBuilder,
+  LinearConstraintBuilder,
+  LhsBuilder,
+  RhsBuilder,
+  StrengthBuilder,
   ConstraintSpec,
   HintTarget,
 } from "./constraint"

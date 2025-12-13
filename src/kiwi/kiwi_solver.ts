@@ -3,7 +3,7 @@
 import * as kiwi from "@lume/kiwi"
 import { KiwiConstraintBuilder } from "./constraints_builder"
 import { KiwiSuggestHandleFactory } from "./suggest_handle"
-import type { VariableId, ILayoutVariable, LayoutConstraintId, ILayoutConstraint, ISuggestHandleFactory, ILayoutSolver } from "../core"
+import type { VariableId, LayoutVariable, LayoutConstraintId, LayoutConstraint, SuggestHandleFactory, ILayoutSolver } from "../core"
 import type { ConstraintSpec } from "../core"
 
 /**
@@ -31,7 +31,7 @@ export function isBrandedKiwi(obj: unknown): boolean {
   return !!(obj && typeof obj === "object" && (obj as any)[KIWI_BRAND])
 }
 
-export class KiwiVariable implements ILayoutVariable {
+export class KiwiVariable implements LayoutVariable {
   constructor(
     public readonly id: VariableId,
     public readonly variable: kiwi.Variable
@@ -42,7 +42,7 @@ export class KiwiVariable implements ILayoutVariable {
   }
 }
 
-export interface KiwiConstraints extends ILayoutConstraint {
+export interface KiwiConstraints extends LayoutConstraint {
   rawConstraints: kiwi.Constraint[]
 }
 
@@ -94,7 +94,7 @@ export class KiwiSolver implements ILayoutSolver {
   /**
    * Fluent edit variable handle を作成
    */
-  createHandle(variable: ILayoutVariable): ISuggestHandleFactory {
+  createHandle(variable: LayoutVariable): SuggestHandleFactory {
     if (!isKiwiVariable(variable)) {
       throw new Error("KiwiSolver.createHandle: variable must be a KiwiVariable created by KiwiSolver")
     }

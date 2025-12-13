@@ -3,7 +3,7 @@ import type {
   BoundsType,
 } from "../core"
 import type { LayoutVariables } from "./layout_variables"
-import type { SymbolId, ISymbol, ISymbolCharacs, ILayoutConstraint } from "../core"
+import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint } from "../core"
 import type { SymbolBase } from "./symbol_base"
 
 /**
@@ -12,7 +12,7 @@ import type { SymbolBase } from "./symbol_base"
 export type SymbolRegistration = {
   symbol: ISymbol
   characs: ISymbolCharacs
-  constraint: ILayoutConstraint
+  constraint: LayoutConstraint
 }
 
 /**
@@ -28,7 +28,7 @@ export class SymbolRegistrationBuilder {
 
   private _characs?: ISymbolCharacs
   private _symbol?: ISymbol
-  private _constraint?: ILayoutConstraint
+  private _constraint?: LayoutConstraint
 
   constructor(id: SymbolId, variables: LayoutVariables) {
     this.id = id
@@ -64,11 +64,11 @@ export class SymbolRegistrationBuilder {
   }
 
   /**
-   * setConstraint を ConstraintSpec を受け取り ILayoutConstraint を生成して返す仕様に変更しました。
+   * setConstraint を ConstraintSpec を受け取り LayoutConstraint を生成して返す仕様に変更しました。
    * LayoutVariables（または関連する変数管理オブジェクト）の createConstraint を呼び出して
    * this._constraint に保存します。
    */
-  setConstraint(spec: ConstraintSpec): ILayoutConstraint {
+  setConstraint(spec: ConstraintSpec): LayoutConstraint {
     // variables 側に createConstraint(id, spec) がある前提
     const constraint = this.variables.createConstraint(this.id, spec)
     this._constraint = constraint
