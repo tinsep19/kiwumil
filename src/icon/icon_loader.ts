@@ -30,9 +30,9 @@ export class IconLoader {
   }
 
   // Synchronous load helper (returns optimized meta). Real impl should read & sanitize from disk.
-  load_sync(name: string): IconMeta | null {
+  load_sync(name: string): IconMeta {
     const rel = this.registry[name];
-    if (!rel) return null;
+    if (!rel) throw new Error(`${name} is not registered.`);
     const id = `${this.plugin}-${name}`.toLowerCase();
     let filePath = '';
     try {
@@ -57,7 +57,7 @@ export class IconLoader {
       const vbMatch = content.match(/<svg[^>]*viewBox=["']([^"']+)["'][^>]*>/i);
       const viewBox = vbMatch ? vbMatch[1] : undefined;
       return { href: id, raw: content, viewBox };
-    } catch (e: any) {
+    } catch (e: unknown) {
       // If file not found, throw an error to stop execution as requested
       if (e && e.code === 'ENOENT') {
         throw new Error(`Icon file not found: ${rel} resolved to ${filePath}`);
@@ -67,8 +67,4 @@ export class IconLoader {
     }
   }
 
-  // Async wrapper kept for backward-compatibility
-  async load(name: string): Promise<IconMeta | null> {
-    return this.load_sync(name)
-  }
 }
