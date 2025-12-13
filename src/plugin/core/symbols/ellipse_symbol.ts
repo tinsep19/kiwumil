@@ -1,5 +1,5 @@
 // src/plugin/core/symbols/ellipse_symbol.ts
-import type { IConstraintsBuilder } from "../../../core"
+import type { LinearConstraintBuilder } from "../../../core"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
@@ -82,7 +82,7 @@ export class EllipseSymbol extends SymbolBase {
     `
   }
 
-  ensureLayoutBounds(_builder: IConstraintsBuilder): void {
+  ensureLayoutBounds(_builder: LinearConstraintBuilder): void {
     // no specific constraints
   }
 }

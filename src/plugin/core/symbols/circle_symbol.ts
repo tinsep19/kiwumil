@@ -1,5 +1,5 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import type { IConstraintsBuilder, ILayoutVariable } from "../../../core"
+import type { LinearConstraintBuilder, LayoutVariable } from "../../../core"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
@@ -7,12 +7,12 @@ import { getBoundsValues } from "../../../core"
 
 export interface CircleSymbolOptions extends SymbolBaseOptions {
   label: string
-  r: ILayoutVariable
+  r: LayoutVariable
 }
 
 export class CircleSymbol extends SymbolBase {
   readonly label: string
-  readonly r: ILayoutVariable
+  readonly r: LayoutVariable
 
   constructor(options: CircleSymbolOptions) {
     super(options)
@@ -86,7 +86,7 @@ export class CircleSymbol extends SymbolBase {
     `
   }
 
-  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+  ensureLayoutBounds(builder: LinearConstraintBuilder): void {
     // r = min(width, height) / 2
     // Since we can't express min() directly in constraints, we'll use:
     // r * 2 <= width and r * 2 <= height

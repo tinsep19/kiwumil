@@ -1,7 +1,7 @@
 // src/constraint_helper.ts
 // ConstraintHelper: LinearConstraintBuilder をラップして高水準のチェーン API を提供
 
-import type { LinearConstraintBuilder, ILayoutVariable } from "./core"
+import type { LinearConstraintBuilder, LayoutVariable } from "./core"
 import type { LayoutBounds, ItemBounds } from "./core"
 
 /**
@@ -21,8 +21,8 @@ class SetSizeBuilder implements StrengthBuilder {
   constructor(
     private readonly builder: LinearConstraintBuilder,
     private readonly bounds: LayoutBounds,
-    private readonly width: number | ILayoutVariable,
-    private readonly height: number | ILayoutVariable
+    private readonly width: number | LayoutVariable,
+    private readonly height: number | LayoutVariable
   ) {}
 
   weak(): void {
@@ -62,7 +62,7 @@ class EnclosePaddingBuilder {
     private readonly builder: LinearConstraintBuilder,
     private readonly container: LayoutBounds,
     private readonly children: LayoutBounds[],
-    private readonly paddingValue: number | ILayoutVariable
+    private readonly paddingValue: number | LayoutVariable
   ) {}
 
   weak(): void {
@@ -134,7 +134,7 @@ class EncloseChildsBuilder {
     private readonly children: LayoutBounds[]
   ) {}
 
-  padding(value: number | ILayoutVariable): EnclosePaddingBuilder {
+  padding(value: number | LayoutVariable): EnclosePaddingBuilder {
     return new EnclosePaddingBuilder(this.builder, this.container, this.children, value)
   }
 }
@@ -146,7 +146,7 @@ class ArrangeDirectionBuilder implements StrengthBuilder {
   constructor(
     private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
-    private readonly marginValue: number | ILayoutVariable,
+    private readonly marginValue: number | LayoutVariable,
     private readonly direction: 'horizontal' | 'vertical'
   ) {}
 
@@ -198,7 +198,7 @@ class ArrangeMarginBuilder {
   constructor(
     private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
-    private readonly marginValue: number | ILayoutVariable
+    private readonly marginValue: number | LayoutVariable
   ) {}
 
   horizontal(): ArrangeDirectionBuilder {
@@ -219,7 +219,7 @@ class ArrangeBuilder {
     private readonly elements: (LayoutBounds | ItemBounds)[]
   ) {}
 
-  margin(value: number | ILayoutVariable): ArrangeMarginBuilder {
+  margin(value: number | LayoutVariable): ArrangeMarginBuilder {
     return new ArrangeMarginBuilder(this.builder, this.elements, value)
   }
 }
@@ -230,7 +230,7 @@ class ArrangeBuilder {
 class AlignBuilder implements StrengthBuilder {
   constructor(
     private readonly builder: LinearConstraintBuilder,
-    private readonly vars: ILayoutVariable[]
+    private readonly vars: LayoutVariable[]
   ) {}
 
   weak(): void {
@@ -300,8 +300,8 @@ export class ConstraintHelper {
    */
   setSize(
     bounds: LayoutBounds,
-    width: number | ILayoutVariable,
-    height: number | ILayoutVariable
+    width: number | LayoutVariable,
+    height: number | LayoutVariable
   ): StrengthBuilder {
     return new SetSizeBuilder(this.builder, bounds, width, height)
   }
@@ -358,7 +358,7 @@ export class ConstraintHelper {
    * @example
    * helper.align(layout.z, container.z, item1.z, item2.z).required()
    */
-  align(...vars: ILayoutVariable[]): StrengthBuilder {
+  align(...vars: LayoutVariable[]): StrengthBuilder {
     return new AlignBuilder(this.builder, vars)
   }
 }

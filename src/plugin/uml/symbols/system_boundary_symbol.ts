@@ -3,7 +3,7 @@ import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
 import { ConstraintHelper } from "../../../hint"
-import type { ContainerBounds, IConstraintsBuilder } from "../../../core"
+import type { ContainerBounds, LinearConstraintBuilder } from "../../../core"
 import type { Theme } from "../../../theme"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model"
 import { ContainerSymbol, type ContainerPadding } from "../../../model"
@@ -46,7 +46,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     return theme.defaultStyleSet.verticalGap / 2
   }
 
-  private buildContainerConstraints(builder: IConstraintsBuilder): void {
+  private buildContainerConstraints(builder: LinearConstraintBuilder): void {
     const bounds = this.layout
     const theme = this.theme
     const padding = this.getContainerPadding(theme)
@@ -98,7 +98,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     }
   }
 
-  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+  ensureLayoutBounds(builder: LinearConstraintBuilder): void {
     this.buildContainerConstraints(builder)
     if (this.constraintsApplied) {
       return
