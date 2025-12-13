@@ -152,7 +152,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
           if (meta && meta.raw) {
             iconsRegistry.register(pluginName, name, meta.raw)
           }
-        } catch (e) {
+        } catch {
           // ignore loader errors for now
         }
       }

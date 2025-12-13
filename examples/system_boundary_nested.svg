@@ -4,6 +4,9 @@
      height="358.33333333333337" 
      viewBox="0 0 433.33333333333337 358.33333333333337">
   <rect width="100%" height="100%" fill="white"/>
+  <defs>
+<symbol id="uml-actor"><svg><!-- stub for icons/actor.svg --></svg></symbol>
+</defs>
   
       <g id="uml:systemBoundary/1">
         <!-- System Boundary Rectangle -->

@@ -4,6 +4,9 @@
      height="150" 
      viewBox="0 0 200 150">
   <rect width="100%" height="100%" fill="#1e1e1e"/>
+  <defs>
+<symbol id="uml-actor"><svg><!-- stub for icons/actor.svg --></svg></symbol>
+</defs>
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
