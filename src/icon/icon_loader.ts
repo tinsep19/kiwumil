@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 export type IconMeta = {
   width?: number;
   height?: number;
@@ -31,7 +34,32 @@ export class IconLoader {
     const rel = this.registry[name];
     if (!rel) return null;
     const id = `${this.plugin}-${name}`.toLowerCase();
-    return { href: id, raw: `<svg><!-- stub for ${rel} --></svg>` };
+    try {
+      let filePath: string;
+      if (this.baseUrl) {
+        try {
+          const resolved = new URL(rel, this.baseUrl);
+          if (resolved.protocol === 'file:') {
+            filePath = decodeURIComponent(resolved.pathname);
+          } else {
+            // unsupported protocol, fall back to resolving as path
+            filePath = path.resolve(process.cwd(), rel);
+          }
+        } catch {
+          // baseUrl may be a plain path
+          filePath = path.resolve(this.baseUrl, rel);
+        }
+      } else {
+        filePath = path.resolve(process.cwd(), rel);
+      }
+
+      const content = fs.readFileSync(filePath, 'utf8');
+      const vbMatch = content.match(/<svg[^>]*viewBox=["']([^"']+)["'][^>]*>/i);
+      const viewBox = vbMatch ? vbMatch[1] : undefined;
+      return { href: id, raw: content, viewBox };
+    } catch (e) {
+      return { href: id, raw: `<svg><!-- stub for ${rel} --></svg>` };
+    }
   }
 
   // Async wrapper kept for backward-compatibility
