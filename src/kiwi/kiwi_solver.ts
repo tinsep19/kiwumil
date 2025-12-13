@@ -18,7 +18,13 @@ const KIWI_BRAND: unique symbol = Symbol("KIWI_BRAND")
  */
 function brandAsKiwi(obj: unknown): void {
   if (obj && typeof obj === "object") {
-    ;(obj as any)[KIWI_BRAND] = true
+    // Use Reflect.defineProperty to avoid using `any` and keep the property non-enumerable
+    Reflect.defineProperty(obj as object, KIWI_BRAND, {
+      value: true,
+      enumerable: false,
+      configurable: true,
+      writable: true,
+    })
   }
 }
 
@@ -28,7 +34,7 @@ function brandAsKiwi(obj: unknown): void {
  * @returns true if the object has been branded
  */
 export function isBrandedKiwi(obj: unknown): boolean {
-  return !!(obj && typeof obj === "object" && (obj as any)[KIWI_BRAND])
+  return Boolean(obj && typeof obj === "object" && Reflect.get(obj as object, KIWI_BRAND))
 }
 
 export class KiwiVariable implements LayoutVariable {
@@ -115,7 +121,7 @@ export function isKiwiVariable(v: unknown): v is KiwiVariable {
     "id" in v &&
     "variable" in v &&
     "value" in v &&
-    typeof (v as any).value === "function"
+    typeof (v as { value?: unknown }).value === "function"
   )
 }
 

@@ -9,21 +9,38 @@ function normalize_id(plugin: string, name: string): string {
   return id;
 }
 
+type StoredIcon = {
+  inner: string
+  viewBox?: string
+}
+
 export class IconRegistry {
-  private symbols = new Map<string, string>();
+  private symbols = new Map<string, StoredIcon>();
 
   // Register an icon's SVG content and return symbolId
   register(plugin: string, name: string, svgContent: string): string {
     const id = normalize_id(plugin, name);
-    this.symbols.set(id, svgContent);
+
+    // If svgContent is a full <svg> element, extract viewBox and inner content
+    const svgMatch = svgContent.match(/<svg([^>]*)>([\s\S]*?)<\/svg>/i);
+    let inner = svgContent;
+    let viewBox: string | undefined = undefined;
+    if (svgMatch) {
+      inner = svgMatch[2] || '';
+      const attr = svgMatch[1] || '';
+      const vb = attr.match(/viewBox\s*=\s*"([^"]+)"/i);
+      if (vb) viewBox = vb[1];
+    }
+
+    this.symbols.set(id, { inner, viewBox });
     return id;
   }
 
   // Mark usage (placeholder, can track usage counts)
   mark_usage(plugin: string, name: string): string {
     const id = normalize_id(plugin, name);
-    // ensure symbol exists; if not, caller should register first
-    if (!this.symbols.has(id)) this.symbols.set(id, '');
+    // ensure symbol exists; if not, create empty placeholder
+    if (!this.symbols.has(id)) this.symbols.set(id, { inner: '' });
     return id;
   }
 
@@ -31,9 +48,9 @@ export class IconRegistry {
   emit_symbols(): string {
     if (this.symbols.size === 0) return '';
     let out = '<defs>\n';
-    for (const [id, svg] of this.symbols.entries()) {
-      // svg is expected to be inner content (e.g., paths). For now insert raw.
-      out += `<symbol id="${id}">` + svg + `</symbol>\n`;
+    for (const [id, icon] of this.symbols.entries()) {
+      const vbAttr = icon.viewBox ? ` viewBox="${icon.viewBox}"` : '';
+      out += `<symbol id="${id}"${vbAttr}>` + icon.inner + `</symbol>\n`;
     }
     out += '</defs>';
     return out;

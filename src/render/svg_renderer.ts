@@ -4,6 +4,7 @@ import type { SymbolId } from "../core"
 import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model"
 import { getBoundsValues } from "../core"
+import { IconRegistry } from "../icon"
 
 interface RenderElement {
   zIndex: number
@@ -25,11 +26,13 @@ export class SvgRenderer {
   private symbols: SymbolBase[]
   private relationships: RelationshipBase[]
   private theme?: Theme
+  private iconRegistry?: IconRegistry
 
-  constructor(symbols: SymbolBase[], relationships: RelationshipBase[] = [], theme?: Theme) {
+  constructor(symbols: SymbolBase[], relationships: RelationshipBase[] = [], theme?: Theme, iconRegistry?: IconRegistry) {
     this.symbols = symbols
     this.relationships = relationships
     this.theme = theme
+    this.iconRegistry = iconRegistry
   }
 
   private calculateSymbolZIndex(symbol: SymbolBase): number {
@@ -144,6 +147,7 @@ export class SvgRenderer {
     }
 
     const bgColor = this.theme?.defaultStyleSet.backgroundColor || "white"
+    const defs = this.iconRegistry ? this.iconRegistry.emit_symbols() : ''
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
@@ -151,6 +155,7 @@ export class SvgRenderer {
      height="${height}" 
      viewBox="0 0 ${width} ${height}">
   <rect width="100%" height="100%" fill="${bgColor}"/>
+  ${defs}
   ${content}
 </svg>`
   }
