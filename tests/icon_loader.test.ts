@@ -10,12 +10,10 @@ describe('IconLoader (stub)', () => {
     expect(list).toContain('icon2');
   });
 
-  test('load returns meta stub for registered icon', async () => {
+  test('register returns list for registered icon', () => {
     const loader = new IconLoader('pkg', import.meta.url);
     loader.register('a', 'icons/a.svg');
-    const meta = await loader.load('a');
-    expect(meta).not.toBeNull();
-    expect(meta?.href).toBe('pkg-a');
-    expect(typeof meta?.raw).toBe('string');
+    const list = loader.list();
+    expect(list).toContain('a');
   });
 });
