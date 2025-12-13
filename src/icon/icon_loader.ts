@@ -34,8 +34,8 @@ export class IconLoader {
     const rel = this.registry[name];
     if (!rel) return null;
     const id = `${this.plugin}-${name}`.toLowerCase();
+    let filePath = '';
     try {
-      let filePath: string;
       if (this.baseUrl) {
         try {
           const resolved = new URL(rel, this.baseUrl);
@@ -57,8 +57,13 @@ export class IconLoader {
       const vbMatch = content.match(/<svg[^>]*viewBox=["']([^"']+)["'][^>]*>/i);
       const viewBox = vbMatch ? vbMatch[1] : undefined;
       return { href: id, raw: content, viewBox };
-    } catch (e) {
-      return { href: id, raw: `<svg><!-- stub for ${rel} --></svg>` };
+    } catch (e: any) {
+      // If file not found, throw an error to stop execution as requested
+      if (e && e.code === 'ENOENT') {
+        throw new Error(`Icon file not found: ${rel} resolved to ${filePath}`);
+      }
+      // Other errors also should surface
+      throw new Error(`Failed to load icon ${rel}: ${e?.message || String(e)}`);
     }
   }
 
