@@ -166,7 +166,7 @@ describe("ConstraintHelper", () => {
     expect(variables.valueOf(bounds.height)).toBeCloseTo(50)
   })
 
-  test("builder property should expose underlying IConstraintsBuilder", () => {
+  test("builder property should expose underlying LinearConstraintBuilder", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
 

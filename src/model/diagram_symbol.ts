@@ -3,7 +3,7 @@ import { getStyleForSymbol } from "../theme"
 import type { Theme } from "../theme"
 import type { Point } from "../core"
 import type { DiagramInfo } from "./diagram_info"
-import type { ContainerBounds, IConstraintsBuilder } from "../core"
+import type { ContainerBounds, LinearConstraintBuilder } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
 import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
@@ -45,7 +45,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     return theme.defaultStyleSet.verticalGap
   }
 
-  private buildContainerConstraints(builder: IConstraintsBuilder): void {
+  private buildContainerConstraints(builder: LinearConstraintBuilder): void {
     const bounds = this.layout
     const padding = this.getContainerPadding(this.theme)
     const header = this.getHeaderHeight(this.theme)
@@ -70,7 +70,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       .strong()
   }
 
-  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+  ensureLayoutBounds(builder: LinearConstraintBuilder): void {
     this.buildContainerConstraints(builder)
     if (this.constraintsApplied) {
       return

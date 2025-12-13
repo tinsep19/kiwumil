@@ -1,7 +1,7 @@
 // src/hint/align_builder.ts
 // Align 操作のビルダー
 
-import type { IConstraintsBuilder, ILayoutVariable } from "../core"
+import type { LinearConstraintBuilder, LayoutVariable } from "../core"
 import type { StrengthBuilder } from "./strength_builder"
 
 /**
@@ -9,8 +9,8 @@ import type { StrengthBuilder } from "./strength_builder"
  */
 export class AlignBuilder implements StrengthBuilder {
   constructor(
-    private readonly builder: IConstraintsBuilder,
-    private readonly vars: ILayoutVariable[]
+    private readonly builder: LinearConstraintBuilder,
+    private readonly vars: LayoutVariable[]
   ) {}
 
   weak(): void {

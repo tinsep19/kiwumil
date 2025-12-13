@@ -1,5 +1,5 @@
 import type { Theme } from "../theme"
-import type { ILayoutSolver, ILayoutConstraint, ILayoutVariable } from "../core"
+import type { ILayoutSolver, LayoutConstraint, LayoutVariable } from "../core"
 import type { HintTarget } from "../core"
 
 export interface HintVariableOptions {
@@ -17,7 +17,7 @@ export interface HintVariableOptions {
 
 export interface HintVariable {
   /** The created LayoutVariable */
-  variable: ILayoutVariable
+  variable: LayoutVariable
   /** Full variable name with hint: prefix */
   name: string
   /** Constraint IDs associated with this hint variable (if any) */
@@ -25,7 +25,7 @@ export interface HintVariable {
 }
 
 export class Hints {
-  private readonly constraints: ILayoutConstraint[] = []
+  private readonly constraints: LayoutConstraint[] = []
   private readonly hintVariables: HintVariable[] = []
   private hintVarCounter = 0
 
@@ -67,14 +67,14 @@ export class Hints {
     return [...this.hintVariables]
   }
 
-  list(): ILayoutConstraint[] {
+  list(): LayoutConstraint[] {
     return [...this.constraints]
   }
 
   arrangeHorizontal(
     targets: HintTarget[],
     gap = this.theme.defaultStyleSet.horizontalGap
-  ) {
+  ): LayoutConstraint {
     const constraint = this.solver.createConstraint("constraints/arrangeHorizontal", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
@@ -90,9 +90,10 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  arrangeVertical(targets: HintTarget[], gap = this.theme.defaultStyleSet.verticalGap) {
+  arrangeVertical(targets: HintTarget[], gap = this.theme.defaultStyleSet.verticalGap): LayoutConstraint {
     const constraint = this.solver.createConstraint("constraints/arrangeVertical", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
@@ -108,10 +109,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignLeft(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignLeft(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignLeft", (builder) => {
@@ -122,10 +124,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignRight(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignRight(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignRight", (builder) => {
@@ -139,10 +142,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignTop(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignTop(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignTop", (builder) => {
@@ -153,10 +157,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignBottom(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignBottom(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignBottom", (builder) => {
@@ -170,10 +175,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignCenterX(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignCenterX(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignCenterX", (builder) => {
@@ -193,10 +199,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignCenterY(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignCenterY(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignCenterY", (builder) => {
@@ -216,10 +223,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignWidth(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignWidth(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignWidth", (builder) => {
@@ -230,10 +238,11 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignHeight(targets: HintTarget[]) {
-    if (targets.length === 0) return
+  alignHeight(targets: HintTarget[]): LayoutConstraint | null {
+    if (targets.length === 0) return null
     const refBounds = targets[0]!.layout
 
     const constraint = this.solver.createConstraint("constraints/alignHeight", (builder) => {
@@ -244,14 +253,15 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
-  alignSize(targets: HintTarget[]) {
+  alignSize(targets: HintTarget[]): void {
     this.alignWidth(targets)
     this.alignHeight(targets)
   }
 
-  enclose(container: HintTarget, childTargets: HintTarget[]) {
+  enclose(container: HintTarget, childTargets: HintTarget[]): LayoutConstraint {
     const containerBounds = container.container ?? container.layout
 
     const constraint = this.solver.createConstraint("constraints/enclose", (builder) => {
@@ -284,6 +294,7 @@ export class Hints {
     })
 
     this.constraints.push(constraint)
+    return constraint
   }
 
   /**
@@ -377,7 +388,7 @@ export class Hints {
   private createArrangeHorizontalConstraints(
     targets: HintTarget[],
     gap?: number
-  ): ILayoutConstraint {
+  ): LayoutConstraint {
     const actualGap = gap ?? this.theme.defaultStyleSet.horizontalGap
     return this.solver.createConstraint("constraints/arrangeHorizontal", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
@@ -401,7 +412,7 @@ export class Hints {
   private createArrangeVerticalConstraints(
     targets: HintTarget[],
     gap?: number
-  ): ILayoutConstraint {
+  ): LayoutConstraint {
     const actualGap = gap ?? this.theme.defaultStyleSet.verticalGap
     return this.solver.createConstraint("constraints/arrangeVertical", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
@@ -422,7 +433,7 @@ export class Hints {
     })
   }
 
-  private createAlignCenterXConstraints(targets: HintTarget[]): ILayoutConstraint | null {
+  private createAlignCenterXConstraints(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length < 2) return null
 
     const firstBounds = targets[0]!.layout
@@ -438,7 +449,7 @@ export class Hints {
     })
   }
 
-  private createAlignRightConstraints(targets: HintTarget[]): ILayoutConstraint | null {
+  private createAlignRightConstraints(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length < 2) return null
 
     const firstBounds = targets[0]!.layout

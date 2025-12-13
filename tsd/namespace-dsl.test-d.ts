@@ -11,7 +11,7 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { LayoutBounds, IConstraintsBuilder, ISymbolCharacs, IContainerSymbolCharacs, ICircleSymbolCharacs } from "../dist/core"
+import type { LayoutBounds, LinearConstraintBuilder, ISymbolCharacs, IContainerSymbolCharacs, ICircleSymbolCharacs } from "../dist/core"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 import {
@@ -39,7 +39,7 @@ class TestSymbol extends SymbolBase {
     return { x: 0, y: 0 }
   }
 
-  ensureLayoutBounds(_builder: IConstraintsBuilder): void {
+  ensureLayoutBounds(_builder: LinearConstraintBuilder): void {
     // no-op for testing
   }
 }
@@ -103,7 +103,7 @@ TypeDiagram("Default Core").build(({ el, rel }) => {
   const circle = el.core.circle("Circle")
   expectType<ICircleSymbolCharacs>(circle)
   // Verify that r property is accessible
-  expectType<import("../dist/core").ILayoutVariable>(circle.r)
+  expectType<import("../dist/core").LayoutVariable>(circle.r)
   
   expectType<ISymbolCharacs>(el.core.text("Multi\nLine"))
   expectType<ISymbolCharacs>(el.core.text({ label: "Info object", textAnchor: "start" }))

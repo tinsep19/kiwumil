@@ -1,7 +1,7 @@
 // src/hint/constraint_helper.ts
-// ConstraintHelper: IConstraintsBuilder をラップして高水準のチェーン API を提供
+// ConstraintHelper: LinearConstraintBuilder をラップして高水準のチェーン API を提供
 
-import type { IConstraintsBuilder, ILayoutVariable, LayoutBounds, ItemBounds } from "../core"
+import type { LinearConstraintBuilder, LayoutVariable, LayoutBounds, ItemBounds } from "../core"
 import type { StrengthBuilder } from "./strength_builder"
 import { SetSizeBuilder } from "./set_size_builder"
 import { EncloseBuilder } from "./enclose_builder"
@@ -9,7 +9,7 @@ import { ArrangeBuilder } from "./arrange_builder"
 import { AlignBuilder } from "./align_builder"
 
 /**
- * ConstraintHelper は IConstraintsBuilder をラップし、
+ * ConstraintHelper は LinearConstraintBuilder をラップし、
  * プラグイン／シンボル実装で使いやすい高水準のチェーン API を提供します。
  * 
  * 提供する API:
@@ -20,11 +20,11 @@ import { AlignBuilder } from "./align_builder"
  */
 export class ConstraintHelper {
   /**
-   * underlying の IConstraintsBuilder への参照
+   * underlying の LinearConstraintBuilder への参照
    */
-  readonly builder: IConstraintsBuilder
+  readonly builder: LinearConstraintBuilder
 
-  constructor(builder: IConstraintsBuilder) {
+  constructor(builder: LinearConstraintBuilder) {
     this.builder = builder
   }
 
@@ -41,8 +41,8 @@ export class ConstraintHelper {
    */
   setSize(
     bounds: LayoutBounds,
-    width: number | ILayoutVariable,
-    height: number | ILayoutVariable
+    width: number | LayoutVariable,
+    height: number | LayoutVariable
   ): StrengthBuilder {
     return new SetSizeBuilder(this.builder, bounds, width, height)
   }
@@ -99,7 +99,7 @@ export class ConstraintHelper {
    * @example
    * helper.align(layout.z, container.z, item1.z, item2.z).required()
    */
-  align(...vars: ILayoutVariable[]): StrengthBuilder {
+  align(...vars: LayoutVariable[]): StrengthBuilder {
     return new AlignBuilder(this.builder, vars)
   }
 }

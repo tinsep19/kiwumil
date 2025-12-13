@@ -1,5 +1,5 @@
 import type { BoundId } from "./types"
-import type { ILayoutVariable } from "./layout_variable"
+import type { LayoutVariable } from "./layout_variable"
 
 export function createBoundId(value: string): BoundId {
   return value
@@ -20,15 +20,15 @@ export type BoundsType = "layout" | "container" | "item"
 export interface Bounds {
   readonly boundId: BoundId
   readonly type: BoundsType
-  readonly x: ILayoutVariable
-  readonly y: ILayoutVariable
-  readonly width: ILayoutVariable
-  readonly height: ILayoutVariable
-  readonly right: ILayoutVariable
-  readonly bottom: ILayoutVariable
-  readonly centerX: ILayoutVariable
-  readonly centerY: ILayoutVariable
-  readonly z: ILayoutVariable
+  readonly x: LayoutVariable
+  readonly y: LayoutVariable
+  readonly width: LayoutVariable
+  readonly height: LayoutVariable
+  readonly right: LayoutVariable
+  readonly bottom: LayoutVariable
+  readonly centerX: LayoutVariable
+  readonly centerY: LayoutVariable
+  readonly z: LayoutVariable
 }
 
 /**
