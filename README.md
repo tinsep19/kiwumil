@@ -68,7 +68,7 @@ TypeDiagram("First Milestone")
 - 📐 **Guide ベースの整列** - `hint.createGuideX/Y()` でガイドラインを作り、複数シンボルを同一ラインに寄せられる
 - 📝 **メタデータサポート** - タイトルや作成日を図に添えてアーカイブできる
 - 🎯 **型安全な DSL** - `tsd` テストで守られた型推論により、存在しないメソッド呼び出しをコンパイル前に検知
-- 🧵 **SuggestHandle** - `LayoutSolver.createHandle()` から強度文字列（`strong`/`medium`/`weak`）を選び、`kiwi` を隠蔽したまま編集変数を操作
+- 🧵 **SuggestHandle** - `KiwiSolver.createHandle()` から強度文字列（`strong`/`medium`/`weak`）を選び、`kiwi` を隠蔽したまま編集変数を操作
 
 プラグインは Symbol/Relationship を提供するだけでなく、Namespace DSL と直結します。`TypeDiagram().use(MyPlugin)` と書くだけで `el.myplugin.*` / `rel.myplugin.*` が補完され、独自の図形や関係線をコアの API と同じ手触りで扱えるため、ドメイン特化の作図体験をシームレスに拡張できます。
 
@@ -141,7 +141,7 @@ flowchart TD
     M[SymbolBase / RelationshipBase]
   end
 
-  subgraph Layout["Layout 層"]
+  subgraph Kiwi["Kiwi 層"]
     L[Layout Engine powered by kiwi]
   end
 
@@ -163,8 +163,8 @@ flowchart TD
 
 - DSL: actor, usecase の呼び出しを SymbolRegistry から解決
 - Model: SymbolBase / RelationshipBase のインスタンスを構築
-- Layout: Cassowary 制約で位置を自動計算
-- Layout: `LayoutSolver` の `SuggestHandle` を通じてストレングスを文字列で扱い、`kiwi.Solver` との直接依存を封じた edit-variable 管理
+- Kiwi: Cassowary 制約で位置を自動計算
+- Kiwi: `KiwiSolver` の `SuggestHandle` を通じてストレングスを文字列で扱い、`kiwi.Solver` との直接依存を封じた edit-variable 管理
 - Render: SvgRenderer により描画（矢印は折れ線）
 - Plugin: ユーザ追加のシンボル・関係も透過的に統合
 
@@ -185,9 +185,9 @@ kiwumil/
 │   │   ├── id_generator.ts
 │   │   ├── namespace_builder.ts
 │   │   └── namespace_types.ts
-│   ├── layout/                    # Cassowary 連携
+│   ├── kiwi/                      # Cassowary 連携
 │   │   ├── layout_solver.ts
-│   │   └── layout_variable_context.ts
+│   │   └── constraints_builder.ts
 │   ├── model/                     # Symbol / Relationship の共通クラス
 │   │   ├── diagram_info.ts
 │   │   ├── diagram_symbol.ts
@@ -310,7 +310,7 @@ Kiwi（制約ソルバ）と UML（構造表現）を融合した、
 Layer 4: DSL/UI     (dsl/, render/)
 Layer 3: Plugins    (plugin/)  
 Layer 2: Model      (model/, hint/)
-Layer 1: Core       (core/, layout/, theme/, icon/, utils/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 ```
 
 詳細は [循環依存防止ガイドライン](docs/guidelines/circular-dependency-prevention.md) をご覧ください。

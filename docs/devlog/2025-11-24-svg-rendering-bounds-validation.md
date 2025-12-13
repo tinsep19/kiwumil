@@ -27,7 +27,7 @@
 
 ## 実装した解決策
 
-### 1. 検出・警告層 (`src/layout/bounds.ts`)
+### 1. 検出・警告層 (`src/kiwi/bounds.ts`)
 
 ```typescript
 export function getBoundsValues(bounds: Bounds) {
@@ -169,8 +169,8 @@ CodeQL による静的解析を実行：
 
 ### 参考となる箇所
 
-- `src/layout/layout_solver.ts` - 制約ソルバのラッパー
-- `src/layout/layout_constraints.ts` - 制約の構築
+- `src/kiwi/layout_solver.ts` - 制約ソルバのラッパー
+- `src/kiwi/layout_constraints.ts` - 制約の構築
 - `src/model/symbol_base.ts` - Symbol の制約定義
 
 ## まとめ

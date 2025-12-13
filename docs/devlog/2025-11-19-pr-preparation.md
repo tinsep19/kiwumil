@@ -18,9 +18,9 @@
 - テーマとレイアウトロジックの分離を改善
 
 **影響ファイル:**
-- `src/layout/layout_context.ts` (新規)
-- `src/layout/layout_constraints.ts` (リファクタ)
-- `src/layout/layout_variables.ts` (既存)
+- `src/kiwi/layout_context.ts` (新規)
+- `src/kiwi/layout_constraints.ts` (リファクタ)
+- `src/kiwi/layout_variables.ts` (既存)
 - `src/model/symbol_base.ts` (API更新)
 - `src/model/container_symbol_base.ts` (API更新)
 
@@ -28,16 +28,16 @@
 
 ### 2. モジュール凝縮性の改善 ✅
 
-**目的:** src/layout, src/core, src/model の責務を明確化
+**目的:** src/kiwi, src/core, src/model の責務を明確化
 
 **変更内容:**
-- `layout/` モジュール: レイアウト変数・制約のみに集中
+- `kiwi/` モジュール: レイアウト変数・制約のみに集中
 - `core/` モジュール: theme, bounds の型定義に集中
 - `model/` モジュール: Symbol の振る舞いに集中
 - 循環依存の解消とimport経路の整理
 
 **影響ファイル:**
-- `src/layout/*.ts` のexport整理
+- `src/kiwi/*.ts` のexport整理
 - `src/core/bounds.ts` 型定義の分離
 - `src/model/*.ts` のimport修正
 
@@ -55,7 +55,7 @@
 
 **影響ファイル:**
 - `src/dsl/hint_factory.ts` (GridBuilder/FigureBuilder追加)
-- `src/layout/constraint_helpers.ts` (新規)
+- `src/kiwi/constraint_helpers.ts` (新規)
 - `tests/grid_figure_builder.test.ts` (新規)
 
 **devlog:** `docs/devlog/2025-11-19-grid-figure-builder-implementation.md`

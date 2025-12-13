@@ -6,16 +6,16 @@
 
 結論（要旨）
 - 現状は src/dsl/hint_factory.ts に置くのが妥当。理由は DSL 層の API（ユーザーが hint を記述する窓口）としての責務が明確であり、既存のインポート／テスト構成や循環依存回避策と整合しているため。
-- layout/hint 以下（src/layout/hint）にはヒントの具象 Builder 実装（GridBuilder, FigureBuilder, GuideBuilderImpl 等）を置くのが妥当。
+- layout/hint 以下（src/kiwi/hint）にはヒントの具象 Builder 実装（GridBuilder, FigureBuilder, GuideBuilderImpl 等）を置くのが妥当。
 - ただし将来的な拡張要件に備えて、小さくて互換性を壊さない拡張ポイント（metadata や handler registry の余地）を残すことを推奨する。
 
 現状コード参照（代表）
 - HintFactory: src/dsl/hint_factory.ts
   - https://github.com/tinsep19/kiwumil/blob/8207ee5d694964ca96e54646308b04302c6c424a/src/dsl/hint_factory.ts
-- GridBuilder: src/layout/hint/grid_builder.ts
-  - https://github.com/tinsep19/kiwumil/blob/8207ee5d694964ca96e54646308b04302c6c424a/src/layout/hint/grid_builder.ts
-- FigureBuilder: src/layout/hint/figure_builder.ts
-  - https://github.com/tinsep19/kiwumil/blob/8207ee5d694964ca96e54646308b04302c6c424a/src/layout/hint/figure_builder.ts
+- GridBuilder: src/kiwi/hint/grid_builder.ts
+  - https://github.com/tinsep19/kiwumil/blob/8207ee5d694964ca96e54646308b04302c6c424a/src/kiwi/hint/grid_builder.ts
+- FigureBuilder: src/kiwi/hint/figure_builder.ts
+  - https://github.com/tinsep19/kiwumil/blob/8207ee5d694964ca96e54646308b04302c6c424a/src/kiwi/hint/figure_builder.ts
 
 設計理由（詳細）
 - 層の責務分離
@@ -44,8 +44,8 @@
 2. 一時ブランチ作成
    - git checkout -b feat/move-hint-factory
 3. ファイル移動
-   - mkdir -p src/layout/hint (移動先)
-   - git mv src/dsl/hint_factory.ts src/layout/hint/hint_factory.ts
+   - mkdir -p src/kiwi/hint (移動先)
+   - git mv src/dsl/hint_factory.ts src/kiwi/hint/hint_factory.ts
 4. インポート更新
    - 参照しているファイルの import を更新（型のみ import の箇所は `import type` のまま維持）。
 5. バレル／再エクスポート（互換性）
@@ -91,6 +91,6 @@ class LayoutContext {
 ```
 
 まとめ
-- 現在の配置（HintFactory → src/dsl, Builders → src/layout/hint）は合理的で問題ない。
+- 現在の配置（HintFactory → src/dsl, Builders → src/kiwi/hint）は合理的で問題ない。
 - 拡張性は非拡張（固定）を基本としつつ、小さな拡張ポイント（metadata, handler registry）を段階的に追加する方針が推奨される。
 - 移動が必要になった場合は、上記チェックリストに従って慎重に作業すること。

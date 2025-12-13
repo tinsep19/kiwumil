@@ -35,7 +35,7 @@ export class Hints {
   ) {}
 
   /**
-   * Create a hint variable using the LayoutSolver API.
+   * Create a hint variable using the KiwiSolver API.
    * The variable is held in Hints scope and not registered to Symbols.
    * Variable names are automatically prefixed with "hint:".
    * 
@@ -47,7 +47,7 @@ export class Hints {
     const suffix = options?.name ?? `${this.hintVarCounter++}`
     const fullName = `hint:${baseName}_${suffix}`
     
-    // Create the variable using LayoutSolver's public API
+    // Create the variable using KiwiSolver's public API
     const variable = this.solver.createVariable(fullName)
     
     const hintVariable: HintVariable = {

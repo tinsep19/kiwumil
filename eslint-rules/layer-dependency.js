@@ -6,7 +6,7 @@ import path from "node:path"
 // アーキテクチャレイヤーの定義
 const LAYERS = {
   core: 1,
-  layout: 1, 
+  kiwi: 1, 
   theme: 1,
   icon: 1,
   utils: 1,
@@ -20,7 +20,7 @@ const LAYERS = {
 // 許可された依存関係マップ
 const ALLOWED_DEPENDENCIES = {
   core: [],
-  layout: ["core"],
+  kiwi: ["core"],
   theme: ["core"],
   icon: ["core"],
   utils: ["core"],
@@ -28,7 +28,7 @@ const ALLOWED_DEPENDENCIES = {
   hint: ["core", "model"],
   plugin: ["core", "theme", "icon", "utils", "model", "hint"],
   render: ["core", "theme", "icon", "utils", "model", "plugin"],
-  dsl: ["core", "layout", "theme", "icon", "utils", "model", "hint", "plugin", "render"]
+  dsl: ["core", "kiwi", "theme", "icon", "utils", "model", "hint", "plugin", "render"]
 }
 
 /**

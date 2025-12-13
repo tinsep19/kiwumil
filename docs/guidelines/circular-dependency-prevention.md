@@ -8,7 +8,7 @@
 
 ### 問題点
 
-1. **ディレクトリ間re-exportによる循環依存**: `layout/index.ts` が `model` をre-exportし、`model` が `layout` をインポートする循環
+1. **ディレクトリ間re-exportによる循環依存**: `kiwi/index.ts` が `model` をre-exportし、`model` が `kiwi` をインポートする循環
 2. **例外設定の手動管理**: 循環依存回避のためのESLint例外が特定ファイルにハードコード
 3. **依存関係の可視化不足**: どのモジュールがどれに依存しているか把握が困難
 
@@ -39,7 +39,7 @@ Layer 3: Plugins    (plugin/, render/)
    ↓  
 Layer 2: Model      (model/, hint/)
    ↓
-Layer 1: Core       (core/, layout/, theme/, icon/, utils/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 ```
 
 **ルール**: 上位レイヤーは下位レイヤーを依存できるが、下位レイヤーは上位レイヤーに依存してはならない。
@@ -50,18 +50,18 @@ Layer 1: Core       (core/, layout/, theme/, icon/, utils/)
 
 #### Core Layer (Layer 1)
 - `core/`: 型定義のみ、他への依存なし
-- `layout/`: `core/` のみ依存
+- `kiwi/`: `core/` のみ依存
 - `theme/`, `icon/`, `utils/`: `core/` のみ依存
 
 #### Model Layer (Layer 2)  
-- `model/`: `core/`, `layout/`, `theme/` に依存
-- `hint/`: `model/`, `layout/`, `core/` に依存
+- `model/`: `core/`, `kiwi/`, `theme/` に依存
+- `hint/`: `model/`, `kiwi/`, `core/` に依存
 
 #### Plugin Layer (Layer 3)
 - `plugin/`: 下位レイヤーすべてに依存可能
 
 #### DSL Layer (Layer 4)
-- `dsl/`: 全レイヤーに依存可能（layout/ への依存は DSL のみ許可）
+- `dsl/`: 全レイヤーに依存可能（kiwi/ への依存は DSL のみ許可）
 
 ### 3. 改善されたESLintルール設計
 
@@ -71,7 +71,7 @@ Layer 1: Core       (core/, layout/, theme/, icon/, utils/)
 // 提案: レイヤーベースのルール
 const LAYER_RULES = {
   'core/**': [], // 他レイヤーに依存禁止
-  'layout/**': ['core/**'],
+  'kiwi/**': ['core/**'],
   'theme/**': ['core/**'], 
   'icon/**': ['core/**'],
   'utils/**': ['core/**'],
@@ -79,7 +79,7 @@ const LAYER_RULES = {
   'hint/**': ['core/**', 'model/**'],
   'plugin/**': ['core/**', 'theme/**', 'model/**', 'hint/**'],
   'render/**': ['core/**', 'theme/**', 'model/**', 'plugin/**'],
-  'dsl/**': ['core/**', 'layout/**', 'theme/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
+  'dsl/**': ['core/**', 'kiwi/**', 'theme/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
 }
 ```
 
@@ -116,7 +116,7 @@ export { getBoundsValues } from "../core"
 
 ```typescript
 // ❌ 同等または上位レイヤーのre-export
-export { LayoutVariables } from "../model" // layout/ → model/
+export { LayoutVariables } from "../model" // kiwi/ → model/
 
 // ❌ 循環を作るre-export
 export { DiagramBuilder } from "../dsl" // model/ → dsl/ → model/
@@ -129,7 +129,7 @@ export { DiagramBuilder } from "../dsl" // model/ → dsl/ → model/
 ```typescript
 export class LayoutContext {
   constructor(theme: Theme) {
-    this.solver = new LayoutSolver() // 直接依存
+    this.solver = new KiwiSolver() // 直接依存
   }
 }
 ```
@@ -149,7 +149,7 @@ export class LayoutContext {
 ```typescript
 // ✅ 推奨: 依存を明示的に組み立て
 beforeEach(() => {
-  const solver = new LayoutSolver()
+  const solver = new KiwiSolver()
   const context = new LayoutContext(solver, DefaultTheme)
   const symbols = new Symbols(context.variables)
 })
@@ -168,7 +168,7 @@ beforeEach(() => {
 // eslint-rules/layer-dependency.js
 const LAYERS = {
   core: 1,
-  layout: 1, 
+  kiwi: 1, 
   theme: 1,
   icon: 1,
   utils: 1,

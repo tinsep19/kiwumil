@@ -36,8 +36,8 @@
 ```typescript
 // Before (分散)
 import type { SymbolId } from "../model/types"
-import type { ILayoutVariable } from "../layout"
-import type { LayoutBounds } from "../layout/bounds"
+import type { ILayoutVariable } from "../kiwi"
+import type { LayoutBounds } from "../kiwi/bounds"
 
 // After (集約)
 import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
@@ -52,11 +52,11 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 
 **`src/model/`** (ドメインモデル):
 - `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
-- `LayoutVariables` (moved from `src/layout`)
+- `LayoutVariables` (moved from `src/kiwi`)
 - `src/core` のインターフェースに依存
 
-**`src/layout/`** (レイアウトエンジン):
-- `LayoutSolver`, `ConstraintsBuilder` の具象実装
+**`src/kiwi/`** (レイアウトエンジン):
+- `KiwiSolver`, `ConstraintsBuilder` の具象実装
 - `ILayoutSolver`, `IConstraintsBuilder` を実装
 - `src/core` のインターフェースに依存
 
@@ -82,7 +82,7 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 1. **アーキテクチャの明確化**
    - コア型定義 (`src/core`)
    - ドメインモデル (`src/model`)  
-   - レイアウトエンジン (`src/layout`)
+   - レイアウトエンジン (`src/kiwi`)
    - プラグイン (`src/plugin`)
 
 2. **型安全性の向上**
@@ -105,4 +105,4 @@ import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 
 - `src/core/index.ts` - コア型の一元エクスポート
 - `src/model/index.ts` - モデル層のエクスポート
-- `src/layout/index.ts` - レイアウト層のエクスポート
+- `src/kiwi/index.ts` - レイアウト層のエクスポート

@@ -20,7 +20,7 @@
 
 ### Step 2: Index Consolidation
 
-- `src/dsl`, `src/layout`, `src/model`, `src/plugin`, `src/render`, `src/utils` に `index.ts` を追加し、サブモジュールをまとめて再エクスポートするよう整理。
+- `src/dsl`, `src/kiwi`, `src/model`, `src/plugin`, `src/render`, `src/utils` に `index.ts` を追加し、サブモジュールをまとめて再エクスポートするよう整理。
 - `layout/hint`、`plugin/core/symbols`、`plugin/uml/symbols`、`plugin/uml/relationships` などサブディレクトリにもエントリを追加して外部からの参照パターンが安定するようにした。
 - `src/index.ts` をディレクトリインポートに切り替え、`dsl`/`plugin`/`model`/`layout` の公開 API をまとめて参照するように変更。
 - `dsl/hint_factory.ts` も `layout/hint` の index を経由するよう更新し、直接ファイルを import しない形で依存を整えた。

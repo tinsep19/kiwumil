@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test"
-import { LayoutSolver } from "@/layout"
+import { KiwiSolver } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 import { ConstraintHelper } from "@/hint"
 import type { LayoutBounds } from "@/core"
@@ -10,7 +10,7 @@ describe("ConstraintHelper", () => {
   }
 
   test("setSize should set width and height constraints", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const bounds = createTestBounds(variables, "test")
 
@@ -25,7 +25,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("enclose should create padding constraints", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const container = createTestBounds(variables, "container")
     const child = createTestBounds(variables, "child")
@@ -55,7 +55,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("arrange horizontal should create margin constraint", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const prev = createTestBounds(variables, "prev")
     const next = createTestBounds(variables, "next")
@@ -78,7 +78,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("enclose should support multiple children", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const container = createTestBounds(variables, "container")
     const child1 = createTestBounds(variables, "child1")
@@ -113,7 +113,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("align should create equality constraints between variables", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const bounds1 = createTestBounds(variables, "b1")
     const bounds2 = createTestBounds(variables, "b2")
@@ -137,7 +137,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("align with single variable should not create constraints", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const bounds = createTestBounds(variables, "test")
 
@@ -152,7 +152,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("setSize with different strength levels", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const bounds = createTestBounds(variables, "test")
 
@@ -167,7 +167,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("builder property should expose underlying IConstraintsBuilder", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
 
     solver.createConstraint("test-builder-property", (builder) => {
@@ -177,7 +177,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("usage example from comment should work", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const container = createTestBounds(variables, "container")
     const child1 = createTestBounds(variables, "child1")
@@ -201,7 +201,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("arrange with multiple elements horizontal", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const x1 = createTestBounds(variables, "x1")
     const x2 = createTestBounds(variables, "x2")
@@ -231,7 +231,7 @@ describe("ConstraintHelper", () => {
   })
 
   test("arrange with multiple elements vertical", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
     const x1 = createTestBounds(variables, "x1")
     const x2 = createTestBounds(variables, "x2")

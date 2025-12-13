@@ -2,11 +2,11 @@
 
 ## 作業内容
 
-GuideBuilderX と GuideBuilderY の重複実装を解消し、共通実装 GuideBuilderImpl を作成しました。さらに、レイアウト関連の Builder ファイルを `src/layout/hint` ディレクトリに移動し、コード構造を改善しました。
+GuideBuilderX と GuideBuilderY の重複実装を解消し、共通実装 GuideBuilderImpl を作成しました。さらに、レイアウト関連の Builder ファイルを `src/kiwi/hint` ディレクトリに移動し、コード構造を改善しました。
 
 ## 実施した変更
 
-### 1. 新規ファイル作成: `src/layout/hint/guide_builder.ts` (旧: `src/dsl/guide_builder.ts`)
+### 1. 新規ファイル作成: `src/kiwi/hint/guide_builder.ts` (旧: `src/dsl/guide_builder.ts`)
 
 - GuideBuilderX インターフェイスを定義
 - GuideBuilderY インターフェイスを定義
@@ -39,9 +39,9 @@ GuideBuilderX と GuideBuilderY の重複実装を解消し、共通実装 Guide
 ### 5. ディレクトリ構造の整理（追加要件）
 
 Builder ファイルを適切なディレクトリに移動：
-- `src/dsl/grid_builder.ts` → `src/layout/hint/grid_builder.ts`
-- `src/dsl/figure_builder.ts` → `src/layout/hint/figure_builder.ts`
-- `src/dsl/guide_builder.ts` → `src/layout/hint/guide_builder.ts`
+- `src/dsl/grid_builder.ts` → `src/kiwi/hint/grid_builder.ts`
+- `src/dsl/figure_builder.ts` → `src/kiwi/hint/figure_builder.ts`
+- `src/dsl/guide_builder.ts` → `src/kiwi/hint/guide_builder.ts`
 
 各ファイルのインポートパスを更新：
 - Builder ファイル内部: `../model/*` → `../../model/*`、`../layout/*` → `../*`
@@ -52,7 +52,7 @@ Builder ファイルを適切なディレクトリに移動：
 src/dsl/
   └── hint_factory.ts      # DSL エントリポイント
 
-src/layout/hint/
+src/kiwi/hint/
   ├── grid_builder.ts      # レイアウト実装
   ├── figure_builder.ts    # レイアウト実装
   └── guide_builder.ts     # レイアウト実装
@@ -128,5 +128,5 @@ X軸ガイドと Y軸ガイドで arrange の動作が逆になる点に注意�
 
 - 設計ドキュメント: `docs/design/guide-builder-refactoring.md`
 - テストファイル: `tests/guide_builder.test.ts`
-- 実装ファイル: `src/layout/hint/guide_builder.ts` (+ grid_builder.ts, figure_builder.ts)
+- 実装ファイル: `src/kiwi/hint/guide_builder.ts` (+ grid_builder.ts, figure_builder.ts)
 - エントリポイント: `src/dsl/hint_factory.ts`

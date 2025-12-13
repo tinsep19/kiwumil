@@ -1,13 +1,13 @@
 import {
   ConstraintsBuilder,
-  LayoutSolver,
-} from "@/layout"
+  KiwiSolver,
+} from "@/kiwi"
 import { LayoutVariables } from "@/model"
 import * as kiwi from "@lume/kiwi"
 
 describe("ConstraintsBuilder", () => {
   test("expr()/eq() with strong constraint keeps variables equal", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x")
     const y = vars.createVar("builder:y")
@@ -31,7 +31,7 @@ describe("ConstraintsBuilder", () => {
   })
 
   test("eq0() makes expression equal zero", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x-zero")
 
@@ -49,7 +49,7 @@ describe("ConstraintsBuilder", () => {
   })
 
   test("expr(...).eq0() asserts equality between variables", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x-eq0")
     const y = vars.createVar("builder:y-eq0")
@@ -68,7 +68,7 @@ describe("ConstraintsBuilder", () => {
   })
 
   test("expr(...).eq0() can solve 2x - 3y + 7 = 0", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x-linear")
     const y = vars.createVar("builder:y-linear")
@@ -86,7 +86,7 @@ describe("ConstraintsBuilder", () => {
   })
 
   test("buildExpression throws error for unbranded variables", () => {
-    const solver = new LayoutSolver()
+    const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     
     // Create a fake variable that looks like ILayoutVariable but isn't branded
@@ -100,6 +100,6 @@ describe("ConstraintsBuilder", () => {
       solver.createConstraint("test-invalid", (builder) => {
         builder.expr([1, fakeVariable as any]).eq([1, 1]).strong()
       })
-    }).toThrow("ConstraintsBuilder: operand is not a LayoutVariable created by LayoutSolver")
+    }).toThrow("ConstraintsBuilder: operand is not a LayoutVariable created by KiwiSolver")
   })
 })

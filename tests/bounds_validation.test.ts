@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test"
 import { LayoutContext } from "@/model"
-import { LayoutSolver } from "@/layout"
+import { KiwiSolver } from "@/kiwi"
 import { getBoundsValues } from "@/core"
 import { ActorSymbol, UsecaseSymbol } from "@/plugin/uml"
 import { Symbols } from "@/dsl"
@@ -12,7 +12,7 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      const solver = new LayoutSolver()
+      const solver = new KiwiSolver()
       context = new LayoutContext(solver, DefaultTheme)
       symbols = new Symbols(context.variables)
     })
@@ -72,7 +72,7 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      const solver = new LayoutSolver()
+      const solver = new KiwiSolver()
       context = new LayoutContext(solver, DefaultTheme)
       symbols = new Symbols(context.variables)
     })
@@ -135,7 +135,7 @@ describe("Bounds Validation", () => {
     let symbols: Symbols
 
     beforeEach(() => {
-      const solver = new LayoutSolver()
+      const solver = new KiwiSolver()
       context = new LayoutContext(solver, DefaultTheme)
       symbols = new Symbols(context.variables)
     })

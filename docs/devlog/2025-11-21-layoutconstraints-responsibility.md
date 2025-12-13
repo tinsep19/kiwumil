@@ -5,7 +5,7 @@
 [docs/draft/kiwi-boundary-refactor.md](../draft/kiwi-boundary-refactor.md) の移行手順 5 を検討。
 
 移行手順 4 まで完了した時点で、以下の状態になっている：
-- LayoutContext が LayoutSolver を所有
+- LayoutContext が KiwiSolver を所有
 - LayoutVariables が注入された solver を使用
 - LayoutConstraints が LayoutVariables 経由で制約を追加
 
@@ -17,7 +17,7 @@
 
 ```typescript
 LayoutContext
-  ├── solver: LayoutSolver (所有)
+  ├── solver: KiwiSolver (所有)
   ├── vars: LayoutVariables (solver を注入)
   └── constraints: LayoutConstraints (vars を使用)
 ```
@@ -74,7 +74,7 @@ arrangeHorizontal(symbolIds, gap) {
 | LayoutContext | solver の所有と solve のタイミング制御 | ✅ 完了 |
 | LayoutVariables | 変数管理、solver への制約追加の委譲 | ✅ 完了 |
 | LayoutConstraints | 制約の生成とメタデータ管理 | ✅ 完了 |
-| LayoutSolver | 制約の管理と solver の実行 | ✅ 完了 |
+| KiwiSolver | 制約の管理と solver の実行 | ✅ 完了 |
 
 ## 評価と判断
 
@@ -83,7 +83,7 @@ arrangeHorizontal(symbolIds, gap) {
 移行手順 5 の元の目的は「solver への依存を分離する」ことだったが、移行手順 1-4 で既に達成されている：
 
 1. ✅ **kiwi への依存は集約済み**
-   - `src/layout/kiwi/` モジュールに集約
+   - `src/kiwi/kiwi/` モジュールに集約
    - LayoutConstraints は直接 kiwi に依存していない
 
 2. ✅ **solver の所有権は明確**
@@ -93,7 +93,7 @@ arrangeHorizontal(symbolIds, gap) {
 3. ✅ **責務は十分に分離されている**
    - LayoutConstraints: 制約の生成ロジックとメタデータ管理
    - LayoutVariables: 変数管理と制約追加の仲介
-   - LayoutSolver: solver の実装とライフサイクル管理
+   - KiwiSolver: solver の実装とライフサイクル管理
    - LayoutContext: 全体のオーケストレーション
 
 ### さらなる分離を行う場合の考察
@@ -113,7 +113,7 @@ arrangeHorizontal(symbolIds, gap) {
 #### コスト vs ベネフィット
 現状で以下が達成されているため、さらなる分離の実益は限定的：
 - solver の所有権が明確
-- テスタビリティは確保済み（LayoutSolver をモック可能）
+- テスタビリティは確保済み（KiwiSolver をモック可能）
 - 循環依存はない
 - 既存コードとの互換性が保たれている
 
@@ -163,7 +163,7 @@ $ bun run test:types
 │ - vars, constraints を保持              │
 └───────────┬─────────────────────────────┘
             │
-            ├─→ LayoutSolver (所有)
+            ├─→ KiwiSolver (所有)
             │   - kiwi.Solver のラッパー
             │   - 制約管理と solve 実行
             │
@@ -179,8 +179,8 @@ $ bun run test:types
 
 ### データフロー
 
-1. LayoutContext が LayoutSolver を作成
-2. LayoutSolver を LayoutVariables に注入
+1. LayoutContext が KiwiSolver を作成
+2. KiwiSolver を LayoutVariables に注入
 3. LayoutVariables を LayoutConstraints に渡す
 4. LayoutConstraints が vars 経由で制約を追加
 5. 制約は solver に到達（vars → solver）

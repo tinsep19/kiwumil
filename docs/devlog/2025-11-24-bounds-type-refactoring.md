@@ -18,7 +18,7 @@
 
 ### 2. ファイル名の変更
 
-- `src/layout/layout_bound.ts` → `src/layout/bounds.ts`
+- `src/kiwi/layout_bound.ts` → `src/kiwi/bounds.ts`
   - より簡潔で、型名との一貫性を向上
 
 ### 3. 後方互換性
@@ -38,8 +38,8 @@ export type LayoutType = BoundsType
 ```
 
 これらのエイリアスは以下からエクスポートされています：
-- `src/layout/bounds.ts`
-- `src/layout/layout_variables.ts`（再エクスポート）
+- `src/kiwi/bounds.ts`
+- `src/kiwi/layout_variables.ts`（再エクスポート）
 - `src/index.ts`（パッケージエントリポイント）
 
 ## 影響範囲
@@ -47,10 +47,10 @@ export type LayoutType = BoundsType
 ### 更新したファイル（24ファイル）
 
 **レイアウトシステム:**
-- `src/layout/bounds.ts`（旧 layout_bound.ts）
-- `src/layout/layout_variables.ts`
-- `src/layout/layout_context.ts`
-- `src/layout/layout_constraints.ts`
+- `src/kiwi/bounds.ts`（旧 layout_bound.ts）
+- `src/kiwi/layout_variables.ts`
+- `src/kiwi/layout_context.ts`
+- `src/kiwi/layout_constraints.ts`
 
 **モデル層:**
 - `src/model/symbol_base.ts`

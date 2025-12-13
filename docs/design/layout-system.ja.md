@@ -24,10 +24,10 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 
 **`src/model/`** - モデル層実装:
 - `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
-- `LayoutVariables` (moved from `src/layout`)
+- `LayoutVariables` (moved from `src/kiwi`)
 
-**`src/layout/`** - レイアウトエンジン実装:
-- `LayoutSolver` (implements `ILayoutSolver`)
+**`src/kiwi/`** - レイアウトエンジン実装:
+- `KiwiSolver` (implements `ILayoutSolver`)
 - `ConstraintsBuilder` (implements `IConstraintsBuilder`)
 - `LayoutContext`
 
@@ -42,8 +42,8 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
          ▲                                    ▲
          │                                    │
 ┌────────┴──────────┐              ┌─────────┴──────────┐
-│   src/model       │              │   src/layout       │
-│  - SymbolBase     │              │  - LayoutSolver    │
+│   src/model       │              │   src/kiwi       │
+│  - SymbolBase     │              │  - KiwiSolver    │
 │  - LayoutVariables│──────────────▶  - ConstraintsBuilder│
 │  (solver接続)     │              │  (実装層)          │
 └───────────────────┘              └────────────────────┘
@@ -56,7 +56,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 │        LayoutContext                │
 │  (ファサード・コーディネーター)       │
 ├─────────────────────────────────────┤
-│  - solver: LayoutSolver             │
+│  - solver: KiwiSolver             │
 │  - variables: LayoutVariables       │
 │  - constraints: LayoutConstraints   │
 └─────────────────────────────────────┘
@@ -80,7 +80,7 @@ Variables と Constraints を束ね、統一されたインターフェースを
 
 ```typescript
 export class LayoutContext {
-  readonly solver: LayoutSolver
+  readonly solver: KiwiSolver
   readonly variables: LayoutVariables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
@@ -93,7 +93,7 @@ export class LayoutContext {
   solve(): void
   solveAndApply(symbols: SymbolBase[]): void
   valueOf(variable: LayoutVariable): number
-  getSolver(): LayoutSolver
+  getSolver(): KiwiSolver
 }
 ```
 

@@ -14,7 +14,7 @@
 
 ```typescript
 LayoutContext
-  ├── solver: LayoutSolver (所有)
+  ├── solver: KiwiSolver (所有)
   ├── vars: LayoutVariables (solver を注入)
   └── constraints: LayoutConstraints (vars を使用)
 ```
@@ -23,9 +23,9 @@ LayoutContext
 
 #### 現在の実装
 ```typescript
-// src/layout/layout_context.ts
+// src/kiwi/layout_context.ts
 export class LayoutContext {
-  private readonly solver: LayoutSolver
+  private readonly solver: KiwiSolver
   
   solve() {
     this.solver.updateVariables()  // ✅ 直接 solver を呼び出し
@@ -44,7 +44,7 @@ export class LayoutContext {
 
 LayoutConstraints が `this.variables.addConstraint()` を使用：
 ```typescript
-// src/layout/layout_constraints.ts
+// src/kiwi/layout_constraints.ts
 export class LayoutConstraintBuilder {
   eq(left, right, strength) {
     this.raws.push(
@@ -83,7 +83,7 @@ export class LayoutConstraints {
 2. **vars は solver を注入されている**
    ```typescript
    // LayoutContext のコンストラクタ
-   this.solver = new LayoutSolver()
+   this.solver = new KiwiSolver()
    this.variables = new LayoutVariables(this.solver)
    this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
    ```
@@ -132,7 +132,7 @@ export class LayoutContext {
    高レベル: LayoutContext (オーケストレーション)
    中レベル: LayoutConstraints (制約生成ロジック)
    低レベル: LayoutVariables (変数管理)
-   実装:     LayoutSolver (solver ラッパー)
+   実装:     KiwiSolver (solver ラッパー)
    ```
 
 4. **必要な場合は `context.variables.addConstraint()` で可能**
@@ -227,7 +227,7 @@ context.solve()
 | オーケストレーション | LayoutContext | solver 所有、solve タイミング制御 |
 | 制約生成 | LayoutConstraints | 制約ロジック、メタデータ管理 |
 | 変数管理 | LayoutVariables | 変数作成、solver への委譲 |
-| solver 実装 | LayoutSolver | kiwi.Solver ラッパー |
+| solver 実装 | KiwiSolver | kiwi.Solver ラッパー |
 
 ### データフロー
 

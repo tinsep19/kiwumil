@@ -42,7 +42,7 @@ export abstract class SymbolBase {
 
 ### 4. アーキテクチャの改善
 
-- **依存性の逆転**: `src/layout` の具象クラスではなく `src/core` のインターフェースに依存
+- **依存性の逆転**: `src/kiwi` の具象クラスではなく `src/core` のインターフェースに依存
 - **循環依存の解消**: `src/core` が型定義のみを持ち、実装から分離
 - **型安全性の向上**: すべての公開APIがインターフェースベース
 
@@ -58,5 +58,5 @@ export abstract class SymbolBase {
 ## 参照
 
 - `src/core/constraints_builder.ts` - コアインターフェース定義
-- `src/layout/constraints_builder.ts` - 具象実装
+- `src/kiwi/constraints_builder.ts` - 具象実装
 - `src/model/symbol_base.ts` - シンボル基底クラス
