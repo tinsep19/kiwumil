@@ -42,7 +42,7 @@ export class KiwiVariable implements ILayoutVariable {
   }
 }
 
-export interface KiwiConstraint extends ILayoutConstraint {
+export interface KiwiConstraints extends ILayoutConstraint {
   rawConstraints: kiwi.Constraint[]
 }
 
@@ -78,9 +78,9 @@ export class KiwiSolver implements ILayoutSolver {
    * Create a constraint with an ID using a callback pattern
    * @param id Constraint identifier
    * @param spec Builder callback function
-   * @returns KiwiConstraint with id and rawConstraints
+   * @returns KiwiConstraints with id and rawConstraints
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): KiwiConstraint {
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): KiwiConstraints {
     const builder = new KiwiConstraintBuilder(this.solver)
     spec(builder)
     const constraint = {
