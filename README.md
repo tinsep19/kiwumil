@@ -99,5 +99,5 @@ npm install @tinsep19/kiwumil
 
 ## Maintainers
 
-- Kousuke Taniguchi (tinsep19)
+- TANIGUCHI Kousuke (tinsep19)
 

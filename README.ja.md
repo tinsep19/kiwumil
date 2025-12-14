@@ -97,5 +97,5 @@ npm install @tinsep19/kiwumil
 
 ## メンテナ
 
-- 田口 耕介 (Kousuke Taniguchi, tinsep19)
+- TANIGUCHI Kousuke (TANIGUCHI Kousuke, tinsep19)
 
