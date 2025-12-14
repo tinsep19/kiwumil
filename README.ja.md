@@ -8,12 +8,12 @@ Kiwumil は、Kiwi（Cassowary）ベースの制約ソルバと名前空間ベ�
 
 ## クイックリンク
 
-- 設計ドキュメント（英日）: docs/design/index.ja.md
-- ガイドライン（英日）: docs/guidelines/index.ja.md
-- サンプル: examples/
-- 開発ログ: docs/devlog/（主に日本語）
-- パッケージ: @tinsep19/kiwumil
-- ライセンス: MIT
+- 設計ドキュメント（英日）: [docs/design/index.ja.md](docs/design/index.ja.md)
+- ガイドライン（英日）: [docs/guidelines/index.ja.md](docs/guidelines/index.ja.md)
+- サンプル: [examples/](examples/)
+- 開発ログ: [docs/devlog/](docs/devlog/)
+- パッケージ: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
+- ライセンス: [MIT](LICENSE)
 
 ---
 

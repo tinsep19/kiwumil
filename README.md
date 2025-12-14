@@ -8,12 +8,12 @@ Kiwumil is a TypeScript library that combines a Kiwi-based constraint solver wit
 
 ## Quick links
 
-- Design docs (bilingual): docs/design/index.md
-- Guidelines (bilingual): docs/guidelines/index.md
-- Examples: examples/
-- Development log (devlog, primarily Japanese): docs/devlog/
-- Package: @tinsep19/kiwumil
-- License: MIT
+- Design docs (bilingual): [docs/design/index.md](docs/design/index.md)
+- Guidelines (bilingual): [docs/guidelines/index.md](docs/guidelines/index.md)
+- Examples: [examples/](examples/)
+- Development log (devlog, primarily Japanese): [docs/devlog/](docs/devlog/)
+- Package: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
+- License: [MIT](LICENSE)
 
 ---
 
