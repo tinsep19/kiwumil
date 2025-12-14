@@ -738,7 +738,7 @@ layoutContext.constraints.remove("constraints/user/0")
 
 ---
 
-[日本語](layout-constraints-decoupling.ja.md) | English
+[日本語](layout-system.ja.md) | English
 
 # Symbol を見ずに LayoutConstraints を運用する計画
 
@@ -864,7 +864,7 @@ export interface HintTarget {
 
 ---
 
-[日本語](fluent-constraint-builder-plan.ja.md) | English
+[日本語](layout-system.ja.md) | English
 
 # Fluent 制約ビルダー移行計画
 

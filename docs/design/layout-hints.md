@@ -591,7 +591,7 @@ baseline.alignBottom(subtitle, date)  // 他のテキストも揃える
 
 ---
 
-[日本語](hint-factory-placement.ja.md) | English
+[日本語](layout-hints.ja.md) | English
 
 # HintFactory の配置と layout hint の拡張性に関する設計メモ
 
