@@ -4,6 +4,38 @@ Kiwumil is a TypeScript library that combines a Kiwi-based constraint solver wit
 
 [日本語](README.ja.md) | English
 
+
+## Why kiwumil?
+
+**kiwumil is a DSL for tidying diagrams without losing their semantics.**
+
+By writing diagrams in kiwumil's DSL you can express both the semantics of elements and relationships, and the layout intentions (how elements should be arranged), while keeping those concerns separated. This makes diagrams safe to store as text and safe to refine later.
+
+### Why not just SVG, PlantUML or Mermaid?
+
+kiwumil does not encourage editing raw SVG as a primary workflow: SVG is great as a final artifact, but it poorly preserves the semantics and layout intent in a human-friendly form. Unlike PlantUML or Mermaid, kiwumil avoids embedding layout directives into semantic descriptions (e.g. sprinkling `left`/`up` instructions into arrows). Instead, kiwumil treats:
+
+- "what relates to what" (semantics) and
+- "how to tidy or align them" (layout intent)
+
+as separate layers.
+
+### Why a TypeScript DSL?
+
+Providing kiwumil as a TypeScript DSL is a deliberate UX choice: TypeScript's type system, editor integration (IntelliSense/LSP), and ecosystem help keep semantics explicit and discoverable. The DSL becomes a typed authoring surface rather than just a file format.
+
+### Not just "draw and forget"
+
+Because kiwumil runs on Bun/TypeScript, it naturally integrates with JSON/CSV, external APIs, and other systems. This enables:
+
+- text-manageable diagrams
+- diagrams generated from external data
+- diagrams that are refined and tidied by humans after generation
+
+In short: kiwumil is a foundation to bring diagrams closer to human aesthetics while preserving meaning.
+
+> kiwumil helps you preserve semantics while making diagrams look the way humans expect.
+
 ---
 
 ## Quick links
