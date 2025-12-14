@@ -1,3 +1,5 @@
+[English](hints-symbols-hintfactory.md) | 日本語
+
 # DESIGN: Hints / Symbols / HintFactory の設計
 
 日付: 2025-12-04  

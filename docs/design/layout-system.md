@@ -1,3 +1,5 @@
+[日本語](layout-system.ja.md) | English
+
 # Kiwumil レイアウトシステム設計書
 
 ## 概要

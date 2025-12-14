@@ -1,3 +1,5 @@
+[日本語](guide-builder-refactoring.ja.md) | English
+
 # GuideBuilder 実装の共通化とディレクトリ整理
 
 ## 概要

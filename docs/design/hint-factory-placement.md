@@ -1,3 +1,5 @@
+[日本語](hint-factory-placement.ja.md) | English
+
 # HintFactory の配置と layout hint の拡張性に関する設計メモ
 
 目的

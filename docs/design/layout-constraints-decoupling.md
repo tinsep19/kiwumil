@@ -1,3 +1,5 @@
+[日本語](layout-constraints-decoupling.ja.md) | English
+
 # Symbol を見ずに LayoutConstraints を運用する計画
 
 ## ステータス: 完了 ✅

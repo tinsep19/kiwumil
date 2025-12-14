@@ -1,3 +1,5 @@
+[English](theme-system.md) | 日本語
+
 # Kiwumil テーマシステム設計書
 
 ## 概要

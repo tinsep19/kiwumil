@@ -1,3 +1,5 @@
+[English](git-workflow.md) | 日本語
+
 # Git Workflow
 
 ## ブランチ戦略

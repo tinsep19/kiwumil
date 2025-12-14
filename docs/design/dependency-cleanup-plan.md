@@ -1,3 +1,5 @@
+[日本語](dependency-cleanup-plan.ja.md) | English
+
 # 依存整理の計画
 
 ## ステータス: 大幅に完了 ✅

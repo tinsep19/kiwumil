@@ -1,3 +1,5 @@
+[日本語](namespace-dsl.ja.md) | English
+
 # Namespace-Based DSL Architecture
 
 [日本語](./namespace-dsl.ja.md) | English

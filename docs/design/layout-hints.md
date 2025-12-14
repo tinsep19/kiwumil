@@ -1,3 +1,5 @@
+[日本語](layout-hints.ja.md) | English
+
 # Kiwumil レイアウトヒント API
 
 ## 概要

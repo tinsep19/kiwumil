@@ -1,3 +1,5 @@
+[日本語](web-rendering.ja.md) | English
+
 # Web対応レンダリングシステム
 
 **作成日**: 2025-11-15  

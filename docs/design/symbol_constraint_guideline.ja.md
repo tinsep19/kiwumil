@@ -1,3 +1,5 @@
+[English](symbol_constraint_guideline.md) | 日本語
+
 # 制約（Constraint）とは何か・その追加方法について
 
 Symbol設計・配置の基礎となる「制約」について解説します。

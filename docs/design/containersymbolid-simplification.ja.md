@@ -1,3 +1,5 @@
+[English](containersymbolid-simplification.md) | 日本語
+
 # ContainerSymbolId 型の完全削除
 
 ## 概要

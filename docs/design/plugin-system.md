@@ -1,3 +1,5 @@
+[日本語](plugin-system.ja.md) | English
+
 # Kiwumil プラグインシステム
 
 ## 目次

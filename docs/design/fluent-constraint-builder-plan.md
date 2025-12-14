@@ -1,3 +1,5 @@
+[日本語](fluent-constraint-builder-plan.ja.md) | English
+
 # Fluent 制約ビルダー移行計画
 
 ## ステータス: 完了 ✅
