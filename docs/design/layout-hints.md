@@ -1,5 +1,70 @@
 [日本語](layout-hints.ja.md) | English
 
+## Hint API — Design philosophy
+
+**Hint API is not an API to "draw numbers" — but it is not an API that forbids numbers either.**
+Use numeric values when they have meaning (margins, padding, stroke widths, aspect hints), but avoid commanding absolute positions.
+
+Kiwumil avoids:
+
+- absolute coordinate specifications
+- imperative placement like "put this element at (x, y)"
+- tweaking visual details in a way that breaks semantic meaning
+
+### What matters visually
+
+Kiwumil is built on the premise that alignment is the biggest factor in perceived cleanliness:
+
+- centers aligned
+- edges aligned
+- consistent spacing
+- visual reference lines
+
+These are relationships; Hint API expresses those relationships.
+
+### Auto layout stance
+
+Kiwumil does not aim for fully automatic layout. Instead it uses a two-stage approach:
+
+1. rough placement via `figure` / `grid` to build the skeleton
+2. refinement via human-directed Hints to express alignment/intention
+
+This avoids hiding user intent while providing automation where it helps.
+
+### How to use Hints (high level)
+
+1. Use `figure` / `grid` (enclose) to create the broad structure.
+2. Use `align` / `arrange` Hints to align edges/centers and tidy spacing.
+
+Hints communicate intent ("I want these centered", "I want these aligned"). The engine converts intent into constraints and solves for coordinates.
+
+### Key takeaways
+
+- Use numbers when meaningful, but don't let numbers dominate layout decisions.
+- Automation is an assistant, not the decision-maker.
+- Alignment (relationships) is the core of visual quality.
+- Workflow: broad structure → human-guided refinement.
+
+
+
+## Quick start (example)
+
+```typescript
+import { TypeDiagram, UMLPlugin } from "kiwumil"
+
+TypeDiagram("First Milestone")
+  .use(UMLPlugin)
+  .build(({ el, rel, hint }) => {
+    const user = el.uml.actor("User")
+    const login = el.uml.usecase("Login")
+
+    rel.uml.associate(user, login)
+    hint.arrangeVertical(user, login)
+  })
+  .render("output.svg")
+```
+
+
 # Kiwumil レイアウトヒント API
 
 ## 概要
