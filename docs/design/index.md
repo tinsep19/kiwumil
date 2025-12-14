@@ -7,7 +7,6 @@
 - fluent-constraint-builder-plan : [English](./fluent-constraint-builder-plan.md)  |  [日本語](./fluent-constraint-builder-plan.ja.md)
 - git-workflow : [English](./git-workflow.md)  |  [日本語](./git-workflow.ja.md)
 - guide-builder-refactoring : [English](./guide-builder-refactoring.md)  |  [日本語](./guide-builder-refactoring.ja.md)
-- hint-factory-placement : [English](./hint-factory-placement.md)  |  [日本語](./hint-factory-placement.ja.md)
 - layout-constraints-decoupling : [English](./layout-constraints-decoupling.md)  |  [日本語](./layout-constraints-decoupling.ja.md)
 - layout-constraints-fluent-migration : [English](./layout-constraints-fluent-migration.md)  |  [日本語](./layout-constraints-fluent-migration.ja.md)
 - layout-hints : [English](./layout-hints.md)  |  [日本語](./layout-hints.ja.md)
