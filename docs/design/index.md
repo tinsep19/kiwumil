@@ -10,3 +10,5 @@
 - plugin-system : [English](./plugin-system.md)  |  [日本語](./plugin-system.ja.md)
 - theme-system : [English](./theme-system.md)  |  [日本語](./theme-system.ja.md)
 - usage : [English](./usage.md)  |  [日本語](./usage.ja.md)
+- philosophy : [English](./philosophy.md)  |  [日本語](./philosophy.ja.md)
+- philosophy-concise : [English](./philosophy-concise.md)  |  [日本語](./philosophy-concise.ja.md)

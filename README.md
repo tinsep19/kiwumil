@@ -180,3 +180,9 @@ npm install @tinsep19/kiwumil
 
 - TANIGUCHI Kousuke (tinsep19)
 
+
+## Design principles (concise)
+
+kiwumil is a semantics-first DSL that improves diagram appearance via relationship-based layout and opt-in refinement. It preserves semantics, uses automatic layout as baseline, and provides Hint-based, semantics-preserving adjustments for visual quality.
+
+See: docs/design/philosophy-concise.md
