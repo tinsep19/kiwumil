@@ -2,11 +2,20 @@
 
 # アーキテクチャ概要
 
-Kiwumil は循環依存を避けるためにレイヤー構成を採用しています。
+Kiwumil は循環依存を避け、メンテナンス性を保つためにレイヤー構成を採用しています。推奨されるレイヤー構成は以下です：
 
-- DSL 層 (dsl/) — ビルダーとプラグインの公開 API
-- Model 層 (model/) — シンボル／関係のコアクラス
-- Solver 層 (kiwi/) — 制約ソルバ連携
-- Render 層 (render/) — SVG レンダリング
+```
+Layer 4: DSL        (dsl/)
+   ↓
+Layer 3: Plugins    (plugin/)
+   ↓
+Layer 2: Model      (model/, hint/)
+   ↓
+Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+```
 
-詳細は各設計ドキュメントを参照してください。
+ルール:
+- 上位レイヤーは下位レイヤーに依存可能だが、下位レイヤーは上位レイヤーに依存してはいけない。
+- re-export は同一ディレクトリか下位レイヤーの項目に限定し、循環を防ぐ。
+
+詳細は `docs/guidelines/circular-dependency-prevention.md` を参照してください（レイヤーに基づく ESLint ルール案などを含む）。

@@ -8,7 +8,6 @@
 - git-workflow : [日本語](./git-workflow.ja.md)  |  [English](./git-workflow.md)
 - guide-builder-refactoring : [日本語](./guide-builder-refactoring.ja.md)  |  [English](./guide-builder-refactoring.md)
 - hint-factory-placement : [日本語](./hint-factory-placement.ja.md)  |  [English](./hint-factory-placement.md)
-- icon_support : [English](./icon_support.md)
 - layout-constraints-decoupling : [日本語](./layout-constraints-decoupling.ja.md)  |  [English](./layout-constraints-decoupling.md)
 - layout-constraints-fluent-migration : [日本語](./layout-constraints-fluent-migration.ja.md)  |  [English](./layout-constraints-fluent-migration.md)
 - layout-hints : [日本語](./layout-hints.ja.md)  |  [English](./layout-hints.md)
@@ -17,4 +16,3 @@
 - plugin-system : [日本語](./plugin-system.ja.md)  |  [English](./plugin-system.md)
 - theme-system : [日本語](./theme-system.ja.md)  |  [English](./theme-system.md)
 - usage : [日本語](./usage.ja.md)  |  [English](./usage.md)
-- web-rendering : [日本語](./web-rendering.ja.md)  |  [English](./web-rendering.md)
