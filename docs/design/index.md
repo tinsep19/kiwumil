@@ -5,7 +5,6 @@
 - architecture : [English](./architecture.md)  |  [日本語](./architecture.ja.md)
 - dependency-cleanup-plan : [English](./dependency-cleanup-plan.md)  |  [日本語](./dependency-cleanup-plan.ja.md)
 - git-workflow : [English](./git-workflow.md)  |  [日本語](./git-workflow.ja.md)
-- guide-builder-refactoring : [English](./guide-builder-refactoring.md)  |  [日本語](./guide-builder-refactoring.ja.md)
 - layout-hints : [English](./layout-hints.md)  |  [日本語](./layout-hints.ja.md)
 - layout-system : [English](./layout-system.md)  |  [日本語](./layout-system.ja.md)
 - namespace-dsl : [English](./namespace-dsl.md)  |  [日本語](./namespace-dsl.ja.md)
