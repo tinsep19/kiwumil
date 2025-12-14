@@ -1,7 +1,5 @@
 # Kiwumil (キューミル)
-
-Kiwumil is a TypeScript library that combines a Kiwi-based constraint solver with a namespace-driven DSL to write UML-style diagrams as code. It aims to balance hand-crafted layout control and constraint-based alignment so diagrams remain both precise and quickly editable.
-
+Kiwumil is a TypeScript DSL for authoring diagrams from semantics and tidying them only when needed. It uses relationship-based automatic layout as the baseline and allows targeted refinement via layout hints (alignment, spacing, anchors). Hints are interpreted by a Kiwi (Cassowary) linear constraint solver, so you describe placement as relationships without manipulating numeric coordinates directly. The namespace-based DSL and plugin system make it possible to manage UML-like diagrams as text while preserving semantics.
 [日本語](README.ja.md) | English
 
 
