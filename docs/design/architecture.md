@@ -18,6 +18,10 @@ Rules:
 - Higher layers may depend on lower layers, but lower layers must not depend on higher layers.
 - Re-exports should be limited to same-directory or lower-layer items to avoid cycles.
 
+Within-layer dependencies:
+- `kiwi/` depends on `core/`, but is placed here as a default implementation of a replaceable solver.
+- `core/` provides only interfaces and type definitions, while `kiwi/` provides the concrete implementations.
+
 See `docs/guidelines/circular-dependency-prevention.md` for the layer-based ESLint rule proposals and implementation guidance.
 
 
