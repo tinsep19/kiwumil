@@ -1,9 +1,11 @@
-# Kiwumil (キューミル)
+# 🥝 Kiwumil (キューミル)
+
 Kiwumil is a TypeScript DSL for authoring diagrams from semantics and tidying them only when needed. It uses relationship-based automatic layout as the baseline and allows targeted refinement via layout hints (alignment, spacing, anchors). Hints are interpreted by a Kiwi (Cassowary) linear constraint solver, so you describe placement as relationships without manipulating numeric coordinates directly. The namespace-based DSL and plugin system make it possible to manage UML-like diagrams as text while preserving semantics.
+
 [日本語](README.ja.md) | English
 
 
-## Why kiwumil?
+## 🌱 Why kiwumil?
 
 **kiwumil is a DSL for tidying diagrams without losing their semantics.**
 
@@ -36,22 +38,22 @@ In short: kiwumil is a foundation to bring diagrams closer to human aesthetics w
 
 ---
 
-## Quick links
+## 📚 Quick links
 
-- Design docs (bilingual): [docs/design/index.md](docs/design/index.md)
-- Guidelines (bilingual): [docs/guidelines/index.md](docs/guidelines/index.md)
-- Examples: [examples/](examples/)
-- Development log (devlog, primarily Japanese): [docs/devlog/](docs/devlog/)
-- Package: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
-- License: [MIT](LICENSE)
-
----
-
-
+- 📖 Design docs (bilingual): [docs/design/index.md](docs/design/index.md)
+- 📐 Guidelines (bilingual): [docs/guidelines/index.md](docs/guidelines/index.md)
+- 🧩 Examples: [examples/](examples/)
+- 📝 Development log (devlog, primarily Japanese): [docs/devlog/](docs/devlog/)
+- 📦 Package: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
+- 📄 License: [MIT](LICENSE)
 
 ---
 
-## Installation (GitHub Packages)
+
+
+---
+
+## 📦 Installation (GitHub Packages)
 
 Kiwumil is published to GitHub Packages. A Personal Access Token (PAT) with the `read:packages` scope is required to install the package. Follow these steps to configure your environment and install with Bun/NPM.
 
@@ -90,7 +92,7 @@ npm install @tinsep19/kiwumil
 
 ---
 
-## Development (local)
+## 🔧 Development (local)
 
 - Setup: `bun install` (or `npm install` / `pnpm install` depending on your environment)
 - Tests: `bun run test` (see package.json)
@@ -98,29 +100,29 @@ npm install @tinsep19/kiwumil
 
 ---
 
-## Documentation & translation policy
+## 🌍 Documentation & translation policy
 
 - Core design pages are bilingual (English / 日本語). Devlogs are primarily in Japanese.
 - If you need translations or improvements to a specific doc, open an issue or PR referencing `docs/design/<page>`.
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 - Project is pre-1.0 and the public API may change; contribution policy is evolving.
 - For now, open issues for suggestions. Large doc restructures should be proposed as Draft PRs including a `docs/devlog/` entry.
 
 ---
 
-## Maintainers
+## 👥 Maintainers
 
 - TANIGUCHI Kousuke (tinsep19)
 
+---
 
+## ✅ What kiwumil does / does not do
 
-## What kiwumil does / does not do
-
-### What kiwumil does
+### ✅ What kiwumil does
 
 kiwumil is a DSL for authoring and managing diagrams with semantics as the primary concern.
 
@@ -136,7 +138,7 @@ kiwumil aims to support a single model for both "diagrams that are sufficient as
 
 ---
 
-### What kiwumil does not do
+### ❌ What kiwumil does not do
 
 kiwumil is not intended to:
 
@@ -150,9 +152,9 @@ The constraint system exists for plugin authors and internal frameworks; end use
 
 ---
 
-## Who is this for / not for
+## 👤 Who is this for / not for
 
-### Who this is for
+### 👍 Who this is for
 
 kiwumil is aimed at people who:
 
@@ -163,7 +165,7 @@ kiwumil is aimed at people who:
 - Are comfortable authoring in a TypeScript DSL
 - Need to integrate diagrams with external data sources
 
-### Who this is not for
+### 👎 Who this is not for
 
 kiwumil is not the right tool if you:
 
@@ -174,7 +176,7 @@ kiwumil is not the right tool if you:
 
 ---
 
-## Design stance
+## 🎯 Design stance
 
 kiwumil's core design stance is:
 
@@ -183,8 +185,8 @@ kiwumil's core design stance is:
 It treats automatic layout as a baseline and exposes opt-in Hints for targeted, semantics-preserving adjustments. This lets authors express both what a diagram means and how it should be tidied, without mixing concerns.
 
 
-## Design principles (concise)
+## 💡 Design principles (concise)
 
 kiwumil is a semantics-first DSL that improves diagram appearance via relationship-based layout and opt-in refinement. It preserves semantics, uses automatic layout as baseline, and provides Hint-based, semantics-preserving adjustments for visual quality.
 
-See: docs/design/philosophy-concise.md
+See: [docs/design/philosophy-concise.md](docs/design/philosophy-concise.md)
