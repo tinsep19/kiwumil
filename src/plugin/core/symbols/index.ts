@@ -1,4 +1,5 @@
 export { CircleSymbol } from "./circle_symbol"
+export type { ICircleSymbolCharacs } from "./circle_symbol"
 export { EllipseSymbol } from "./ellipse_symbol"
 export { RectangleSymbol } from "./rectangle_symbol"
 export { RoundedRectangleSymbol } from "./rounded_rectangle_symbol"

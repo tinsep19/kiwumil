@@ -11,7 +11,8 @@ import {
   RelationshipBase,
   type RelationshipBaseOptions,
 } from "../dist/model/relationship_base"
-import type { LayoutBounds, LinearConstraintBuilder, ISymbolCharacs, IContainerSymbolCharacs, ICircleSymbolCharacs } from "../dist/core"
+import type { LayoutBounds, LinearConstraintBuilder, ISymbolCharacs, IContainerSymbolCharacs } from "../dist/core"
+import type { ICircleSymbolCharacs } from "../dist/plugin/core/symbols"
 import { DefaultTheme } from "../dist/theme"
 import type { Theme } from "../dist/theme"
 import {

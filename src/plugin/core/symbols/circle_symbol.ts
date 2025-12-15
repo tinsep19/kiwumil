@@ -1,9 +1,17 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import type { LinearConstraintBuilder, LayoutVariable } from "../../../core"
+import type { LinearConstraintBuilder, LayoutVariable, ISymbolCharacs } from "../../../core"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+
+/**
+ * ICircleSymbolCharacs: 円形シンボルの特性
+ * ISymbolCharacs を拡張し、半径 r プロパティを必須にする
+ */
+export interface ICircleSymbolCharacs extends ISymbolCharacs {
+  r: LayoutVariable
+}
 
 export interface CircleSymbolOptions extends SymbolBaseOptions {
   label: string

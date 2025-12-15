@@ -31,11 +31,3 @@ export type ISymbolCharacs = {
 export interface IContainerSymbolCharacs extends ISymbolCharacs {
   container: ContainerBounds
 }
-
-/**
- * ICircleSymbolCharacs: 円形シンボルの特性
- * ISymbolCharacs を拡張し、半径 r プロパティを必須にする
- */
-export interface ICircleSymbolCharacs extends ISymbolCharacs {
-  r: LayoutVariable
-}
