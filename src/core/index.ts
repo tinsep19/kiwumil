@@ -51,6 +51,9 @@ export type {
   AnchorY,
   AnchorZ,
   Anchor,
+  Width,
+  Height,
+  Dimension,
 } from "./bounds"
 
 export { createBoundId, getBoundsValues } from "./bounds"
