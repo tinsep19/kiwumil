@@ -92,14 +92,14 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       const symbol = new DiagramSymbol(
         {
           id,
-          layout: diagramBound,
+          bounds: diagramBound,
           container: containerBound,
           info: diagramInfo,
           theme: this.currentTheme,
         }
       )
       r.setSymbol(symbol)
-      r.setCharacs({id, layout: diagramBound, container: containerBound})
+      r.setCharacs({id, bounds: diagramBound, container: containerBound})
       r.setConstraint((builder) => {
         symbol.ensureLayoutBounds(builder)
       })

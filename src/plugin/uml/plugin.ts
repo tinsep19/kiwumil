@@ -48,14 +48,14 @@ export const UMLPlugin = {
           const iconGetter = icons.actor
           const actor = new ActorSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             label,
             stereotype,
             icon: iconGetter ? iconGetter() : null,
             theme,
           })
           r.setSymbol(actor)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             actor.ensureLayoutBounds(builder)
           })
@@ -73,12 +73,12 @@ export const UMLPlugin = {
           const bound = r.createBounds("layout", "layout")
           const usecase = new UsecaseSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             label,
             theme,
           })
           r.setSymbol(usecase)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             usecase.ensureLayoutBounds(builder)
           })
@@ -97,13 +97,13 @@ export const UMLPlugin = {
           const container = r.createBounds("container", "container")
           const boundary = new SystemBoundarySymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             container,
             label,
             theme,
           })
           r.setSymbol(boundary)
-          r.setCharacs({ id: symbolId, layout: bound, container } satisfies IContainerSymbolCharacs)
+          r.setCharacs({ id: symbolId, bounds: bound, container } satisfies IContainerSymbolCharacs)
           r.setConstraint((builder) => {
             boundary.ensureLayoutBounds(builder)
           })

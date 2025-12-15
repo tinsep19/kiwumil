@@ -86,7 +86,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.layout
+      const bounds = symbol.bounds
       this.enforceStrongEquality([[1, bounds.x]], [[1, this.guideVar]], `guide/alignLeft/${id}`)
     }
     return this
@@ -98,7 +98,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.layout
+      const bounds = symbol.bounds
       this.enforceStrongEquality([[1, bounds.right]], [[1, this.guideVar]], `guide/alignRight/${id}`)
     }
     return this
@@ -109,7 +109,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followLeft")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.layout
+    const bounds = symbol.bounds
     this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.x]], `guide/followLeft/${symbolId}`)
     return this
   }
@@ -119,7 +119,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followRight")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.layout
+    const bounds = symbol.bounds
     this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.right]], `guide/followRight/${symbolId}`)
     return this
   }
@@ -131,7 +131,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.layout
+      const bounds = symbol.bounds
       this.enforceStrongEquality([[1, bounds.y]], [[1, this.guideVar]], `guide/alignTop/${id}`)
     }
     return this
@@ -143,7 +143,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.layout
+      const bounds = symbol.bounds
       this.enforceStrongEquality([[1, bounds.bottom]], [[1, this.guideVar]], `guide/alignBottom/${id}`)
     }
     return this
@@ -154,7 +154,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followTop")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.layout
+    const bounds = symbol.bounds
     this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.y]], `guide/followTop/${symbolId}`)
     return this
   }
@@ -164,7 +164,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followBottom")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.layout
+    const bounds = symbol.bounds
     this.enforceStrongEquality([[1, this.guideVar]], [[1, bounds.bottom]], `guide/followBottom/${symbolId}`)
     return this
   }
@@ -175,7 +175,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
       if (!symbol) continue
-      const bounds = symbol.layout
+      const bounds = symbol.bounds
       const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
       this.enforceStrongEquality([[1, targetVar]], [[1, this.guideVar]], `guide/alignCenter/${id}`)
     }
@@ -186,7 +186,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
-    const bounds = symbol.layout
+    const bounds = symbol.bounds
     const targetVar = this.axis === "x" ? bounds.centerX : bounds.centerY
     this.enforceStrongEquality([[1, this.guideVar]], [[1, targetVar]], `guide/followCenter/${symbolId}`)
     return this

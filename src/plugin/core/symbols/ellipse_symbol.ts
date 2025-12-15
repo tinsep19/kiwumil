@@ -22,7 +22,7 @@ export class EllipseSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -41,7 +41,7 @@ export class EllipseSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2

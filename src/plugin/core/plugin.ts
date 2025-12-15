@@ -34,13 +34,13 @@ export const CorePlugin = {
           const radius = r.createVariable("r")
           const circle = new CircleSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             label,
             r: radius,
             theme,
           })
           r.setSymbol(circle)
-          r.setCharacs({ id: symbolId, layout: bound, r: radius } satisfies ICircleSymbolCharacs)
+          r.setCharacs({ id: symbolId, bounds: bound, r: radius } satisfies ICircleSymbolCharacs)
           r.setConstraint((builder) => {
             circle.ensureLayoutBounds(builder)
           })
@@ -58,12 +58,12 @@ export const CorePlugin = {
           const bound = r.createBounds("layout", "layout")
           const ellipse = new EllipseSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             label,
             theme,
           })
           r.setSymbol(ellipse)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             ellipse.ensureLayoutBounds(builder)
           })
@@ -81,12 +81,12 @@ export const CorePlugin = {
           const bound = r.createBounds("layout", "layout")
           const rectangle = new RectangleSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             label,
             theme,
           })
           r.setSymbol(rectangle)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             rectangle.ensureLayoutBounds(builder)
           })
@@ -104,12 +104,12 @@ export const CorePlugin = {
           const bound = r.createBounds("layout", "layout")
           const rounded = new RoundedRectangleSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             label,
             theme,
           })
           r.setSymbol(rounded)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             rounded.ensureLayoutBounds(builder)
           })
@@ -127,12 +127,12 @@ export const CorePlugin = {
           const bound = r.createBounds("layout", "layout")
           const text = new TextSymbol({
             id: symbolId,
-            layout: bound,
+            bounds: bound,
             info: labelOrInfo,
             theme,
           })
           r.setSymbol(text)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             text.ensureLayoutBounds(builder)
           })

@@ -91,7 +91,7 @@ describe("Bounds Validation", () => {
 
       const actor = new ActorSymbol({
         id: "test-actor",
-        layout: bounds,
+        bounds: bounds,
         label: "TestActor",
         theme: DefaultTheme,
       })
@@ -117,7 +117,7 @@ describe("Bounds Validation", () => {
 
       const actor = new ActorSymbol({
         id: "test-actor",
-        layout: bounds,
+        bounds: bounds,
         label: "TestActor",
         icon: mockIcon,
         theme: DefaultTheme,
@@ -154,7 +154,7 @@ describe("Bounds Validation", () => {
 
       const usecase = new UsecaseSymbol({
         id: "test-usecase",
-        layout: bounds,
+        bounds: bounds,
         label: "TestUsecase",
         theme: DefaultTheme,
       })
@@ -186,7 +186,7 @@ describe("Bounds Validation", () => {
 
       const usecase = new UsecaseSymbol({
         id: "test-usecase",
-        layout: bounds,
+        bounds: bounds,
         label: "TestUsecase",
         theme: DefaultTheme,
       })

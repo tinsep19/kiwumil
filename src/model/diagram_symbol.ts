@@ -51,7 +51,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   private buildContainerConstraints(builder: LinearConstraintBuilder): void {
-    const bounds = this.layout
+    const bounds = this.bounds
     const padding = this.getContainerPadding(this.theme)
     const header = this.getHeaderHeight(this.theme)
     const horizontalPadding = padding.left + padding.right
@@ -80,7 +80,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     if (this.constraintsApplied) {
       return
     }
-    const bounds = this.layout
+    const bounds = this.bounds
     const helper = new ConstraintHelper(builder)
     
     // Fix DiagramSymbol's z to 0 (required)
@@ -97,7 +97,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -124,7 +124,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
 

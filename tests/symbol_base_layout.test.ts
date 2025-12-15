@@ -5,8 +5,8 @@ import type { Point } from "@/core/symbols"
 import { DefaultTheme } from "@/theme"
 
 class DummySymbol extends SymbolBase {
-  constructor(id: string, layout: LayoutBounds) {
-    super({ id, layout, theme: DefaultTheme })
+  constructor(id: string, bounds: LayoutBounds) {
+    super({ id, bounds, theme: DefaultTheme })
   }
 
   getDefaultSize() {
@@ -27,8 +27,8 @@ class DummySymbol extends SymbolBase {
 }
 
 class DummySymbolWithConstraints extends SymbolBase {
-  constructor(id: string, layout: LayoutBounds) {
-    super({ id, layout, theme: DefaultTheme })
+  constructor(id: string, bounds: LayoutBounds) {
+    super({ id, bounds, theme: DefaultTheme })
   }
 
   getDefaultSize() {
@@ -44,7 +44,7 @@ class DummySymbolWithConstraints extends SymbolBase {
   }
 
   ensureLayoutBounds(builder: ConstraintsBuilder): void {
-    const bounds = this.layout
+    const bounds = this.bounds
     builder.expr([1, bounds.width]).ge([20, 1]).weak()
     builder.expr([1, bounds.height]).ge([20, 1]).weak()
   }
@@ -56,7 +56,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-1")
     const symbol = new DummySymbol("dummy-1", bounds)
-    const symbolBounds = symbol.layout
+    const symbolBounds = symbol.bounds
 
     solver.createConstraint("test-init", (builder) => {
       builder.expr([1, symbolBounds.x]).eq([15, 1]).strong()
@@ -68,13 +68,13 @@ describe("SymbolBase layout bounds", () => {
     expect(vars.valueOf(symbolBounds.y)).toBeCloseTo(25)
   })
 
-  test("layout property returns the injected bounds", () => {
+  test("bounds property returns the injected bounds", () => {
     const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-2")
     const symbol = new DummySymbol("dummy-2", bounds)
 
-    expect(symbol.layout).toBe(bounds)
+    expect(symbol.bounds).toBe(bounds)
   })
 
   test("ensureLayoutBounds accepts a builder", () => {
