@@ -16,7 +16,6 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 
 Rules:
 - Higher layers may depend on lower layers, but lower layers must not depend on higher layers.
-- Re-exports should be limited to same-directory or lower-layer items to avoid cycles.
 
 See `docs/guidelines/circular-dependency-prevention.md` for the layer-based ESLint rule proposals and implementation guidance.
 
