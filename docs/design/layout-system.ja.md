@@ -738,8 +738,6 @@ layoutContext.constraints.remove("constraints/user/0")
 
 ---
 
-[English](layout-system.md) | 日本語
-
 # Symbol を見ずに LayoutConstraints を運用する計画
 
 ## ステータス: 完了 ✅
@@ -811,8 +809,6 @@ export interface HintTarget {
 
 ---
 
-[English](layout-constraints-fluent-migration.md) | 日本語
-
 # レイアウト制約フルエントビルダー移行計画
 
 ## 背景
@@ -863,8 +859,6 @@ export interface HintTarget {
 
 
 ---
-
-[English](layout-system.md) | 日本語
 
 # Fluent 制約ビルダー移行計画
 
