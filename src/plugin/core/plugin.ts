@@ -6,6 +6,7 @@ import {
   RoundedRectangleSymbol,
   TextSymbol,
   type TextInfo,
+  type ICircleSymbolCharacs,
 } from "./symbols"
 import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
 import type { Theme } from "../../theme"
@@ -39,12 +40,12 @@ export const CorePlugin = {
             theme,
           })
           r.setSymbol(circle)
-          r.setCharacs({ id: symbolId, layout: bound, r: radius } satisfies import("../../core").ICircleSymbolCharacs)
+          r.setCharacs({ id: symbolId, layout: bound, r: radius } satisfies ICircleSymbolCharacs)
           r.setConstraint((builder) => {
             circle.ensureLayoutBounds(builder)
           })
           return r.build()
-        }).characs as import("../../core").ICircleSymbolCharacs
+        }).characs as ICircleSymbolCharacs
       },
 
       /**

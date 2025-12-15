@@ -13,8 +13,10 @@ export type {
   ISymbol,
   ISymbolCharacs,
   IContainerSymbolCharacs,
-  ICircleSymbolCharacs,
 } from "./symbol"
+
+// ICircleSymbolCharacs は plugin/core/symbols から再エクスポート
+export type { ICircleSymbolCharacs } from "../plugin/core/symbols"
 
 // レイアウト変数
 export type {
