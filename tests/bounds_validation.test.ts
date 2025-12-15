@@ -36,6 +36,26 @@ describe("Bounds Validation", () => {
       expect(values.height).toBe(50)
     })
 
+    test("should support top and left aliases", () => {
+      const bounds = context.variables.createBounds("test-aliases")
+
+      context.createConstraint("test-aliases-bounds", (builder) => {
+        builder.expr([1, bounds.left]).eq([15, 1]).strong()
+        builder.expr([1, bounds.top]).eq([25, 1]).strong()
+        builder.expr([1, bounds.width]).eq([80, 1]).strong()
+        builder.expr([1, bounds.height]).eq([60, 1]).strong()
+      })
+      context.solve()
+
+      // Verify that left is an alias of x and top is an alias of y
+      expect(bounds.left.value()).toBe(15)
+      expect(bounds.top.value()).toBe(25)
+      expect(bounds.x.value()).toBe(15)
+      expect(bounds.y.value()).toBe(25)
+      expect(bounds.left).toBe(bounds.x)
+      expect(bounds.top).toBe(bounds.y)
+    })
+
     test("should detect and warn about negative width", () => {
       const bounds = context.variables.createBounds("test")
 

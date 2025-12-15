@@ -96,6 +96,8 @@ export class LayoutVariables {
       type,
       x,
       y,
+      top: y, // alias of y
+      left: x, // alias of x
       width,
       height,
       right,
