@@ -6,6 +6,14 @@ export function createBoundId(value: string): BoundId {
 }
 
 /**
+ * Anchor types: Position anchor types for layout variables
+ */
+export type AnchorX = LayoutVariable
+export type AnchorY = LayoutVariable
+export type AnchorZ = LayoutVariable
+export type Anchor = { x: AnchorX; y: AnchorY }
+
+/**
  * BoundsType: レイアウトの種類を表す型
  * - "layout": Symbol の外矩形（Symbol は必ず1つだけ持つ）
  * - "container": Symbol を内包できる矩形
@@ -20,15 +28,17 @@ export type BoundsType = "layout" | "container" | "item"
 export interface Bounds {
   readonly boundId: BoundId
   readonly type: BoundsType
-  readonly x: LayoutVariable
-  readonly y: LayoutVariable
+  readonly x: AnchorX
+  readonly y: AnchorY
+  readonly top: AnchorY // alias of y
+  readonly left: AnchorX // alias of x
   readonly width: LayoutVariable
   readonly height: LayoutVariable
-  readonly right: LayoutVariable
-  readonly bottom: LayoutVariable
-  readonly centerX: LayoutVariable
-  readonly centerY: LayoutVariable
-  readonly z: LayoutVariable
+  readonly right: AnchorX
+  readonly bottom: AnchorY
+  readonly centerX: AnchorX
+  readonly centerY: AnchorY
+  readonly z: AnchorZ
 }
 
 /**

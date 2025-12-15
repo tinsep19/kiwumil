@@ -47,6 +47,10 @@ export type {
   LayoutBounds,
   TypedBounds,
   BoundsMap,
+  AnchorX,
+  AnchorY,
+  AnchorZ,
+  Anchor,
 } from "./bounds"
 
 export { createBoundId, getBoundsValues } from "./bounds"
