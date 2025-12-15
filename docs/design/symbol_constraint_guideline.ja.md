@@ -1,3 +1,5 @@
+[English](symbol_constraint_guideline.md) | 日本語
+
 # 制約（Constraint）とは何か・その追加方法について
 
 Symbol設計・配置の基礎となる「制約」について解説します。
@@ -114,4 +116,4 @@ builder.expr([1, layout.right]).ge([1, rect.right], [0.5, strokeWidth]).strong()
 
 - **[Layout System 設計書](./layout-system.ja.md)** - レイアウトシステムの内部実装
 - **[Layout Hints API](./layout-hints.ja.md)** - ユーザー向けレイアウトヒント API
-- **[Fluent 制約ビルダー移行計画](./fluent-constraint-builder-plan.ja.md)** - 制約ビルダーの設計
+- **[Fluent 制約ビルダー移行計画](./layout-system.ja.md)** - 制約ビルダーの設計

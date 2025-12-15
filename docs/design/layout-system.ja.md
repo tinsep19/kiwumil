@@ -1,3 +1,5 @@
+[English](layout-system.md) | 日本語
+
 # Kiwumil レイアウトシステム設計書
 
 ## 概要
@@ -732,3 +734,191 @@ layoutContext.constraints.remove("constraints/user/0")
 - **[Namespace-based DSL](./namespace-dsl.md)** - DSL設計とAPI使い方
 - **[Plugin System](./plugin-system.md)** - プラグイン作成ガイド
 - **[Theme System](./theme-system.md)** - テーマシステムの設計
+
+
+---
+
+# Symbol を見ずに LayoutConstraints を運用する計画
+
+## ステータス: 完了 ✅
+
+本計画で提案されたレイアウト制約とシンボルの分離は完了しました。
+
+## 実装内容
+
+### 1. Bounds に BoundId を追加
+
+`src/core/bounds.ts` で `BoundId` を型として定義し、ブランド化を削除:
+
+```typescript
+export type BoundId = string
+
+export interface Bounds {
+  readonly type: BoundsType
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable
+  readonly bottom: ILayoutVariable
+  readonly centerX: ILayoutVariable
+  readonly centerY: ILayoutVariable
+}
+```
+
+### 2. HintTarget の導入
+
+`src/core/hint_target.ts` に `HintTarget` インターフェースを配置 (旧 `LayoutConstraintTarget`):
+
+```typescript
+export interface HintTarget {
+  ownerId: SymbolId
+  layout: LayoutBounds
+  container?: ContainerBounds
+}
+```
+
+### 3. ILayoutVariable への統一
+
+すべての `Bounds` プロパティが `ILayoutVariable` インターフェースを使用:
+
+- 具象 `LayoutVariable` クラスへの直接依存を排除
+- `src/core` のインターフェースのみに依存
+
+## 完了した実装
+
+| 領域 | 実装内容 |
+| --- | --- |
+| Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `ILayoutVariable` を使用。 |
+| HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`layout`、`container` を保持。 |
+| LayoutConstraints | `HintTarget` を活用し、Bounds ベースでの制約構築を実現。 |
+
+## 得られたメリット
+
+1. **依存性の逆転**: 制約レイヤーが具象型ではなくインターフェースに依存
+2. **型安全性の向上**: コンパイル時の型チェックが強化
+3. **アーキテクチャの明確化**: `src/core` で公開API、`src/kiwi` で実装という明確な境界
+4. **循環依存の排除**: コア型定義が実装から分離
+
+## 関連変更
+
+- `LayoutVariable` → `ILayoutVariable` への統一
+- `LayoutConstraintTarget` → `HintTarget` への名前変更
+- `BoundId` のブランド化削除 (単純な `string` 型に)
+
+
+---
+
+# レイアウト制約フルエントビルダー移行計画
+
+## 背景
+
+- [docs/draft/new_constraint_builder.md](../draft/new_constraint_builder.md) に従って `ConstraintsBuilder` を導入済みですが、まだ `KiwiSolver.addConstraint`/`.expression` や旧来の型ラッパーを使って制約を追加している箇所が残っています。
+- 旧 API を放置すると `KiwiSolver` の公開面が肥大化し、ヒントやテストのような下流コードが古い API と新しい API の両方を気にする必要が出てきます。
+- そこで、残る箇所をビルダーへ移し替えたうえで、型・エクスポートの整理も含めた移行手順をドキュメント化して共有します。
+
+## 目的
+
+1. `src/kiwi` 以下にある制約構築ロジック（`LayoutConstraints`／ガイド／テストなど）をすべて `ConstraintsBuilder` 経由で発行する。
+2. 旧来の Kiwi ラッパー型（`LayoutTerm`、`LayoutExpression`、`toKiwiExpression` など）と、不要になった solver API を削除する。
+3. 移行の実施順・受け入れ条件・テスト手順を明文化し、複数段階のコミットで安全に進められるようにする。
+
+## マイグレーション計画
+
+### 1. `LayoutConstraints` ヘルパーのビルダー化を完了する
+
+- **実施内容**：`arrange*`、`align*`、`enclose*` などのユーティリティが `KiwiSolver.expression`/`addConstraint` を呼ばず、`ConstraintsBuilder` を一貫して利用するように見直します。`expr(...).eq(...).strong()` といったフローを明示し、生成された `rawConstraints` を `record()` に渡す構造を維持します。
+- **受け入れ条件**：すべてのヘルパーが `createConstraintsBuilder()` で builder を取得し、以前と同じ数の制約／同じ強度で `record()` を呼ぶことができる。
+
+### 2. `LayoutContext`／ヒント層／テストを builder へ切り替える
+
+- **実施内容**：
+  1. `LayoutContext` に安全に builder を取り出せるアクセサ（例：`createConstraintsBuilder()`）を用意し、`getSolver()` を廃止する。
+  2. `guide_builder` のすべての `align`/`follow` 系メソッドを `ConstraintsBuilder` で書き直し、強度ごとに `.strong()` などを `finalize` する。
+  3. `tests/bounds_validation.test.ts` や `layout_variables.test.ts`、`constraints_builder.test.ts` を新 API に沿って更新し、`context.solve()` を使い `context.solver` などの private フィールドを参照しない。
+- **受け入れ条件**：`KiwiSolver.addConstraint`/`.expression` を呼ぶコードが `constraints_builder.ts` 以外に存在しないこと、ガイド／テストから `LayoutContext.getSolver()` を経由して solver を直接操作しないこと。
+
+### 3. レガシーなエクスポートと型を整理する
+
+- **実施内容**：
+  1. `LayoutTerm`/`LayoutExpression`/`toKiwiExpression` といった obsolete なエクスポートを削除し、新しい `LayoutConstraintStrength`/`LayoutConstraintOperator` は `layout_constraints.ts` に集中させる。
+  2. `src/index.ts` も新しい出口に合わせて更新し、不要な re-export を排除する。
+  3. `src/kiwi` 内部の `kiwi` インポートを見直し、未使用の型や関数を削除する。
+- **受け入れ条件**：必要最低限の型・定数だけが `src/kiwi` から公開され、旧 API を仮置きするコードが残らない。
+
+## テスト & 検証
+
+- `bun test`
+- `bun run lint`（既存の `@typescript-eslint/no-unused-vars` 警告も解消する）
+- 必要に応じて `tsc --noEmit`（`test:types` スクリプトが実行しているため、そのままでも可）
+
+## リスク & 備考
+
+- `KiwiSolver` の旧ヘルパーを削るのは最終段階まで待ち、すべての制約コードがビルダー経由になっていることを確認してから行う。
+- ビルダーは内部的に同じ `kiwi.Constraint` を吐き出すので、`rawConstraints` を見る既存のテスト/ヒントが壊れないよう、生成順序・強度は意識しておく。
+
+
+---
+
+# Fluent 制約ビルダー移行計画
+
+## ステータス: 完了 ✅
+
+本計画で提案された `IConstraintsBuilder` インターフェースの抽出と、型の整理は完了しました。
+
+## 実装内容
+
+### 1. インターフェース抽出
+
+`src/core/constraints_builder.ts` に以下のコアインターフェースを配置:
+
+```typescript
+export interface IConstraintsBuilder {
+  eq(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
+  ge(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
+  le(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
+}
+
+export type Term = ILayoutVariable | number
+export type ConstraintSpec = (builder: IConstraintsBuilder) => void
+```
+
+### 2. 型の標準化
+
+- `ConstraintStrength`: `"required" | "strong" | "medium" | "weak"`
+- `ISuggestHandle`: 旧 `SuggestHandle` から名前変更
+- `ISuggestHandleFactory`: 旧 `SuggestHandleFactory` から名前変更
+- `ILayoutVariable`: 旧 `LayoutVariable<T>` から型パラメータを削除
+
+### 3. シンボル実装の更新
+
+すべてのシンボルクラス (`SymbolBase` およびその派生クラス) が `ensureLayoutBounds(builder: IConstraintsBuilder)` メソッドを実装:
+
+```typescript
+export abstract class SymbolBase {
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+    // 各シンボルが固有の制約を追加
+  }
+}
+```
+
+### 4. アーキテクチャの改善
+
+- **依存性の逆転**: `src/kiwi` の具象クラスではなく `src/core` のインターフェースに依存
+- **循環依存の解消**: `src/core` が型定義のみを持ち、実装から分離
+- **型安全性の向上**: すべての公開APIがインターフェースベース
+
+## 移行完了項目
+
+- [x] `IConstraintsBuilder` インターフェースの抽出と `src/core` への配置
+- [x] `Term` と `ConstraintSpec` の `src/core` への移動
+- [x] `ConstraintStrength` への名前変更と `"required"` の追加
+- [x] `ISuggestHandle` / `ISuggestHandleFactory` への名前変更
+- [x] すべてのシンボル実装で `IConstraintsBuilder` を使用
+- [x] テストの更新と検証 (129 tests pass)
+
+## 参照
+
+- `src/core/constraints_builder.ts` - コアインターフェース定義
+- `src/kiwi/constraints_builder.ts` - 具象実装
+- `src/model/symbol_base.ts` - シンボル基底クラス

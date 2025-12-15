@@ -1,21 +1,23 @@
-# 循環依存防止ガイドライン
+[日本語](circular-dependency-prevention.ja.md) | English
 
-## 概要
+# Circular Dependency Prevention Guidelines
 
-このドキュメントは、TypeScriptプロジェクトにおける循環依存を防止し、健全なアーキテクチャを維持するためのガイドラインです。
+## Summary
 
-## 現在の問題とESLintルールの課題
+This document provides guidelines to prevent circular dependencies in a TypeScript project and to maintain a healthy architecture.
 
-### 問題点
+## Current problems and ESLint rule limitations
 
-1. **ディレクトリ間re-exportによる循環依存**: `kiwi/index.ts` が `model` をre-exportし、`model` が `kiwi` をインポートする循環
-2. **例外設定の手動管理**: 循環依存回避のためのESLint例外が特定ファイルにハードコード
-3. **依存関係の可視化不足**: どのモジュールがどれに依存しているか把握が困難
+### Issues
 
-### 現在のESLintルールの限界
+1. Re-exports across directories can create cycles: e.g. `kiwi/index.ts` re-exports from `model`, while `model` imports from `kiwi`.
+2. Manual exception management: ESLint exceptions for cycles are hard-coded for specific files.
+3. Lack of visibility into dependencies: it's hard to know which modules depend on others.
+
+### Current ESLint approach limitations
 
 ```javascript
-// 現在: 特定ファイルへの例外設定（手動管理）
+// Current: manual exceptions for specific files
 files: [
   "src/plugin/core/symbols/circle_symbol.ts",
   "src/plugin/uml/symbols/actor_symbol.ts", 
@@ -23,14 +25,11 @@ files: [
 ]
 ```
 
-この方式では：
-- 新しいファイルが追加される度に手動で例外を追加する必要
-- なぜそのファイルが例外なのかが明確でない
-- スケールしない
+This approach requires manual updates when new files are added, and reasons for exceptions are unclear, making it unscalable.
 
-## 新しいアプローチ：レイヤーベース設計
+## New approach: layer-based architecture
 
-### 1. アーキテクチャレイヤーの定義
+### 1. Define architecture layers
 
 ```
 Layer 4: DSL        (dsl/)
@@ -42,35 +41,34 @@ Layer 2: Model      (model/, hint/)
 Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 ```
 
-**ルール**: 上位レイヤーは下位レイヤーを依存できるが、下位レイヤーは上位レイヤーに依存してはならない。
+Rule: Higher layers may depend on lower layers, but lower layers must not depend on higher layers.
 
-### 2. レイヤー内循環依存の防止
+### 2. Prevent intra-layer cycles
 
-各レイヤー内でも循環依存を避ける：
+Avoid cycles within each layer.
 
 #### Core Layer (Layer 1)
-- `core/`: 型定義のみ、他への依存なし
-- `kiwi/`: `core/` のみ依存
-- `theme/`, `icon/`, `utils/`: `core/` のみ依存
+- `core/`: only type definitions, no external dependencies
+- `kiwi/`: depends only on `core/`
+- `theme/`, `icon/`, `utils/`: depend only on `core/`
 
-#### Model Layer (Layer 2)  
-- `model/`: `core/`, `kiwi/`, `theme/` に依存
-- `hint/`: `model/`, `kiwi/`, `core/` に依存
+#### Model Layer (Layer 2)
+- `model/`: depends on `core/`, `kiwi/`, `theme/`
+- `hint/`: depends on `model/`, `kiwi/`, `core/`
 
 #### Plugin Layer (Layer 3)
-- `plugin/`: 下位レイヤーすべてに依存可能
+- `plugin/`: may depend on lower layers
 
 #### DSL Layer (Layer 4)
-- `dsl/`: 全レイヤーに依存可能（kiwi/ への依存は DSL のみ許可）
+- `dsl/`: may depend on all layers (DSL-only dependency on `kiwi/` is allowed)
 
-### 3. 改善されたESLintルール設計
+### 3. Improved ESLint rule design
 
-#### A. レイヤーベースルール
+#### A. Layer-based rules
 
 ```javascript
-// 提案: レイヤーベースのルール
 const LAYER_RULES = {
-  'core/**': [], // 他レイヤーに依存禁止
+  'core/**': [], // cannot depend on other layers
   'kiwi/**': ['core/**'],
   'theme/**': ['core/**'], 
   'icon/**': ['core/**'],
@@ -83,12 +81,10 @@ const LAYER_RULES = {
 }
 ```
 
-#### B. レイヤー内循環検出
+#### B. Detect intra-layer cycles
 
 ```javascript
-// レイヤー内での循環依存も検出
 const INTRA_LAYER_RULES = {
-  // model内での循環を防ぐ
   'model/layout_context.ts': {
     forbidden: ['model/**'],
     exceptions: ['model/layout_variables.ts', 'model/hints.ts']
@@ -96,73 +92,77 @@ const INTRA_LAYER_RULES = {
 }
 ```
 
-## 実装ガイドライン
+## Implementation guidelines
 
-### 1. Index.tsのRe-export原則
+### 1. Principle for index.ts re-exports
 
-#### ✅ 推奨パターン
+✅ Recommended pattern:
 
 ```typescript
-// ✅ 同じディレクトリ内のexport
+// ✅ exports within the same directory
 export { SymbolBase } from "./symbol_base"
 export { DiagramSymbol } from "./diagram_symbol"
 
-// ✅ 下位レイヤーからのre-export  
+// ✅ re-exporting from lower layers as types or utilities
 export type { ILayoutSolver } from "../core"
 export { getBoundsValues } from "../core"
 ```
 
-#### ❌ 避けるべきパターン
+❌ Anti-patterns:
 
 ```typescript
-// ❌ 同等または上位レイヤーのre-export
+// ❌ re-export from equal or higher layers
 export { LayoutVariables } from "../model" // kiwi/ → model/
 
-// ❌ 循環を作るre-export
+// ❌ re-export causing cycles
 export { DiagramBuilder } from "../dsl" // model/ → dsl/ → model/
 ```
 
-### 2. 依存注入によるデカップリング
+### 2. Decoupling via dependency injection
 
-#### Before: 直接依存
+Before: direct dependency
 
 ```typescript
 export class LayoutContext {
   constructor(theme: Theme) {
-    this.solver = new KiwiSolver() // 直接依存
+    this.solver = new KiwiSolver() // direct dependency
   }
 }
 ```
 
-#### After: 依存注入
+After: injection
 
 ```typescript
 export class LayoutContext {
   constructor(solver: ILayoutSolver, theme: Theme) {
-    this.solver = solver // 注入された依存
+    this.solver = solver // injected dependency
   }
 }
 ```
 
-### 3. テスト設計パターン
+### 3. Test design patterns
+
+✅ Recommended: assemble dependencies explicitly
 
 ```typescript
-// ✅ 推奨: 依存を明示的に組み立て
 beforeEach(() => {
   const solver = new KiwiSolver()
   const context = new LayoutContext(solver, DefaultTheme)
   const symbols = new Symbols(context.variables)
 })
+```
 
-// ❌ 避ける: 内部で依存を隠蔽
+❌ Avoid: hiding dependencies
+
+```typescript
 beforeEach(() => {
-  const context = new LayoutContext(DefaultTheme) // 内部でsolver作成
+  const context = new LayoutContext(DefaultTheme) // creates solver internally
 })
 ```
 
-## ESLintルールの改善提案
+## ESLint rule improvements
 
-### 1. 新しいカスタムルール
+### 1. New custom rule
 
 ```javascript
 // eslint-rules/layer-dependency.js
@@ -186,16 +186,14 @@ function getLayerLevel(filePath) {
   return LAYERS[layerName] || 999
 }
 
-// 上位レイヤーから下位レイヤーへの依存のみ許可
 function validateLayerDependency(importerPath, importeePath) {
   const importerLayer = getLayerLevel(importerPath)
   const importeeLayer = getLayerLevel(importeePath)
-  
   return importerLayer >= importeeLayer
 }
 ```
 
-### 2. 設定ファイルの更新
+### 2. Config updates
 
 ```javascript
 export default [
@@ -205,62 +203,60 @@ export default [
       "@typescript-eslint": tseslint,
       local: {
         ...directoryEntryImport,
-        ...layerDependency // 新しいルール
+        ...layerDependency // new rule
       }
     },
     rules: {
       "local/require-directory-index-import": "error",
-      "local/no-layer-violation": "error", // 新しいルール
-      "local/no-intra-layer-cycle": "warn"  // 新しいルール
+      "local/no-layer-violation": "error", // new rule
+      "local/no-intra-layer-cycle": "warn"  // new rule
     }
   }
 ]
 ```
 
-## 移行戦略
+## Migration strategy
 
-### Phase 1: 現在の修正 ✅
-- [x] 即座の循環依存解決（今回のPR）
-- [x] LayoutVariablesのre-export削除
-- [x] 依存注入パターン導入
+### Phase 1: immediate fixes ✅
+- [x] Resolve immediate cycles (this PR)
+- [x] Remove LayoutVariables re-export
+- [x] Adopt dependency injection patterns
 
-### Phase 2: ルール拡張
-- [ ] レイヤーベースESLintルール実装
-- [ ] 依存関係可視化ツール追加
-- [ ] CI/CDでの循環依存検証強化
+### Phase 2: rule expansion
+- [ ] Implement layer-based ESLint rules
+- [ ] Add dependency visualization tooling
+- [ ] Enforce cycle checks in CI/CD
 
-### Phase 3: アーキテクチャ改善
-- [ ] 残りの循環依存解消
-- [ ] レイヤー境界の明確化
-- [ ] ドキュメント整備
+### Phase 3: architecture improvements
+- [ ] Remove remaining cycles
+- [ ] Clarify layer boundaries
+- [ ] Improve documentation
 
-## 運用ルール
+## Operating rules
 
-### 1. コードレビュー時のチェックポイント
+### 1. Review checklist
+- [ ] When adding re-exports to index.ts, check for cycles
+- [ ] Ensure constructors do not instantiate concrete classes directly
+- [ ] Tests follow dependency injection patterns
 
-- [ ] 新しいindex.tsにre-exportを追加する際は、循環依存チェック
-- [ ] クラスのコンストラクタで具象クラスを直接生成していないか確認
-- [ ] テストコードで依存注入パターンに従っているか確認
+### 2. New feature guidelines
+- [ ] Respect layer placement
+- [ ] Only depend from higher to lower layers
+- [ ] Extract interfaces when appropriate
 
-### 2. 新機能開発時の注意事項
+### 3. Refactoring guidance
+- [ ] Use dependency injection to resolve cycles
+- [ ] Re-exports only within same or lower layers
+- [ ] Separate responsibilities to clarify layer boundaries
 
-- [ ] レイヤー設計に従った配置
-- [ ] 上位レイヤーから下位レイヤーへの依存のみ
-- [ ] 必要に応じてインターフェース抽出
+## Summary
 
-### 3. リファクタリング時の指針
+This guideline aims to:
 
-- [ ] 循環依存がある場合は依存注入で解決
-- [ ] Re-exportは同等・下位レイヤーのみ
-- [ ] 責務分離によるレイヤー境界の明確化
+1. Prevent circular dependencies by design
+2. Provide scalable, layer-based verification
+3. Make dependency directions explicit
+4. Shift from manual exceptions to structural rules
 
-## まとめ
+This helps maintain a healthy, maintainable codebase over time.
 
-このガイドラインにより：
-
-1. **予防的**: 循環依存の発生を設計レベルで防止
-2. **スケーラブル**: レイヤーベースで自動的に検証
-3. **明確**: 依存関係の方向性が明示的
-4. **保守性**: 手動例外設定から構造的なルールへ
-
-健全なアーキテクチャを維持し、長期的にメンテナブルなコードベースを実現できます。

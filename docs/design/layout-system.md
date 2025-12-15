@@ -1,3 +1,5 @@
+[日本語](layout-system.ja.md) | English
+
 # Kiwumil レイアウトシステム設計書
 
 ## 概要
@@ -732,3 +734,191 @@ layoutContext.constraints.remove("constraints/user/0")
 - **[Namespace-based DSL](./namespace-dsl.md)** - DSL設計とAPI使い方
 - **[Plugin System](./plugin-system.md)** - プラグイン作成ガイド
 - **[Theme System](./theme-system.md)** - テーマシステムの設計
+
+
+---
+
+# Symbol を見ずに LayoutConstraints を運用する計画
+
+## ステータス: 完了 ✅
+
+本計画で提案されたレイアウト制約とシンボルの分離は完了しました。
+
+## 実装内容
+
+### 1. Bounds に BoundId を追加
+
+`src/core/bounds.ts` で `BoundId` を型として定義し、ブランド化を削除:
+
+```typescript
+export type BoundId = string
+
+export interface Bounds {
+  readonly type: BoundsType
+  readonly x: ILayoutVariable
+  readonly y: ILayoutVariable
+  readonly width: ILayoutVariable
+  readonly height: ILayoutVariable
+  readonly right: ILayoutVariable
+  readonly bottom: ILayoutVariable
+  readonly centerX: ILayoutVariable
+  readonly centerY: ILayoutVariable
+}
+```
+
+### 2. HintTarget の導入
+
+`src/core/hint_target.ts` に `HintTarget` インターフェースを配置 (旧 `LayoutConstraintTarget`):
+
+```typescript
+export interface HintTarget {
+  ownerId: SymbolId
+  layout: LayoutBounds
+  container?: ContainerBounds
+}
+```
+
+### 3. ILayoutVariable への統一
+
+すべての `Bounds` プロパティが `ILayoutVariable` インターフェースを使用:
+
+- 具象 `LayoutVariable` クラスへの直接依存を排除
+- `src/core` のインターフェースのみに依存
+
+## 完了した実装
+
+| 領域 | 実装内容 |
+| --- | --- |
+| Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `ILayoutVariable` を使用。 |
+| HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`layout`、`container` を保持。 |
+| LayoutConstraints | `HintTarget` を活用し、Bounds ベースでの制約構築を実現。 |
+
+## 得られたメリット
+
+1. **依存性の逆転**: 制約レイヤーが具象型ではなくインターフェースに依存
+2. **型安全性の向上**: コンパイル時の型チェックが強化
+3. **アーキテクチャの明確化**: `src/core` で公開API、`src/kiwi` で実装という明確な境界
+4. **循環依存の排除**: コア型定義が実装から分離
+
+## 関連変更
+
+- `LayoutVariable` → `ILayoutVariable` への統一
+- `LayoutConstraintTarget` → `HintTarget` への名前変更
+- `BoundId` のブランド化削除 (単純な `string` 型に)
+
+
+---
+
+# Layout Constraints Fluent Builder Migration
+
+## Context
+
+- The new `ConstraintsBuilder` (per [docs/draft/new_constraint_builder.md](../draft/new_constraint_builder.md)) is already wired into parts of `LayoutConstraints`, but several helpers, hints, and exported types still rely on `KiwiSolver.addConstraint`/`.expression` or legacy type wrappers.
+- Keeping these old pathways prolongs the `KiwiSolver` surface, encourages duplicated expression logic, and pits downstream consumers (hints, tests, docs) against both the old and new APIs.
+- We need a written migration plan to ensure the remaining pieces adopt the fluent builder before removing the old exports and solver helpers.
+
+## Objectives
+
+1. Ensure every constraint-producing helper in `src/kiwi` (constraints utilities, hint builders, layout helpers) issues constraints exclusively through `ConstraintsBuilder`.
+2. Eliminate unused Kiwi/Wrapping exports (`LayoutTerm`, `LayoutExpression`, solver expression helpers, etc.) without regressing any consumer expectations.
+3. Capture the migration sequence, acceptance criteria, and testing steps so the team can coordinate multiple commits safely.
+
+## Migration Plan
+
+### 1. Finish migrating `LayoutConstraints` helpers
+
+- **Steps**: Confirm that `arrange*`, `align*`, `enclose*`, and other utility methods build every constraint using a `ConstraintsBuilder` instance, collect the generated `rawConstraints`, and keep constraint metadata unchanged. Document the required builder flow (e.g., `expr(...).eq(...).strong()` for equality, `.ge()`/`.le()` for inequalities).
+- **Acceptance**: Each helper uses `createConstraintsBuilder()` rather than `KiwiSolver.expression`/`.addConstraint`, the `rawConstraints` recorded by `record()` still match their previous counts, and `LayoutConstraintType`/`strength` mappings are unchanged.
+
+### 2. Rewire `LayoutContext`/hint layers and tests
+
+- **Steps**:
+  1. Provide a safe way to create builders (e.g., `LayoutContext.createConstraintsBuilder()`), remove the `getSolver()` accessor, and drop direct solver usage from guides/tests.
+  2. Update `guide_builder` methods to instantiate a fresh builder for each constraint, chain the fluent API, and finalize with the appropriate strength.
+  3. Adjust tests (`bounds_validation`, `layout_variables`, builder unit tests, etc.) to use the new API, rely on `context.solve()` instead of `context.solver.updateVariables()`, and remove references to Kiwi operators or strengths when possible.
+- **Acceptance**: No file outside `constraints_builder` calls `KiwiSolver.addConstraint`/`.expression`, guides/tests no longer rely on `LayoutContext.getSolver()` or private solver fields, and existing coverage still passes.
+
+### 3. Prune legacy exports and re-export the new API consistently
+
+- **Steps**:
+  1. Remove unused Kiwi wrappers (`LayoutTerm`, `LayoutExpression`, `toKiwiExpression`, etc.) and re-export only the new `LayoutConstraintStrength`/`Operator` constants from `layout_constraints`.
+  2. Update `src/index.ts` to surface the cleaned exports. Keep the exported `ConstraintsBuilder` handy for downstream consumers.
+  3. Review `src/kiwi` exports for duplicates and ensure no stray `kiwi` imports remain.
+- **Acceptance**: Only necessary types remain exported, public types align with `ConstraintsBuilder`, and ABI-compatible coverage (lint, tests, docs) stays green.
+
+## Testing & Verification
+
+- `bun test` (the full suite, including `constraints_builder.test.ts` + domain tests).
+- `bun run lint` (fix remaining `@typescript-eslint/no-unused-vars` warnings as part of the cleanup).
+- `tsc --noEmit` (already part of `bun test:types`, but re-run if necessary).
+
+## Risks & Notes
+
+- Removing `KiwiSolver` helpers must happen only after all consumers adopt the builder; this document is a guardrail before the final cut.
+- Builder-based APIs replace Kiwi expressions but still produce `kiwi.Constraint` internally, so existing `rawConstraints` checks should continue to pass.
+
+
+---
+
+# Fluent 制約ビルダー移行計画
+
+## ステータス: 完了 ✅
+
+本計画で提案された `IConstraintsBuilder` インターフェースの抽出と、型の整理は完了しました。
+
+## 実装内容
+
+### 1. インターフェース抽出
+
+`src/core/constraints_builder.ts` に以下のコアインターフェースを配置:
+
+```typescript
+export interface IConstraintsBuilder {
+  eq(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
+  ge(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
+  le(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
+}
+
+export type Term = ILayoutVariable | number
+export type ConstraintSpec = (builder: IConstraintsBuilder) => void
+```
+
+### 2. 型の標準化
+
+- `ConstraintStrength`: `"required" | "strong" | "medium" | "weak"`
+- `ISuggestHandle`: 旧 `SuggestHandle` から名前変更
+- `ISuggestHandleFactory`: 旧 `SuggestHandleFactory` から名前変更
+- `ILayoutVariable`: 旧 `LayoutVariable<T>` から型パラメータを削除
+
+### 3. シンボル実装の更新
+
+すべてのシンボルクラス (`SymbolBase` およびその派生クラス) が `ensureLayoutBounds(builder: IConstraintsBuilder)` メソッドを実装:
+
+```typescript
+export abstract class SymbolBase {
+  ensureLayoutBounds(builder: IConstraintsBuilder): void {
+    // 各シンボルが固有の制約を追加
+  }
+}
+```
+
+### 4. アーキテクチャの改善
+
+- **依存性の逆転**: `src/kiwi` の具象クラスではなく `src/core` のインターフェースに依存
+- **循環依存の解消**: `src/core` が型定義のみを持ち、実装から分離
+- **型安全性の向上**: すべての公開APIがインターフェースベース
+
+## 移行完了項目
+
+- [x] `IConstraintsBuilder` インターフェースの抽出と `src/core` への配置
+- [x] `Term` と `ConstraintSpec` の `src/core` への移動
+- [x] `ConstraintStrength` への名前変更と `"required"` の追加
+- [x] `ISuggestHandle` / `ISuggestHandleFactory` への名前変更
+- [x] すべてのシンボル実装で `IConstraintsBuilder` を使用
+- [x] テストの更新と検証 (129 tests pass)
+
+## 参照
+
+- `src/core/constraints_builder.ts` - コアインターフェース定義
+- `src/kiwi/constraints_builder.ts` - 具象実装
+- `src/model/symbol_base.ts` - シンボル基底クラス

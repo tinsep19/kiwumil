@@ -1,6 +1,6 @@
-# Namespace-Based DSL Architecture
+[English](namespace-dsl.md) | 日本語
 
-[English](./namespace-dsl.md) | 日本語
+# 名前空間ベース DSL アーキテクチャ
 
 ## 概要
 

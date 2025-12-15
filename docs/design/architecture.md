@@ -1,3 +1,31 @@
+[日本語](architecture.ja.md) | English
+
+# Architecture Overview
+
+Kiwumil is layered to avoid circular dependencies and to keep the codebase maintainable. The recommended layer structure is:
+
+```
+Layer 4: DSL        (dsl/)
+   ↓
+Layer 3: Plugins    (plugin/)
+   ↓
+Layer 2: Model      (model/, hint/)
+   ↓
+Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+```
+
+Rules:
+- Higher layers may depend on lower layers, but lower layers must not depend on higher layers.
+
+Within-layer dependencies:
+- `core/` provides only interfaces and type definitions.
+- `kiwi/` depends on `core/`, but is placed here as a default implementation of a replaceable solver.
+- layer-based ESLint rule implementation guidance.
+
+See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependency-prevention.md) 
+
+---
+
 # 依存整理の計画
 
 ## ステータス: 大幅に完了 ✅
