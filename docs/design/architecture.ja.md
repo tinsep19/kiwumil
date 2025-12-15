@@ -16,14 +16,11 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 
 ルール:
 - 上位レイヤーは下位レイヤーに依存可能だが、下位レイヤーは上位レイヤーに依存してはいけない。
-- re-export は同一ディレクトリか下位レイヤーの項目に限定し、循環を防ぐ。
-
-同一レイヤー内の依存関係:
+- `core/` はインターフェースと型定義のみを提供する。
 - `kiwi/` は `core/` に依存しているが、これは差替可能なソルバーのデフォルト実装としてここに置いている。
-- `core/` はインターフェースと型定義のみを提供し、`kiwi/` がその具象実装を提供する。
+- これらのルールはレイヤーに基づく ESLint ルール によるガードレールが提供されています。
 
-詳細は `docs/guidelines/circular-dependency-prevention.md` を参照してください（レイヤーに基づく ESLint ルール案などを含む）。
-
+詳細は [循環依存防止ガイドライン](../guidelines/circular-dependency-prevention.ja.md) を参照してください。
 
 ---
 
