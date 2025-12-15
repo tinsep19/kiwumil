@@ -17,8 +17,12 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 Rules:
 - Higher layers may depend on lower layers, but lower layers must not depend on higher layers.
 
-See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependency-prevention.md) for the layer-based ESLint rule proposals and implementation guidance.
+Within-layer dependencies:
+- `core/` provides only interfaces and type definitions.
+- `kiwi/` depends on `core/`, but is placed here as a default implementation of a replaceable solver.
+- layer-based ESLint rule implementation guidance.
 
+See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependency-prevention.md) 
 
 ---
 

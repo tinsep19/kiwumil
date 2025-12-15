@@ -16,9 +16,11 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 
 ルール:
 - 上位レイヤーは下位レイヤーに依存可能だが、下位レイヤーは上位レイヤーに依存してはいけない。
+- `core/` はインターフェースと型定義のみを提供する。
+- `kiwi/` は `core/` に依存しているが、これは差替可能なソルバーのデフォルト実装としてここに置いている。
+- これらのルールはレイヤーに基づく ESLint ルール によるガードレールが提供されています。
 
-詳細は [循環依存防止ガイドライン](../guidelines/circular-dependency-prevention.ja.md) を参照してください（レイヤーに基づく ESLint ルール案などを含む）。
-
+詳細は [循環依存防止ガイドライン](../guidelines/circular-dependency-prevention.ja.md) を参照してください。
 
 ---
 
