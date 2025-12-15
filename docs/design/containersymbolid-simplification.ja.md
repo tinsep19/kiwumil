@@ -89,4 +89,4 @@ const id = symbolId
 - `src/model/container_symbol.ts`: 関数削除
 - `src/dsl/symbol_helpers.ts`: 関数削除
 - `src/index.ts`: export 削除
-- `docs/devlog/2025-12-09-remove-containersymbolid-branding.md`: 実装ログ
+- [docs/devlog/2025-12-09-remove-containersymbolid-branding.md](../devlog/2025-12-09-remove-containersymbolid-branding.md): 実装ログ

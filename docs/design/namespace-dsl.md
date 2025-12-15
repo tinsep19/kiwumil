@@ -2,8 +2,6 @@
 
 # Namespace-Based DSL Architecture
 
-[日本語](./namespace-dsl.ja.md) | English
-
 ## Overview
 
 kiwumil creates diagrams using a type-safe DSL with namespaces for each plugin. Each plugin provides its own Symbols and Relationships, realizing an intuitive API complemented by IntelliSense.

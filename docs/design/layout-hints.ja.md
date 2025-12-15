@@ -635,8 +635,6 @@ baseline.alignBottom(subtitle, date)  // 他のテキストも揃える
 
 ---
 
-[English](layout-hints.md) | 日本語
-
 # HintFactory の配置と layout hint の拡張性に関する設計メモ
 
 目的
@@ -736,8 +734,6 @@ class LayoutContext {
 
 
 ---
-
-[English](hints-symbols-hintfactory.md) | 日本語
 
 # DESIGN: Hints / Symbols / HintFactory の設計
 
