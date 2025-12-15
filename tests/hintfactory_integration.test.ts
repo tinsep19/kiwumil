@@ -23,12 +23,12 @@ describe("HintFactory with Hints integration", () => {
       const bound = r.createBounds("layout", "layout")
       const rect = new RectangleSymbol({
         id: symbolId,
-        layout: bound,
+        bounds: bound,
         label: id,
         theme: DefaultTheme,
       })
       r.setSymbol(rect)
-      r.setCharacs({ id: symbolId, layout: bound })
+      r.setCharacs({ id: symbolId, bounds: bound })
       r.setConstraint((builder) => {
         rect.ensureLayoutBounds(builder)
       })
@@ -47,8 +47,8 @@ describe("HintFactory with Hints integration", () => {
     context.solveAndApply([rect1, rect2])
 
     // Both rectangles should be aligned to the guide at x=100
-    expect(context.valueOf(rect1.layout.x)).toBeCloseTo(100, 1)
-    expect(context.valueOf(rect2.layout.x)).toBeCloseTo(100, 1)
+    expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(100, 1)
+    expect(context.valueOf(rect2.bounds.x)).toBeCloseTo(100, 1)
   })
 
   test("Hints tracks variables created by GuideBuilder", () => {
@@ -80,7 +80,7 @@ describe("HintFactory with Hints integration", () => {
     expect(uniqueNames.size).toBe(names.length)
   })
 
-  test("Hint variables work with Symbol layout", () => {
+  test("Hint variables work with Symbol bounds", () => {
     const rect1 = createRectangle("rect1")
     const rect2 = createRectangle("rect2")
     const rect3 = createRectangle("rect3")
@@ -96,13 +96,13 @@ describe("HintFactory with Hints integration", () => {
     context.solveAndApply([rect1, rect2, rect3])
 
     // All rectangles should be at the guide positions
-    expect(context.valueOf(rect1.layout.x)).toBeCloseTo(50, 1)
-    expect(context.valueOf(rect2.layout.x)).toBeCloseTo(50, 1)
-    expect(context.valueOf(rect3.layout.x)).toBeCloseTo(50, 1)
+    expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(50, 1)
+    expect(context.valueOf(rect2.bounds.x)).toBeCloseTo(50, 1)
+    expect(context.valueOf(rect3.bounds.x)).toBeCloseTo(50, 1)
     
-    expect(context.valueOf(rect1.layout.y)).toBeCloseTo(200, 1)
-    expect(context.valueOf(rect2.layout.y)).toBeCloseTo(200, 1)
-    expect(context.valueOf(rect3.layout.y)).toBeCloseTo(200, 1)
+    expect(context.valueOf(rect1.bounds.y)).toBeCloseTo(200, 1)
+    expect(context.valueOf(rect2.bounds.y)).toBeCloseTo(200, 1)
+    expect(context.valueOf(rect3.bounds.y)).toBeCloseTo(200, 1)
   })
 
   test("Hint variables have proper naming convention", () => {
@@ -138,7 +138,7 @@ describe("HintFactory with Hints integration", () => {
     // Use the anchor in a constraint
     context.createConstraint("anchor/rect1", (builder) => {
       builder
-        .expr([1, rect1.layout.x])
+        .expr([1, rect1.bounds.x])
         .eq([1, anchor.variable])
         .strong()
     })
@@ -153,6 +153,6 @@ describe("HintFactory with Hints integration", () => {
     
     context.solveAndApply([rect1])
     
-    expect(context.valueOf(rect1.layout.x)).toBeCloseTo(150, 1)
+    expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(150, 1)
   })
 })

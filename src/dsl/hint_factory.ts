@@ -172,8 +172,8 @@ export class HintFactory {
     if (!symbol) return undefined
     const container = this.isContainerSymbol(symbol) ? symbol.container : undefined
     return {
-      boundId: symbol.layout.boundId,
-      layout: symbol.layout,
+      boundId: symbol.bounds.boundId,
+      bounds: symbol.bounds,
       container,
     }
   }

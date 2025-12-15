@@ -61,7 +61,7 @@ export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
  */
 export interface HintTarget {
   readonly boundId: BoundId
-  readonly layout: LayoutBounds
+  readonly bounds: LayoutBounds
   readonly container?: ContainerBounds
 }
 

@@ -5,18 +5,18 @@ import type { LinearConstraintBuilder, LayoutBounds } from "../core"
 
 export interface SymbolBaseOptions {
   id: SymbolId
-  layout: LayoutBounds
+  bounds: LayoutBounds
   theme: Theme
 }
 
 export abstract class SymbolBase implements ISymbol {
   readonly id: SymbolId
-  readonly layout: LayoutBounds
+  readonly bounds: LayoutBounds
   protected readonly theme: Theme
 
   constructor(options: SymbolBaseOptions) {
     this.id = options.id
-    this.layout = options.layout
+    this.bounds = options.bounds
     this.theme = options.theme
   }
 

@@ -22,7 +22,7 @@ Automatic layout yields readable diagrams but not always visually tidy. Small di
 
 ### Characs
 
-Each Symbol exposes `characs.layout` as the canonical layout surface. Characs act as semantic anchors (e.g. `icon.center`, `stereotype.top`) that hint at what should be aligned without exposing raw variables.
+Each Symbol exposes `characs.bounds` as the canonical layout surface. Characs act as semantic anchors (e.g. `icon.center`, `stereotype.top`) that hint at what should be aligned without exposing raw variables.
 
 ### Hint API
 

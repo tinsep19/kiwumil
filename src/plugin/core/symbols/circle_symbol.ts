@@ -33,7 +33,7 @@ export class CircleSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -54,7 +54,7 @@ export class CircleSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -98,7 +98,7 @@ export class CircleSymbol extends SymbolBase {
     // r = min(width, height) / 2
     // Since we can't express min() directly in constraints, we'll use:
     // r * 2 <= width and r * 2 <= height
-    const { width, height } = this.layout
+    const { width, height } = this.bounds
     builder.expr([2, this.r]).le([1, width])
     builder.expr([2, this.r]).le([1, height])
   }

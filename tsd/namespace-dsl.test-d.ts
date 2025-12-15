@@ -23,8 +23,8 @@ import {
 class TestSymbol extends SymbolBase {
   readonly label: string
 
-  constructor(id: SymbolId, label: string, layout: LayoutBounds) {
-    super({ id, layout, theme: DefaultTheme })
+  constructor(id: SymbolId, label: string, bounds: LayoutBounds) {
+    super({ id, bounds, theme: DefaultTheme })
     this.label = label
   }
 
@@ -66,7 +66,7 @@ const CustomPlugin = {
           const bound = r.createBounds("layout", "layout")
           const testSymbol = new TestSymbol(symbolId, label, bound)
           r.setSymbol(testSymbol)
-          r.setCharacs({ id: symbolId, layout: bound })
+          r.setCharacs({ id: symbolId, bounds: bound })
           r.setConstraint((builder) => {
             testSymbol.ensureLayoutBounds(builder)
           })

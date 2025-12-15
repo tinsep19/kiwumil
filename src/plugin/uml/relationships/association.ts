@@ -20,8 +20,8 @@ export class Association extends RelationshipBase {
       throw new Error(`Association endpoints not found or not positioned`)
     }
 
-    const fromBounds = getBoundsValues(fromSymbol.layout)
-    const toBounds = getBoundsValues(toSymbol.layout)
+    const fromBounds = getBoundsValues(fromSymbol.bounds)
+    const toBounds = getBoundsValues(toSymbol.bounds)
 
     const fromCenter = {
       x: fromBounds.x + fromBounds.width / 2,

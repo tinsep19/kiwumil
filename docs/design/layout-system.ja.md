@@ -773,7 +773,7 @@ export interface Bounds {
 ```typescript
 export interface HintTarget {
   ownerId: SymbolId
-  layout: LayoutBounds
+  bounds: LayoutBounds
   container?: ContainerBounds
 }
 ```
@@ -790,7 +790,7 @@ export interface HintTarget {
 | 領域 | 実装内容 |
 | --- | --- |
 | Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `ILayoutVariable` を使用。 |
-| HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`layout`、`container` を保持。 |
+| HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`bounds`、`container` を保持。 |
 | LayoutConstraints | `HintTarget` を活用し、Bounds ベースでの制約構築を実現。 |
 
 ## 得られたメリット

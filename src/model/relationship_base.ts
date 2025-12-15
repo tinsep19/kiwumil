@@ -32,13 +32,13 @@ export abstract class RelationshipBase {
     // Read z from layout.z via getBoundsValues, default to 0 if not available or not finite
     let fromZ = 0
     if (fromSymbol) {
-      const fromBounds = getBoundsValues(fromSymbol.layout)
+      const fromBounds = getBoundsValues(fromSymbol.bounds)
       fromZ = Number.isFinite(fromBounds.z) ? fromBounds.z : 0
     }
 
     let toZ = 0
     if (toSymbol) {
-      const toBounds = getBoundsValues(toSymbol.layout)
+      const toBounds = getBoundsValues(toSymbol.bounds)
       toZ = Number.isFinite(toBounds.z) ? toBounds.z : 0
     }
 

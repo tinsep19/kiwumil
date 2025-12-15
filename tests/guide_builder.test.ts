@@ -24,12 +24,12 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const bound = r.createBounds("layout", "layout")
       const actor = new ActorSymbol({
         id: symbolId,
-        layout: bound,
+        bounds: bound,
         label: id,
         theme: DefaultTheme,
       })
       r.setSymbol(actor)
-      r.setCharacs({ id: symbolId, layout: bound })
+      r.setCharacs({ id: symbolId, bounds: bound })
       r.setConstraint((builder) => {
         actor.ensureLayoutBounds(builder)
       })
@@ -47,8 +47,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.x).toBeCloseTo(100)
       expect(bBounds.x).toBeCloseTo(100)
     })
@@ -62,8 +62,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.x + aBounds.width).toBeCloseTo(200)
       expect(bBounds.x + bBounds.width).toBeCloseTo(200)
     })
@@ -77,8 +77,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.x + aBounds.width / 2).toBeCloseTo(150)
       expect(bBounds.x + bBounds.width / 2).toBeCloseTo(150)
     })
@@ -93,8 +93,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.x).toBeCloseTo(bBounds.x)
     })
 
@@ -107,8 +107,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       // Should be arranged vertically
       expect(bBounds.y).toBeCloseTo(
         aBounds.y + aBounds.height + DefaultTheme.defaultStyleSet.verticalGap
@@ -146,8 +146,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.y).toBeCloseTo(50)
       expect(bBounds.y).toBeCloseTo(50)
     })
@@ -161,8 +161,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.y + aBounds.height).toBeCloseTo(200)
       expect(bBounds.y + bBounds.height).toBeCloseTo(200)
     })
@@ -176,8 +176,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.y + aBounds.height / 2).toBeCloseTo(100)
       expect(bBounds.y + bBounds.height / 2).toBeCloseTo(100)
     })
@@ -192,8 +192,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       expect(aBounds.y).toBeCloseTo(bBounds.y)
     })
 
@@ -206,8 +206,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       // Should be arranged horizontally
       expect(bBounds.x).toBeCloseTo(
         aBounds.x + aBounds.width + DefaultTheme.defaultStyleSet.horizontalGap
@@ -260,8 +260,8 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
       context.solveAndApply(symbols.getAllSymbols())
 
-      const aBounds = getBoundsValues(a.layout)
-      const bBounds = getBoundsValues(b.layout)
+      const aBounds = getBoundsValues(a.bounds)
+      const bBounds = getBoundsValues(b.bounds)
       const guideValue = context.valueOf(guide.y)
       expect(aBounds.y).toBeCloseTo(guideValue)
       expect(bBounds.y + bBounds.height).toBeCloseTo(guideValue)

@@ -47,7 +47,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
   }
 
   private buildContainerConstraints(builder: LinearConstraintBuilder): void {
-    const bounds = this.layout
+    const bounds = this.bounds
     const theme = this.theme
     const padding = this.getContainerPadding(theme)
     const header = this.getHeaderHeight(theme)
@@ -72,7 +72,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
       .strong()
   }
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -103,7 +103,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     if (this.constraintsApplied) {
       return
     }
-    const bounds = this.layout
+    const bounds = this.bounds
     const helper = new ConstraintHelper(builder)
     
     // Align z values between layout and container
@@ -115,7 +115,7 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const style = this.theme
       ? getStyleForSymbol(this.theme, "systemBoundary")

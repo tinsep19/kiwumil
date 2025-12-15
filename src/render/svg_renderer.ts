@@ -37,7 +37,7 @@ export class SvgRenderer {
 
   private calculateSymbolZIndex(symbol: SymbolBase): number {
     // Read z from layout.z via getBoundsValues, default to 0 if not finite
-    const bounds = getBoundsValues(symbol.layout)
+    const bounds = getBoundsValues(symbol.bounds)
     const z = Number.isFinite(bounds.z) ? bounds.z : 0
 
     if (symbol.constructor.name === "SystemBoundarySymbol") {
@@ -82,7 +82,7 @@ export class SvgRenderer {
     const maxBoundsSize = 10000 // bounds の最大有効サイズ
 
     for (const symbol of this.symbols) {
-      const bounds = getBoundsValues(symbol.layout)
+      const bounds = getBoundsValues(symbol.bounds)
       // 極端に小さい、大きい、または不正な値をチェック
       if (
         bounds.width < minBoundsSize ||
@@ -104,7 +104,7 @@ export class SvgRenderer {
     let diagramHeight: number | undefined
     for (const symbol of this.symbols) {
       if (symbol instanceof DiagramSymbol) {
-        const bounds = getBoundsValues(symbol.layout)
+        const bounds = getBoundsValues(symbol.bounds)
         diagramWidth = bounds.width
         diagramHeight = bounds.height
         break
@@ -138,7 +138,7 @@ export class SvgRenderer {
       let maxX = 0
       let maxY = 0
       for (const symbol of this.symbols) {
-        const bounds = getBoundsValues(symbol.layout)
+        const bounds = getBoundsValues(symbol.bounds)
         maxX = Math.max(maxX, bounds.x + bounds.width)
         maxY = Math.max(maxY, bounds.y + bounds.height)
       }

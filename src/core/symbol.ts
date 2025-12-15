@@ -16,11 +16,11 @@ export interface ISymbol {
 
 /**
  * ISymbolCharacs: シンボルに付随するレイアウト情報群
- * 必須で id と layout は含む。その他の key は ContainerBounds | ItemBounds | LayoutVariable
+ * 必須で id と bounds は含む。その他の key は ContainerBounds | ItemBounds | LayoutVariable
  */
 export type ISymbolCharacs = {
   id: SymbolId
-  layout: LayoutBounds
+  bounds: LayoutBounds
   [key: string]: SymbolId | LayoutBounds | ContainerBounds | ItemBounds | LayoutVariable | undefined
 }
 

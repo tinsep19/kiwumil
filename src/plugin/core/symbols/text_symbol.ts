@@ -105,7 +105,7 @@ export class TextSymbol extends SymbolBase {
   }
 
   getConnectionPoint(from: Point): Point {
-    const { x, y, width, height } = getBoundsValues(this.layout)
+    const { x, y, width, height } = getBoundsValues(this.bounds)
 
     const cx = x + width / 2
     const cy = y + height / 2
@@ -129,7 +129,7 @@ export class TextSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width } = getBoundsValues(this.layout)
+    const { x, y, width } = getBoundsValues(this.bounds)
 
     const style = this.getStyle()
     const lines = this.getLines()

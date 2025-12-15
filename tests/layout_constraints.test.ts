@@ -23,12 +23,12 @@ describe("LayoutConstraints metadata", () => {
       const bound = r.createBounds("layout", "layout")
       const actor = new ActorSymbol({
         id: symbolId,
-        layout: bound,
+        bounds: bound,
         label: id,
         theme: DefaultTheme,
       })
       r.setSymbol(actor)
-      r.setCharacs({ id: symbolId, layout: bound })
+      r.setCharacs({ id: symbolId, bounds: bound })
       r.setConstraint((builder) => {
         actor.ensureLayoutBounds(builder)
       })
@@ -42,13 +42,13 @@ describe("LayoutConstraints metadata", () => {
       const container = r.createBounds("container", "container")
       const boundary = new SystemBoundarySymbol({
         id: symbolId,
-        layout: bound,
+        bounds: bound,
         container,
         label: id,
         theme: DefaultTheme,
       })
       r.setSymbol(boundary)
-      r.setCharacs({ id: symbolId, layout: bound, container })
+      r.setCharacs({ id: symbolId, bounds: bound, container })
       r.setConstraint((builder) => {
         boundary.ensureLayoutBounds(builder)
       })

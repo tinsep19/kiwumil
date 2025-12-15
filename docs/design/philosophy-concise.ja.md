@@ -22,7 +22,7 @@ PlantUML や Mermaid は、意味記述から図を生成する点で有効で�
 
 ### Characs の役割
 
-各 Symbol は `characs.layout` を持ち、Characs は `icon.center` や `stereotype.top` のような意味付きアンカーとして機能します。数値ではなく「何を揃えるか」を表現します。
+各 Symbol は `characs.bounds` を持ち、Characs は `icon.center` や `stereotype.top` のような意味付きアンカーとして機能します。数値ではなく「何を揃えるか」を表現します。
 
 ### Hint API の思想
 

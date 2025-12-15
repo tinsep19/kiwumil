@@ -79,8 +79,8 @@ export class Hints {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
         const next = targets[i + 1]!
-        const aBounds = current.layout
-        const bBounds = next.layout
+        const aBounds = current.bounds
+        const bBounds = next.bounds
 
         builder
           .expr([1, bBounds.x])
@@ -98,8 +98,8 @@ export class Hints {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
         const next = targets[i + 1]!
-        const aBounds = current.layout
-        const bBounds = next.layout
+        const aBounds = current.bounds
+        const bBounds = next.bounds
 
         builder
           .expr([1, bBounds.y])
@@ -114,11 +114,11 @@ export class Hints {
 
   alignLeft(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignLeft", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder.expr([1, bounds.x]).eq([1, refBounds.x]).strong()
       }
     })
@@ -129,11 +129,11 @@ export class Hints {
 
   alignRight(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignRight", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder
           .expr([1, bounds.x], [1, bounds.width])
           .eq([1, refBounds.x], [1, refBounds.width])
@@ -147,11 +147,11 @@ export class Hints {
 
   alignTop(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignTop", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder.expr([1, bounds.y]).eq([1, refBounds.y]).strong()
       }
     })
@@ -162,11 +162,11 @@ export class Hints {
 
   alignBottom(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignBottom", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder
           .expr([1, bounds.y], [1, bounds.height])
           .eq([1, refBounds.y], [1, refBounds.height])
@@ -180,11 +180,11 @@ export class Hints {
 
   alignCenterX(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignCenterX", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder
           .expr(
             [1, bounds.x],
@@ -204,11 +204,11 @@ export class Hints {
 
   alignCenterY(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignCenterY", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder
           .expr(
             [1, bounds.y],
@@ -228,11 +228,11 @@ export class Hints {
 
   alignWidth(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignWidth", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder.expr([1, bounds.width]).eq([1, refBounds.width]).strong()
       }
     })
@@ -243,11 +243,11 @@ export class Hints {
 
   alignHeight(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length === 0) return null
-    const refBounds = targets[0]!.layout
+    const refBounds = targets[0]!.bounds
 
     const constraint = this.solver.createConstraint("constraints/alignHeight", (builder) => {
       for (const target of targets.slice(1)) {
-        const bounds = target.layout
+        const bounds = target.bounds
         builder.expr([1, bounds.height]).eq([1, refBounds.height]).strong()
       }
     })
@@ -262,11 +262,11 @@ export class Hints {
   }
 
   enclose(container: HintTarget, childTargets: HintTarget[]): LayoutConstraint {
-    const containerBounds = container.container ?? container.layout
+    const containerBounds = container.container ?? container.bounds
 
     const constraint = this.solver.createConstraint("constraints/enclose", (builder) => {
       for (const child of childTargets) {
-        const childBounds = child.layout
+        const childBounds = child.bounds
 
         builder
           .expr([1, childBounds.x])
@@ -394,8 +394,8 @@ export class Hints {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
         const next = targets[i + 1]!
-        const currentBounds = current.layout
-        const nextBounds = next.layout
+        const currentBounds = current.bounds
+        const nextBounds = next.bounds
 
         builder
           .expr([1, nextBounds.x])
@@ -418,8 +418,8 @@ export class Hints {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
         const next = targets[i + 1]!
-        const currentBounds = current.layout
-        const nextBounds = next.layout
+        const currentBounds = current.bounds
+        const nextBounds = next.bounds
 
         builder
           .expr([1, nextBounds.y])
@@ -436,10 +436,10 @@ export class Hints {
   private createAlignCenterXConstraints(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length < 2) return null
 
-    const firstBounds = targets[0]!.layout
+    const firstBounds = targets[0]!.bounds
     return this.solver.createConstraint("constraints/alignCenterX", (builder) => {
       for (let i = 1; i < targets.length; i++) {
-        const currentBounds = targets[i]!.layout
+        const currentBounds = targets[i]!.bounds
 
         builder
           .expr([1, currentBounds.x], [0.5, currentBounds.width])
@@ -452,10 +452,10 @@ export class Hints {
   private createAlignRightConstraints(targets: HintTarget[]): LayoutConstraint | null {
     if (targets.length < 2) return null
 
-    const firstBounds = targets[0]!.layout
+    const firstBounds = targets[0]!.bounds
     return this.solver.createConstraint("constraints/alignRight", (builder) => {
       for (let i = 1; i < targets.length; i++) {
-        const currentBounds = targets[i]!.layout
+        const currentBounds = targets[i]!.bounds
 
         builder
           .expr([1, currentBounds.x], [1, currentBounds.width])
