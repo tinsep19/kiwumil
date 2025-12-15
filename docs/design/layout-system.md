@@ -813,7 +813,7 @@ export interface HintTarget {
 
 ## Context
 
-- The new `ConstraintsBuilder` (per `docs/draft/new_constraint_builder.md`) is already wired into parts of `LayoutConstraints`, but several helpers, hints, and exported types still rely on `KiwiSolver.addConstraint`/`.expression` or legacy type wrappers.
+- The new `ConstraintsBuilder` (per [docs/draft/new_constraint_builder.md](../draft/new_constraint_builder.md)) is already wired into parts of `LayoutConstraints`, but several helpers, hints, and exported types still rely on `KiwiSolver.addConstraint`/`.expression` or legacy type wrappers.
 - Keeping these old pathways prolongs the `KiwiSolver` surface, encourages duplicated expression logic, and pits downstream consumers (hints, tests, docs) against both the old and new APIs.
 - We need a written migration plan to ensure the remaining pieces adopt the fluent builder before removing the old exports and solver helpers.
 

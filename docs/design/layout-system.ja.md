@@ -813,7 +813,7 @@ export interface HintTarget {
 
 ## 背景
 
-- `docs/draft/new_constraint_builder.md` に従って `ConstraintsBuilder` を導入済みですが、まだ `KiwiSolver.addConstraint`/`.expression` や旧来の型ラッパーを使って制約を追加している箇所が残っています。
+- [docs/draft/new_constraint_builder.md](../draft/new_constraint_builder.md) に従って `ConstraintsBuilder` を導入済みですが、まだ `KiwiSolver.addConstraint`/`.expression` や旧来の型ラッパーを使って制約を追加している箇所が残っています。
 - 旧 API を放置すると `KiwiSolver` の公開面が肥大化し、ヒントやテストのような下流コードが古い API と新しい API の両方を気にする必要が出てきます。
 - そこで、残る箇所をビルダーへ移し替えたうえで、型・エクスポートの整理も含めた移行手順をドキュメント化して共有します。
 
