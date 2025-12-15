@@ -1,192 +1,343 @@
 # 🥝 Kiwumil (キューミル)
 
-Kiwumil is a TypeScript DSL for authoring diagrams from semantics and tidying them only when needed. It uses relationship-based automatic layout as the baseline and allows targeted refinement via layout hints (alignment, spacing, anchors). Hints are interpreted by a Kiwi (Cassowary) linear constraint solver, so you describe placement as relationships without manipulating numeric coordinates directly. The namespace-based DSL and plugin system make it possible to manage UML-like diagrams as text while preserving semantics.
-
-[日本語](README.ja.md) | English
-
-
-## 🌱 Why kiwumil?
-
-**kiwumil is a DSL for tidying diagrams without losing their semantics.**
-
-By writing diagrams in kiwumil's DSL you can express both the semantics of elements and relationships, and the layout intentions (how elements should be arranged), while keeping those concerns separated. This makes diagrams safe to store as text and safe to refine later.
-
-### Why not just SVG, PlantUML or Mermaid?
-
-kiwumil does not encourage editing raw SVG as a primary workflow: SVG is great as a final artifact, but it poorly preserves the semantics and layout intent in a human-friendly form. Unlike PlantUML or Mermaid, kiwumil avoids embedding layout directives into semantic descriptions (e.g. sprinkling `left`/`up` instructions into arrows). Instead, kiwumil treats:
-
-- "what relates to what" (semantics) and
-- "how to tidy or align them" (layout intent)
-
-as separate layers.
-
-### Why a TypeScript DSL?
-
-Providing kiwumil as a TypeScript DSL is a deliberate UX choice: TypeScript's type system, editor integration (IntelliSense/LSP), and ecosystem help keep semantics explicit and discoverable. The DSL becomes a typed authoring surface rather than just a file format.
-
-### Not just "draw and forget"
-
-Because kiwumil runs on Bun/TypeScript, it naturally integrates with JSON/CSV, external APIs, and other systems. This enables:
-
-- text-manageable diagrams
-- diagrams generated from external data
-- diagrams that are refined and tidied by humans after generation
-
-In short: kiwumil is a foundation to bring diagrams closer to human aesthetics while preserving meaning.
-
-> kiwumil helps you preserve semantics while making diagrams look the way humans expect.
+**Kiwumil** は、[@lume/kiwi](https://github.com/lume/kiwi) 制約ソルバーを使って  
+UML風の図をテキストで記述しつつ、必要な部分だけ制約で整えるための TypeScript ライブラリです。  
+PlantUML / Mermaid.js のような手軽さをリスペクトしながら、  
+「手で配置したいこだわり」と「制約による整列」を両立させることを目指しています。
 
 ---
 
-## 📚 Quick links
+## 🌱 コンセプト
 
-- 📖 Design docs (bilingual): [docs/design/index.md](docs/design/index.md)
-- 📐 Guidelines (bilingual): [docs/guidelines/index.md](docs/guidelines/index.md)
-- 🧩 Examples: [examples/](examples/)
-- 📝 Development log (devlog, primarily Japanese): [docs/devlog/](docs/devlog/)
-- 📦 Package: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
-- 📄 License: [MIT](LICENSE)
+PlantUML や Mermaid.js が「テキストで図を書く」体験を切り開いてくれたことに感謝しています。  
+一方で、レイアウトを完全に自動に任せると細部が思い通りにならず、  
+かといってベクターエディタへ移行するとテキスト編集の快適さを失ってしまいます。
+
+Kiwumil は、このギャップを埋めるために **3つのステップ** へ集約しました：
+
+1. **ノードを定義する**
+2. **関係を定義する**
+3. **レイアウトヒントを与える**
 
 ---
 
+## 🧩 使用イメージ
 
+```typescript
+import { TypeDiagram, UMLPlugin } from "kiwumil"
 
----
+// シンプルな使い方
+TypeDiagram("First Milestone")
+  .use(UMLPlugin)
+  .build(({ el, rel, hint }) => {
+    // 1. シンボルを定義（名前空間ベースの DSL）
+    const user = el.uml.actor("User")
+    const admin = el.uml.actor("Admin")
 
-## 📦 Installation (GitHub Packages)
+    const login = el.uml.usecase("Login")
+    const logout = el.uml.usecase("Logout")
+    const manage_users = el.uml.usecase("Manage Users")
 
-Kiwumil is published to GitHub Packages. A Personal Access Token (PAT) with the `read:packages` scope is required to install the package. Follow these steps to configure your environment and install with Bun/NPM.
+    const system_boundary = el.uml.systemBoundary("システム化範囲")
 
-1) Create a read-only PAT
+    // 2. 関係を定義
+    rel.uml.associate(user, login)
+    rel.uml.associate(user, logout)
+    rel.uml.associate(admin, login)
+    rel.uml.associate(admin, logout)
+    rel.uml.associate(admin, manage_users)
 
-- Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic).
-- Give the token a name and select only the `read:packages` scope.
-- Copy the generated token and keep it secure; treat it like a password.
-
-2) Configure .npmrc
-
-Create or edit the file `~/.npmrc` in your home directory and add the following lines (replace `YOUR_READONLY_PAT` with the token generated above):
-
+    // 3. レイアウトヒントを設定
+    hint.arrangeVertical(user, admin)
+    hint.arrangeHorizontal(user, system_boundary)
+    hint.enclose(system_boundary, [login, logout, manage_users])
+    hint.arrangeVertical(login, logout, manage_users)
+  })
+  .render("output.svg")
 ```
+
+**出力イメージ:**
+
+![First Milestone](examples/first_milestone.svg)
+
+**特徴:**
+
+- 🔧 **制約 + レイアウトヒント** - Cassowary 制約ソルバーをベースに、`hint.arrange*` / `hint.enclose` で意図した整列を記述
+- 📦 **自動サイズ調整コンテナ** - SystemBoundary などが子要素に合わせてスケールし、ラベルで囲みを作成
+- 🔌 **名前空間プラグイン** - `el.uml.actor()` のようにプラグインごとに DSL が分離され、カスタム図形も拡張可能
+- 📐 **Guide ベースの整列** - `hint.createGuideX/Y()` でガイドラインを作り、複数シンボルを同一ラインに寄せられる
+- 📝 **メタデータサポート** - タイトルや作成日を図に添えてアーカイブできる
+- 🎯 **型安全な DSL** - `tsd` テストで守られた型推論により、存在しないメソッド呼び出しをコンパイル前に検知
+- 🧵 **SuggestHandle** - `KiwiSolver.createHandle()` から強度文字列（`strong`/`medium`/`weak`）を選び、`kiwi` を隠蔽したまま編集変数を操作
+
+プラグインは Symbol/Relationship を提供するだけでなく、Namespace DSL と直結します。`TypeDiagram().use(MyPlugin)` と書くだけで `el.myplugin.*` / `rel.myplugin.*` が補完され、独自の図形や関係線をコアの API と同じ手触りで扱えるため、ドメイン特化の作図体験をシームレスに拡張できます。
+
+詳細は [docs/design/layout-hints.md](docs/design/layout-hints.md) を参照してください。
+
+---
+
+## 📚 ドキュメント
+
+- **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計とAPI使い方
+- **[Plugin System](docs/design/plugin-system.md)** - プラグイン作成ガイド
+- **[Layout Hints API](docs/design/layout-hints.md)** - レイアウトヒントAPIの使い方（ユーザー向け）
+- **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの内部実装（開発者向け）
+- **[Theme System](docs/design/theme-system.md)** - テーマシステムの設計
+- **[Web Rendering](docs/design/web-rendering.md)** - ブラウザ環境でのレンダリング
+- **[Git Workflow](docs/design/git-workflow.md)** - 開発ワークフロー
+
+---
+
+## 📦 インストール
+
+**`@tinsep19/kiwumil`** は GitHub Packages で公開されています。  
+インストールには GitHub の Personal Access Token（read-only）が必要です。
+
+### トークンを発行する
+
+GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)  
+→ **Generate new token (classic)**
+
+スコープは **`read:packages`** のみでOK 🔑
+
+### `.npmrc` を設定する
+
+ホームディレクトリに `.npmrc` を作成：
+
+```bash
 @tinsep19:registry=https://npm.pkg.github.com/
 //npm.pkg.github.com/:_authToken=YOUR_READONLY_PAT
 ```
 
-Security notes:
-- Do NOT commit your PAT or `.npmrc` containing the token into version control.
-- Prefer storing tokens in a credentials manager or environment-specific secret store.
+⚠ `YOUR_READONLY_PAT` は発行したトークンに置き換えてください
 
-3) Install
-
-With Bun:
+### インストール
 
 ```bash
 bun install @tinsep19/kiwumil
 ```
 
-With npm:
+---
 
-```bash
-npm install @tinsep19/kiwumil
+## 🧠 技術スタック
+
+| 要素       | 内容                                                                |
+| ---------- | ------------------------------------------------------------------- |
+| 言語       | TypeScript                                                          |
+| 実行環境   | [Bun](https://bun.sh)                                               |
+| 制約ソルバ | [@lume/kiwi](https://github.com/lume/kiwi)（Cassowaryアルゴリズム） |
+| 目的       | テキスト定義 + 制約ヒントで整える図レイアウトエンジン               |
+
+---
+
+```mermaid
+
+flowchart TD
+  subgraph DSL["DSL 層"]
+    D[Diagram DSL]
+  end
+
+  subgraph Model["Model 層"]
+    M[SymbolBase / RelationshipBase]
+  end
+
+  subgraph Kiwi["Kiwi 層"]
+    L[Layout Engine powered by kiwi]
+  end
+
+  subgraph Render["Render 層"]
+    R[SVG Renderer]
+  end
+
+  subgraph Plugin["Plugin 層"]
+    P[SymbolRegistry / RelationshipFactory]
+  end
+
+  D --> M
+  M --> L
+  L --> R
+  P --> M
+  P --> D
+
+```
+
+- DSL: actor, usecase の呼び出しを SymbolRegistry から解決
+- Model: SymbolBase / RelationshipBase のインスタンスを構築
+- Kiwi: Cassowary 制約で位置を自動計算
+- Kiwi: `KiwiSolver` の `SuggestHandle` を通じてストレングスを文字列で扱い、`kiwi.Solver` との直接依存を封じた edit-variable 管理
+- Render: SvgRenderer により描画（矢印は折れ線）
+- Plugin: ユーザ追加のシンボル・関係も透過的に統合
+
+---
+
+## 📁 プロジェクト構造
+
+```
+kiwumil/
+├── src/
+│   ├── core/                      # 制約計算の基盤（テーマやエンジン）
+│   │   ├── layout_engine.ts
+│   │   └── theme.ts
+│   ├── dsl/                       # TypeDiagram / ヒント / プラグインIF
+│   │   ├── diagram_builder.ts
+│   │   ├── diagram_plugin.ts
+│   │   ├── hint_factory.ts
+│   │   ├── id_generator.ts
+│   │   ├── namespace_builder.ts
+│   │   └── namespace_types.ts
+│   ├── kiwi/                      # Cassowary 連携
+│   │   ├── layout_solver.ts
+│   │   └── constraints_builder.ts
+│   ├── model/                     # Symbol / Relationship の共通クラス
+│   │   ├── diagram_info.ts
+│   │   ├── diagram_symbol.ts
+│   │   ├── relationship_base.ts
+│   │   ├── symbol_base.ts
+│   │   └── types.ts
+│   ├── plugin/
+│   │   ├── core/
+│   │   │   ├── plugin.ts
+│   │   │   └── symbols/
+│   │   │       ├── circle_symbol.ts
+│   │   │       ├── ellipse_symbol.ts
+│   │   │       ├── rectangle_symbol.ts
+│   │   │       ├── rounded_rectangle_symbol.ts
+│   │   │       └── text_symbol.ts
+│   │   └── uml/
+│   │       ├── plugin.ts
+│   │       ├── relationships/
+│   │       │   ├── association.ts
+│   │       │   ├── extend.ts
+│   │       │   ├── generalize.ts
+│   │       │   └── include.ts
+│   │       └── symbols/
+│   │           ├── actor_symbol.ts
+│   │           ├── system_boundary_symbol.ts
+│   │           └── usecase_symbol.ts
+│   ├── render/
+│   │   └── svg_renderer.ts
+│   ├── utils/
+│   │   └── path_helper.ts
+│   └── index.ts                   # ライブラリの公開エントリポイント
+│
+├── example/                       # CLI から動かせるサンプル
+│   ├── core_text_poc.ts
+│   ├── diagram_info_full.ts
+│   ├── first_milestone.ts
+│   ├── system_boundary_complex.ts
+│   ├── uml-relations.ts
+│   └── usecase_with_actor_dark.ts
+│
+├── tests/                         # Bun test
+│   ├── layout_solver.test.ts
+│   ├── namespace_dsl.test.ts
+│   └── ...
+├── tsd/                           # 型テスト (`bun run test:types`)
+│
+├── docs/
+│   ├── design/
+│   │   ├── git-workflow.md
+│   │   ├── layout-hints.md
+│   │   ├── layout-system.md
+│   │   ├── namespace-dsl.md
+│   │   ├── plugin-system.md
+│   │   ├── theme-system.md
+│   │   └── web-rendering.md
+│   └── devlog/
+├── scripts/
+├── package.json
+├── tsconfig.json
+└── README.md
+
 ```
 
 ---
 
-## 🔧 Development (local)
+## ⚙️ セットアップ
 
-- Setup: `bun install` (or `npm install` / `pnpm install` depending on your environment)
-- Tests: `bun run test` (see package.json)
-- Type tests: `bun run test:types`
+```bash
+bun init
+bun add @lume/kiwi
+```
 
----
+## 🚧 今後の予定
 
-## 🌍 Documentation & translation policy
-
-- Core design pages are bilingual (English / 日本語). Devlogs are primarily in Japanese.
-- If you need translations or improvements to a specific doc, open an issue or PR referencing `docs/design/<page>`.
-
----
-
-## 🤝 Contributing
-
-- Project is pre-1.0 and the public API may change; contribution policy is evolving.
-- For now, open issues for suggestions. Large doc restructures should be proposed as Draft PRs including a `docs/devlog/` entry.
-
----
-
-## 👥 Maintainers
-
-- TANIGUCHI Kousuke (tinsep19)
+- [x] `LayoutHint` クラスによる宣言的API (`hint.horizontal()`, `hint.vertical()`)
+- [x] SVG レンダラー
+- [x] テーマシステム (default, blue, dark)
+- [x] `SystemBoundary` によるコンテナ制約 (`hint.enclose()`)
+- [x] Z-Index ベースのレンダリング（ネスト構造対応）
+- [x] Include / Extend 関係（ユースケース図）
+- [x] Generalization 関係（継承矢印）
+- [ ] Note シンボル（注釈）
+- [ ] 矢印・関係線の自動ルーティング
+- [ ] クラス図対応（Class, Interface, Package）
+- [ ] Canvas レンダラー
+- [ ] PlantUML / Mermaid.js 風 DSL の追加
+- [ ] Webアプリデモ
 
 ---
 
-## ✅ What kiwumil does / does not do
+## 🗣️ 名前について
 
-### ✅ What kiwumil does
+> **Kiwumil (キューミル)** は
+> “KiwiでUMLを書く” → “Kiw(um)i(l)”
+> という語呂合わせから生まれた名前です 🍃
 
-kiwumil is a DSL for authoring and managing diagrams with semantics as the primary concern.
-
-- Treats semantic information (elements, relationships) as first-class
-- Performs automatic layout derived from those semantics
-- Allows optional, targeted refinement using the Hint API on top of automatic layout
-- Expresses structures that people perceive as visually pleasing (alignment, enclosure via figure/grid, spacing)
-- Uses numeric values only where meaningful (margins, stroke widths, etc.)
-- Delivered as a TypeScript DSL, so users benefit from editor completion and LSP integration
-- Runs on Bun/TypeScript, enabling integration with JSON/CSV and external data
-
-kiwumil aims to support a single model for both "diagrams that are sufficient as-is from semantics" and "diagrams that need a bit of tidying".
+英語的には “キューミル” /ˈkɪ.wu.mɪl/ に近い発音になります。
+Kiwi（制約ソルバ）と UML（構造表現）を融合した、
+軽量で宣言的なレイアウトエンジンを目指します。
 
 ---
 
-### ❌ What kiwumil does not do
+## 🤝 貢献について (CONTRIBUTION)
 
-kiwumil is not intended to:
+現在のところ外部からの貢献は受け付けていません。プロジェクトの API はまだ不安定で、1.0.0 に到達するまでは破壊的な変更や流動的な改定を行う予定です。そのため、バージョン 1.0.0 をリリースするまではコントリビューションの受付を控えます。
 
-- Produce perfectly beautiful diagrams automatically in all cases
-- Provide absolute coordinate / pixel-level placement APIs
-- Replace WYSIWYG editors or SVG editing tools
-- Ask end-users to write complex solver constraints
-- Be a magic optimizer that fixes all layout problems without guidance
+1.0.0 リリース時には CONTRIBUTING.md を追加し、ブランチ/PR の運用ルール、コードスタイル、テスト要件などを明記した上で外部からの貢献を受け入れる予定です。
 
-The constraint system exists for plugin authors and internal frameworks; end users are expected to use the DSL and Hint API rather than manipulating solver internals.
+バグ報告や要望、アイデアがある場合は Issue を立ててください。今後の改善の参考とさせていただきますが、初期段階のため対応に時間がかかることがあります。
 
 ---
 
-## 👤 Who is this for / not for
+## 🛠️ 開発ガイド
 
-### 👍 Who this is for
+### アーキテクチャと循環依存防止
 
-kiwumil is aimed at people who:
+プロジェクトは循環依存を防止するためのレイヤーベース設計を採用しています：
 
-- Treat diagrams as meaningful structures rather than just images
-- Want diagrams version-controlled and reviewable as text
-- Respect automatic layout but want to add human intent afterwards
-- Prefer to "make things a bit neater" rather than redraw everything
-- Are comfortable authoring in a TypeScript DSL
-- Need to integrate diagrams with external data sources
+```
+Layer 4: DSL/UI     (dsl/, render/)
+Layer 3: Plugins    (plugin/)  
+Layer 2: Model      (model/, hint/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+```
 
-### 👎 Who this is not for
+詳細は [循環依存防止ガイドライン](docs/guidelines/circular-dependency-prevention.md) をご覧ください。
 
-kiwumil is not the right tool if you:
+### テスト実行
 
-- Prefer drag-and-drop WYSIWYG diagramming
-- Want to manually position every element by coordinates
-- Only need purely automatic layout with no refinement
-- Need the fastest possible way to produce a one-off visual
+```bash
+bun run test        # テスト実行
+bun run lint        # リント実行
+bun run test:types  # 型定義テスト
+```
+
+### ドキュメント
+
+- [設計ドキュメント](docs/design/) - アーキテクチャと設計思想
+- [開発ログ](docs/devlog/) - 実装の経緯と技術的判断
+- [ガイドライン](docs/guidelines/) - 開発ルールとベストプラクティス
 
 ---
 
-## 🎯 Design stance
+## 🧾 ライセンス
 
-kiwumil's core design stance is:
+MIT License
+(c) 2025 Kousuke Taniguchi
 
-> Preserve semantics and enable visual refinement.
+---
 
-It treats automatic layout as a baseline and exposes opt-in Hints for targeted, semantics-preserving adjustments. This lets authors express both what a diagram means and how it should be tidied, without mixing concerns.
+## ✨ スクリーンショット
 
-
-## 💡 Design principles (concise)
-
-kiwumil is a semantics-first DSL that improves diagram appearance via relationship-based layout and opt-in refinement. It preserves semantics, uses automatic layout as baseline, and provides Hint-based, semantics-preserving adjustments for visual quality.
-
-See: [docs/design/philosophy-concise.md](docs/design/philosophy-concise.md)
+[GALLERY.md](GALLERY.md)
