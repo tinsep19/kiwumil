@@ -1,4 +1,7 @@
 [English](README.md) | 日本語
+
+# 🥝 Kiwumil（キューミル）
+
 Kiwumil は、図を「意味」から記述し、必要なときだけ美しく整えるための
 TypeScript DSL です。
 
@@ -8,14 +11,11 @@ TypeScript DSL です。
 
 名前空間ベースの DSL とプラグイン機構により、
 UML 風の図をセマンティクスを保ったままテキストで管理できることを目指しています.
+
 [English](README.md) | 日本語
 
-# Kiwumil（キューミル）
 
-Kiwumil は、Kiwi（Cassowary）ベースの制約ソルバと名前空間ベースの DSL を組み合わせ、TypeScript で UML 風の図をテキストで作るためのライブラリです。手動でのレイアウト調整と制約による自動整列を両立し、編集性と精度を両立させることを目指します。
-
-
-## Why kiwumil?
+## 🌱 Why kiwumil?
 
 **kiwumil は、セマンティクスを失わずに図の見た目を整えるための DSL です。**
 
@@ -43,18 +43,18 @@ Bun / TypeScript 上で動くことで、JSON や CSV、外部 API などとの�
 
 ---
 
-## クイックリンク
+## 📚 クイックリンク
 
-- 設計ドキュメント（英日）: [docs/design/index.ja.md](docs/design/index.ja.md)
-- ガイドライン（英日）: [docs/guidelines/index.ja.md](docs/guidelines/index.ja.md)
-- サンプル: [examples/](examples/)
-- 開発ログ: [docs/devlog/](docs/devlog/)
-- パッケージ: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
-- ライセンス: [MIT](LICENSE)
+- 📖 設計ドキュメント（英日）: [docs/design/index.ja.md](docs/design/index.ja.md)
+- 📐 ガイドライン（英日）: [docs/guidelines/index.ja.md](docs/guidelines/index.ja.md)
+- 🧩 サンプル: [examples/](examples/)
+- 📝 開発ログ: [docs/devlog/](docs/devlog/)
+- 📦 パッケージ: [@tinsep19/kiwumil](https://github.com/tinsep19/kiwumil/packages)
+- 📄 ライセンス: [MIT](LICENSE)
 
 ---
 
-## クイックスタート（例）
+## 🚀 クイックスタート（例）
 
 ```typescript
 import { TypeDiagram, UMLPlugin } from "kiwumil"
@@ -73,9 +73,9 @@ TypeDiagram("First Milestone")
 
 ---
 
-## インストール（GitHub Packages）
+## 📦 インストール（GitHub Packages）
 
-Kiwumil は GitHub Packages に公開されています。パッケージのインストールには `read:packages` スコープを持つ Personal Access Token (PAT) が必要です。以下の手順に従って環境を設定してください。
+Kiwumil は GitHub Packages に公開されています。パッケージのインストールには `read:packages` スコープを持つ Personal Access Token (PAT) が必要です。以下の手順に従って環境を設定してください.
 
 1) 読み取り専用 PAT を発行
 
@@ -110,7 +110,7 @@ npm install @tinsep19/kiwumil
 
 ---
 
-## 開発（ローカル）
+## 🔧 開発（ローカル）
 
 - 依存導入: `bun install`（または `npm install`/`pnpm install`）
 - テスト: `bun run test`
@@ -118,32 +118,29 @@ npm install @tinsep19/kiwumil
 
 ---
 
-## ドキュメント方針
+## 🌍 ドキュメント方針
 
 - 設計の主要ページは英日両方を用意します。devlog は作業記録のため日本語優先です。
 - 翻訳や補強が必要なページがあれば Issue/PR で提案してください。大規模な再編は devlog に記録してください。
 
 ---
 
-## 貢献について
+## 🤝 貢献について
 
 - 現在は 1.0 前で API は不安定です。外部貢献は段階的に受け入れ予定です。
 - まずは Issue を立てて相談してください。ドキュメント改訂は Draft PR（docs/*）で提案してください。
 
 ---
 
-## メンテナ
+## 👥 メンテナ
 
 - TANIGUCHI Kousuke (TANIGUCHI Kousuke, tinsep19)
 
+---
 
+## ✅ What kiwumil does / does not do
 
-
-
-
-## What kiwumil does / does not do
-
-### What kiwumil does
+### ✅ What kiwumil does
 
 kiwumil は、**図を「意味（セマンティクス）」を中心に記述・管理するための DSL** です。
 
@@ -160,7 +157,7 @@ kiwumil は、
 
 ---
 
-### What kiwumil does not do
+### ❌ What kiwumil does not do
 
 kiwumil は、以下のことを目的としていません。
 
@@ -176,9 +173,9 @@ kiwumil は、以下のことを目的としていません。
 
 ---
 
-## Who is this for / not for
+## 👤 Who is this for / not for
 
-### Who this is for
+### 👍 Who this is for
 
 kiwumil は、次のような人に向いています。
 
@@ -189,7 +186,7 @@ kiwumil は、次のような人に向いています。
 * DSL や TypeScript に抵抗がない人
 * 図と外部データ・コードを連携させたい人
 
-### Who this is not for
+### 👎 Who this is not for
 
 kiwumil は、次のような用途には向いていません。
 
@@ -201,7 +198,7 @@ kiwumil は、次のような用途には向いていません。
 
 ---
 
-## Design stance
+## 🎯 Design stance
 
 kiwumil は、
 
@@ -214,8 +211,8 @@ kiwumil は、
 **意味とレイアウトを混在させつつ、分離して記述できる**ことを目指しています。
 
 
-## 設計思想（簡潔版）
+## 💡 設計思想（簡潔版）
 
 kiwumil はセマンティクスを最優先する DSL で、関係性ベースのレイアウトと必要に応じた微調整により図の見た目を向上させます。セマンティクスを壊さず、自動レイアウトを基盤とし、Hint による調整で視覚品質を高めます。
 
-参照: docs/design/philosophy-concise.ja.md
+参照: [docs/design/philosophy-concise.ja.md](docs/design/philosophy-concise.ja.md)
