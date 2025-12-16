@@ -16,7 +16,8 @@ export type {
 } from "./symbol"
 
 // レイアウト変数
-export type { Variable, AnchorX, AnchorY, AnchorZ, Width, Height, Anchor, Dimension } from "./layout_variable"
+export type { Variable, AnchorX, AnchorY, AnchorZ, Width, Height, Anchor, Dimension, VariableFactory } from "./layout_variable"
+export { asAnchorX, asAnchorY, asAnchorZ, asWidth, asHeight, createBrandVariableFactory } from "./layout_variable"
 
 // 制約
 export type {

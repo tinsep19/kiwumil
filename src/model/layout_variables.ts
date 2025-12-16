@@ -2,6 +2,11 @@
 import type { CassowarySolver, Variable, LayoutConstraint, ConstraintSpec } from "../core"
 import {
   createBoundId,
+  asAnchorX,
+  asAnchorY,
+  asAnchorZ,
+  asWidth,
+  asHeight,
   type Bounds,
   type BoundsType,
   type LayoutBounds,
@@ -51,20 +56,20 @@ export class LayoutVariables {
   ): BoundsMap[Type] {
     const boundId = createBoundId(`${prefix}:${type}`)
 
-    // 基本的な 4 つの変数を作成
-    const x = this.createVariable(`${prefix}.x`)
-    const y = this.createVariable(`${prefix}.y`)
-    const width = this.createVariable(`${prefix}.width`)
-    const height = this.createVariable(`${prefix}.height`)
+    // 基本的な 4 つの変数を作成（ブランド型にキャスト）
+    const x = asAnchorX(this.createVariable(`${prefix}.x`))
+    const y = asAnchorY(this.createVariable(`${prefix}.y`))
+    const width = asWidth(this.createVariable(`${prefix}.width`))
+    const height = asHeight(this.createVariable(`${prefix}.height`))
 
-    // computed properties を作成
-    const right = this.createVariable(`${prefix}.right`)
-    const bottom = this.createVariable(`${prefix}.bottom`)
-    const centerX = this.createVariable(`${prefix}.centerX`)
-    const centerY = this.createVariable(`${prefix}.centerY`)
+    // computed properties を作成（ブランド型にキャスト）
+    const right = asAnchorX(this.createVariable(`${prefix}.right`))
+    const bottom = asAnchorY(this.createVariable(`${prefix}.bottom`))
+    const centerX = asAnchorX(this.createVariable(`${prefix}.centerX`))
+    const centerY = asAnchorY(this.createVariable(`${prefix}.centerY`))
 
     // z (depth) 変数を作成し、デフォルト値を0に設定
-    const z = this.createVariable(`${prefix}.z`)
+    const z = asAnchorZ(this.createVariable(`${prefix}.z`))
 
     this.solver.createConstraint(`${boundId}:computed`, (builder) => {
       builder
