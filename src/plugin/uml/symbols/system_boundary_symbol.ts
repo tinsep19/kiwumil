@@ -4,9 +4,8 @@ import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
 import { ConstraintHelper } from "../../../hint"
 import type { ContainerBounds, LinearConstraintBuilder } from "../../../core"
-import type { Theme } from "../../../theme"
-import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "../../../model/symbol_base"
-import type { ContainerPadding } from "../../../theme/types"
+import type { Theme, ContainerPadding } from "../../../theme"
+import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "../../../model"
 
 export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
   label: string
