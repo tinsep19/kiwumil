@@ -6,8 +6,8 @@
 
 移行手順 4 まで完了した時点で、以下の状態になっている：
 - LayoutContext が KiwiSolver を所有
-- LayoutVariables が注入された solver を使用
-- LayoutConstraints が LayoutVariables 経由で制約を追加
+- Variables が注入された solver を使用
+- LayoutConstraints が Variables 経由で制約を追加
 
 移行手順 5 の元の方針：「Constraint を『生成して返す』役割に限定し、生成した Constraint を Context が受け取り solver に追加するフローに変更する」
 
@@ -18,7 +18,7 @@
 ```typescript
 LayoutContext
   ├── solver: KiwiSolver (所有)
-  ├── vars: LayoutVariables (solver を注入)
+  ├── vars: Variables (solver を注入)
   └── constraints: LayoutConstraints (vars を使用)
 ```
 
@@ -29,7 +29,7 @@ LayoutContext
 export class LayoutConstraintBuilder {
   private readonly raws: kiwi.Constraint[] = []
   
-  constructor(private readonly vars: LayoutVariables) {}
+  constructor(private readonly vars: Variables) {}
   
   eq(left, right, strength) {
     this.raws.push(
@@ -72,7 +72,7 @@ arrangeHorizontal(symbolIds, gap) {
 | モジュール | 責務 | 実装状況 |
 |-----------|------|---------|
 | LayoutContext | solver の所有と solve のタイミング制御 | ✅ 完了 |
-| LayoutVariables | 変数管理、solver への制約追加の委譲 | ✅ 完了 |
+| Variables | 変数管理、solver への制約追加の委譲 | ✅ 完了 |
 | LayoutConstraints | 制約の生成とメタデータ管理 | ✅ 完了 |
 | KiwiSolver | 制約の管理と solver の実行 | ✅ 完了 |
 
@@ -88,11 +88,11 @@ arrangeHorizontal(symbolIds, gap) {
 
 2. ✅ **solver の所有権は明確**
    - LayoutContext が所有
-   - LayoutVariables、LayoutConstraints は注入された solver を使用
+   - Variables、LayoutConstraints は注入された solver を使用
 
 3. ✅ **責務は十分に分離されている**
    - LayoutConstraints: 制約の生成ロジックとメタデータ管理
-   - LayoutVariables: 変数管理と制約追加の仲介
+   - Variables: 変数管理と制約追加の仲介
    - KiwiSolver: solver の実装とライフサイクル管理
    - LayoutContext: 全体のオーケストレーション
 
@@ -167,7 +167,7 @@ $ bun run test:types
             │   - kiwi.Solver のラッパー
             │   - 制約管理と solve 実行
             │
-            ├─→ LayoutVariables (solver 注入)
+            ├─→ Variables (solver 注入)
             │   - 変数の作成と管理
             │   - solver への制約追加を委譲
             │
@@ -180,8 +180,8 @@ $ bun run test:types
 ### データフロー
 
 1. LayoutContext が KiwiSolver を作成
-2. KiwiSolver を LayoutVariables に注入
-3. LayoutVariables を LayoutConstraints に渡す
+2. KiwiSolver を Variables に注入
+3. Variables を LayoutConstraints に渡す
 4. LayoutConstraints が vars 経由で制約を追加
 5. 制約は solver に到達（vars → solver）
 6. LayoutContext が solver.updateVariables() を呼び出し
@@ -193,7 +193,7 @@ $ bun run test:types
 移行手順の残り：
 1. ✅ kiwi ラッパーを作成（完了）
 2. ✅ 型の切り出し（完了）
-3. ✅ LayoutVariables を依存注入対応にする（完了）
+3. ✅ Variables を依存注入対応にする（完了）
 4. ✅ LayoutContext に Solver を移動（完了）
 5. ✅ LayoutConstraints の責務整理（実質的に完了）
 6. ⏳ 呼び出し元の更新（任意／必要に応じて）

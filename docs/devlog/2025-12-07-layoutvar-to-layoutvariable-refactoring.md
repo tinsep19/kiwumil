@@ -1,9 +1,9 @@
-# LayoutVar から LayoutVariable へのリファクタリング
+# LayoutVar から Variable へのリファクタリング
 
 ## 概要
 
 LayoutVar のブランディング型から明確なインターフェース・実装クラス構造への移行を実施。
-createLayoutVar API も createLayoutVariable にリネームし、より明示的な設計にした。
+createLayoutVar API も createVariable にリネームし、より明示的な設計にした。
 
 ## 変更日時
 
@@ -25,13 +25,13 @@ createLayoutVar API も createLayoutVariable にリネームし、より明示�
 ```typescript
 export type VariableId = string
 
-export interface ILayoutVariable<T = kiwi.Variable> {
+export interface IVariable<T = kiwi.Variable> {
   id: VariableId
   value(): number
   variable: T
 }
 
-export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
+export class Variable implements IVariable<kiwi.Variable> {
   constructor(
     public readonly id: VariableId,
     public readonly variable: kiwi.Variable
@@ -45,28 +45,28 @@ export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
 
 ### 2. API の変更
 
-- `createLayoutVar(name: string): LayoutVar` → `createLayoutVariable(id: VariableId): LayoutVariable`
-- `isLayoutVar()` を削除（instanceof LayoutVariable を使用）
+- `createLayoutVar(name: string): LayoutVar` → `createVariable(id: VariableId): Variable`
+- `isLayoutVar()` を削除（instanceof Variable を使用）
 - LAYOUT_VAR_BRAND を削除
 
 ### 3. 更新されたファイル
 
 #### コア実装
-- `src/kiwi/layout_solver.ts` - 新しい LayoutVariable クラスと API
-- `src/kiwi/layout_variables.ts` - createLayoutVariable の使用
-- `src/kiwi/constraints_builder.ts` - Term 型を LayoutVariable に更新
-- `src/kiwi/bounds.ts` - Bounds インターフェースを LayoutVariable に更新
+- `src/kiwi/layout_solver.ts` - 新しい Variable クラスと API
+- `src/kiwi/layout_variables.ts` - createVariable の使用
+- `src/kiwi/constraints_builder.ts` - Term 型を Variable に更新
+- `src/kiwi/bounds.ts` - Bounds インターフェースを Variable に更新
 - `src/kiwi/index.ts` - エクスポートを更新
 
 #### ヒント機能
-- `src/hint/hints.ts` - HintVariable を LayoutVariable に更新
+- `src/hint/hints.ts` - HintVariable を Variable に更新
 - `src/hint/guide_builder.ts` - GuideBuilder インターフェースを更新
 
 #### モデル
-- `src/model/layout_context.ts` - valueOf を LayoutVariable 対応に
+- `src/model/layout_context.ts` - valueOf を Variable 対応に
 
 #### テスト
-- `tests/suggest_handle.test.ts` - createLayoutVariable を使用
+- `tests/suggest_handle.test.ts` - createVariable を使用
 - `tests/hints_createHintVariable.test.ts` - instanceof チェックに変更
 
 #### ドキュメント
@@ -76,7 +76,7 @@ export class LayoutVariable implements ILayoutVariable<kiwi.Variable> {
 
 ## 利点
 
-1. **型の分離**: インターフェース (ILayoutVariable) と実装 (LayoutVariable) が明確に分離
+1. **型の分離**: インターフェース (IVariable) と実装 (Variable) が明確に分離
 2. **kiwi 依存の明示化**: variable プロパティで kiwi.Variable へのアクセスを明示
 3. **テスト性の向上**: instanceof による型チェックが可能
 4. **将来のモジュール分割**: インターフェースベースの設計により、将来的な分割が容易
@@ -100,11 +100,11 @@ const v = solver.createLayoutVar("x")
 if (isLayoutVar(v)) { ... }
 
 // After
-const v = solver.createLayoutVariable("x")
-if (v instanceof LayoutVariable) { ... }
+const v = solver.createVariable("x")
+if (v instanceof Variable) { ... }
 ```
 
 ## 関連コミット
 
-- 0e7541e: Refactor LayoutVar to LayoutVariable with clear interface
-- c52a09b: Update documentation to reflect LayoutVariable API changes
+- 0e7541e: Refactor LayoutVar to Variable with clear interface
+- c52a09b: Update documentation to reflect Variable API changes

@@ -4,9 +4,9 @@
 import type { VariableId } from "./types"
 
 /**
- * LayoutVariable: レイアウト変数のインターフェース
+ * Variable: レイアウト変数のインターフェース
  */
-export interface LayoutVariable {
+export interface Variable {
   id: VariableId
   value(): number
   variable: unknown

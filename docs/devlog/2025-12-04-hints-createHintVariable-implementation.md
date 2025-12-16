@@ -99,7 +99,7 @@ export { ..., type HintVariable, type HintVariableOptions } from "./hints"
 `docs/design/hints-symbols-hintfactory.ja.md` の要件をすべて満たしている：
 
 ✅ Hints.createHintVariable() が内部で既存の KiwiSolver API を呼ぶ  
-✅ 生成した LayoutVariable を Hints インスタンスのスコープで保持  
+✅ 生成した Variable を Hints インスタンスのスコープで保持  
 ✅ 変数名に自動プレフィックス（hint:）を付与  
 ✅ 生成された変数は Symbols に自動登録されない  
 ✅ Guide（GuideBuilder）が Hints を経由して変数を取得

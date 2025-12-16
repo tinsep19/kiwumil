@@ -56,7 +56,7 @@ export class LayoutBounds {
   private _centerY?: LayoutVar
 
   constructor(
-    private readonly ctx: LayoutVariables,
+    private readonly ctx: Variables,
     x: LayoutVar,
     y: LayoutVar,
     width: LayoutVar,
@@ -142,7 +142,7 @@ centerY = y + height * 0.5
 **src/model/symbol_base.ts:**
 
 ```typescript
-protected attachLayoutContext(ctx: LayoutVariables) {
+protected attachLayoutContext(ctx: Variables) {
   if (this.layoutBounds) {
     return
   }

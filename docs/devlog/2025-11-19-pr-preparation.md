@@ -13,7 +13,7 @@
 **目的:** レイアウト関連APIの統一と簡素化
 
 **変更内容:**
-- `LayoutContext` クラスを導入し、`LayoutVariables` と `LayoutConstraints` を統合
+- `LayoutContext` クラスを導入し、`Variables` と `LayoutConstraints` を統合
 - Symbol/Hint APIから `LayoutContext` 経由でアクセス
 - テーマとレイアウトロジックの分離を改善
 
@@ -162,7 +162,7 @@ hint.grid(container).enclose([[a, b], [c, d]]).gap(10).layout()
 ### 2. アーキテクチャの明確化
 
 - **LayoutContext:** レイアウトAPIの統一窓口
-- **LayoutVariables:** 変数管理に特化
+- **Variables:** 変数管理に特化
 - **LayoutConstraints:** 制約管理に特化
 - **ContainerSymbolBase:** コンテナロジックの共通化
 

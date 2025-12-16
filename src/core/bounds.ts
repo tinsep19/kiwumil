@@ -1,5 +1,5 @@
 import type { BoundId } from "./types"
-import type { LayoutVariable } from "./layout_variable"
+import type { Variable } from "./layout_variable"
 
 export function createBoundId(value: string): BoundId {
   return value
@@ -8,16 +8,16 @@ export function createBoundId(value: string): BoundId {
 /**
  * Anchor types: Position anchor types for layout variables
  */
-export type AnchorX = LayoutVariable
-export type AnchorY = LayoutVariable
-export type AnchorZ = LayoutVariable
+export type AnchorX = Variable
+export type AnchorY = Variable
+export type AnchorZ = Variable
 export type Anchor = { x: AnchorX; y: AnchorY }
 
 /**
  * Dimension types: Size dimension types for layout variables
  */
-export type Width = LayoutVariable
-export type Height = LayoutVariable
+export type Width = Variable
+export type Height = Variable
 export type Dimension = { width: Width; height: Height }
 
 /**

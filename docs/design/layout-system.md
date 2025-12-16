@@ -18,7 +18,7 @@ Kiwumil のレイアウトシステムは、Cassowary アルゴリズムを使�
 Kiwumil は `src/core` モジュールで公開インターフェースを集約し、アーキテクチャの境界を明確化しています。
 
 **`src/core/`** - 公開コアインターフェース:
-- `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `ILayoutVariable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
+- `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `IVariable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
 - `bounds.ts`: `BoundId`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
 - `constraints_builder.ts`: `IConstraintsBuilder`, `Term`, `ConstraintSpec`
 - `layout_solver.ts`: `ILayoutSolver`
@@ -26,7 +26,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 
 **`src/model/`** - モデル層実装:
 - `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
-- `LayoutVariables` (moved from `src/kiwi`)
+- `Variables` (moved from `src/kiwi`)
 
 **`src/kiwi/`** - レイアウトエンジン実装:
 - `KiwiSolver` (implements `ILayoutSolver`)
@@ -38,7 +38,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 ```
 ┌────────────────────────────────────────────────────────┐
 │                    src/core (公開API)                  │
-│  - ILayoutSolver, IConstraintsBuilder, ILayoutVariable │
+│  - ILayoutSolver, IConstraintsBuilder, IVariable │
 │  - LayoutBounds, ConstraintSpec, HintTarget           │
 └────────────────────────────────────────────────────────┘
          ▲                                    ▲
@@ -46,7 +46,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 ┌────────┴──────────┐              ┌─────────┴──────────┐
 │   src/model       │              │   src/kiwi       │
 │  - SymbolBase     │              │  - KiwiSolver    │
-│  - LayoutVariables│──────────────▶  - ConstraintsBuilder│
+│  - Variables│──────────────▶  - ConstraintsBuilder│
 │  (solver接続)     │              │  (実装層)          │
 └───────────────────┘              └────────────────────┘
 ```
@@ -59,7 +59,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 │  (ファサード・コーディネーター)       │
 ├─────────────────────────────────────┤
 │  - solver: KiwiSolver             │
-│  - variables: LayoutVariables       │
+│  - variables: Variables       │
 │  - constraints: LayoutConstraints   │
 └─────────────────────────────────────┘
          │                    │
@@ -83,7 +83,7 @@ Variables と Constraints を束ね、統一されたインターフェースを
 ```typescript
 export class LayoutContext {
   readonly solver: KiwiSolver
-  readonly variables: LayoutVariables
+  readonly variables: Variables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
   
@@ -94,20 +94,20 @@ export class LayoutContext {
   
   solve(): void
   solveAndApply(symbols: SymbolBase[]): void
-  valueOf(variable: LayoutVariable): number
+  valueOf(variable: Variable): number
   getSolver(): KiwiSolver
 }
 ```
 
-#### LayoutVariables（変数管理）
+#### Variables（変数管理）
 
 kiwi の Variable/Constraint 生成を担う薄い層。`src/model` に配置され、`ILayoutSolver` インターフェースを通じてレイアウトソルバーを利用します。
 
 ```typescript
-export class LayoutVariables {
+export class Variables {
   private readonly solver: ILayoutSolver
   
-  createVariable(id: VariableId): ILayoutVariable
+  createVariable(id: VariableId): IVariable
   createBound(id: SymbolId): LayoutBounds
   createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): ILayoutConstraint
 }
@@ -140,19 +140,19 @@ export class LayoutConstraints {
 
 ### Bounds の定義
 
-Bounds はインターフェースとして `src/core/bounds.ts` に定義され、すべてのプロパティが `ILayoutVariable` インターフェースを使用します。
+Bounds はインターフェースとして `src/core/bounds.ts` に定義され、すべてのプロパティが `IVariable` インターフェースを使用します。
 
 ```typescript
 export interface Bounds {
   readonly type: BoundsType  // "layout" | "container" | "item"
-  readonly x: ILayoutVariable
-  readonly y: ILayoutVariable
-  readonly width: ILayoutVariable
-  readonly height: ILayoutVariable
-  readonly right: ILayoutVariable    // 派生変数: x + width
-  readonly bottom: ILayoutVariable   // 派生変数: y + height
-  readonly centerX: ILayoutVariable  // 派生変数: x + width * 0.5
-  readonly centerY: ILayoutVariable  // 派生変数: y + height * 0.5
+  readonly x: IVariable
+  readonly y: IVariable
+  readonly width: IVariable
+  readonly height: IVariable
+  readonly right: IVariable    // 派生変数: x + width
+  readonly bottom: IVariable   // 派生変数: y + height
+  readonly centerX: IVariable  // 派生変数: x + width * 0.5
+  readonly centerY: IVariable  // 派生変数: y + height * 0.5
 }
 
 export type BoundId = string
@@ -166,7 +166,7 @@ export type ItemBounds = Bounds & { type: 'item' }
 派生変数は `createBound()` 呼び出し時に事前生成され、制約も同時に設定されます。
 
 ```typescript
-// LayoutVariables.createBound() で生成時に派生変数を作成し制約を設定
+// Variables.createBound() で生成時に派生変数を作成し制約を設定
 createBound(id: SymbolId | SymbolId): Bounds {
   const x = this.createVar(\`\${id}.x\`)
   const y = this.createVar(\`\${id}.y\`)
@@ -625,7 +625,7 @@ circle(label: string): SymbolId {
 
 * `LayoutContext` インスタンスは `context` と呼ぶ
 * `LayoutConstraints` は `constraints`
-* `LayoutVariables` は `variables`
+* `Variables` は `variables`
 
 ## LayoutBound Injection
 
@@ -755,14 +755,14 @@ export type BoundId = string
 
 export interface Bounds {
   readonly type: BoundsType
-  readonly x: ILayoutVariable
-  readonly y: ILayoutVariable
-  readonly width: ILayoutVariable
-  readonly height: ILayoutVariable
-  readonly right: ILayoutVariable
-  readonly bottom: ILayoutVariable
-  readonly centerX: ILayoutVariable
-  readonly centerY: ILayoutVariable
+  readonly x: IVariable
+  readonly y: IVariable
+  readonly width: IVariable
+  readonly height: IVariable
+  readonly right: IVariable
+  readonly bottom: IVariable
+  readonly centerX: IVariable
+  readonly centerY: IVariable
 }
 ```
 
@@ -778,18 +778,18 @@ export interface HintTarget {
 }
 ```
 
-### 3. ILayoutVariable への統一
+### 3. IVariable への統一
 
-すべての `Bounds` プロパティが `ILayoutVariable` インターフェースを使用:
+すべての `Bounds` プロパティが `IVariable` インターフェースを使用:
 
-- 具象 `LayoutVariable` クラスへの直接依存を排除
+- 具象 `Variable` クラスへの直接依存を排除
 - `src/core` のインターフェースのみに依存
 
 ## 完了した実装
 
 | 領域 | 実装内容 |
 | --- | --- |
-| Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `ILayoutVariable` を使用。 |
+| Bounds モデル | `BoundId` を `string` 型として `src/core/symbols.ts` に追加。`Bounds` のすべてのプロパティが `IVariable` を使用。 |
 | HintTarget | `HintTarget` インターフェースを `src/core/hint_target.ts` に配置し、`ownerId`、`bounds`、`container` を保持。 |
 | LayoutConstraints | `HintTarget` を活用し、Bounds ベースでの制約構築を実現。 |
 
@@ -802,7 +802,7 @@ export interface HintTarget {
 
 ## 関連変更
 
-- `LayoutVariable` → `ILayoutVariable` への統一
+- `Variable` → `IVariable` への統一
 - `LayoutConstraintTarget` → `HintTarget` への名前変更
 - `BoundId` のブランド化削除 (単純な `string` 型に)
 
@@ -879,7 +879,7 @@ export interface IConstraintsBuilder {
   le(lhs: Term, rhs: Term | number, strength?: ConstraintStrength): this
 }
 
-export type Term = ILayoutVariable | number
+export type Term = IVariable | number
 export type ConstraintSpec = (builder: IConstraintsBuilder) => void
 ```
 
@@ -888,7 +888,7 @@ export type ConstraintSpec = (builder: IConstraintsBuilder) => void
 - `ConstraintStrength`: `"required" | "strong" | "medium" | "weak"`
 - `ISuggestHandle`: 旧 `SuggestHandle` から名前変更
 - `ISuggestHandleFactory`: 旧 `SuggestHandleFactory` から名前変更
-- `ILayoutVariable`: 旧 `LayoutVariable<T>` から型パラメータを削除
+- `IVariable`: 旧 `Variable<T>` から型パラメータを削除
 
 ### 3. シンボル実装の更新
 

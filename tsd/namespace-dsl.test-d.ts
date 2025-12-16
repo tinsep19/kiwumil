@@ -104,7 +104,7 @@ TypeDiagram("Default Core").build(({ el, rel }) => {
   const circle = el.core.circle("Circle")
   expectType<ICircleSymbolCharacs>(circle)
   // Verify that r property is accessible
-  expectType<import("../dist/core").LayoutVariable>(circle.r)
+  expectType<import("../dist/core").Variable>(circle.r)
   
   expectType<ISymbolCharacs>(el.core.text("Multi\nLine"))
   expectType<ISymbolCharacs>(el.core.text({ label: "Info object", textAnchor: "start" }))

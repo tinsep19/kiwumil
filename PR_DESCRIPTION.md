@@ -86,7 +86,7 @@ this.layout.variables.addConstraint(
 **アーキテクチャ:**
 ```
 LayoutContext (ファサード)
-  ├── LayoutVariables (変数管理)
+  ├── Variables (変数管理)
   ├── LayoutConstraints (制約管理)
   └── solver: kiwi.Solver
 ```

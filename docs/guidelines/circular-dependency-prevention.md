@@ -112,7 +112,7 @@ export { getBoundsValues } from "../core"
 
 ```typescript
 // ❌ re-export from equal or higher layers
-export { LayoutVariables } from "../model" // kiwi/ → model/
+export { Variables } from "../model" // kiwi/ → model/
 
 // ❌ re-export causing cycles
 export { DiagramBuilder } from "../dsl" // model/ → dsl/ → model/
@@ -219,7 +219,7 @@ export default [
 
 ### Phase 1: immediate fixes ✅
 - [x] Resolve immediate cycles (this PR)
-- [x] Remove LayoutVariables re-export
+- [x] Remove Variables re-export
 - [x] Adopt dependency injection patterns
 
 ### Phase 2: rule expansion

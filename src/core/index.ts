@@ -17,7 +17,7 @@ export type {
 
 // レイアウト変数
 export type {
-  LayoutVariable,
+  Variable,
   ConstraintStrength,
   SuggestHandle,
   SuggestHandleFactory,

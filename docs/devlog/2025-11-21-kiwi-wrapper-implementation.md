@@ -7,7 +7,7 @@
 現状の課題：
 - kiwi.Solver が `src/kiwi/layout_variables.ts` に散在し、ライフサイクル管理が不明確
 - kiwi への依存が複数箇所に分散しており、将来的なテスト・差し替えが困難
-- 変換ロジック（`LayoutExpression` → `kiwi.Expression`）が `LayoutVariables` 内部の private メソッドとして隠蔽されている
+- 変換ロジック（`LayoutExpression` → `kiwi.Expression`）が `Variables` 内部の private メソッドとして隠蔽されている
 
 ## 実施した作業
 
@@ -37,7 +37,7 @@ kiwi の Operator と Strength を再エクスポートすることで、他の�
 - `toKiwiExpression(input)`: LayoutExpressionInput を kiwi.Expression に変換
 - `createLayoutVar(name)`: ブランド付き LayoutVar を作成
 
-これまで `LayoutVariables` 内部の private メソッドだった `toKiwiExpression` を public な関数として公開した。
+これまで `Variables` 内部の private メソッドだった `toKiwiExpression` を public な関数として公開した。
 
 #### KiwiSolver クラス
 kiwi.Solver のラッパークラスとして実装。以下のメソッドを提供：
@@ -126,10 +126,10 @@ $ bun run test:types
 
 ### 3. 可読性の向上
 - 型定義と変換ロジックが独立したモジュールとして整理された
-- LayoutVariables の責務が明確になった（変数管理に専念）
+- Variables の責務が明確になった（変数管理に専念）
 
 ### 4. 既存コードとの互換性維持
-- LayoutVariables の public API は変更なし
+- Variables の public API は変更なし
 - `LayoutConstraintOperator`, `LayoutConstraintStrength` も既存の名前で export
 
 ## 次のステップ
@@ -137,7 +137,7 @@ $ bun run test:types
 移行手順の次の段階：
 1. ✅ kiwi ラッパーを作成（完了）
 2. 型の切り出し（`src/kiwi/layout_types.ts` の作成）
-3. LayoutVariables を依存注入対応にする
+3. Variables を依存注入対応にする
 4. LayoutContext に Solver を移動
 5. LayoutConstraints の責務整理
 

@@ -1,5 +1,5 @@
 // src/model/layout_variables.ts
-import type { ILayoutSolver, LayoutVariable, LayoutConstraint, ConstraintSpec } from "../core"
+import type { ILayoutSolver, Variable, LayoutConstraint, ConstraintSpec } from "../core"
 import {
   createBoundId,
   type Bounds,
@@ -11,7 +11,7 @@ import {
 } from "../core"
 
 // 互換性のため既存の export を維持
-export type { LayoutVariable }
+export type { Variable }
 
 // 新しい型エイリアス
 export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
@@ -27,14 +27,14 @@ export class LayoutVariables {
     this.solver = solver
   }
 
-  createVariable(name: string): LayoutVariable {
+  createVariable(name: string): Variable {
     return this.solver.createVariable(name)
   }
 
   /**
    * @deprecated Use createVariable instead. This method is kept for backward compatibility and will be removed in a future major version.
    */
-  createVar(name: string): LayoutVariable {
+  createVar(name: string): Variable {
     return this.createVariable(name)
   }
 
@@ -109,14 +109,14 @@ export class LayoutVariables {
   }
 
   /**
-   * 複数の Bounds または LayoutVariable を一括で生成する factory メソッド
+   * 複数の Bounds または Variable を一括で生成する factory メソッド
    * @param set キーと BoundsType または "variable" のマップ
-   * @returns キーと対応する型付き Bounds または LayoutVariable のマップ
+   * @returns キーと対応する型付き Bounds または Variable のマップ
    */
   createBoundsSet<T extends Record<string, BoundsType | "variable">>(
     set: T
-  ): { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] } {
-    const result: Record<string, Bounds | LayoutVariable> = {}
+  ): { [K in keyof T]: T[K] extends "variable" ? Variable : BoundsMap[T[K] & BoundsType] } {
+    const result: Record<string, Bounds | Variable> = {}
     for (const [key, type] of Object.entries(set)) {
       if (type === "variable") {
         result[key] = this.createVariable(key)
@@ -124,10 +124,10 @@ export class LayoutVariables {
         result[key] = this.createBounds(key, type)
       }
     }
-    return result as { [K in keyof T]: T[K] extends "variable" ? LayoutVariable : BoundsMap[T[K] & BoundsType] }
+    return result as { [K in keyof T]: T[K] extends "variable" ? Variable : BoundsMap[T[K] & BoundsType] }
   }
 
-  valueOf(variable: LayoutVariable): number {
+  valueOf(variable: Variable): number {
     return variable.value()
   }
 

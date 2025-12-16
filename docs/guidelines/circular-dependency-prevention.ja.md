@@ -118,7 +118,7 @@ export { getBoundsValues } from "../core"
 
 ```typescript
 // ❌ 同等または上位レイヤーのre-export
-export { LayoutVariables } from "../model" // kiwi/ → model/
+export { Variables } from "../model" // kiwi/ → model/
 
 // ❌ 循環を作るre-export
 export { DiagramBuilder } from "../dsl" // model/ → dsl/ → model/
@@ -223,7 +223,7 @@ export default [
 
 ### Phase 1: 現在の修正 ✅
 - [x] 即座の循環依存解決（今回のPR）
-- [x] LayoutVariablesのre-export削除
+- [x] Variablesのre-export削除
 - [x] 依存注入パターン導入
 
 ### Phase 2: ルール拡張

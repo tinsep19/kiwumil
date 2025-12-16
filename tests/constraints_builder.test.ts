@@ -89,7 +89,7 @@ describe("ConstraintsBuilder", () => {
     const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
     
-    // Create a fake variable that looks like LayoutVariable but isn't branded
+    // Create a fake variable that looks like Variable but isn't branded
     const fakeVariable = {
       id: "fake:var",
       value: () => 0,

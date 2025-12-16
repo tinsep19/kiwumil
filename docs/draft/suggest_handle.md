@@ -1,12 +1,12 @@
 # KiwiSolver の SuggestHandle API
 
-以前は `KiwiSolver#addEditVariable(variable: LayoutVariable, strength: kiwi.Strength)` という
+以前は `KiwiSolver#addEditVariable(variable: Variable, strength: kiwi.Strength)` という
 唯一の編集エントリで `kiwi.Strength` をユーザーが直接扱う必要がありました。
 この API を `SuggestHandle` に置き換えることで、フルエント・スタイルで strength を文字列で
 指定でき、`kiwi` への依存を完全に隠蔽します。
 
 ```
-const x : LayoutVariable
+const x : Variable
 
 // create SuggestHandle to suggest value
 const handle : SuggestHandle = solver.createHandle(x).strong()

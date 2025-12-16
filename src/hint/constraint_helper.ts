@@ -1,7 +1,7 @@
 // src/hint/constraint_helper.ts
 // ConstraintHelper: LinearConstraintBuilder をラップして高水準のチェーン API を提供
 
-import type { LinearConstraintBuilder, LayoutVariable, LayoutBounds, ItemBounds } from "../core"
+import type { LinearConstraintBuilder, Variable, LayoutBounds, ItemBounds } from "../core"
 import type { StrengthBuilder } from "./strength_builder"
 import { SetSizeBuilder } from "./set_size_builder"
 import { EncloseBuilder } from "./enclose_builder"
@@ -41,8 +41,8 @@ export class ConstraintHelper {
    */
   setSize(
     bounds: LayoutBounds,
-    width: number | LayoutVariable,
-    height: number | LayoutVariable
+    width: number | Variable,
+    height: number | Variable
   ): StrengthBuilder {
     return new SetSizeBuilder(this.builder, bounds, width, height)
   }
@@ -99,7 +99,7 @@ export class ConstraintHelper {
    * @example
    * helper.align(layout.z, container.z, item1.z, item2.z).required()
    */
-  align(...vars: LayoutVariable[]): StrengthBuilder {
+  align(...vars: Variable[]): StrengthBuilder {
     return new AlignBuilder(this.builder, vars)
   }
 }

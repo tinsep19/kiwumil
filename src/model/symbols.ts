@@ -65,7 +65,7 @@ export class SymbolRegistrationBuilder {
 
   /**
    * setConstraint を ConstraintSpec を受け取り LayoutConstraint を生成して返す仕様に変更しました。
-   * LayoutVariables（または関連する変数管理オブジェクト）の createConstraint を呼び出して
+   * Variables（または関連する変数管理オブジェクト）の createConstraint を呼び出して
    * this._constraint に保存します。
    */
   setConstraint(spec: ConstraintSpec): LayoutConstraint {
