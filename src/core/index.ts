@@ -32,7 +32,7 @@ export type {
 
 // ソルバー
 export type {
-  ILayoutSolver,
+  CassowarySolver,
   ConstraintStrength,
   SuggestHandle,
   SuggestHandleFactory,

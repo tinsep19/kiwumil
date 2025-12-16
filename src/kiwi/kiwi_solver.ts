@@ -3,7 +3,7 @@
 import * as kiwi from "@lume/kiwi"
 import { KiwiConstraintBuilder } from "./constraints_builder"
 import { KiwiSuggestHandleFactory } from "./suggest_handle"
-import type { VariableId, Variable, LayoutConstraintId, LayoutConstraint, SuggestHandleFactory, ILayoutSolver } from "../core"
+import type { VariableId, Variable, LayoutConstraintId, LayoutConstraint, SuggestHandleFactory, CassowarySolver } from "../core"
 import type { ConstraintSpec } from "../core"
 
 /**
@@ -56,7 +56,7 @@ export interface KiwiConstraints extends LayoutConstraint {
  * kiwi.Solver のラッパークラス
  * ソルバーのライフサイクル管理と操作を集約
  */
-export class KiwiSolver implements ILayoutSolver {
+export class KiwiSolver implements CassowarySolver {
   private readonly solver: kiwi.Solver
 
   constructor() {

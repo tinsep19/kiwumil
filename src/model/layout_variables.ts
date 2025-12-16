@@ -1,5 +1,5 @@
 // src/model/layout_variables.ts
-import type { ILayoutSolver, Variable, LayoutConstraint, ConstraintSpec } from "../core"
+import type { CassowarySolver, Variable, LayoutConstraint, ConstraintSpec } from "../core"
 import {
   createBoundId,
   type Bounds,
@@ -18,12 +18,12 @@ export type { BoundsType, LayoutBounds, ContainerBounds, ItemBounds }
 
 /**
  * Layout変数とバウンドの生成・管理を担当
- * 式の作成や制約の追加は ILayoutSolver が担当
+ * 式の作成や制約の追加は CassowarySolver が担当
  */
 export class LayoutVariables {
-  private readonly solver: ILayoutSolver
+  private readonly solver: CassowarySolver
 
-  constructor(solver: ILayoutSolver) {
+  constructor(solver: CassowarySolver) {
     this.solver = solver
   }
 
@@ -145,7 +145,7 @@ export class LayoutVariables {
    * solver へのアクセサ（後方互換性のため）
    * LayoutContext から注入された solver を取得する
    */
-  getSolver(): ILayoutSolver {
+  getSolver(): CassowarySolver {
     return this.solver
   }
 }

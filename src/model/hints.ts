@@ -1,5 +1,5 @@
 import type { Theme } from "../theme"
-import type { ILayoutSolver, LayoutConstraint, Variable } from "../core"
+import type { CassowarySolver, LayoutConstraint, Variable } from "../core"
 import type { HintTarget } from "../core"
 
 export interface HintVariableOptions {
@@ -30,7 +30,7 @@ export class Hints {
   private hintVarCounter = 0
 
   constructor(
-    private readonly solver: ILayoutSolver,
+    private readonly solver: CassowarySolver,
     private readonly theme: Theme
   ) {}
 

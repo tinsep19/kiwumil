@@ -29,9 +29,10 @@ export interface SuggestHandleFactory {
 }
 
 /**
- * ILayoutSolver: Layout solver interface
+ * CassowarySolver: Layout solver interface
+ * (Previously named ILayoutSolver)
  */
-export interface ILayoutSolver {
+export interface CassowarySolver {
   /**
    * Create a layout variable
    */
