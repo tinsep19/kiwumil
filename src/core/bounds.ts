@@ -1,5 +1,5 @@
 import type { BoundId } from "./types"
-import type { Variable, AnchorX, AnchorY, AnchorZ, Width, Height, Anchor, Dimension } from "./layout_variable"
+import type { AnchorX, AnchorY, AnchorZ, Width, Height } from "./layout_variable"
 
 export function createBoundId(value: string): BoundId {
   return value
