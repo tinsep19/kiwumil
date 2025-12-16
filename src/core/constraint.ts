@@ -1,10 +1,9 @@
 // src/core/constraint.ts
 // 制約関連のインターフェースと型定義
 
-import type { LayoutConstraintId, BoundId } from "./types"
+import type { LayoutConstraintId } from "./types"
 import type { Variable } from "./layout_variable"
 import type { ConstraintStrength } from "./solver"
-import type { LayoutBounds, ContainerBounds } from "./bounds"
 
 /**
  * LayoutConstraint: レイアウト制約のインターフェース
@@ -56,15 +55,6 @@ export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, Stren
  * ConstraintSpec: Callback function that builds constraints using LinearConstraintBuilder
  */
 export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
-
-/**
- * HintTarget: 制約適用の対象となるシンボルの境界情報
- */
-export interface HintTarget {
-  readonly boundId: BoundId
-  readonly bounds: LayoutBounds
-  readonly container?: ContainerBounds
-}
 
 // Re-export ConstraintStrength for convenience
 export type { ConstraintStrength }
