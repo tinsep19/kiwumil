@@ -6,10 +6,16 @@ import type { Variable } from "./layout_variable"
 import type { ConstraintStrength } from "./solver"
 
 /**
+ * LinearConstraint: placeholder type for raw kiwi constraints
+ */
+type LinearConstraint = unknown
+
+/**
  * LayoutConstraint: レイアウト制約のインターフェース
  */
 export interface LayoutConstraint {
   id: LayoutConstraintId
+  rawConstraints: LinearConstraint[]
 }
 
 /**
@@ -49,7 +55,9 @@ export interface StrengthBuilder {
 /**
  * LinearConstraintBuilder: Constraint builder interface
  */
-export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, StrengthBuilder {}
+export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, StrengthBuilder {
+  getRawConstraints(): LinearConstraint[]
+}
 
 /**
  * ConstraintSpec: Callback function that builds constraints using LinearConstraintBuilder
