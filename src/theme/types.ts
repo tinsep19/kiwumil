@@ -20,3 +20,10 @@ export interface Theme {
   defaultStyleSet: StyleSet
   symbols?: Record<SymbolName, Partial<StyleSet>>
 }
+
+export interface ContainerPadding {
+  top: number
+  right: number
+  bottom: number
+  left: number
+}

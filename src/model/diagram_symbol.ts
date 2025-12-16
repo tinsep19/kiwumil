@@ -1,6 +1,6 @@
 // src/model/diagram_symbol.ts
 import { getStyleForSymbol } from "../theme"
-import type { Theme } from "../theme"
+import type { Theme, ContainerPadding } from "../theme"
 import type { Point } from "../core"
 export interface DiagramInfo {
   title: string
@@ -11,8 +11,7 @@ export interface DiagramInfo {
 import type { ContainerBounds, LinearConstraintBuilder } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
-import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
-import { ContainerPadding, ContainerSymbol } from "./container_symbol"
+import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
