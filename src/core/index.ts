@@ -28,7 +28,7 @@ export type {
   OpRhsBuilder,
   StrengthBuilder,
   ConstraintSpec,
-} from "./constraint"
+} from "./solver"
 
 // レイアウトヒント
 export type { HintTarget } from "./layout_hint"

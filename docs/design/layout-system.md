@@ -20,7 +20,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 **`src/core/`** - 公開コアインターフェース:
 - `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `Variable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
 - `bounds.ts`: `BoundId`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
-- `constraints_builder.ts`: `IConstraintsBuilder`, `Term`, `ConstraintSpec`
+- `solver.ts`: `CassowarySolver`, `ConstraintStrength`, `SuggestHandle`, `SuggestHandleFactory`, `LayoutConstraint`, `Term`, `ConstraintSpec`, `LinearConstraintBuilder`, `LhsBuilder`, `OpRhsBuilder`, `StrengthBuilder`
 - `layout_solver.ts`: `CassowarySolver`
 - `hint_target.ts`: `HintTarget`
 
@@ -870,7 +870,7 @@ export interface HintTarget {
 
 ### 1. インターフェース抽出
 
-`src/core/constraints_builder.ts` に以下のコアインターフェースを配置:
+`src/core/solver.ts` に以下のコアインターフェースを配置:
 
 ```typescript
 export interface IConstraintsBuilder {
@@ -919,6 +919,6 @@ export abstract class SymbolBase {
 
 ## 参照
 
-- `src/core/constraints_builder.ts` - コアインターフェース定義
+- `src/core/solver.ts` - コアインターフェース定義
 - `src/kiwi/constraints_builder.ts` - 具象実装
 - `src/model/symbol_base.ts` - シンボル基底クラス

@@ -36,23 +36,26 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 
 公開インターフェースと型定義を `src/core` に集約:
 
-**`src/core/symbols.ts`**:
-- `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`
-- `VariableId`, `Variable`, `BoundId`
-- `LayoutConstraintId`, `ILayoutConstraint`
-- `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
+**`src/core/types.ts`**:
+- `SymbolId`, `Point`, `VariableId`, `BoundId`, `LayoutConstraintId`
+
+**`src/core/symbol.ts`**:
+- `ISymbol`, `ISymbolCharacs`, `IContainerSymbolCharacs`
+
+**`src/core/layout_variable.ts`**:
+- `Variable`, `AnchorX`, `AnchorY`, `AnchorZ`, `Width`, `Height`, `Anchor`, `Dimension`, `VariableFactory`
 
 **`src/core/bounds.ts`**:
 - `Bounds`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
 - `BoundsType`, `BoundsMap`
 
-**`src/core/constraints_builder.ts`**:
-- `IConstraintsBuilder`, `Term`, `ConstraintSpec`
+**`src/core/solver.ts`** (統合):
+- `CassowarySolver` (ソルバーインターフェース)
+- `ConstraintStrength`, `SuggestHandle`, `SuggestHandleFactory`
+- `LayoutConstraint`, `Term`, `ConstraintSpec`
+- `LinearConstraintBuilder`, `LhsBuilder`, `OpRhsBuilder`, `StrengthBuilder`
 
-**`src/core/layout_solver.ts`**:
-- `CassowarySolver`
-
-**`src/core/hint_target.ts`**:
+**`src/core/layout_hint.ts`**:
 - `HintTarget`
 
 ### 2. インポートパスの統一
