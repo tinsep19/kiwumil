@@ -40,7 +40,7 @@ See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependenc
 
 **`src/core/symbols.ts`**:
 - `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`
-- `VariableId`, `ILayoutVariable`, `BoundId`
+- `VariableId`, `Variable`, `BoundId`
 - `LayoutConstraintId`, `ILayoutConstraint`
 - `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
 
@@ -64,11 +64,11 @@ See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependenc
 ```typescript
 // Before (分散)
 import type { SymbolId } from "../model/types"
-import type { ILayoutVariable } from "../kiwi"
+import type { Variable } from "../kiwi"
 import type { LayoutBounds } from "../kiwi/bounds"
 
 // After (集約)
-import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
+import type { SymbolId, Variable, LayoutBounds } from "../core"
 ```
 
 ### 3. モジュール構成の明確化

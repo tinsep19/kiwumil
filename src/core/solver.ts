@@ -2,7 +2,7 @@
 // レイアウトソルバーのインターフェース
 
 import type { VariableId, LayoutConstraintId } from "./types"
-import type { LayoutVariable, SuggestHandleFactory } from "./layout_variable"
+import type { Variable, SuggestHandleFactory } from "./layout_variable"
 import type { LayoutConstraint, ConstraintSpec } from "./constraint"
 
 /**
@@ -12,7 +12,7 @@ export interface ILayoutSolver {
   /**
    * Create a layout variable
    */
-  createVariable(id: VariableId): LayoutVariable
+  createVariable(id: VariableId): Variable
 
   /**
    * Update variables
@@ -27,5 +27,5 @@ export interface ILayoutSolver {
   /**
    * Create a fluent edit variable handle
    */
-  createHandle(variable: LayoutVariable): SuggestHandleFactory
+  createHandle(variable: Variable): SuggestHandleFactory
 }

@@ -1,5 +1,5 @@
 import type { Theme } from "../theme"
-import type { ILayoutSolver, LayoutConstraint, LayoutVariable } from "../core"
+import type { ILayoutSolver, LayoutConstraint, Variable } from "../core"
 import type { HintTarget } from "../core"
 
 export interface HintVariableOptions {
@@ -16,8 +16,8 @@ export interface HintVariableOptions {
 }
 
 export interface HintVariable {
-  /** The created LayoutVariable */
-  variable: LayoutVariable
+  /** The created Variable */
+  variable: Variable
   /** Full variable name with hint: prefix */
   name: string
   /** Constraint IDs associated with this hint variable (if any) */

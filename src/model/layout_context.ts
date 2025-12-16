@@ -1,7 +1,7 @@
 // src/model/layout_context.ts
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
-import type { LayoutVariable, LayoutConstraint, ConstraintSpec, ILayoutSolver } from "../core"
+import type { Variable, LayoutConstraint, ConstraintSpec, ILayoutSolver } from "../core"
 import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
 
@@ -38,7 +38,7 @@ export class LayoutContext {
     // No longer need to populate the deprecated bounds property
   }
 
-  valueOf(variable: LayoutVariable): number {
+  valueOf(variable: Variable): number {
     return this.variables.valueOf(variable)
   }
 }

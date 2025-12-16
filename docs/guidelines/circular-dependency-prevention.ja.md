@@ -223,7 +223,7 @@ export default [
 
 ### Phase 1: 現在の修正 ✅
 - [x] 即座の循環依存解決（今回のPR）
-- [x] LayoutVariablesのre-export削除
+- [x] Variablesのre-export削除
 - [x] 依存注入パターン導入
 
 ### Phase 2: ルール拡張

@@ -1,12 +1,12 @@
 # 2025-11-18 LayoutContext リワーク
 
 ## 背景
-- 従来は `LayoutVariableContext` にヒント情報 (LayoutHint) を貯め、`KiwiSolver.solve()` 内でまとめて制約を追加していた。
+- 従来は `VariableContext` にヒント情報 (LayoutHint) を貯め、`KiwiSolver.solve()` 内でまとめて制約を追加していた。
 - ガイド API 等は既にオンラインで制約を登録しており整合性が取れていなかった。
 
 ## 変更点
 1. **レイアウト基盤の再構築**
-   - `LayoutVariableContext` を `LayoutVariables` にリネームし、kiwi の薄いブリッジとして簡素化。
+   - `VariableContext` を `LayoutVariables` にリネームし、kiwi の薄いブリッジとして簡素化。
    - `LayoutConstraints` / `LayoutConstraint` を追加し、kiwumil の論理的制約 (`arrangeHorizontal`, `alignTop`, `enclose`, `setDefaultSize`, `setMinSize` など) を管理できるようにした。
    - `LayoutContext` を導入し、`LayoutVariables` と `LayoutConstraints` を束ねて Symbol / Hint / Guide から利用できるようにした。
 

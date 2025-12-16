@@ -2,7 +2,7 @@
 // 制約関連のインターフェースと型定義
 
 import type { LayoutConstraintId, BoundId } from "./types"
-import type { LayoutVariable, ConstraintStrength } from "./layout_variable"
+import type { Variable, ConstraintStrength } from "./layout_variable"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
 
 /**
@@ -15,7 +15,7 @@ export interface LayoutConstraint {
 /**
  * Term: Layout constraint term consisting of a coefficient and a variable or constant
  */
-export type Term = [number, LayoutVariable | number]
+export type Term = [number, Variable | number]
 
 /**
  * LhsBuilder: Interface for building left-hand side of constraints

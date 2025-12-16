@@ -5,7 +5,7 @@ import { ConstraintHelper } from "@/hint"
 import type { LayoutBounds } from "@/core"
 
 describe("ConstraintHelper", () => {
-  function createTestBounds(variables: LayoutVariables, prefix: string): LayoutBounds {
+  function createTestBounds(variables: Variables, prefix: string): LayoutBounds {
     return variables.createBounds(prefix, "layout")
   }
 

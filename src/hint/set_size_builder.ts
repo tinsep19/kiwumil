@@ -1,7 +1,7 @@
 // src/hint/set_size_builder.ts
 // SetSize 操作のビルダー
 
-import type { LinearConstraintBuilder, LayoutVariable, LayoutBounds } from "../core"
+import type { LinearConstraintBuilder, Variable, LayoutBounds } from "../core"
 import type { StrengthBuilder } from "./strength_builder"
 
 /**
@@ -11,8 +11,8 @@ export class SetSizeBuilder implements StrengthBuilder {
   constructor(
     private readonly builder: LinearConstraintBuilder,
     private readonly bounds: LayoutBounds,
-    private readonly width: number | LayoutVariable,
-    private readonly height: number | LayoutVariable
+    private readonly width: number | Variable,
+    private readonly height: number | Variable
   ) {}
 
   weak(): void {
