@@ -1,5 +1,5 @@
 // src/model/symbol_base.ts
-import type { SymbolId, Point, ISymbol } from "../core"
+import type { SymbolId, Point, ISymbol, ContainerBounds } from "../core"
 import type { Theme } from "../theme"
 import type { LinearConstraintBuilder, LayoutBounds } from "../core"
 
@@ -7,6 +7,10 @@ export interface SymbolBaseOptions {
   id: SymbolId
   bounds: LayoutBounds
   theme: Theme
+}
+
+export interface ContainerSymbol extends SymbolBase {
+  readonly container: ContainerBounds
 }
 
 export abstract class SymbolBase implements ISymbol {

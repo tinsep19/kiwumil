@@ -1,5 +1,6 @@
 // src/dsl/hint_factory.ts
-import { ContainerSymbol, SymbolBase, Symbols, LayoutContext } from "../model"
+import { SymbolBase, Symbols, LayoutContext } from "../model"
+import type { ContainerSymbol } from "../model/symbol_base"
 import type { SymbolId, HintTarget } from "../core"
 import {
   FigureBuilder,

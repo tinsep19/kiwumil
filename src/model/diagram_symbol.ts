@@ -11,8 +11,8 @@ export interface DiagramInfo {
 import type { ContainerBounds, LinearConstraintBuilder } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
-import { SymbolBase, type SymbolBaseOptions } from "./symbol_base"
-import { ContainerPadding, ContainerSymbol } from "./container_symbol"
+import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
+import type { ContainerPadding } from "../theme/types"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
