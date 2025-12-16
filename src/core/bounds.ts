@@ -1,24 +1,9 @@
 import type { BoundId } from "./types"
-import type { Variable } from "./layout_variable"
+import type { Variable, AnchorX, AnchorY, AnchorZ, Width, Height, Anchor, Dimension } from "./layout_variable"
 
 export function createBoundId(value: string): BoundId {
   return value
 }
-
-/**
- * Anchor types: Position anchor types for layout variables
- */
-export type AnchorX = Variable
-export type AnchorY = Variable
-export type AnchorZ = Variable
-export type Anchor = { x: AnchorX; y: AnchorY }
-
-/**
- * Dimension types: Size dimension types for layout variables
- */
-export type Width = Variable
-export type Height = Variable
-export type Dimension = { width: Width; height: Height }
 
 /**
  * BoundsType: レイアウトの種類を表す型

@@ -16,7 +16,7 @@ export type {
 } from "./symbol"
 
 // レイアウト変数
-export type { Variable } from "./layout_variable"
+export type { Variable, AnchorX, AnchorY, AnchorZ, Width, Height, Anchor, Dimension } from "./layout_variable"
 
 // 制約
 export type {
@@ -49,13 +49,6 @@ export type {
   LayoutBounds,
   TypedBounds,
   BoundsMap,
-  AnchorX,
-  AnchorY,
-  AnchorZ,
-  Anchor,
-  Width,
-  Height,
-  Dimension,
 } from "./bounds"
 
 export { createBoundId, getBoundsValues } from "./bounds"
