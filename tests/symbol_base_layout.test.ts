@@ -82,7 +82,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-3")
     const symbol = new DummySymbol("dummy-3", bounds)
-    
+
     const constraint = solver.createConstraint("test-ensure", (builder) => {
       symbol.ensureLayoutBounds(builder)
     })
@@ -96,7 +96,7 @@ describe("SymbolBase layout bounds", () => {
     const vars = new LayoutVariables(solver)
     const bounds = vars.createBounds("dummy-4")
     const symbol = new DummySymbolWithConstraints("dummy-4", bounds)
-    
+
     const constraint = solver.createConstraint("test-custom", (builder) => {
       symbol.ensureLayoutBounds(builder)
     })

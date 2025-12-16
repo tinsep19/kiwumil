@@ -97,12 +97,12 @@ export class ActorSymbol extends SymbolBase {
     // Reserve space above the figure when stereotype is present
     const stereotypeHeight = this.stereotype ? style.fontSize + 5 : 0
     const actorStartY = y + stereotypeHeight
-    
+
     // Icon is required - throw error if not available
     if (!this.icon?.raw) {
       throw new Error(`Actor icon is required but not available for symbol ${this.id}`)
     }
-    
+
     // Use icon at fixed size (no scaling)
     const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
     const iconY = actorStartY + 5
@@ -110,7 +110,7 @@ export class ActorSymbol extends SymbolBase {
     // Render icon via <use> referencing the symbol id; fall back to raw svg if href missing
     const iconSvg = this.icon.href
       ? `<svg width="${ICON_BASE_SIZE}" height="${ICON_BASE_SIZE}" viewBox="${this.icon.viewBox ?? `0 0 ${ICON_BASE_SIZE} ${ICON_BASE_SIZE}`}" xmlns="http://www.w3.org/2000/svg"><use href="#${this.icon.href}"/></svg>`
-      : (this.icon.raw || '')
+      : this.icon.raw || ""
 
     const bodyContent = `
       <g transform="translate(${iconX}, ${iconY})">
@@ -132,7 +132,7 @@ export class ActorSymbol extends SymbolBase {
     }
 
     const escapedLabel = escapeXml(this.label)
-    
+
     return `
       <g id="${this.id}">
         ${stereotypeText}

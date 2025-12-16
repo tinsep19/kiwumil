@@ -1,6 +1,11 @@
 // src/dsl/namespace_builder.ts
 import type { DiagramPlugin } from "./diagram_plugin"
-import type { BuildElementNamespace, BuildRelationshipNamespace, BuildIconNamespace, PluginIcons } from "./namespace_types"
+import type {
+  BuildElementNamespace,
+  BuildRelationshipNamespace,
+  BuildIconNamespace,
+  PluginIcons,
+} from "./namespace_types"
 import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
@@ -44,7 +49,11 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     for (const plugin of this.plugins) {
       if (typeof plugin.createSymbolFactory === "function") {
         const pluginIcons = iconNamespace[plugin.name] || {}
-        namespace[plugin.name] = plugin.createSymbolFactory(symbols, theme, pluginIcons as PluginIcons)
+        namespace[plugin.name] = plugin.createSymbolFactory(
+          symbols,
+          theme,
+          pluginIcons as PluginIcons
+        )
       }
     }
 
@@ -95,9 +104,9 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     const namespace: Record<string, PluginIcons> = {}
 
     for (const plugin of this.plugins) {
-      if (typeof plugin.registerIcons === 'function') {
+      if (typeof plugin.registerIcons === "function") {
         const pluginName = plugin.name
-        const loader = new IconLoader(pluginName, '')
+        const loader = new IconLoader(pluginName, "")
         // call registerIcons to let plugin register icons into our loader
         const createRegistrar: CreateRegistrar = (_p, _importMeta, cb) => cb(loader)
         plugin.registerIcons({

@@ -3,7 +3,7 @@ import type { CassowarySolver, LayoutConstraint, Variable } from "../core"
 import type { HintTarget } from "../core"
 
 export interface HintVariableOptions {
-  /** 
+  /**
    * Variable name suffix. If not provided, an auto-incremented counter is used.
    * Full variable name will be: hint:{baseName}_{suffix}
    */
@@ -38,7 +38,7 @@ export class Hints {
    * Create a hint variable using the KiwiSolver API.
    * The variable is held in Hints scope and not registered to Symbols.
    * Variable names are automatically prefixed with "hint:".
-   * 
+   *
    * @param options Configuration for the hint variable
    * @returns HintVariable containing the created variable and metadata
    */
@@ -46,16 +46,16 @@ export class Hints {
     const baseName = options?.baseName ?? "var"
     const suffix = options?.name ?? `${this.hintVarCounter++}`
     const fullName = `hint:${baseName}_${suffix}`
-    
+
     // Create the variable using KiwiSolver's public API
     const variable = this.solver.createVariable(fullName)
-    
+
     const hintVariable: HintVariable = {
       variable,
       name: fullName,
       constraintIds: [],
     }
-    
+
     this.hintVariables.push(hintVariable)
     return hintVariable
   }
@@ -82,10 +82,7 @@ export class Hints {
         const aBounds = current.bounds
         const bBounds = next.bounds
 
-        builder
-          .expr([1, bBounds.x])
-          .eq([1, aBounds.x], [1, aBounds.width], [gap, 1])
-          .strong()
+        builder.expr([1, bBounds.x]).eq([1, aBounds.x], [1, aBounds.width], [gap, 1]).strong()
       }
     })
 
@@ -93,7 +90,10 @@ export class Hints {
     return constraint
   }
 
-  arrangeVertical(targets: HintTarget[], gap = this.theme.defaultStyleSet.verticalGap): LayoutConstraint {
+  arrangeVertical(
+    targets: HintTarget[],
+    gap = this.theme.defaultStyleSet.verticalGap
+  ): LayoutConstraint {
     const constraint = this.solver.createConstraint("constraints/arrangeVertical", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
         const current = targets[i]!
@@ -101,10 +101,7 @@ export class Hints {
         const aBounds = current.bounds
         const bBounds = next.bounds
 
-        builder
-          .expr([1, bBounds.y])
-          .eq([1, aBounds.y], [1, aBounds.height], [gap, 1])
-          .strong()
+        builder.expr([1, bBounds.y]).eq([1, aBounds.y], [1, aBounds.height], [gap, 1]).strong()
       }
     })
 
@@ -186,14 +183,8 @@ export class Hints {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
         builder
-          .expr(
-            [1, bounds.x],
-            [0.5, bounds.width]
-          )
-          .eq(
-            [1, refBounds.x],
-            [0.5, refBounds.width]
-          )
+          .expr([1, bounds.x], [0.5, bounds.width])
+          .eq([1, refBounds.x], [0.5, refBounds.width])
           .strong()
       }
     })
@@ -210,14 +201,8 @@ export class Hints {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
         builder
-          .expr(
-            [1, bounds.y],
-            [0.5, bounds.height]
-          )
-          .eq(
-            [1, refBounds.y],
-            [0.5, refBounds.height]
-          )
+          .expr([1, bounds.y], [0.5, bounds.height])
+          .eq([1, refBounds.y], [0.5, refBounds.height])
           .strong()
       }
     })
@@ -268,14 +253,8 @@ export class Hints {
       for (const child of childTargets) {
         const childBounds = child.bounds
 
-        builder
-          .expr([1, childBounds.x])
-          .ge([1, containerBounds.x])
-          .required()
-        builder
-          .expr([1, childBounds.y])
-          .ge([1, containerBounds.y])
-          .required()
+        builder.expr([1, childBounds.x]).ge([1, containerBounds.x]).required()
+        builder.expr([1, childBounds.y]).ge([1, containerBounds.y]).required()
         builder
           .expr([1, containerBounds.x], [1, containerBounds.width])
           .ge([1, childBounds.x], [1, childBounds.width])
@@ -284,12 +263,9 @@ export class Hints {
           .expr([1, containerBounds.y], [1, containerBounds.height])
           .ge([1, childBounds.y], [1, childBounds.height])
           .required()
-        
+
         // Z-index depth constraint: child.z >= container.z + 1
-        builder
-          .expr([1, childBounds.z])
-          .ge([1, containerBounds.z], [1, 1])
-          .strong()
+        builder.expr([1, childBounds.z]).ge([1, containerBounds.z], [1, 1]).strong()
       }
     })
 
@@ -399,20 +375,13 @@ export class Hints {
 
         builder
           .expr([1, nextBounds.x])
-          .eq(
-            [1, currentBounds.x],
-            [1, currentBounds.width],
-            [actualGap, 1]
-          )
+          .eq([1, currentBounds.x], [1, currentBounds.width], [actualGap, 1])
           .strong()
       }
     })
   }
 
-  private createArrangeVerticalConstraints(
-    targets: HintTarget[],
-    gap?: number
-  ): LayoutConstraint {
+  private createArrangeVerticalConstraints(targets: HintTarget[], gap?: number): LayoutConstraint {
     const actualGap = gap ?? this.theme.defaultStyleSet.verticalGap
     return this.solver.createConstraint("constraints/arrangeVertical", (builder) => {
       for (let i = 0; i < targets.length - 1; i++) {
@@ -423,11 +392,7 @@ export class Hints {
 
         builder
           .expr([1, nextBounds.y])
-          .eq(
-            [1, currentBounds.y],
-            [1, currentBounds.height],
-            [actualGap, 1]
-          )
+          .eq([1, currentBounds.y], [1, currentBounds.height], [actualGap, 1])
           .strong()
       }
     })
@@ -464,5 +429,4 @@ export class Hints {
       }
     })
   }
-
 }

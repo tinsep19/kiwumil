@@ -79,9 +79,7 @@ export class FigureBuilder {
     // TODO: Verify that hints.encloseFigure adds proper z constraints for container/child relationships
 
     // 制約を適用
-    this.hint
-      .getLayoutContext()
-      .hints.encloseFigure(containerTarget, rowTargets, this.options)
+    this.hint.getLayoutContext().hints.encloseFigure(containerTarget, rowTargets, this.options)
   }
 
   // Removed: applyContainerMetadata method that mutated nestLevel

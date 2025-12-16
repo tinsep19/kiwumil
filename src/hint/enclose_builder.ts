@@ -16,22 +16,22 @@ export class EnclosePaddingBuilder implements StrengthBuilder {
   ) {}
 
   weak(): void {
-    this.applyConstraints('weak')
+    this.applyConstraints("weak")
   }
 
   medium(): void {
-    this.applyConstraints('medium')
+    this.applyConstraints("medium")
   }
 
   strong(): void {
-    this.applyConstraints('strong')
+    this.applyConstraints("strong")
   }
 
   required(): void {
-    this.applyConstraints('required')
+    this.applyConstraints("required")
   }
 
-  private applyConstraints(strength: 'weak' | 'medium' | 'strong' | 'required'): void {
+  private applyConstraints(strength: "weak" | "medium" | "strong" | "required"): void {
     for (const child of this.children) {
       // container.width >= child.width + 2*padding
       this.builder
@@ -46,16 +46,10 @@ export class EnclosePaddingBuilder implements StrengthBuilder {
         [strength]()
 
       // child.x >= container.x + padding
-      this.builder
-        .expr([1, child.x])
-        .ge([1, this.container.x], [1, this.paddingValue])
-        [strength]()
+      this.builder.expr([1, child.x]).ge([1, this.container.x], [1, this.paddingValue])[strength]()
 
       // child.y >= container.y + padding
-      this.builder
-        .expr([1, child.y])
-        .ge([1, this.container.y], [1, this.paddingValue])
-        [strength]()
+      this.builder.expr([1, child.y]).ge([1, this.container.y], [1, this.paddingValue])[strength]()
     }
   }
 }

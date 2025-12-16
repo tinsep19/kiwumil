@@ -3,7 +3,14 @@
 import * as kiwi from "@lume/kiwi"
 import { KiwiConstraintBuilder } from "./constraints_builder"
 import { KiwiSuggestHandleFactory } from "./suggest_handle"
-import type { VariableId, Variable, LayoutConstraintId, LayoutConstraint, SuggestHandleFactory, CassowarySolver } from "../core"
+import type {
+  VariableId,
+  Variable,
+  LayoutConstraintId,
+  LayoutConstraint,
+  SuggestHandleFactory,
+  CassowarySolver,
+} from "../core"
 import type { ConstraintSpec } from "../core"
 
 /**
@@ -102,7 +109,9 @@ export class KiwiSolver implements CassowarySolver {
    */
   createHandle(variable: Variable): SuggestHandleFactory {
     if (!isKiwiVariable(variable)) {
-      throw new Error("KiwiSolver.createHandle: variable must be a KiwiVariable created by KiwiSolver")
+      throw new Error(
+        "KiwiSolver.createHandle: variable must be a KiwiVariable created by KiwiSolver"
+      )
     }
     return new KiwiSuggestHandleFactory(this.solver, variable.variable)
   }
@@ -124,4 +133,3 @@ export function isKiwiVariable(v: unknown): v is KiwiVariable {
     typeof (v as { value?: unknown }).value === "function"
   )
 }
-

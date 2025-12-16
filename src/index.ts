@@ -11,10 +11,7 @@ export type { DiagramInfo, SymbolBase, LayoutContext } from "./model"
 export type { SymbolId, RelationshipId } from "./model"
 
 // Layout 型定義
-export type {
-  Bounds,
-  BoundsType,
-} from "./core"
+export type { Bounds, BoundsType } from "./core"
 
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"

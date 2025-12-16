@@ -1,7 +1,4 @@
-import {
-  ConstraintsBuilder,
-  KiwiSolver,
-} from "@/kiwi"
+import { ConstraintsBuilder, KiwiSolver } from "@/kiwi"
 import { LayoutVariables } from "@/model"
 import * as kiwi from "@lume/kiwi"
 
@@ -88,7 +85,7 @@ describe("ConstraintsBuilder", () => {
   test("buildExpression throws error for unbranded variables", () => {
     const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)
-    
+
     // Create a fake variable that looks like Variable but isn't branded
     const fakeVariable = {
       id: "fake:var",
@@ -98,7 +95,10 @@ describe("ConstraintsBuilder", () => {
 
     expect(() => {
       solver.createConstraint("test-invalid", (builder) => {
-        builder.expr([1, fakeVariable as any]).eq([1, 1]).strong()
+        builder
+          .expr([1, fakeVariable as any])
+          .eq([1, 1])
+          .strong()
       })
     }).toThrow("KiwiConstraintBuilder: operand is not a KiwiVariable created by KiwiSolver")
   })

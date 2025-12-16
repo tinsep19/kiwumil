@@ -80,15 +80,13 @@ describe("Layout pipeline", () => {
     const diagramId = "__diagram__"
     const diagramBound = context.variables.createBounds(diagramId)
     const diagramContainer = context.variables.createBounds(`${diagramId}.container`, "container")
-    const diagram = new DiagramSymbol(
-      {
-        id: diagramId,
-        bounds: diagramBound,
-        container: diagramContainer,
-        info: { title: "Test" },
-        theme: DefaultTheme,
-      }
-    )
+    const diagram = new DiagramSymbol({
+      id: diagramId,
+      bounds: diagramBound,
+      container: diagramContainer,
+      info: { title: "Test" },
+      theme: DefaultTheme,
+    })
     // Register constraints manually since we removed registerContainerConstraints
     context.createConstraint(`constraints/${diagram.id}`, (builder) => {
       diagram.ensureLayoutBounds(builder)

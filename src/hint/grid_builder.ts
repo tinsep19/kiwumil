@@ -82,9 +82,7 @@ export class GridBuilder {
     // TODO: Verify that hints.encloseGrid adds proper z constraints for container/child relationships
 
     // 制約を適用
-    this.hint
-      .getLayoutContext()
-      .hints.encloseGrid(containerTarget, matrixTargets, this.options)
+    this.hint.getLayoutContext().hints.encloseGrid(containerTarget, matrixTargets, this.options)
   }
 
   // Removed: applyContainerMetadata method that mutated nestLevel

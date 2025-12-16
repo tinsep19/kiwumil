@@ -1,8 +1,5 @@
 // src/plugin/uml/relationships/association.ts
-import {
-  RelationshipBase,
-  type RelationshipBaseOptions,
-} from "../../../model/relationship_base"
+import { RelationshipBase, type RelationshipBaseOptions } from "../../../model/relationship_base"
 import type { SymbolBase } from "../../../model/symbol_base"
 import type { SymbolId } from "../../../core"
 import { getBoundsValues } from "../../../core"

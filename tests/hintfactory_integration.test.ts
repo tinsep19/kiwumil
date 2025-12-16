@@ -59,9 +59,9 @@ describe("HintFactory with Hints integration", () => {
 
     const allHintVars = context.hints.getHintVariables()
     expect(allHintVars.length).toBe(initialVarCount + 2)
-    
+
     // Check that variables have the correct prefix
-    expect(allHintVars.every(v => v.name.startsWith("hint:"))).toBe(true)
+    expect(allHintVars.every((v) => v.name.startsWith("hint:"))).toBe(true)
   })
 
   test("Multiple guides create separate hint variables", () => {
@@ -70,12 +70,12 @@ describe("HintFactory with Hints integration", () => {
     const guide3 = hint.createGuideY()
 
     const allVars = context.hints.getHintVariables()
-    
+
     // Each guide should create its own variable
     expect(allVars.length).toBeGreaterThanOrEqual(3)
-    
+
     // Variables should have unique names
-    const names = allVars.map(v => v.name)
+    const names = allVars.map((v) => v.name)
     const uniqueNames = new Set(names)
     expect(uniqueNames.size).toBe(names.length)
   })
@@ -99,7 +99,7 @@ describe("HintFactory with Hints integration", () => {
     expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(50, 1)
     expect(context.valueOf(rect2.bounds.x)).toBeCloseTo(50, 1)
     expect(context.valueOf(rect3.bounds.x)).toBeCloseTo(50, 1)
-    
+
     expect(context.valueOf(rect1.bounds.y)).toBeCloseTo(200, 1)
     expect(context.valueOf(rect2.bounds.y)).toBeCloseTo(200, 1)
     expect(context.valueOf(rect3.bounds.y)).toBeCloseTo(200, 1)
@@ -110,49 +110,43 @@ describe("HintFactory with Hints integration", () => {
     const guideY = hint.createGuideY()
 
     const allVars = context.hints.getHintVariables()
-    
+
     // Find the guide variables (filter by the guide_x/guide_y pattern)
-    const guideVars = allVars.filter(v => 
-      v.name.includes("guide_x_") || v.name.includes("guide_y_")
+    const guideVars = allVars.filter(
+      (v) => v.name.includes("guide_x_") || v.name.includes("guide_y_")
     )
-    
+
     expect(guideVars.length).toBeGreaterThanOrEqual(2)
-    
+
     // Check naming pattern: hint:guide_{x|y}_{name}
-    guideVars.forEach(v => {
+    guideVars.forEach((v) => {
       expect(v.name).toMatch(/^hint:guide_(x|y)_/)
     })
   })
 
   test("createHintVariable can be used directly for custom anchors", () => {
     const rect1 = createRectangle("rect1")
-    
+
     // Create custom anchor variable
-    const anchor = context.hints.createHintVariable({ 
+    const anchor = context.hints.createHintVariable({
       baseName: "custom_anchor",
-      name: "center_point"
+      name: "center_point",
     })
-    
+
     expect(anchor.name).toBe("hint:custom_anchor_center_point")
-    
+
     // Use the anchor in a constraint
     context.createConstraint("anchor/rect1", (builder) => {
-      builder
-        .expr([1, rect1.bounds.x])
-        .eq([1, anchor.variable])
-        .strong()
+      builder.expr([1, rect1.bounds.x]).eq([1, anchor.variable]).strong()
     })
-    
+
     // Set anchor value
     context.createConstraint("anchor/value", (builder) => {
-      builder
-        .expr([1, anchor.variable])
-        .eq([150, 1])
-        .required()
+      builder.expr([1, anchor.variable]).eq([150, 1]).required()
     })
-    
+
     context.solveAndApply([rect1])
-    
+
     expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(150, 1)
   })
 })

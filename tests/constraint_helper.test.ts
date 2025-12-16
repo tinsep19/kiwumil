@@ -48,7 +48,7 @@ describe("ConstraintHelper", () => {
     })
 
     solver.updateVariables()
-    
+
     // child should be at least 10 pixels from container edges
     expect(variables.valueOf(child.x)).toBeGreaterThanOrEqual(10)
     expect(variables.valueOf(child.y)).toBeGreaterThanOrEqual(10)
@@ -71,7 +71,7 @@ describe("ConstraintHelper", () => {
     })
 
     solver.updateVariables()
-    
+
     // next.x should be >= prev.x + prev.width + 20
     const expectedMinX = variables.valueOf(prev.x) + variables.valueOf(prev.width) + 20
     expect(variables.valueOf(next.x)).toBeGreaterThanOrEqual(expectedMinX - 0.01)
@@ -104,7 +104,7 @@ describe("ConstraintHelper", () => {
     })
 
     solver.updateVariables()
-    
+
     // Both children should be at least 10 pixels from container edges
     expect(variables.valueOf(child1.x)).toBeGreaterThanOrEqual(10)
     expect(variables.valueOf(child1.y)).toBeGreaterThanOrEqual(10)
@@ -129,7 +129,7 @@ describe("ConstraintHelper", () => {
     })
 
     solver.updateVariables()
-    
+
     // All x values should be equal
     expect(variables.valueOf(bounds1.x)).toBeCloseTo(10)
     expect(variables.valueOf(bounds2.x)).toBeCloseTo(10)
@@ -188,7 +188,7 @@ describe("ConstraintHelper", () => {
 
     solver.createConstraint("test-usage-example", (builder) => {
       const helper = new ConstraintHelper(builder)
-      
+
       helper.setSize(container, 200, 150).weak()
       helper.enclose(container).childs(child1, child2).padding(10).strong()
       helper.arrange(child1, child2).margin(20).horizontal().medium()
@@ -222,7 +222,7 @@ describe("ConstraintHelper", () => {
     })
 
     solver.updateVariables()
-    
+
     // x2.x should be >= x1.x + x1.width + 10 = 0 + 50 + 10 = 60
     expect(variables.valueOf(x2.x)).toBeGreaterThanOrEqual(60 - 0.01)
     // x3.x should be >= x2.x + x2.width + 10
@@ -252,7 +252,7 @@ describe("ConstraintHelper", () => {
     })
 
     solver.updateVariables()
-    
+
     // x2.y should be >= x1.y + x1.height + 15 = 0 + 40 + 15 = 55
     expect(variables.valueOf(x2.y)).toBeGreaterThanOrEqual(55 - 0.01)
     // x3.y should be >= x2.y + x2.height + 15

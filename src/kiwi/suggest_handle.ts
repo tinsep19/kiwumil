@@ -40,7 +40,10 @@ export class KiwiSuggestHandle implements SuggestHandle {
 
 /** @internal */
 export class KiwiSuggestHandleFactory implements SuggestHandleFactory {
-  constructor(private readonly solver: kiwi.Solver, private readonly variable: kiwi.Variable) {}
+  constructor(
+    private readonly solver: kiwi.Solver,
+    private readonly variable: kiwi.Variable
+  ) {}
 
   strong(): SuggestHandle {
     return this.createHandle("strong", kiwi.Strength.strong)

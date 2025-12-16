@@ -72,28 +72,13 @@ export class LayoutVariables {
     const z = asAnchorZ(this.createVariable(`${prefix}.z`))
 
     this.solver.createConstraint(`${boundId}:computed`, (builder) => {
-      builder
-        .expr([1, right])
-        .eq([1, x], [1, width])
-        .strong()
-      builder
-        .expr([1, bottom])
-        .eq([1, y], [1, height])
-        .strong()
-      builder
-        .expr([1, centerX])
-        .eq([1, x], [0.5, width])
-        .strong()
-      builder
-        .expr([1, centerY])
-        .eq([1, y], [0.5, height])
-        .strong()
+      builder.expr([1, right]).eq([1, x], [1, width]).strong()
+      builder.expr([1, bottom]).eq([1, y], [1, height]).strong()
+      builder.expr([1, centerX]).eq([1, x], [0.5, width]).strong()
+      builder.expr([1, centerY]).eq([1, y], [0.5, height]).strong()
       // z のデフォルト値を0に設定 (弱制約)
       // enclose hints によってこの値は上書きされることがある
-      builder
-        .expr([1, z])
-        .eq([0, 1])
-        .weak()
+      builder.expr([1, z]).eq([0, 1]).weak()
     })
 
     return {
@@ -129,7 +114,9 @@ export class LayoutVariables {
         result[key] = this.createBounds(key, type)
       }
     }
-    return result as { [K in keyof T]: T[K] extends "variable" ? Variable : BoundsMap[T[K] & BoundsType] }
+    return result as {
+      [K in keyof T]: T[K] extends "variable" ? Variable : BoundsMap[T[K] & BoundsType]
+    }
   }
 
   valueOf(variable: Variable): number {

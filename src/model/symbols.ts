@@ -1,7 +1,4 @@
-import type {
-  ConstraintSpec,
-  BoundsType,
-} from "../core"
+import type { ConstraintSpec, BoundsType } from "../core"
 import type { LayoutVariables } from "./layout_variables"
 import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint } from "../core"
 import type { SymbolBase } from "./symbol_base"
@@ -40,10 +37,7 @@ export class SymbolRegistrationBuilder {
    * 自動的に id を与える（ユーザーは意識しなくて良い）
    * type は "layout" | "container" | "item" 相当
    */
-  createBounds<Type extends BoundsType>(
-    key: string,
-    type: Type
-  ) {
+  createBounds<Type extends BoundsType>(key: string, type: Type) {
     return this.variables.createBounds(`${this.id}#${key}`, type)
   }
 

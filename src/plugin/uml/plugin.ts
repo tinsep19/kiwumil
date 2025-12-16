@@ -1,15 +1,6 @@
 // src/plugin/uml/plugin.ts
-import {
-  ActorSymbol,
-  SystemBoundarySymbol,
-  UsecaseSymbol,
-} from "./symbols"
-import {
-  Association,
-  Extend,
-  Generalize,
-  Include,
-} from "./relationships"
+import { ActorSymbol, SystemBoundarySymbol, UsecaseSymbol } from "./symbols"
+import { Association, Extend, Generalize, Include } from "./relationships"
 import type { DiagramPlugin, PluginIcons, Relationships, Symbols, Icons } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import type { Theme } from "../../theme"
@@ -41,8 +32,9 @@ export const UMLPlugin = {
        */
       actor(labelOrOptions: string | { label: string; stereotype?: string }) {
         const label = typeof labelOrOptions === "string" ? labelOrOptions : labelOrOptions.label
-        const stereotype = typeof labelOrOptions === "string" ? undefined : labelOrOptions.stereotype
-        
+        const stereotype =
+          typeof labelOrOptions === "string" ? undefined : labelOrOptions.stereotype
+
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createBounds("layout", "layout")
           const iconGetter = icons.actor

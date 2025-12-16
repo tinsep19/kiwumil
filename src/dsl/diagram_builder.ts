@@ -25,14 +25,12 @@ import { IconLoader, IconRegistry } from "../icon"
  * オブジェクトスタイルで `el` (element), `rel` (relationship), `hint`, `icon` の4つのパラメータを受け取り、
  * 型安全に図の要素を定義できる。
  */
-type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (
-  args: {
-    el: BuildElementNamespace<TPlugins>
-    rel: BuildRelationshipNamespace<TPlugins>
-    hint: HintFactory
-    icon: Record<string, PluginIcons>
-  }
-) => void
+type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (args: {
+  el: BuildElementNamespace<TPlugins>
+  rel: BuildRelationshipNamespace<TPlugins>
+  hint: HintFactory
+  icon: Record<string, PluginIcons>
+}) => void
 
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
 type CreateRegistrar = RegisterIconsParam["createRegistrar"]
@@ -89,17 +87,15 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
       const diagramBound = r.createBounds("layout", "layout")
       const containerBound = r.createBounds("container", "container")
-      const symbol = new DiagramSymbol(
-        {
-          id,
-          bounds: diagramBound,
-          container: containerBound,
-          info: diagramInfo,
-          theme: this.currentTheme,
-        }
-      )
+      const symbol = new DiagramSymbol({
+        id,
+        bounds: diagramBound,
+        container: containerBound,
+        info: diagramInfo,
+        theme: this.currentTheme,
+      })
       r.setSymbol(symbol)
-      r.setCharacs({id, bounds: diagramBound, container: containerBound})
+      r.setCharacs({ id, bounds: diagramBound, container: containerBound })
       r.setConstraint((builder) => {
         symbol.ensureLayoutBounds(builder)
       })
@@ -111,9 +107,13 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // Icon loaders registered by plugins (build icons first)
     const icon_loaders: Record<string, IconLoader> = {}
     for (const plugin of this.plugins) {
-      if (typeof plugin.registerIcons === 'function') {
-        const createRegistrar: CreateRegistrar = (pluginName, importMeta, iconRegistrationBlock) => {
-          const loader = new IconLoader(pluginName, importMeta?.url ?? '')
+      if (typeof plugin.registerIcons === "function") {
+        const createRegistrar: CreateRegistrar = (
+          pluginName,
+          importMeta,
+          iconRegistrationBlock
+        ) => {
+          const loader = new IconLoader(pluginName, importMeta?.url ?? "")
           iconRegistrationBlock(loader)
           icon_loaders[pluginName] = loader
         }
@@ -131,24 +131,21 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       iconRegistry[pluginName] = {}
       for (const name of loader.list()) {
         // use sync loader if available
-        iconRegistry[pluginName]![name] = () => (typeof loader.load_sync === 'function' ? loader.load_sync(name) : null)
+        iconRegistry[pluginName]![name] = () =>
+          typeof loader.load_sync === "function" ? loader.load_sync(name) : null
       }
     }
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
-    const rel = namespaceBuilder.buildRelationshipNamespace(
-      relationships,
-      this.currentTheme,
-      icon
-    )
+    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
 
     // Register available icon SVGs into runtime IconRegistry so renderers can emit <symbol> defs
     const iconsRegistry = new IconRegistry()
     for (const [pluginName, loader] of Object.entries(icon_loaders)) {
       for (const name of loader.list()) {
         try {
-          const meta = typeof loader.load_sync === 'function' ? loader.load_sync(name) : null
+          const meta = typeof loader.load_sync === "function" ? loader.load_sync(name) : null
           if (meta && meta.raw) {
             iconsRegistry.register(pluginName, name, meta.raw)
           }
@@ -168,7 +165,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     callback({ el, rel, hint, icon })
 
     const relationshipList = relationships.getAll()
-    const symbolList = symbols.getAll().filter((reg) => reg.symbol.id !== diagramSymbol.id).map((reg) => reg.symbol as SymbolBase)
+    const symbolList = symbols
+      .getAll()
+      .filter((reg) => reg.symbol.id !== diagramSymbol.id)
+      .map((reg) => reg.symbol as SymbolBase)
     const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
 
     if (symbolList.length > 0) {
@@ -185,7 +185,12 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       symbols: allSymbols,
       relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(allSymbols, [...relationshipList], this.currentTheme, iconsRegistry)
+        const renderer = new SvgRenderer(
+          allSymbols,
+          [...relationshipList],
+          this.currentTheme,
+          iconsRegistry
+        )
 
         if (typeof target === "string") {
           renderer.saveToFile(target)

@@ -8,11 +8,7 @@ import {
   type GuideBuilderX,
   type GuideBuilderY,
 } from "../hint"
-import {
-  ContainerSymbolOrId,
-  toSymbolId,
-  type SymbolOrId,
-} from "./symbol_helpers"
+import { ContainerSymbolOrId, toSymbolId, type SymbolOrId } from "./symbol_helpers"
 
 type LayoutTargetId = SymbolOrId
 type LayoutContainerTarget = ContainerSymbolOrId

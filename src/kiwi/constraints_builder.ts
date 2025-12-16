@@ -142,7 +142,9 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
 
       // Validate that operand is a branded KiwiVariable
       if (!isBrandedKiwi(operand)) {
-        throw new Error("KiwiConstraintBuilder: operand is not a KiwiVariable created by KiwiSolver")
+        throw new Error(
+          "KiwiConstraintBuilder: operand is not a KiwiVariable created by KiwiSolver"
+        )
       }
 
       // operand is Variable, which has .variable property
