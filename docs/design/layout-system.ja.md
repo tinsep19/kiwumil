@@ -20,7 +20,7 @@ Kiwumil は `src/core` モジュールで公開インターフェースを集約
 **`src/core/`** - 公開コアインターフェース:
 - `symbols.ts`: `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`, `Variable`, `LayoutConstraintId`, `ILayoutConstraint`, `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
 - `bounds.ts`: `BoundId`, `LayoutBounds`, `ContainerBounds`, `ItemBounds`
-- `constraints_builder.ts`: `IConstraintsBuilder`, `Term`, `ConstraintSpec`
+- `solver.ts`: `CassowarySolver`, `ConstraintStrength`, `SuggestHandle`, `SuggestHandleFactory`, `LayoutConstraint`, `Term`, `ConstraintSpec`, `LinearConstraintBuilder`, `LhsBuilder`, `OpRhsBuilder`, `StrengthBuilder`
 - `layout_solver.ts`: `CassowarySolver`
 - `hint_target.ts`: `HintTarget`
 
@@ -836,7 +836,7 @@ export interface HintTarget {
   1. `LayoutContext` に安全に builder を取り出せるアクセサ（例：`createConstraintsBuilder()`）を用意し、`getSolver()` を廃止する。
   2. `guide_builder` のすべての `align`/`follow` 系メソッドを `ConstraintsBuilder` で書き直し、強度ごとに `.strong()` などを `finalize` する。
   3. `tests/bounds_validation.test.ts` や `layout_variables.test.ts`、`constraints_builder.test.ts` を新 API に沿って更新し、`context.solve()` を使い `context.solver` などの private フィールドを参照しない。
-- **受け入れ条件**：`KiwiSolver.addConstraint`/`.expression` を呼ぶコードが `constraints_builder.ts` 以外に存在しないこと、ガイド／テストから `LayoutContext.getSolver()` を経由して solver を直接操作しないこと。
+- **受け入れ条件**：`KiwiSolver.addConstraint`/`.expression` を呼ぶコードが `src/kiwi/constraints_builder.ts` 以外に存在しないこと、ガイド／テストから `LayoutContext.getSolver()` を経由して solver を直接操作しないこと。
 
 ### 3. レガシーなエクスポートと型を整理する
 
@@ -870,7 +870,7 @@ export interface HintTarget {
 
 ### 1. インターフェース抽出
 
-`src/core/constraints_builder.ts` に以下のコアインターフェースを配置:
+`src/core/solver.ts` に以下のコアインターフェースを配置:
 
 ```typescript
 export interface IConstraintsBuilder {
@@ -919,6 +919,6 @@ export abstract class SymbolBase {
 
 ## 参照
 
-- `src/core/constraints_builder.ts` - コアインターフェース定義
+- `src/core/solver.ts` - コアインターフェース定義
 - `src/kiwi/constraints_builder.ts` - 具象実装
 - `src/model/symbol_base.ts` - シンボル基底クラス

@@ -1,9 +1,8 @@
 // src/core/solver.ts
-// レイアウトソルバーのインターフェース
+// レイアウトソルバーのインターフェースとレイアウト制約の型定義を統合
 
 import type { VariableId, LayoutConstraintId } from "./types"
 import type { Variable } from "./layout_variable"
-import type { LayoutConstraint, ConstraintSpec } from "./constraint"
 
 /**
  * ConstraintStrength: 制約の強度
@@ -27,6 +26,66 @@ export interface SuggestHandleFactory {
   medium(): SuggestHandle
   weak(): SuggestHandle
 }
+
+/**
+ * LinearConstraint: placeholder type for raw kiwi constraints
+ * (具象ソルバー実装側で具体型を指定する)
+ */
+type LinearConstraint = unknown
+
+/**
+ * LayoutConstraint: レイアウト制約のインターフェース
+ */
+export interface LayoutConstraint {
+  id: LayoutConstraintId
+  rawConstraints: LinearConstraint[]
+}
+
+/**
+ * Term: Layout constraint term consisting of a coefficient and a variable or constant
+ */
+export type Term = [number, Variable | number]
+
+/**
+ * LhsBuilder: Interface for building left-hand side of constraints
+ */
+export interface LhsBuilder {
+  expr(...lhs: Term[]): OpRhsBuilder
+}
+
+/**
+ * OpRhsBuilder: Interface for building operator and right-hand side of constraints
+ */
+export interface OpRhsBuilder {
+  eq(...rhs: Term[]): StrengthBuilder
+  ge(...rhs: Term[]): StrengthBuilder
+  le(...rhs: Term[]): StrengthBuilder
+  eq0(): StrengthBuilder
+  ge0(): StrengthBuilder
+  le0(): StrengthBuilder
+}
+
+/**
+ * StrengthBuilder: Interface for setting constraint strength
+ */
+export interface StrengthBuilder {
+  required(): void
+  strong(): void
+  medium(): void
+  weak(): void
+}
+
+/**
+ * LinearConstraintBuilder: Constraint builder interface
+ */
+export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, StrengthBuilder {
+  getRawConstraints(): LinearConstraint[]
+}
+
+/**
+ * ConstraintSpec: Callback function that builds constraints using LinearConstraintBuilder
+ */
+export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
 
 /**
  * CassowarySolver: Layout solver interface
