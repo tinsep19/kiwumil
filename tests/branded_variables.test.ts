@@ -1,61 +1,59 @@
 import { KiwiSolver } from "@/kiwi"
 import { LayoutVariables } from "@/model"
-import {
-  asAnchorX,
-  asAnchorY,
-  asAnchorZ,
-  asWidth,
-  asHeight,
-  createBrandVariableFactory,
-} from "@/core"
+import { createBrandVariableFactory } from "@/core"
 
 describe("Branded Layout Variables", () => {
-  test("asAnchorX casts Variable to AnchorX", () => {
+  test("createBrandVariableFactory creates AnchorX branded variables", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
-    const v = variables.createVariable("test.x")
-    const x = asAnchorX(v)
+    const factory = createBrandVariableFactory((id) => variables.createVariable(id))
+
+    const x = factory.createAnchorX("test.x")
 
     // The branded variable should still work as a Variable
     expect(x.id).toBe("test.x")
     expect(typeof x.value).toBe("function")
   })
 
-  test("asAnchorY casts Variable to AnchorY", () => {
+  test("createBrandVariableFactory creates AnchorY branded variables", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
-    const v = variables.createVariable("test.y")
-    const y = asAnchorY(v)
+    const factory = createBrandVariableFactory((id) => variables.createVariable(id))
+
+    const y = factory.createAnchorY("test.y")
 
     expect(y.id).toBe("test.y")
     expect(typeof y.value).toBe("function")
   })
 
-  test("asAnchorZ casts Variable to AnchorZ", () => {
+  test("createBrandVariableFactory creates AnchorZ branded variables", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
-    const v = variables.createVariable("test.z")
-    const z = asAnchorZ(v)
+    const factory = createBrandVariableFactory((id) => variables.createVariable(id))
+
+    const z = factory.createAnchorZ("test.z")
 
     expect(z.id).toBe("test.z")
     expect(typeof z.value).toBe("function")
   })
 
-  test("asWidth casts Variable to Width", () => {
+  test("createBrandVariableFactory creates Width branded variables", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
-    const v = variables.createVariable("test.width")
-    const width = asWidth(v)
+    const factory = createBrandVariableFactory((id) => variables.createVariable(id))
+
+    const width = factory.createWidth("test.width")
 
     expect(width.id).toBe("test.width")
     expect(typeof width.value).toBe("function")
   })
 
-  test("asHeight casts Variable to Height", () => {
+  test("createBrandVariableFactory creates Height branded variables", () => {
     const solver = new KiwiSolver()
     const variables = new LayoutVariables(solver)
-    const v = variables.createVariable("test.height")
-    const height = asHeight(v)
+    const factory = createBrandVariableFactory((id) => variables.createVariable(id))
+
+    const height = factory.createHeight("test.height")
 
     expect(height.id).toBe("test.height")
     expect(typeof height.value).toBe("function")

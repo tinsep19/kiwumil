@@ -17,14 +17,7 @@ export type {
   Dimension,
   VariableFactory,
 } from "./layout_variable"
-export {
-  asAnchorX,
-  asAnchorY,
-  asAnchorZ,
-  asWidth,
-  asHeight,
-  createBrandVariableFactory,
-} from "./layout_variable"
+export { createBrandVariableFactory } from "./layout_variable"
 
 // 制約
 export type {
