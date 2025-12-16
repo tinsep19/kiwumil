@@ -1,5 +1,5 @@
 // src/core/layout_variable.ts
-// レイアウト変数とサジェストハンドル
+// レイアウト変数とサジェストハンドル（Variable のみ：SuggestHandle 関連の型は solver に移動）
 
 import type { VariableId } from "./types"
 
@@ -10,27 +10,4 @@ export interface Variable {
   id: VariableId
   value(): number
   variable: unknown
-}
-
-/**
- * ConstraintStrength: 制約の強度
- */
-export type ConstraintStrength = "required" | "strong" | "medium" | "weak"
-
-/**
- * SuggestHandle: レイアウト変数への値の提案を行うハンドル
- */
-export interface SuggestHandle {
-  suggest(value: number): void
-  strength(): ConstraintStrength
-  dispose(): void
-}
-
-/**
- * SuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
- */
-export interface SuggestHandleFactory {
-  strong(): SuggestHandle
-  medium(): SuggestHandle
-  weak(): SuggestHandle
 }
