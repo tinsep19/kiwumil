@@ -17,7 +17,7 @@
 ### 1. SymbolBase の変更
 - `abstract getDefaultSize(): { width: number; height: number }` 宣言を削除
 - `LayoutContext` 型をインポート
-- `layoutContext` プロパティの型を `Variables | LayoutContext` に拡張
+- `layoutContext` プロパティの型を `LayoutVariables | LayoutContext` に拡張
 - `protected applyFixedSize(size)` メソッドを追加（サブクラスがコンストラクタで使用）
 - `protected isLayoutContext()` 型ガード関数を追加（保守性向上）
 
@@ -38,14 +38,14 @@
   }
   ```
 
-- `TextSymbol`: 条件付きで適用（`Variables` の場合もサポート）
+- `TextSymbol`: 条件付きで適用（`LayoutVariables` の場合もサポート）
   ```typescript
-  constructor(id: string, info: string | TextInfo, layoutContext?: Variables | LayoutContext) {
+  constructor(id: string, info: string | TextInfo, layoutContext?: LayoutVariables | LayoutContext) {
     // ...
     this.applySizeIfContext(layoutContext)
   }
   
-  private applySizeIfContext(layoutContext?: Variables | LayoutContext) {
+  private applySizeIfContext(layoutContext?: LayoutVariables | LayoutContext) {
     if (layoutContext && 'constraints' in layoutContext) {
       this.applyFixedSize(this.getDefaultSize())
     }

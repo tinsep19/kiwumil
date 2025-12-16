@@ -1,10 +1,10 @@
 # 2025-11-21: 責務の最終調整（移行手順 7）
 
 ## 概要
-Variables, KiwiSolver, LayoutConstraints の責務をさらに明確化するためのリファクタリングを実施。
+LayoutVariables, KiwiSolver, LayoutConstraints の責務をさらに明確化するためのリファクタリングを実施。
 
 ## 背景
-移行手順 1-6 により基本的なアーキテクチャは確立されたが、Variables の責務が込み入っており、expression() や addConstraint() などのメソッドを持っていた。これらのメソッドは本来 kiwi のラッパーとして KiwiSolver が提供すべき機能である。
+移行手順 1-6 により基本的なアーキテクチャは確立されたが、LayoutVariables の責務が込み入っており、expression() や addConstraint() などのメソッドを持っていた。これらのメソッドは本来 kiwi のラッパーとして KiwiSolver が提供すべき機能である。
 
 ## 実施内容
 
@@ -12,7 +12,7 @@ Variables, KiwiSolver, LayoutConstraints の責務をさらに明確化するた
 - `expression(terms, constant)` メソッドを KiwiSolver に移動
 - kiwi ラッパーとしての責務を明確化
 
-### 2. Variables の簡素化
+### 2. LayoutVariables の簡素化
 - `expression()` と `addConstraint()` を削除
 - 変数生成（createVar, valueOf）のみに専念
 - solver への参照を保持（`getSolver()` アクセサを提供）
@@ -40,7 +40,7 @@ Variables, KiwiSolver, LayoutConstraints の責務をさらに明確化するた
 - `container_symbol_base.ts`: layout.getSolver() を使用するよう変更
 
 ### 7. 互換性の確保
-- Variables に `LayoutConstraintOperator` と `LayoutConstraintStrength` を再エクスポート
+- LayoutVariables に `LayoutConstraintOperator` と `LayoutConstraintStrength` を再エクスポート
 - 既存のインポートが動作し続けるよう後方互換性を維持
 
 ## 最終アーキテクチャ
@@ -48,10 +48,10 @@ Variables, KiwiSolver, LayoutConstraints の責務をさらに明確化するた
 ```
 LayoutContext（オーケストレーション）
   ├── solver: KiwiSolver（所有、ライフサイクル管理）
-  ├── vars: Variables（solver 注入済み）
+  ├── vars: LayoutVariables（solver 注入済み）
   └── constraints: LayoutConstraints（vars と solver を両方注入）
 
-Variables（変数とバウンドの生成・管理）
+LayoutVariables（変数とバウンドの生成・管理）
   - createVar(): LayoutVar の生成
   - valueOf(): 変数値の取得
   - getSolver(): 注入された solver へのアクセス

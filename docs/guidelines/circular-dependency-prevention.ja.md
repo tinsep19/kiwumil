@@ -118,7 +118,7 @@ export { getBoundsValues } from "../core"
 
 ```typescript
 // ❌ 同等または上位レイヤーのre-export
-export { Variables } from "../model" // kiwi/ → model/
+export { LayoutVariables } from "../model" // kiwi/ → model/
 
 // ❌ 循環を作るre-export
 export { DiagramBuilder } from "../dsl" // model/ → dsl/ → model/

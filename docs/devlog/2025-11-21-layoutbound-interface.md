@@ -2,14 +2,14 @@
 
 ## 目的
 
-LayoutBound を class から interface に変更し、Variables に factory メソッドを追加することで、アーキテクチャをさらに簡素化する。
+LayoutBound を class から interface に変更し、LayoutVariables に factory メソッドを追加することで、アーキテクチャをさらに簡素化する。
 
 ## 背景
 
 移行手順 7 により、vars と constraints が完全に独立し、両方とも KiwiSolver を通じて連携する設計になった。しかし、LayoutBound はまだ class として実装されており、vars と solver への依存を保持していた。これをより単純な interface に変更することで、以下のメリットが得られる：
 
 1. **単純化**: LayoutBound は単なる変数のグループとして表現される
-2. **責務の集約**: computed properties の制約生成ロジックを Variables 内に集約
+2. **責務の集約**: computed properties の制約生成ロジックを LayoutVariables 内に集約
 3. **依存の削減**: LayoutBound が vars と solver に依存しなくなる
 
 ## 実施内容
@@ -30,7 +30,7 @@ export class LayoutBound {
   private _centerY?: LayoutVar
 
   constructor(
-    private readonly vars: Variables,
+    private readonly vars: LayoutVariables,
     private readonly solver: KiwiSolver,
     x: LayoutVar, y: LayoutVar, width: LayoutVar, height: LayoutVar
   ) { ... }
@@ -56,10 +56,10 @@ export interface LayoutBound {
 }
 ```
 
-### 2. Variables に createBound() factory メソッドを追加
+### 2. LayoutVariables に createBound() factory メソッドを追加
 
 ```typescript
-class Variables {
+class LayoutVariables {
   /**
    * LayoutBound を生成する factory メソッド
    * すべての computed properties (right, bottom, centerX, centerY) も作成し、制約を設定する
@@ -67,7 +67,7 @@ class Variables {
   createBound(prefix: string): LayoutBound {
     const solver = this.getSolver()
     if (!solver) {
-      throw new Error("Variables: solver is not injected. Cannot create bound with constraints.")
+      throw new Error("LayoutVariables: solver is not injected. Cannot create bound with constraints.")
     }
 
     // 基本的な 4 つの変数を作成
@@ -150,7 +150,7 @@ $ bun run test:types
    - class の複雑な実装が不要に
 
 2. **責務の明確化**:
-   - computed properties の制約生成が Variables に集約
+   - computed properties の制約生成が LayoutVariables に集約
    - LayoutBound は単なるデータ構造として機能
 
 3. **依存関係の削減**:
@@ -164,7 +164,7 @@ $ bun run test:types
 ## 最終アーキテクチャ
 
 ```
-Variables（変数とバウンドの生成・管理）
+LayoutVariables（変数とバウンドの生成・管理）
   - createVar(name): LayoutVar の生成
   - createBound(prefix): LayoutBound の生成（factory）
     → 8 つの変数を作成

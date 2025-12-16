@@ -6,9 +6,9 @@
 
 ## 変更点
 1. **レイアウト基盤の再構築**
-   - `VariableContext` を `Variables` にリネームし、kiwi の薄いブリッジとして簡素化。
+   - `VariableContext` を `LayoutVariables` にリネームし、kiwi の薄いブリッジとして簡素化。
    - `LayoutConstraints` / `LayoutConstraint` を追加し、kiwumil の論理的制約 (`arrangeHorizontal`, `alignTop`, `enclose`, `setDefaultSize`, `setMinSize` など) を管理できるようにした。
-   - `LayoutContext` を導入し、`Variables` と `LayoutConstraints` を束ねて Symbol / Hint / Guide から利用できるようにした。
+   - `LayoutContext` を導入し、`LayoutVariables` と `LayoutConstraints` を束ねて Symbol / Hint / Guide から利用できるようにした。
 
 2. **Symbol / Hint / Solver の更新**
    - `createSymbolFactory` / `createRelationshipFactory`／各 Symbol 実装を `LayoutContext` 注入に対応。シンボル生成時に `layout.constraints` で初期制約をオンライン適用。

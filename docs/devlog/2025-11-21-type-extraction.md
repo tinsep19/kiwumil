@@ -117,8 +117,8 @@ src/kiwi/
 移行手順の次の段階：
 1. ✅ kiwi ラッパーを作成（完了）
 2. ✅ 型の切り出し（完了）
-3. ⏳ Variables を依存注入対応にする
+3. ⏳ LayoutVariables を依存注入対応にする
 4. ⏳ LayoutContext に Solver を移動
 5. ⏳ LayoutConstraints の責務整理
 
-次は手順 3（Variables の依存注入対応）を実施する予定。
+次は手順 3（LayoutVariables の依存注入対応）を実施する予定。

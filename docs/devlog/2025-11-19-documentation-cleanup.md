@@ -37,7 +37,7 @@
 
 2. **LayoutContext**（約150行）
    - アーキテクチャ概要
-   - Variables/Constraintsの役割分担
+   - LayoutVariables/Constraintsの役割分担
    - オンライン制約適用の説明
    - Symbol生成時の制約適用
    - 制約の追跡方法

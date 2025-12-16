@@ -25,13 +25,13 @@ createLayoutVar API も createVariable にリネームし、より明示的な�
 ```typescript
 export type VariableId = string
 
-export interface IVariable<T = kiwi.Variable> {
+export interface ILayoutVariable<T = kiwi.Variable> {
   id: VariableId
   value(): number
   variable: T
 }
 
-export class Variable implements IVariable<kiwi.Variable> {
+export class Variable implements ILayoutVariable<kiwi.Variable> {
   constructor(
     public readonly id: VariableId,
     public readonly variable: kiwi.Variable
@@ -76,7 +76,7 @@ export class Variable implements IVariable<kiwi.Variable> {
 
 ## 利点
 
-1. **型の分離**: インターフェース (IVariable) と実装 (Variable) が明確に分離
+1. **型の分離**: インターフェース (ILayoutVariable) と実装 (Variable) が明確に分離
 2. **kiwi 依存の明示化**: variable プロパティで kiwi.Variable へのアクセスを明示
 3. **テスト性の向上**: instanceof による型チェックが可能
 4. **将来のモジュール分割**: インターフェースベースの設計により、将来的な分割が容易

@@ -747,7 +747,7 @@ Guide を作成する際に、Guide 側で Variable を直接扱いたい（制�
 - KiwiSolver の既存 API を変更しない（新メソッドは追加しない）。
 - Hints は内部的に既存の KiwiSolver API を使って Variable（＝ソルバが管理する変数）を生成するが、生成された変数を Symbols に自動登録しない。
 - HintFactory は LayoutContext を保持せず Hints を保持する。Guide は Hints を経由して変数を得て、その変数と既存 Symbols が管理する Symbol との間で制約を作る。
-- Symbols は旧 Variables と Variables の責務を一つに併合する（別ハンドル型は定義しない）。
+- Symbols は旧 LayoutVariables と Variables の責務を一つに併合する（別ハンドル型は定義しない）。
 
 この設計は、Guide が変数を直接操作できる柔軟性を確保しつつ、既存のソルバ API 互換性を保持して影響範囲を限定することをねらいとします。
 
@@ -760,7 +760,7 @@ Guide を作成する際に、Guide 側で Variable を直接扱いたい（制�
 - 変数（Variable）と制約（Constraint）の実体を管理する（所有者）。
 - Constraint に creator/tag 等のメタ情報を付与できると望ましい（管理・削除が容易になる）。
 
-### Symbols（旧: Variables + Variables の併合）
+### Symbols（旧: LayoutVariables + Variables の併合）
 - Symbol 名、Bounds、関連する既存 Symbol に関するユーティリティ（align, pin, setMin/Max 等）を管理する。
 - Symbols は solver が管理する変数への参照を持つことはあるが、Hints が作った変数を自動的に登録・管理はしない。
 - Symbols は Symbol 間の補助的な制約生成メソッドを提供する（ただし Hints の変数は登録対象外）。

@@ -38,7 +38,7 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 
 **`src/core/symbols.ts`**:
 - `SymbolId`, `Point`, `ISymbol`, `ISymbolCharacs`
-- `VariableId`, `IVariable`, `BoundId`
+- `VariableId`, `ILayoutVariable`, `BoundId`
 - `LayoutConstraintId`, `ILayoutConstraint`
 - `ConstraintStrength`, `ISuggestHandle`, `ISuggestHandleFactory`
 
@@ -62,11 +62,11 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 ```typescript
 // Before (分散)
 import type { SymbolId } from "../model/types"
-import type { IVariable } from "../kiwi"
+import type { ILayoutVariable } from "../kiwi"
 import type { LayoutBounds } from "../kiwi/bounds"
 
 // After (集約)
-import type { SymbolId, IVariable, LayoutBounds } from "../core"
+import type { SymbolId, ILayoutVariable, LayoutBounds } from "../core"
 ```
 
 ### 3. モジュール構成の明確化
@@ -78,7 +78,7 @@ import type { SymbolId, IVariable, LayoutBounds } from "../core"
 
 **`src/model/`** (ドメインモデル):
 - `SymbolBase`, `RelationshipBase`, `DiagramSymbol`
-- `Variables` (moved from `src/kiwi`)
+- `LayoutVariables` (moved from `src/kiwi`)
 - `src/core` のインターフェースに依存
 
 **`src/kiwi/`** (レイアウトエンジン):

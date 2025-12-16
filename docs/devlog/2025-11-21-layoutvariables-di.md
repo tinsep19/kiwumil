@@ -1,14 +1,14 @@
-# 2025-11-21 Variables を依存注入対応にする（移行手順 3）
+# 2025-11-21 LayoutVariables を依存注入対応にする（移行手順 3）
 
 ## 背景
 
 [docs/draft/kiwi-boundary-refactor.md](../draft/kiwi-boundary-refactor.md) の移行手順 3 を実施。
 
-移行手順 1, 2 で kiwi ラッパーモジュールと型定義の分離を完了したが、`Variables` はまだ内部で `kiwi.Solver` を直接使用していた。将来的に `LayoutContext` が `KiwiSolver` を所有し、それを `Variables` に注入する設計にするため、`Variables` を依存注入に対応させる必要があった。
+移行手順 1, 2 で kiwi ラッパーモジュールと型定義の分離を完了したが、`LayoutVariables` はまだ内部で `kiwi.Solver` を直接使用していた。将来的に `LayoutContext` が `KiwiSolver` を所有し、それを `LayoutVariables` に注入する設計にするため、`LayoutVariables` を依存注入に対応させる必要があった。
 
 ## 実施した作業
 
-### 1. Variables のコンストラクタを変更
+### 1. LayoutVariables のコンストラクタを変更
 
 **変更ファイル**: `src/kiwi/layout_variables.ts`
 
@@ -16,7 +16,7 @@
 ```typescript
 import * as kiwi from "@lume/kiwi"
 
-export class Variables {
+export class LayoutVariables {
   private readonly solver: kiwi.Solver
 
   constructor(solver?: kiwi.Solver) {
@@ -40,7 +40,7 @@ import {
   // ...
 } from "./kiwi"
 
-export class Variables {
+export class LayoutVariables {
   private readonly solver: KiwiSolver
 
   constructor(solver?: KiwiSolver) {
@@ -69,7 +69,7 @@ export class Variables {
 - **旧**: 内部で `toKiwiExpression` と `kiwi.Constraint` を使用して制約を作成し、solver に追加
 - **新**: `KiwiSolver.addConstraint` メソッドに委譲
 
-これにより、制約作成のロジックが `KiwiSolver` に集約され、`Variables` の責務が明確になった。
+これにより、制約作成のロジックが `KiwiSolver` に集約され、`LayoutVariables` の責務が明確になった。
 
 #### インポートの整理
 - `import * as kiwi from "@lume/kiwi"` を削除
@@ -91,16 +91,16 @@ $ bun run test:types
 ## 効果
 
 ### 1. 依存注入の準備完了
-- `Variables` が `KiwiSolver` を外部から注入できるようになった
+- `LayoutVariables` が `KiwiSolver` を外部から注入できるようになった
 - デフォルトでは内部で新規作成するため、既存コードとの互換性を維持
 
 ### 2. 責務の明確化
-- `Variables`: 変数の作成と管理に専念
+- `LayoutVariables`: 変数の作成と管理に専念
 - `KiwiSolver`: 制約の追加と解決を担当
 
 ### 3. 将来の拡張性向上
-- LayoutContext が KiwiSolver を作成し、Variables に注入する設計が可能になった
-- 複数の Variables が同じ KiwiSolver を共有することも可能
+- LayoutContext が KiwiSolver を作成し、LayoutVariables に注入する設計が可能になった
+- 複数の LayoutVariables が同じ KiwiSolver を共有することも可能
 - テスト時にモック KiwiSolver を注入できる
 
 ### 4. コードの簡潔化
@@ -112,7 +112,7 @@ $ bun run test:types
 ### 変更なしで動作するパターン
 ```typescript
 // パターン 1: 引数なし（デフォルト動作）
-const vars = new Variables()
+const vars = new LayoutVariables()
 // 内部で new KiwiSolver() が作成される
 
 // パターン 2: 既存の使い方
@@ -125,8 +125,8 @@ vars.solve()
 ```typescript
 // パターン 3: KiwiSolver を注入
 const solver = new KiwiSolver()
-const vars = new Variables(solver)
-// 同じ solver を複数の Variables で共有可能
+const vars = new LayoutVariables(solver)
+// 同じ solver を複数の LayoutVariables で共有可能
 ```
 
 ## 次のステップ
@@ -134,8 +134,8 @@ const vars = new Variables(solver)
 移行手順の次の段階：
 1. ✅ kiwi ラッパーを作成（完了）
 2. ✅ 型の切り出し（完了）
-3. ✅ Variables を依存注入対応にする（完了）
+3. ✅ LayoutVariables を依存注入対応にする（完了）
 4. ⏳ LayoutContext に Solver を移動
 5. ⏳ LayoutConstraints の責務整理
 
-次は手順 4（LayoutContext への Solver 移動）を実施する予定。LayoutContext が KiwiSolver を所有し、Variables に注入する設計に移行する。
+次は手順 4（LayoutContext への Solver 移動）を実施する予定。LayoutContext が KiwiSolver を所有し、LayoutVariables に注入する設計に移行する。

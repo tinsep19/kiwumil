@@ -4,7 +4,7 @@
 
 [docs/draft/kiwi-boundary-refactor.md](../draft/kiwi-boundary-refactor.md) の移行手順 4 を実施。
 
-移行手順 1-3 で kiwi ラッパーモジュール、型定義の分離、Variables の依存注入対応を完了した。次のステップとして、solver の所有権を LayoutContext に移動し、レイアウトシステム全体のライフサイクル管理を一元化する必要があった。
+移行手順 1-3 で kiwi ラッパーモジュール、型定義の分離、LayoutVariables の依存注入対応を完了した。次のステップとして、solver の所有権を LayoutContext に移動し、レイアウトシステム全体のライフサイクル管理を一元化する必要があった。
 
 ## 実施した作業
 
@@ -15,7 +15,7 @@
 #### 変更前
 ```typescript
 export class LayoutContext {
-  readonly vars: Variables
+  readonly vars: LayoutVariables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
 
@@ -24,7 +24,7 @@ export class LayoutContext {
     resolveSymbol: (id: SymbolId | ContainerSymbolId) => SymbolBase | undefined
   ) {
     this.theme = theme
-    this.variables = new Variables()
+    this.variables = new LayoutVariables()
     this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
   }
 
@@ -40,7 +40,7 @@ import { KiwiSolver } from "./kiwi"
 
 export class LayoutContext {
   private readonly solver: KiwiSolver
-  readonly vars: Variables
+  readonly vars: LayoutVariables
   readonly constraints: LayoutConstraints
   readonly theme: Theme
 
@@ -50,7 +50,7 @@ export class LayoutContext {
   ) {
     this.theme = theme
     this.solver = new KiwiSolver()
-    this.variables = new Variables(this.solver)
+    this.variables = new LayoutVariables(this.solver)
     this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
   }
 
@@ -68,11 +68,11 @@ export class LayoutContext {
 
 #### コンストラクタの変更
 - KiwiSolver を最初に作成
-- 作成した solver を Variables に注入: `new Variables(this.solver)`
+- 作成した solver を LayoutVariables に注入: `new LayoutVariables(this.solver)`
 - これにより、vars と constraints が同じ solver を共有する
 
 #### solve メソッドの変更
-- **旧**: `this.variables.solve()` - Variables 経由で solver を呼び出し
+- **旧**: `this.variables.solve()` - LayoutVariables 経由で solver を呼び出し
 - **新**: `this.solver.updateVariables()` - LayoutContext が直接 solver を操作
 
 これにより、solver のライフサイクル管理が LayoutContext に集約された。
@@ -96,7 +96,7 @@ $ bun run test:types
 
 ### 1. solver の所有権の明確化
 - LayoutContext が solver を所有し、そのライフサイクルを管理
-- Variables は注入された solver を使用するだけの役割に
+- LayoutVariables は注入された solver を使用するだけの役割に
 
 ### 2. 一元的な制御
 - solve のタイミングを LayoutContext が制御できる
@@ -109,7 +109,7 @@ LayoutContext:
   - solve のタイミングを制御
   - 全体のオーケストレーション
 
-Variables:
+LayoutVariables:
   - 変数の作成と管理
   - 注入された solver を利用
 
@@ -132,7 +132,7 @@ LayoutConstraints:
 ### 変更前
 ```
 LayoutContext
-  ├── vars: Variables
+  ├── vars: LayoutVariables
   │     └── solver: KiwiSolver (内部所有)
   └── constraints: LayoutConstraints
 ```
@@ -141,11 +141,11 @@ LayoutContext
 ```
 LayoutContext
   ├── solver: KiwiSolver (ContextがSolverを所有)
-  ├── vars: Variables (Solverを注入)
+  ├── vars: LayoutVariables (Solverを注入)
   └── constraints: LayoutConstraints
 ```
 
-solver の所有権が Variables から LayoutContext に移動し、より上位のレイヤーで管理されるようになった。
+solver の所有権が LayoutVariables から LayoutContext に移動し、より上位のレイヤーで管理されるようになった。
 
 ## 既存コードとの互換性
 
@@ -167,7 +167,7 @@ context.solve() // 内部実装が変わっただけで、呼び出し方は同�
 移行手順の次の段階：
 1. ✅ kiwi ラッパーを作成（完了）
 2. ✅ 型の切り出し（完了）
-3. ✅ Variables を依存注入対応にする（完了）
+3. ✅ LayoutVariables を依存注入対応にする（完了）
 4. ✅ LayoutContext に Solver を移動（完了）
 5. ⏳ LayoutConstraints の責務整理
 6. ⏳ 呼び出し元の更新（段階的に置換）

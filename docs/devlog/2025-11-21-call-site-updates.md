@@ -15,7 +15,7 @@
 ```typescript
 LayoutContext
   ├── solver: KiwiSolver (所有)
-  ├── vars: Variables (solver を注入)
+  ├── vars: LayoutVariables (solver を注入)
   └── constraints: LayoutConstraints (vars を使用)
 ```
 
@@ -74,7 +74,7 @@ export class LayoutConstraints {
 1. **LayoutConstraints は vars を受け取る**
    ```typescript
    constructor(
-     private readonly vars: Variables,
+     private readonly vars: LayoutVariables,
      private readonly theme: Theme,
      private readonly resolveSymbol: (id: LayoutSymbolId) => SymbolBase | undefined
    ) {}
@@ -84,7 +84,7 @@ export class LayoutConstraints {
    ```typescript
    // LayoutContext のコンストラクタ
    this.solver = new KiwiSolver()
-   this.variables = new Variables(this.solver)
+   this.variables = new LayoutVariables(this.solver)
    this.constraints = new LayoutConstraints(this.variables, theme, resolveSymbol)
    ```
 
@@ -131,7 +131,7 @@ export class LayoutContext {
    ```
    高レベル: LayoutContext (オーケストレーション)
    中レベル: LayoutConstraints (制約生成ロジック)
-   低レベル: Variables (変数管理)
+   低レベル: LayoutVariables (変数管理)
    実装:     KiwiSolver (solver ラッパー)
    ```
 
@@ -226,7 +226,7 @@ context.solve()
 |---------|-----------|------|
 | オーケストレーション | LayoutContext | solver 所有、solve タイミング制御 |
 | 制約生成 | LayoutConstraints | 制約ロジック、メタデータ管理 |
-| 変数管理 | Variables | 変数作成、solver への委譲 |
+| 変数管理 | LayoutVariables | 変数作成、solver への委譲 |
 | solver 実装 | KiwiSolver | kiwi.Solver ラッパー |
 
 ### データフロー
@@ -248,7 +248,7 @@ solver の所有権が Context にあるため、すべての操作が Context �
 移行手順の残り：
 1. ✅ kiwi ラッパーを作成（完了）
 2. ✅ 型の切り出し（完了）
-3. ✅ Variables を依存注入対応にする（完了）
+3. ✅ LayoutVariables を依存注入対応にする（完了）
 4. ✅ LayoutContext に Solver を移動（完了）
 5. ✅ LayoutConstraints の責務整理（実質的に完了）
 6. ✅ 呼び出し元の更新（実質的に完了）
