@@ -2,6 +2,7 @@
 import type { CassowarySolver, Variable, LayoutConstraint, ConstraintSpec } from "../core"
 import {
   createBoundId,
+  createBrandVariableFactory,
   type Bounds,
   type BoundsType,
   type LayoutBounds,
@@ -51,44 +52,32 @@ export class LayoutVariables {
   ): BoundsMap[Type] {
     const boundId = createBoundId(`${prefix}:${type}`)
 
-    // 基本的な 4 つの変数を作成
-    const x = this.createVariable(`${prefix}.x`)
-    const y = this.createVariable(`${prefix}.y`)
-    const width = this.createVariable(`${prefix}.width`)
-    const height = this.createVariable(`${prefix}.height`)
+    // ブランドファクトリを作成して変換関数を隠蔽
+    const factory = createBrandVariableFactory((id) => this.createVariable(id))
 
-    // computed properties を作成
-    const right = this.createVariable(`${prefix}.right`)
-    const bottom = this.createVariable(`${prefix}.bottom`)
-    const centerX = this.createVariable(`${prefix}.centerX`)
-    const centerY = this.createVariable(`${prefix}.centerY`)
+    // 基本的な 4 つの変数を作成（ブランド型にキャスト）
+    const x = factory.createAnchorX(`${prefix}.x`)
+    const y = factory.createAnchorY(`${prefix}.y`)
+    const width = factory.createWidth(`${prefix}.width`)
+    const height = factory.createHeight(`${prefix}.height`)
+
+    // computed properties を作成（ブランド型にキャスト）
+    const right = factory.createAnchorX(`${prefix}.right`)
+    const bottom = factory.createAnchorY(`${prefix}.bottom`)
+    const centerX = factory.createAnchorX(`${prefix}.centerX`)
+    const centerY = factory.createAnchorY(`${prefix}.centerY`)
 
     // z (depth) 変数を作成し、デフォルト値を0に設定
-    const z = this.createVariable(`${prefix}.z`)
+    const z = factory.createAnchorZ(`${prefix}.z`)
 
     this.solver.createConstraint(`${boundId}:computed`, (builder) => {
-      builder
-        .expr([1, right])
-        .eq([1, x], [1, width])
-        .strong()
-      builder
-        .expr([1, bottom])
-        .eq([1, y], [1, height])
-        .strong()
-      builder
-        .expr([1, centerX])
-        .eq([1, x], [0.5, width])
-        .strong()
-      builder
-        .expr([1, centerY])
-        .eq([1, y], [0.5, height])
-        .strong()
+      builder.expr([1, right]).eq([1, x], [1, width]).strong()
+      builder.expr([1, bottom]).eq([1, y], [1, height]).strong()
+      builder.expr([1, centerX]).eq([1, x], [0.5, width]).strong()
+      builder.expr([1, centerY]).eq([1, y], [0.5, height]).strong()
       // z のデフォルト値を0に設定 (弱制約)
       // enclose hints によってこの値は上書きされることがある
-      builder
-        .expr([1, z])
-        .eq([0, 1])
-        .weak()
+      builder.expr([1, z]).eq([0, 1]).weak()
     })
 
     return {
@@ -124,7 +113,9 @@ export class LayoutVariables {
         result[key] = this.createBounds(key, type)
       }
     }
-    return result as { [K in keyof T]: T[K] extends "variable" ? Variable : BoundsMap[T[K] & BoundsType] }
+    return result as {
+      [K in keyof T]: T[K] extends "variable" ? Variable : BoundsMap[T[K] & BoundsType]
+    }
   }
 
   valueOf(variable: Variable): number {

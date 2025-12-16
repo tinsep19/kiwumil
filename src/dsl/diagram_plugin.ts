@@ -14,11 +14,7 @@ export type IconRegistrar = { register: (name: string, relPath: string) => void 
 export type IconRegistrarCallback = (registrar: IconRegistrar) => void
 
 export type Icons = {
-  createRegistrar: (
-    plugin: string,
-    importMeta: ImportMeta,
-    callback: IconRegistrarCallback
-  ) => void
+  createRegistrar: (plugin: string, importMeta: ImportMeta, callback: IconRegistrarCallback) => void
 }
 
 /**

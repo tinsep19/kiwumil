@@ -115,7 +115,7 @@ describe("Bounds Validation", () => {
         label: "TestActor",
         theme: DefaultTheme,
       })
-      
+
       // Should throw error when icon is not available
       expect(() => actor.toSVG()).toThrow("Actor icon is required but not available")
     })
@@ -132,7 +132,7 @@ describe("Bounds Validation", () => {
       context.solve()
 
       const mockIcon = {
-        raw: '<svg><circle cx="30" cy="30" r="20"/></svg>'
+        raw: '<svg><circle cx="30" cy="30" r="20"/></svg>',
       }
 
       const actor = new ActorSymbol({

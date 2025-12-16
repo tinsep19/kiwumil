@@ -84,9 +84,7 @@ describe("LayoutConstraints metadata", () => {
 
     // enclose creates one constraint entry with 10 constraints
     // (4 required bounds constraints + 1 z-index constraint per child)
-    const entry = context.hints.list().find(
-      (constraint) => constraint.rawConstraints.length === 10
-    )
+    const entry = context.hints.list().find((constraint) => constraint.rawConstraints.length === 10)
 
     expect(entry).toBeDefined()
     expect(entry?.rawConstraints).toHaveLength(10)

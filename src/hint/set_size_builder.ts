@@ -16,30 +16,24 @@ export class SetSizeBuilder implements StrengthBuilder {
   ) {}
 
   weak(): void {
-    this.applyConstraints('weak')
+    this.applyConstraints("weak")
   }
 
   medium(): void {
-    this.applyConstraints('medium')
+    this.applyConstraints("medium")
   }
 
   strong(): void {
-    this.applyConstraints('strong')
+    this.applyConstraints("strong")
   }
 
   required(): void {
-    this.applyConstraints('required')
+    this.applyConstraints("required")
   }
 
-  private applyConstraints(strength: 'weak' | 'medium' | 'strong' | 'required'): void {
-    this.builder
-      .expr([1, this.bounds.width])
-      .eq([1, this.width])
-      [strength]()
+  private applyConstraints(strength: "weak" | "medium" | "strong" | "required"): void {
+    this.builder.expr([1, this.bounds.width]).eq([1, this.width])[strength]()
 
-    this.builder
-      .expr([1, this.bounds.height])
-      .eq([1, this.height])
-      [strength]()
+    this.builder.expr([1, this.bounds.height]).eq([1, this.height])[strength]()
   }
 }

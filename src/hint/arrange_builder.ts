@@ -12,32 +12,32 @@ export class ArrangeDirectionBuilder implements StrengthBuilder {
     private readonly builder: LinearConstraintBuilder,
     private readonly elements: (LayoutBounds | ItemBounds)[],
     private readonly marginValue: number | Variable,
-    private readonly direction: 'horizontal' | 'vertical'
+    private readonly direction: "horizontal" | "vertical"
   ) {}
 
   weak(): void {
-    this.applyConstraints('weak')
+    this.applyConstraints("weak")
   }
 
   medium(): void {
-    this.applyConstraints('medium')
+    this.applyConstraints("medium")
   }
 
   strong(): void {
-    this.applyConstraints('strong')
+    this.applyConstraints("strong")
   }
 
   required(): void {
-    this.applyConstraints('required')
+    this.applyConstraints("required")
   }
 
-  private applyConstraints(strength: 'weak' | 'medium' | 'strong' | 'required'): void {
+  private applyConstraints(strength: "weak" | "medium" | "strong" | "required"): void {
     for (let i = 0; i < this.elements.length - 1; i++) {
       const prev = this.elements[i]
       const next = this.elements[i + 1]
       if (!prev || !next) continue
 
-      if (this.direction === 'horizontal') {
+      if (this.direction === "horizontal") {
         // next.x >= prev.x + prev.width + margin
         // Equivalently: prev.right + margin = next.left
         this.builder
@@ -67,11 +67,11 @@ export class ArrangeMarginBuilder {
   ) {}
 
   horizontal(): ArrangeDirectionBuilder {
-    return new ArrangeDirectionBuilder(this.builder, this.elements, this.marginValue, 'horizontal')
+    return new ArrangeDirectionBuilder(this.builder, this.elements, this.marginValue, "horizontal")
   }
 
   vertical(): ArrangeDirectionBuilder {
-    return new ArrangeDirectionBuilder(this.builder, this.elements, this.marginValue, 'vertical')
+    return new ArrangeDirectionBuilder(this.builder, this.elements, this.marginValue, "vertical")
   }
 }
 

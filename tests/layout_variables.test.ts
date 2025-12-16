@@ -23,10 +23,7 @@ describe("LayoutVariables", () => {
 
     solver.createConstraint("test-combined", (builder) => {
       builder.expr([1, a]).eq([10, 1]).strong()
-      builder
-        .expr([1, b])
-        .eq([1, a], [20, 1])
-        .strong()
+      builder.expr([1, b]).eq([1, a], [20, 1]).strong()
     })
 
     solver.updateVariables()

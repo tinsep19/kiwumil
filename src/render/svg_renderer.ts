@@ -28,7 +28,12 @@ export class SvgRenderer {
   private theme?: Theme
   private iconRegistry?: IconRegistry
 
-  constructor(symbols: SymbolBase[], relationships: RelationshipBase[] = [], theme?: Theme, iconRegistry?: IconRegistry) {
+  constructor(
+    symbols: SymbolBase[],
+    relationships: RelationshipBase[] = [],
+    theme?: Theme,
+    iconRegistry?: IconRegistry
+  ) {
     this.symbols = symbols
     this.relationships = relationships
     this.theme = theme
@@ -147,7 +152,7 @@ export class SvgRenderer {
     }
 
     const bgColor = this.theme?.defaultStyleSet.backgroundColor || "white"
-    const defs = this.iconRegistry ? this.iconRegistry.emit_symbols() : ''
+    const defs = this.iconRegistry ? this.iconRegistry.emit_symbols() : ""
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 

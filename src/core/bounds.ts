@@ -101,20 +101,17 @@ export function getBoundsValues(bounds: Bounds): {
     !Number.isFinite(rawZ)
 
   if (hasInvalidValues) {
-    console.warn(
-      `[getBoundsValues] Invalid bounds detected:`,
-      {
-        x: rawX,
-        y: rawY,
-        width: rawWidth,
-        height: rawHeight,
-        right: rawRight,
-        bottom: rawBottom,
-        centerX: rawCenterX,
-        centerY: rawCenterY,
-        z: rawZ,
-      }
-    )
+    console.warn(`[getBoundsValues] Invalid bounds detected:`, {
+      x: rawX,
+      y: rawY,
+      width: rawWidth,
+      height: rawHeight,
+      right: rawRight,
+      bottom: rawBottom,
+      centerX: rawCenterX,
+      centerY: rawCenterY,
+      z: rawZ,
+    })
   }
 
   // 負の値を検出して警告（レイアウトソルバの問題を示唆）
