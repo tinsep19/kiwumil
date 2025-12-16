@@ -14,32 +14,29 @@
 
 ### ブランド型の定義
 
+unique symbol を使用したブランディング型:
+
 ```typescript
 // src/core/layout_variable.ts
 
-// ブランディング型: ユニークなシンボルプロパティを持つ交差型
-export type AnchorX = Variable & { readonly __brand_anchorX: "anchor_x" }
-export type AnchorY = Variable & { readonly __brand_anchorY: "anchor_y" }
-export type AnchorZ = Variable & { readonly __brand_anchorZ: "anchor_z" }
-export type Width = Variable & { readonly __brand_width: "width" }
-export type Height = Variable & { readonly __brand_height: "height" }
+// unique symbol でブランド型を定義
+declare const __brand: unique symbol
+
+export type AnchorX = Variable & { readonly [__brand]: "anchor_x" }
+export type AnchorY = Variable & { readonly [__brand]: "anchor_y" }
+export type AnchorZ = Variable & { readonly [__brand]: "anchor_z" }
+export type Width = Variable & { readonly [__brand]: "width" }
+export type Height = Variable & { readonly [__brand]: "height" }
 ```
 
-### キャスト関数
-
-型安全なキャストを提供するヘルパー関数:
-
-```typescript
-export function asAnchorX(v: Variable): AnchorX { return v as AnchorX }
-export function asAnchorY(v: Variable): AnchorY { return v as AnchorY }
-export function asAnchorZ(v: Variable): AnchorZ { return v as AnchorZ }
-export function asWidth(v: Variable): Width { return v as Width }
-export function asHeight(v: Variable): Height { return v as Height }
-```
+**特徴:**
+- 同じ `__brand` シンボルで複数の値を分類可能
+- 型レベルでより厳密なチェックが可能
+- コードベース内の他のブランド実装（KiwiSolver）との一貫性
 
 ### VariableFactory
 
-変数生成を抽象化する工場パターン:
+変数生成を抽象化する工場パターン（キャストを内包）:
 
 ```typescript
 export type VariableFactory = (id: VariableId) => Variable
@@ -47,12 +44,20 @@ export type VariableFactory = (id: VariableId) => Variable
 export function createBrandVariableFactory(factory: VariableFactory) {
   return {
     createAnchorX(id: VariableId): AnchorX {
-      return asAnchorX(factory(id))
+      return factory(id) as AnchorX
     },
     createAnchorY(id: VariableId): AnchorY {
-      return asAnchorY(factory(id))
+      return factory(id) as AnchorY
     },
-    // ... 他の型も同様
+    createAnchorZ(id: VariableId): AnchorZ {
+      return factory(id) as AnchorZ
+    },
+    createWidth(id: VariableId): Width {
+      return factory(id) as Width
+    },
+    createHeight(id: VariableId): Height {
+      return factory(id) as Height
+    },
     createVariable(id: VariableId): Variable {
       return factory(id)
     },
@@ -60,13 +65,15 @@ export function createBrandVariableFactory(factory: VariableFactory) {
 }
 ```
 
+**注意:** キャスト関数（`asAnchorX` など）は実装の詳細として `createBrandVariableFactory` 内に隠蔽され、公開 API からは削除されています。
+
 ## 変更されたファイル
 
 ### src/core/layout_variable.ts
 
-- ブランド型の定義を追加
-- キャスト関数 (asAnchorX, asAnchorY, etc.) を追加
+- unique symbol を使用したブランド型の定義を追加
 - VariableFactory 型と createBrandVariableFactory を追加
+- キャスト関数は createBrandVariableFactory 内に隠蔽（公開 API から削除）
 
 ### src/core/bounds.ts
 
@@ -74,12 +81,13 @@ export function createBrandVariableFactory(factory: VariableFactory) {
 
 ### src/model/layout_variables.ts
 
-- createBounds メソッドでキャスト関数を使用
+- createBounds メソッドで createBrandVariableFactory を使用
 - 生成される変数が適切なブランド型を持つことを保証
 
 ### src/core/index.ts
 
-- 新しい型とキャスト関数のエクスポートを追加
+- createBrandVariableFactory のエクスポートを追加
+- キャスト関数のエクスポートは削除（実装の詳細として隠蔽）
 
 ## 互換性
 
@@ -117,8 +125,7 @@ function setWidth(bounds: Bounds, width: Width | number): void
 
 新しいテストファイル `tests/branded_variables.test.ts` を追加し、以下をカバー:
 
-- 各キャスト関数の動作確認
-- createBrandVariableFactory の動作確認
+- createBrandVariableFactory の各メソッド（createAnchorX, createAnchorY, etc.）の動作確認
 - createBounds が正しいブランド型を返すことの確認
 - ブランド型が制約ソルバーで正常に動作することの確認
 
