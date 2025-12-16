@@ -2,7 +2,8 @@
 // 制約関連のインターフェースと型定義
 
 import type { LayoutConstraintId, BoundId } from "./types"
-import type { Variable, ConstraintStrength } from "./layout_variable"
+import type { Variable } from "./layout_variable"
+import type { ConstraintStrength } from "./solver"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
 
 /**

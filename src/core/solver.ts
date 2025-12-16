@@ -2,8 +2,31 @@
 // レイアウトソルバーのインターフェース
 
 import type { VariableId, LayoutConstraintId } from "./types"
-import type { Variable, SuggestHandleFactory } from "./layout_variable"
+import type { Variable } from "./layout_variable"
 import type { LayoutConstraint, ConstraintSpec } from "./constraint"
+
+/**
+ * ConstraintStrength: 制約の強度
+ */
+export type ConstraintStrength = "required" | "strong" | "medium" | "weak"
+
+/**
+ * SuggestHandle: レイアウト変数への値の提案を行うハンドル
+ */
+export interface SuggestHandle {
+  suggest(value: number): void
+  strength(): ConstraintStrength
+  dispose(): void
+}
+
+/**
+ * SuggestHandleFactory: SuggestHandleを作成するファクトリインターフェース
+ */
+export interface SuggestHandleFactory {
+  strong(): SuggestHandle
+  medium(): SuggestHandle
+  weak(): SuggestHandle
+}
 
 /**
  * ILayoutSolver: Layout solver interface

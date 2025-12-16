@@ -16,12 +16,7 @@ export type {
 } from "./symbol"
 
 // レイアウト変数
-export type {
-  Variable,
-  ConstraintStrength,
-  SuggestHandle,
-  SuggestHandleFactory,
-} from "./layout_variable"
+export type { Variable } from "./layout_variable"
 
 // 制約
 export type {
@@ -36,7 +31,12 @@ export type {
 } from "./constraint"
 
 // ソルバー
-export type { ILayoutSolver } from "./solver"
+export type {
+  ILayoutSolver,
+  ConstraintStrength,
+  SuggestHandle,
+  SuggestHandleFactory,
+} from "./solver"
 
 // 境界
 export type {
