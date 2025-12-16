@@ -104,7 +104,7 @@ export { SymbolBase } from "./symbol_base"
 export { DiagramSymbol } from "./diagram_symbol"
 
 // ✅ re-exporting from lower layers as types or utilities
-export type { ILayoutSolver } from "../core"
+export type { CassowarySolver } from "../core"
 export { getBoundsValues } from "../core"
 ```
 
@@ -134,7 +134,7 @@ After: injection
 
 ```typescript
 export class LayoutContext {
-  constructor(solver: ILayoutSolver, theme: Theme) {
+  constructor(solver: CassowarySolver, theme: Theme) {
     this.solver = solver // injected dependency
   }
 }

@@ -52,7 +52,7 @@ See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependenc
 - `IConstraintsBuilder`, `Term`, `ConstraintSpec`
 
 **`src/core/layout_solver.ts`**:
-- `ILayoutSolver`
+- `CassowarySolver`
 
 **`src/core/hint_target.ts`**:
 - `HintTarget`
@@ -85,7 +85,7 @@ import type { SymbolId, Variable, LayoutBounds } from "../core"
 
 **`src/kiwi/`** (レイアウトエンジン):
 - `KiwiSolver`, `ConstraintsBuilder` の具象実装
-- `ILayoutSolver`, `IConstraintsBuilder` を実装
+- `CassowarySolver`, `IConstraintsBuilder` を実装
 - `src/core` のインターフェースに依存
 
 ### 4. 循環依存の排除

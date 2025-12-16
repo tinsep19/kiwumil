@@ -110,7 +110,7 @@ export { SymbolBase } from "./symbol_base"
 export { DiagramSymbol } from "./diagram_symbol"
 
 // ✅ 下位レイヤーからのre-export  
-export type { ILayoutSolver } from "../core"
+export type { CassowarySolver } from "../core"
 export { getBoundsValues } from "../core"
 ```
 
@@ -140,7 +140,7 @@ export class LayoutContext {
 
 ```typescript
 export class LayoutContext {
-  constructor(solver: ILayoutSolver, theme: Theme) {
+  constructor(solver: CassowarySolver, theme: Theme) {
     this.solver = solver // 注入された依存
   }
 }
