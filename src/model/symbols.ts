@@ -17,7 +17,7 @@ export type SymbolRegistration = {
  * register コールバック内でシンボル登録に必要な情報（characs / symbol / constraint）を
  * 作成・設定するためのヘルパービルダー。
  *
- * createBounds/createVariable は内部で LayoutVariables を使い、prefix 等に id を渡す想定。
+ * createLayoutBounds/createContainerBounds/createItemBounds/createVariable は内部で LayoutVariables を使い、prefix 等に id を渡す想定。
  */
 export class SymbolRegistrationBuilder {
   private readonly id: SymbolId
@@ -35,10 +35,28 @@ export class SymbolRegistrationBuilder {
   /**
    * key は ISymbolCharacsのプロパティ に相当
    * 自動的に id を与える（ユーザーは意識しなくて良い）
-   * type は "layout" | "container" | "item" 相当
+   * Creates bounds of type "layout"
    */
-  createBounds<Type extends BoundsType>(key: string, type: Type) {
-    return this.variables.createBounds(`${this.id}#${key}`, type)
+  createLayoutBounds(key: string) {
+    return this.variables.createBounds(`${this.id}#${key}`, "layout")
+  }
+
+  /**
+   * key は ISymbolCharacsのプロパティ に相当
+   * 自動的に id を与える（ユーザーは意識しなくて良い）
+   * Creates bounds of type "container"
+   */
+  createContainerBounds(key: string) {
+    return this.variables.createBounds(`${this.id}#${key}`, "container")
+  }
+
+  /**
+   * key は ISymbolCharacsのプロパティ に相当
+   * 自動的に id を与える（ユーザーは意識しなくて良い）
+   * Creates bounds of type "item"
+   */
+  createItemBounds(key: string) {
+    return this.variables.createBounds(`${this.id}#${key}`, "item")
   }
 
   /**
@@ -101,7 +119,7 @@ export class Symbols {
    * 指定したプラグインによる Symbol を登録し、登録結果 (SymbolRegistration) を返す。
    *
    * factory は (symbolId, builder) => SymbolRegistration を返す。
-   * builder は createBounds/createVariable/setCharacs/setSymbol/setConstraint/build を持つ。
+   * builder は createLayoutBounds/createContainerBounds/createItemBounds/createVariable/setCharacs/setSymbol/setConstraint/build を持つ。
    */
   register(
     plugin: string,

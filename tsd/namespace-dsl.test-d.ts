@@ -63,7 +63,7 @@ const CustomPlugin = {
     return {
       node(label: string) {
         return symbols.register(plugin, "node", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const testSymbol = new TestSymbol(symbolId, label, bound)
           r.setSymbol(testSymbol)
           r.setCharacs({ id: symbolId, bounds: bound })

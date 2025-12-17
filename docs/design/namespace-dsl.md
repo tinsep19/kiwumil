@@ -130,7 +130,7 @@ The Namespace-based DSL is constructed by composing namespaces provided by plugi
 - Both `createSymbolFactory` and `createRelationshipFactory` are optional; only the needed one can be implemented.
 - Both factories receive `Symbols` / `Relationships` instances, `Theme`, and `PluginIcons`.
 - Symbol / Relationship registration uses the `Symbols.register()` / `Relationships.register()` methods.
-- LayoutBounds are generated using `r.createBounds()` within the callback of `symbols.register()`.
+- LayoutBounds are generated using `r.createLayoutBounds()`, `r.createContainerBounds()`, or `r.createItemBounds()` within the callback of `symbols.register()`.
 
 ### Reference Materials
 

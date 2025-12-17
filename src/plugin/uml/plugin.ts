@@ -36,7 +36,7 @@ export const UMLPlugin = {
           typeof labelOrOptions === "string" ? undefined : labelOrOptions.stereotype
 
         return symbols.register(plugin, "actor", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const iconGetter = icons.actor
           const actor = new ActorSymbol({
             id: symbolId,
@@ -62,7 +62,7 @@ export const UMLPlugin = {
        */
       usecase(label: string) {
         return symbols.register(plugin, "usecase", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const usecase = new UsecaseSymbol({
             id: symbolId,
             bounds: bound,
@@ -85,8 +85,8 @@ export const UMLPlugin = {
        */
       systemBoundary(label: string): IContainerSymbolCharacs {
         return symbols.register(plugin, "systemBoundary", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
-          const container = r.createBounds("container", "container")
+          const bound = r.createLayoutBounds("layout")
+          const container = r.createContainerBounds("container")
           const boundary = new SystemBoundarySymbol({
             id: symbolId,
             bounds: bound,

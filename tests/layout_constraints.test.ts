@@ -20,7 +20,7 @@ describe("LayoutConstraints metadata", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId, r) => {
-      const bound = r.createBounds("layout", "layout")
+      const bound = r.createLayoutBounds("layout")
       const actor = new ActorSymbol({
         id: symbolId,
         bounds: bound,
@@ -38,8 +38,8 @@ describe("LayoutConstraints metadata", () => {
 
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId, r) => {
-      const bound = r.createBounds("layout", "layout")
-      const container = r.createBounds("container", "container")
+      const bound = r.createLayoutBounds("layout")
+      const container = r.createContainerBounds("container")
       const boundary = new SystemBoundarySymbol({
         id: symbolId,
         bounds: bound,
