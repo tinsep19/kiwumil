@@ -1,6 +1,6 @@
 import type { ConstraintSpec, BoundsType } from "../core"
 import type { LayoutVariables } from "./layout_variables"
-import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint } from "../core"
+import type { SymbolId, ISymbol, ISymbolCharacs, LinearConstraints } from "../core"
 import type { SymbolBase } from "./symbol_base"
 
 /**
@@ -9,7 +9,7 @@ import type { SymbolBase } from "./symbol_base"
 export type SymbolRegistration = {
   symbol: ISymbol
   characs: ISymbolCharacs
-  constraint: LayoutConstraint
+  constraint: LinearConstraints
 }
 
 /**
@@ -25,7 +25,7 @@ export class SymbolRegistrationBuilder {
 
   private _characs?: ISymbolCharacs
   private _symbol?: ISymbol
-  private _constraint?: LayoutConstraint
+  private _constraint?: LinearConstraints
 
   constructor(id: SymbolId, variables: LayoutVariables) {
     this.id = id
@@ -58,13 +58,13 @@ export class SymbolRegistrationBuilder {
   }
 
   /**
-   * setConstraint を ConstraintSpec を受け取り LayoutConstraint を生成して返す仕様に変更しました。
-   * Variables（または関連する変数管理オブジェクト）の createConstraint を呼び出して
+   * setConstraint を ConstraintSpec を受け取り LinearConstraints を生成して返す仕様に変更しました。
+   * Variables（または関連する変数管理オブジェクト）の createConstraints を呼び出して
    * this._constraint に保存します。
    */
-  setConstraint(spec: ConstraintSpec): LayoutConstraint {
-    // variables 側に createConstraint(id, spec) がある前提
-    const constraint = this.variables.createConstraint(this.id, spec)
+  setConstraint(spec: ConstraintSpec): LinearConstraints {
+    // variables 側に createConstraints(id, spec) がある前提
+    const constraint = this.variables.createConstraints(this.id, spec)
     this._constraint = constraint
     return constraint
   }

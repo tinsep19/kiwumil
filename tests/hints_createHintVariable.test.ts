@@ -61,7 +61,7 @@ describe("Hints.createHintVariable", () => {
     const testVar = context.variables.createVar("test")
 
     // Create a constraint using the hint variable
-    context.createConstraint("test/constraint", (builder) => {
+    context.createConstraints("test/constraint", (builder) => {
       builder.expr([1, hintVar.variable]).eq([1, testVar]).strong()
     })
 
@@ -85,7 +85,7 @@ describe("Hints.createHintVariable", () => {
     const anchor = context.hints.createHintVariable({ baseName: "anchor" })
 
     // Set the anchor to a specific value
-    context.createConstraint("anchor/fixed", (builder) => {
+    context.createConstraints("anchor/fixed", (builder) => {
       builder.expr([1, anchor.variable]).eq([100, 1]).required()
     })
 
@@ -100,15 +100,15 @@ describe("Hints.createHintVariable", () => {
     const width = context.hints.createHintVariable({ baseName: "width" })
 
     // x2 = x1 + width
-    context.createConstraint("layout/horizontal", (builder) => {
+    context.createConstraints("layout/horizontal", (builder) => {
       builder.expr([1, x2.variable]).eq([1, x1.variable], [1, width.variable]).strong()
     })
 
     // Fix x1 and width
-    context.createConstraint("x1/fixed", (builder) => {
+    context.createConstraints("x1/fixed", (builder) => {
       builder.expr([1, x1.variable]).eq([10, 1]).required()
     })
-    context.createConstraint("width/fixed", (builder) => {
+    context.createConstraints("width/fixed", (builder) => {
       builder.expr([1, width.variable]).eq([50, 1]).required()
     })
 

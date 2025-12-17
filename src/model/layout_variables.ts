@@ -1,5 +1,5 @@
 // src/model/layout_variables.ts
-import type { CassowarySolver, Variable, LayoutConstraint, ConstraintSpec } from "../core"
+import type { CassowarySolver, Variable, LinearConstraints, ConstraintSpec } from "../core"
 import {
   createBoundId,
   createBrandVariableFactory,
@@ -70,7 +70,7 @@ export class LayoutVariables {
     // z (depth) 変数を作成し、デフォルト値を0に設定
     const z = factory.createAnchorZ(`${prefix}.z`)
 
-    this.solver.createConstraint(`${boundId}:computed`, (builder) => {
+    this.solver.createConstraints(`${boundId}:computed`, (builder) => {
       builder.expr([1, right]).eq([1, x], [1, width]).strong()
       builder.expr([1, bottom]).eq([1, y], [1, height]).strong()
       builder.expr([1, centerX]).eq([1, x], [0.5, width]).strong()
@@ -123,13 +123,13 @@ export class LayoutVariables {
   }
 
   /**
-   * Create a constraint by forwarding to the solver.
+   * Create constraints by forwarding to the solver.
    * @param name Constraint identifier
    * @param spec Builder callback function
-   * @returns LayoutConstraint with id
+   * @returns LinearConstraints with id
    */
-  createConstraint(name: string, spec: ConstraintSpec): LayoutConstraint {
-    return this.solver.createConstraint(name, spec)
+  createConstraints(name: string, spec: ConstraintSpec): LinearConstraints {
+    return this.solver.createConstraints(name, spec)
   }
 
   /**

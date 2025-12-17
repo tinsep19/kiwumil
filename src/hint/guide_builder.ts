@@ -70,7 +70,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     }
 
     if (typeof initialValue === "number") {
-      this.context.createConstraint(`guide/${variableName}/initial`, (builder) => {
+      this.context.createConstraints(`guide/${variableName}/initial`, (builder) => {
         builder.expr([1, this.guideVar]).eq([initialValue, 1]).strong()
       })
     }
@@ -246,7 +246,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   }
 
   private enforceStrongEquality(lhs: Term[], rhs: Term[], id: string) {
-    this.context.createConstraint(id, (builder) => {
+    this.context.createConstraints(id, (builder) => {
       builder
         .expr(...lhs)
         .eq(...rhs)

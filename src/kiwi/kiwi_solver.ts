@@ -6,8 +6,8 @@ import { KiwiSuggestHandleFactory } from "./suggest_handle"
 import type {
   VariableId,
   Variable,
-  LayoutConstraintId,
-  LayoutConstraint,
+  LinearConstraintsId,
+  LinearConstraints,
   SuggestHandleFactory,
   CassowarySolver,
 } from "../core"
@@ -55,7 +55,7 @@ export class KiwiVariable implements Variable {
   }
 }
 
-export interface KiwiConstraints extends LayoutConstraint {
+export interface KiwiLinearConstraints extends LinearConstraints {
   rawConstraints: kiwi.Constraint[]
 }
 
@@ -88,15 +88,15 @@ export class KiwiSolver implements CassowarySolver {
   }
 
   /**
-   * Create a constraint with an ID using a callback pattern
+   * Create constraints with an ID using a callback pattern
    * @param id Constraint identifier
    * @param spec Builder callback function
-   * @returns KiwiConstraints with id and rawConstraints
+   * @returns KiwiLinearConstraints with id and rawConstraints
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): KiwiConstraints {
+  createConstraints(id: LinearConstraintsId, spec: ConstraintSpec): KiwiLinearConstraints {
     const builder = new KiwiConstraintBuilder(this.solver)
     spec(builder)
-    const constraint = {
+    const constraint: KiwiLinearConstraints = {
       id,
       rawConstraints: builder.getRawConstraints(),
     }

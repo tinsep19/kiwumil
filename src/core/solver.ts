@@ -1,7 +1,7 @@
 // src/core/solver.ts
 // レイアウトソルバーのインターフェースとレイアウト制約の型定義を統合
 
-import type { VariableId, LayoutConstraintId } from "./types"
+import type { VariableId, LayoutConstraintId, LinearConstraintsId } from "./types"
 import type { Variable } from "./layout_variable"
 
 /**
@@ -34,11 +34,19 @@ export interface SuggestHandleFactory {
 type LinearConstraint = unknown
 
 /**
- * LayoutConstraint: レイアウト制約のインターフェース
+ * LinearConstraints: 複数の線形制約を表す基本インターフェース
  */
-export interface LayoutConstraint {
-  id: LayoutConstraintId
+export interface LinearConstraints {
+  id: LinearConstraintsId
   rawConstraints: LinearConstraint[]
+}
+
+/**
+ * LayoutConstraint: ブランド型としてのレイアウト制約
+ * LinearConstraintsにブランドを追加した型
+ */
+export type LayoutConstraint = LinearConstraints & {
+  readonly __brand: unique symbol
 }
 
 /**
@@ -88,6 +96,11 @@ export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, Stren
 export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
 
 /**
+ * LayoutConstraintFactory: Factory function type for creating LayoutConstraint
+ */
+export type LayoutConstraintFactory = (id: LayoutConstraintId, spec: ConstraintSpec) => LayoutConstraint
+
+/**
  * CassowarySolver: Layout solver interface
  * (Previously named ILayoutSolver)
  */
@@ -103,12 +116,30 @@ export interface CassowarySolver {
   updateVariables(): void
 
   /**
-   * Create a constraint with an ID using a callback pattern
+   * Create constraints with an ID using a callback pattern
+   * Returns LinearConstraints (branded version of LayoutConstraint)
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint
+  createConstraints(id: LinearConstraintsId, spec: ConstraintSpec): LinearConstraints
 
   /**
    * Create a fluent edit variable handle
    */
   createHandle(variable: Variable): SuggestHandleFactory
 }
+
+/**
+ * createLayoutConstraintFactory: Factory function to create a LayoutConstraintFactory
+ * that wraps a CassowarySolver's createConstraints method and produces LinearConstraints
+ * 
+ * @param solver CassowarySolver instance
+ * @returns LayoutConstraintFactory function
+ */
+export function createLayoutConstraintFactory(
+  solver: CassowarySolver
+): LayoutConstraintFactory {
+  return (id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint => {
+    // Use createConstraints internally but return as LayoutConstraint
+    return solver.createConstraints(id as LinearConstraintsId, spec)
+  }
+}
+

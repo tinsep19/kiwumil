@@ -120,7 +120,7 @@ describe("Branded Layout Variables", () => {
     const bounds = variables.createBounds("test", "layout")
 
     // Set constraints
-    solver.createConstraint("test-constraints", (builder) => {
+    solver.createConstraints("test-constraints", (builder) => {
       builder.expr([1, bounds.x]).eq([10, 1]).strong()
       builder.expr([1, bounds.y]).eq([20, 1]).strong()
       builder.expr([1, bounds.width]).eq([100, 1]).strong()

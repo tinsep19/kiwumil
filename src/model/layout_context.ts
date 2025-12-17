@@ -1,7 +1,7 @@
 // src/model/layout_context.ts
 import type { Theme } from "../theme"
 import type { SymbolBase } from "./"
-import type { Variable, LayoutConstraint, ConstraintSpec, CassowarySolver } from "../core"
+import type { Variable, LinearConstraints, ConstraintSpec, CassowarySolver } from "../core"
 import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
 
@@ -23,13 +23,13 @@ export class LayoutContext {
   }
 
   /**
-   * Create a constraint with an ID using a callback pattern
+   * Create constraints with an ID using a callback pattern
    * @param id Constraint identifier
    * @param spec Builder callback function
-   * @returns LayoutConstraint with id
+   * @returns LinearConstraints with id
    */
-  createConstraint(id: string, spec: ConstraintSpec): LayoutConstraint {
-    return this.solver.createConstraint(id, spec)
+  createConstraints(id: string, spec: ConstraintSpec): LinearConstraints {
+    return this.solver.createConstraints(id, spec)
   }
 
   solveAndApply(_symbols: SymbolBase[]) {

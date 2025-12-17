@@ -1,6 +1,6 @@
 // src/core/index.ts
 // 基本型
-export type { SymbolId, Point, VariableId, BoundId, LayoutConstraintId } from "./types"
+export type { SymbolId, Point, VariableId, BoundId, LayoutConstraintId, LinearConstraintsId } from "./types"
 
 // シンボル
 export type { ISymbol, ISymbolCharacs, IContainerSymbolCharacs } from "./symbol"
@@ -22,13 +22,17 @@ export { createBrandVariableFactory } from "./layout_variable"
 // 制約
 export type {
   LayoutConstraint,
+  LinearConstraints,
   Term,
   LinearConstraintBuilder,
   LhsBuilder,
   OpRhsBuilder,
   StrengthBuilder,
   ConstraintSpec,
+  LayoutConstraintFactory,
 } from "./solver"
+
+export { createLayoutConstraintFactory } from "./solver"
 
 // レイアウトヒント
 export type { HintTarget } from "./layout_hint"

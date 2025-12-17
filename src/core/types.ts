@@ -28,3 +28,8 @@ export type BoundId = string
  * LayoutConstraintId: レイアウト制約の識別子
  */
 export type LayoutConstraintId = string
+
+/**
+ * LinearConstraintsId: 複数の線形制約を識別するID
+ */
+export type LinearConstraintsId = string

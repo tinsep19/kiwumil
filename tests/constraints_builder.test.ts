@@ -9,11 +9,11 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x")
     const y = vars.createVar("builder:y")
 
-    const constraint1 = solver.createConstraint("test-eq", (builder) => {
+    const constraint1 = solver.createConstraints("test-eq", (builder) => {
       builder.expr([1, x]).eq([1, y]).strong()
     })
 
-    const constraint2 = solver.createConstraint("test-setter", (builder) => {
+    const constraint2 = solver.createConstraints("test-setter", (builder) => {
       builder.expr([1, y]).eq([100, 1]).strong()
     })
     solver.updateVariables()
@@ -32,7 +32,7 @@ describe("ConstraintsBuilder", () => {
     const vars = new LayoutVariables(solver)
     const x = vars.createVar("builder:x-zero")
 
-    const constraint = solver.createConstraint("test-eq0", (builder) => {
+    const constraint = solver.createConstraints("test-eq0", (builder) => {
       builder.expr([1, x]).eq0().strong()
     })
 
@@ -51,11 +51,11 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x-eq0")
     const y = vars.createVar("builder:y-eq0")
 
-    solver.createConstraint("test-eq0-vars", (builder) => {
+    solver.createConstraints("test-eq0-vars", (builder) => {
       builder.expr([1, x], [-1, y]).eq0().strong()
     })
 
-    solver.createConstraint("test-setter", (builder) => {
+    solver.createConstraints("test-setter", (builder) => {
       builder.expr([1, x]).eq([42, 1]).strong()
     })
     solver.updateVariables()
@@ -70,11 +70,11 @@ describe("ConstraintsBuilder", () => {
     const x = vars.createVar("builder:x-linear")
     const y = vars.createVar("builder:y-linear")
 
-    solver.createConstraint("test-linear", (builder) => {
+    solver.createConstraints("test-linear", (builder) => {
       builder.expr([2, x], [-3, y], [7, 1]).eq0().strong()
     })
 
-    solver.createConstraint("test-setter", (builder) => {
+    solver.createConstraints("test-setter", (builder) => {
       builder.expr([1, x]).eq([10, 1]).strong()
     })
     solver.updateVariables()
@@ -94,7 +94,7 @@ describe("ConstraintsBuilder", () => {
     }
 
     expect(() => {
-      solver.createConstraint("test-invalid", (builder) => {
+      solver.createConstraints("test-invalid", (builder) => {
         builder
           .expr([1, fakeVariable as any])
           .eq([1, 1])
