@@ -112,6 +112,9 @@ export class KiwiSolver implements CassowarySolver {
       rawConstraints: builder.getRawConstraints(),
       __kiwiConstraintBrand: KIWI_CONSTRAINT_BRAND,
     }
+    // Apply runtime brand via KIWI_BRAND symbol (different from __kiwiConstraintBrand)
+    // KIWI_BRAND is used by isBrandedKiwi() for general Kiwi object detection
+    // __kiwiConstraintBrand is specifically for type-level constraint identification
     brandAsKiwi(constraint)
     return constraint
   }

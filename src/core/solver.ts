@@ -139,8 +139,11 @@ export function createLayoutConstraintFactory(
   solver: CassowarySolver
 ): LayoutConstraintFactory {
   return (id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint => {
-    // Use createConstraints internally and cast the result to LayoutConstraint
-    // This is safe because LayoutConstraint is a branded version of LinearConstraints
+    // Use createConstraints internally and cast the result to LayoutConstraint.
+    // NOTE: This cast is safe because LayoutConstraint's __layoutConstraintBrand is a
+    // type-level brand (unique symbol) that exists only at compile time and is not
+    // meant to be instantiated at runtime. LinearConstraints is structurally compatible
+    // with LayoutConstraint minus the phantom brand property.
     return solver.createConstraints(id as LinearConstraintsId, spec) as LayoutConstraint
   }
 }
