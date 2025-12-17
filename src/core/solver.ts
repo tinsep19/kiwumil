@@ -97,9 +97,11 @@ export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, Stren
 export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
 
 /**
- * LayoutConstraintFactory: Factory function type for creating LayoutConstraint
+ * LayoutConstraintFactory: Factory interface for creating LayoutConstraint
  */
-export type LayoutConstraintFactory = (id: LayoutConstraintId, spec: ConstraintSpec) => LayoutConstraint
+export interface LayoutConstraintFactory {
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint
+}
 
 /**
  * CassowarySolver: Layout solver interface
@@ -130,21 +132,24 @@ export interface CassowarySolver {
 
 /**
  * createLayoutConstraintFactory: Factory function to create a LayoutConstraintFactory
- * that wraps a CassowarySolver's createConstraints method
+ * that wraps a function returning LinearConstraints
  * 
- * @param solver CassowarySolver instance
- * @returns LayoutConstraintFactory function
+ * @param factory Function that returns a function creating LinearConstraints
+ * @returns LayoutConstraintFactory instance
  */
 export function createLayoutConstraintFactory(
-  solver: CassowarySolver
+  factory: () => (id: LinearConstraintsId, spec: ConstraintSpec) => LinearConstraints
 ): LayoutConstraintFactory {
-  return (id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint => {
-    // Use createConstraints internally and cast the result to LayoutConstraint.
-    // NOTE: This cast is safe because LayoutConstraint's __layoutConstraintBrand is a
-    // type-level brand (unique symbol) that exists only at compile time and is not
-    // meant to be instantiated at runtime. LinearConstraints is structurally compatible
-    // with LayoutConstraint minus the phantom brand property.
-    return solver.createConstraints(id as LinearConstraintsId, spec) as LayoutConstraint
+  return {
+    createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint {
+      // Use the factory function internally and cast the result to LayoutConstraint.
+      // NOTE: This cast is safe because LayoutConstraint's __layoutConstraintBrand is a
+      // type-level brand (unique symbol) that exists only at compile time and is not
+      // meant to be instantiated at runtime. LinearConstraints is structurally compatible
+      // with LayoutConstraint minus the phantom brand property.
+      const createFn = factory()
+      return createFn(id as LinearConstraintsId, spec) as LayoutConstraint
+    }
   }
 }
 

@@ -58,10 +58,10 @@ describe("LinearConstraints API", () => {
   })
 
   test("createLayoutConstraintFactory produces LayoutConstraint", () => {
-    const factory = createLayoutConstraintFactory(solver)
+    const factory = createLayoutConstraintFactory(() => solver.createConstraints.bind(solver))
     const x = solver.createVariable("x")
     
-    const constraint: LayoutConstraint = factory("factory-test", (builder) => {
+    const constraint: LayoutConstraint = factory.createConstraint("factory-test", (builder) => {
       builder.expr([1, x]).eq([200, 1]).medium()
     })
 
@@ -70,11 +70,11 @@ describe("LinearConstraints API", () => {
   })
 
   test("factory function works with LayoutConstraintId", () => {
-    const factory = createLayoutConstraintFactory(solver)
+    const factory = createLayoutConstraintFactory(() => solver.createConstraints.bind(solver))
     const x = solver.createVariable("x")
     const y = solver.createVariable("y")
     
-    const constraint = factory("layout-constraint-id", (builder) => {
+    const constraint = factory.createConstraint("layout-constraint-id", (builder) => {
       builder.expr([1, y]).eq([1, x], [10, 1]).weak()
     })
 
