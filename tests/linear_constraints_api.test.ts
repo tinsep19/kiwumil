@@ -1,5 +1,5 @@
 import { describe, test, beforeEach, expect } from "bun:test"
-import { KiwiSolver } from "@/kiwi"
+import { KiwiSolver, isKiwiLinearConstraints } from "@/kiwi"
 import { createLayoutConstraintFactory } from "@/core"
 import type { LinearConstraints, LayoutConstraint } from "@/core"
 
@@ -31,6 +31,30 @@ describe("LinearConstraints API", () => {
     })
 
     expect(constraint.id).toBe("test-id")
+  })
+
+  test("KiwiLinearConstraints has Kiwi brand", () => {
+    const x = solver.createVariable("x")
+    const constraint = solver.createConstraints("branded-constraint", (builder) => {
+      builder.expr([1, x]).eq([75, 1]).medium()
+    })
+
+    // Check that the constraint has the Kiwi brand
+    expect(constraint).toHaveProperty("__kiwiConstraintBrand")
+    expect(isKiwiLinearConstraints(constraint)).toBe(true)
+  })
+
+  test("isKiwiLinearConstraints correctly identifies KiwiLinearConstraints", () => {
+    const x = solver.createVariable("x")
+    const constraint = solver.createConstraints("kiwi-test", (builder) => {
+      builder.expr([1, x]).ge([0, 1]).weak()
+    })
+
+    expect(isKiwiLinearConstraints(constraint)).toBe(true)
+    expect(isKiwiLinearConstraints(null)).toBe(false)
+    expect(isKiwiLinearConstraints(undefined)).toBe(false)
+    expect(isKiwiLinearConstraints({})).toBe(false)
+    expect(isKiwiLinearConstraints({ id: "fake", rawConstraints: [] })).toBe(false)
   })
 
   test("createLayoutConstraintFactory produces LayoutConstraint", () => {
@@ -78,6 +102,8 @@ describe("LinearConstraints API", () => {
     expect(y.value()).toBeCloseTo(150)
     expect(constraint1.rawConstraints.length).toBeGreaterThan(0)
     expect(constraint2.rawConstraints.length).toBeGreaterThan(0)
+    expect(isKiwiLinearConstraints(constraint1)).toBe(true)
+    expect(isKiwiLinearConstraints(constraint2)).toBe(true)
   })
 
   test("LinearConstraints can be used in collections", () => {
@@ -95,5 +121,10 @@ describe("LinearConstraints API", () => {
     expect(constraints[0]!.id).toBe("constraint-0")
     expect(constraints[1]!.id).toBe("constraint-1")
     expect(constraints[2]!.id).toBe("constraint-2")
+    
+    // All should be KiwiLinearConstraints
+    constraints.forEach(c => {
+      expect(isKiwiLinearConstraints(c)).toBe(true)
+    })
   })
 })

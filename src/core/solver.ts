@@ -44,9 +44,10 @@ export interface LinearConstraints {
 /**
  * LayoutConstraint: ブランド型としてのレイアウト制約
  * LinearConstraintsにブランドを追加した型
+ * この型はコンパイル時の型チェックのためのもので、実装側で実際にプロパティを持つ必要はない
  */
 export type LayoutConstraint = LinearConstraints & {
-  readonly __brand: unique symbol
+  readonly __layoutConstraintBrand: unique symbol
 }
 
 /**

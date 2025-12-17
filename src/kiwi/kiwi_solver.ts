@@ -55,8 +55,19 @@ export class KiwiVariable implements Variable {
   }
 }
 
+/**
+ * Unique symbol used to brand KiwiLinearConstraints
+ * @internal
+ */
+const KIWI_CONSTRAINT_BRAND: unique symbol = Symbol("KIWI_CONSTRAINT_BRAND")
+
+/**
+ * KiwiLinearConstraints: KiwiSolver によって生成された線形制約
+ * LinearConstraints を拡張し、kiwi 固有の型情報とブランドを持つ
+ */
 export interface KiwiLinearConstraints extends LinearConstraints {
   rawConstraints: kiwi.Constraint[]
+  readonly __kiwiConstraintBrand: typeof KIWI_CONSTRAINT_BRAND
 }
 
 /**
@@ -91,7 +102,7 @@ export class KiwiSolver implements CassowarySolver {
    * Create constraints with an ID using a callback pattern
    * @param id Constraint identifier
    * @param spec Builder callback function
-   * @returns KiwiLinearConstraints with id and rawConstraints
+   * @returns KiwiLinearConstraints with id, rawConstraints, and Kiwi brand
    */
   createConstraints(id: LinearConstraintsId, spec: ConstraintSpec): KiwiLinearConstraints {
     const builder = new KiwiConstraintBuilder(this.solver)
@@ -99,6 +110,7 @@ export class KiwiSolver implements CassowarySolver {
     const constraint: KiwiLinearConstraints = {
       id,
       rawConstraints: builder.getRawConstraints(),
+      __kiwiConstraintBrand: KIWI_CONSTRAINT_BRAND,
     }
     brandAsKiwi(constraint)
     return constraint
@@ -131,5 +143,22 @@ export function isKiwiVariable(v: unknown): v is KiwiVariable {
     "variable" in v &&
     "value" in v &&
     typeof (v as { value?: unknown }).value === "function"
+  )
+}
+
+/**
+ * Check if a value is a KiwiLinearConstraints created by KiwiSolver
+ * @param v Value to check
+ * @returns true if v is a KiwiLinearConstraints with the proper brand
+ */
+export function isKiwiLinearConstraints(v: unknown): v is KiwiLinearConstraints {
+  return (
+    isBrandedKiwi(v) &&
+    typeof v === "object" &&
+    v !== null &&
+    "id" in v &&
+    "rawConstraints" in v &&
+    "__kiwiConstraintBrand" in v &&
+    (v as { __kiwiConstraintBrand?: unknown }).__kiwiConstraintBrand === KIWI_CONSTRAINT_BRAND
   )
 }
