@@ -129,7 +129,7 @@ export interface CassowarySolver {
 
 /**
  * createLayoutConstraintFactory: Factory function to create a LayoutConstraintFactory
- * that wraps a CassowarySolver's createConstraints method and produces LinearConstraints
+ * that wraps a CassowarySolver's createConstraints method
  * 
  * @param solver CassowarySolver instance
  * @returns LayoutConstraintFactory function
@@ -138,8 +138,9 @@ export function createLayoutConstraintFactory(
   solver: CassowarySolver
 ): LayoutConstraintFactory {
   return (id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint => {
-    // Use createConstraints internally but return as LayoutConstraint
-    return solver.createConstraints(id as LinearConstraintsId, spec)
+    // Use createConstraints internally and cast the result to LayoutConstraint
+    // This is safe because LayoutConstraint is a branded version of LinearConstraints
+    return solver.createConstraints(id as LinearConstraintsId, spec) as LayoutConstraint
   }
 }
 
