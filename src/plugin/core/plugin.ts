@@ -30,7 +30,7 @@ export const CorePlugin = {
        */
       circle(label: string) {
         return symbols.register(plugin, "circle", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const radius = r.createVariable("r")
           const circle = new CircleSymbol({
             id: symbolId,
@@ -55,7 +55,7 @@ export const CorePlugin = {
        */
       ellipse(label: string) {
         return symbols.register(plugin, "ellipse", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const ellipse = new EllipseSymbol({
             id: symbolId,
             bounds: bound,
@@ -78,7 +78,7 @@ export const CorePlugin = {
        */
       rectangle(label: string) {
         return symbols.register(plugin, "rectangle", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const rectangle = new RectangleSymbol({
             id: symbolId,
             bounds: bound,
@@ -101,7 +101,7 @@ export const CorePlugin = {
        */
       roundedRectangle(label: string) {
         return symbols.register(plugin, "roundedRectangle", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const rounded = new RoundedRectangleSymbol({
             id: symbolId,
             bounds: bound,
@@ -124,7 +124,7 @@ export const CorePlugin = {
        */
       text(labelOrInfo: string | TextInfo) {
         return symbols.register(plugin, "text", (symbolId, r) => {
-          const bound = r.createBounds("layout", "layout")
+          const bound = r.createLayoutBounds("layout")
           const text = new TextSymbol({
             id: symbolId,
             bounds: bound,

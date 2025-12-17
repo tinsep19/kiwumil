@@ -22,7 +22,7 @@ describe("Layout pipeline", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId, r) => {
-      const bound = r.createBounds("layout", "layout")
+      const bound = r.createLayoutBounds("layout")
       const actor = new ActorSymbol({
         id: symbolId,
         bounds: bound,
@@ -40,7 +40,7 @@ describe("Layout pipeline", () => {
 
   function createUsecase(id: string) {
     return symbols.register("test", "usecase", (symbolId, r) => {
-      const bound = r.createBounds("layout", "layout")
+      const bound = r.createLayoutBounds("layout")
       const usecase = new UsecaseSymbol({
         id: symbolId,
         bounds: bound,
@@ -58,8 +58,8 @@ describe("Layout pipeline", () => {
 
   function createBoundary(id: string) {
     return symbols.register("test", "systemBoundary", (symbolId, r) => {
-      const bound = r.createBounds("layout", "layout")
-      const container = r.createBounds("container", "container")
+      const bound = r.createLayoutBounds("layout")
+      const container = r.createContainerBounds("container")
       const boundary = new SystemBoundarySymbol({
         id: symbolId,
         bounds: bound,

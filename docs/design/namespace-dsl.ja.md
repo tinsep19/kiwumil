@@ -130,7 +130,7 @@ Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提
 - `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
 - 両ファクトリは `Symbols` / `Relationships` インスタンスと `Theme`、`PluginIcons` を受け取ります。
 - Symbol / Relationship の登録は `Symbols.register()` / `Relationships.register()` メソッドを使用します。
-- LayoutBounds は `symbols.register()` のコールバック内で `r.createBounds()` を使用して生成します。
+- LayoutBounds は `symbols.register()` のコールバック内で `r.createLayoutBounds()`、`r.createContainerBounds()`、または `r.createItemBounds()` を使用して生成します。
 
 ### 参考資料
 

@@ -21,7 +21,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
 
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId, r) => {
-      const bound = r.createBounds("layout", "layout")
+      const bound = r.createLayoutBounds("layout")
       const actor = new ActorSymbol({
         id: symbolId,
         bounds: bound,

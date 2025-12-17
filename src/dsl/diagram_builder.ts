@@ -85,8 +85,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
     const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
-      const diagramBound = r.createBounds("layout", "layout")
-      const containerBound = r.createBounds("container", "container")
+      const diagramBound = r.createLayoutBounds("layout")
+      const containerBound = r.createContainerBounds("container")
       const symbol = new DiagramSymbol({
         id,
         bounds: diagramBound,

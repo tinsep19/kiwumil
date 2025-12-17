@@ -19,7 +19,7 @@ describe("Symbols Index Map", () => {
   // Helper function to create a test symbol registration
   const createTestSymbol = (plugin: string, symbolName: string): SymbolRegistration => {
     return symbols.register(plugin, symbolName, (symbolId, builder) => {
-      const layout = builder.createBounds("layout", "layout")
+      const layout = builder.createLayoutBounds("layout")
       builder.setCharacs({
         id: symbolId,
         layout,
