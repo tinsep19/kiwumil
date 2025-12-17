@@ -1,4 +1,4 @@
-import type { ConstraintSpec, BoundsType } from "../core"
+import type { ConstraintSpec } from "../core"
 import type { LayoutVariables } from "./layout_variables"
 import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint } from "../core"
 import type { SymbolBase } from "./symbol_base"
