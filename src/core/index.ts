@@ -30,6 +30,7 @@ export type {
   StrengthBuilder,
   ConstraintSpec,
   LayoutConstraintFactory,
+  LinearConstraintsFactory,
 } from "./solver"
 
 export { createLayoutConstraintFactory } from "./solver"

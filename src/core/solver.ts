@@ -104,6 +104,11 @@ export interface LayoutConstraintFactory {
 }
 
 /**
+ * LinearConstraintsFactory: Factory function type for creating LinearConstraints
+ */
+export type LinearConstraintsFactory = (id: LinearConstraintsId, spec: ConstraintSpec) => LinearConstraints
+
+/**
  * CassowarySolver: Layout solver interface
  * (Previously named ILayoutSolver)
  */
@@ -132,13 +137,13 @@ export interface CassowarySolver {
 
 /**
  * createLayoutConstraintFactory: Factory function to create a LayoutConstraintFactory
- * that wraps a function returning LinearConstraints
+ * that wraps a LinearConstraintsFactory
  * 
- * @param factory Function that returns a function creating LinearConstraints
+ * @param factory LinearConstraintsFactory function creating LinearConstraints
  * @returns LayoutConstraintFactory instance
  */
 export function createLayoutConstraintFactory(
-  factory: () => (id: LinearConstraintsId, spec: ConstraintSpec) => LinearConstraints
+  factory: LinearConstraintsFactory
 ): LayoutConstraintFactory {
   return {
     createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LayoutConstraint {
@@ -147,8 +152,7 @@ export function createLayoutConstraintFactory(
       // type-level brand (unique symbol) that exists only at compile time and is not
       // meant to be instantiated at runtime. LinearConstraints is structurally compatible
       // with LayoutConstraint minus the phantom brand property.
-      const createFn = factory()
-      return createFn(id as LinearConstraintsId, spec) as LayoutConstraint
+      return factory(id as LinearConstraintsId, spec) as LayoutConstraint
     }
   }
 }
