@@ -1,9 +1,10 @@
 // src/dsl/hint_factory.ts
 import { SymbolBase, Symbols, LayoutContext, type ContainerSymbol } from "../model"
-import type { SymbolId, HintTarget } from "../core"
+import type { SymbolId, HintTarget, ISymbolCharacs } from "../core"
 import {
   FigureBuilder,
   GridBuilder,
+  FluentGridBuilder,
   GuideBuilderImpl,
   type GuideBuilderX,
   type GuideBuilderY,
@@ -36,10 +37,25 @@ export class HintFactory {
 
   /**
    * Grid Builder を返す（矩形行列レイアウト用）
-   * @param container コンテナID。省略時は diagram 全体を対象とする
+   * 
+   * @overload
+   * @param symbols - 2D array of symbols for fluent grid API
+   * @returns FluentGridBuilder with grid coordinate system
+   * 
+   * @overload
+   * @param container - コンテナID。省略時は diagram 全体を対象とする
+   * @returns GridBuilder for traditional grid layout
    */
-  grid(container?: LayoutContainerTarget): GridBuilder {
-    const targetContainer = container ? toSymbolId(container) : this.diagramContainer
+  grid(
+    symbolsOrContainer?: LayoutContainerTarget | (ISymbolCharacs | null)[][]
+  ): GridBuilder | FluentGridBuilder {
+    // Check if it's a 2D array (fluent grid API)
+    if (Array.isArray(symbolsOrContainer)) {
+      return new FluentGridBuilder(this, symbolsOrContainer)
+    }
+    
+    // Traditional grid builder
+    const targetContainer = symbolsOrContainer ? toSymbolId(symbolsOrContainer) : this.diagramContainer
     return new GridBuilder(this, targetContainer)
   }
 
