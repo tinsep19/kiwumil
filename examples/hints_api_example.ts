@@ -37,22 +37,22 @@ TypeDiagram("Hints API Example: Custom Anchors")
     
     // Box1 を中央アンカーに左揃え、上アンカーに配置
     hint.getLayoutContext().createConstraint("box1/align", (builder) => {
-      builder.expr([1, box1.layout.x]).eq([1, centerX.variable]).strong()
-      builder.expr([1, box1.layout.y]).eq([1, topY.variable]).strong()
+      builder.expr([1, box1.bounds.x]).eq([1, centerX.variable]).strong()
+      builder.expr([1, box1.bounds.y]).eq([1, topY.variable]).strong()
     })
     
     // Box2 を Box1 の下に配置
     hint.arrangeVertical(box1, box2)
     hint.getLayoutContext().createConstraint("box2/x", (builder) => {
       // Box2 も中央アンカーに左揃え
-      builder.expr([1, box2.layout.x]).eq([1, centerX.variable]).strong()
+      builder.expr([1, box2.bounds.x]).eq([1, centerX.variable]).strong()
     })
     
     // Box3 を Box2 の下に配置
     hint.arrangeVertical(box2, box3)
     hint.getLayoutContext().createConstraint("box3/x", (builder) => {
       // Box3 も中央アンカーに左揃え
-      builder.expr([1, box3.layout.x]).eq([1, centerX.variable]).strong()
+      builder.expr([1, box3.bounds.x]).eq([1, centerX.variable]).strong()
     })
     
     // 作成されたヒント変数を確認（開発時のデバッグ用）
