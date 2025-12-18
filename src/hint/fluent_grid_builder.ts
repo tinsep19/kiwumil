@@ -1,9 +1,8 @@
 // src/hint/fluent_grid_builder.ts
 
-import type { SymbolId, ISymbolCharacs, Variable } from "../core"
+import type { SymbolId, ISymbolCharacs, Variable, AnchorX, AnchorY } from "../core"
 import { createBrandVariableFactory, type Width, type Height } from "../core"
 import type { HintFactory } from "../dsl"
-import type { GuideBuilderX, GuideBuilderY } from "./guide_builder"
 
 /**
  * Cell represents a bounded area in the grid
@@ -16,24 +15,30 @@ export interface Cell {
 }
 
 /**
+ * GridSymbol: Minimal interface required for grid symbols
+ * Accepts any object with id and bounds properties, or just a SymbolId
+ */
+type GridSymbol = Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId
+
+/**
  * FluentGridBuilder provides a fluent API for grid-based layouts
  * Returns guide variables for grid lines and dimension variables for cell sizes
  */
 export class FluentGridBuilder {
-  private readonly symbols: (ISymbolCharacs | null)[][]
+  private readonly symbols: (GridSymbol | null)[][]
   private readonly rows: number
   private readonly cols: number
   private container?: SymbolId
 
-  // Grid coordinate arrays
-  public readonly x: GuideBuilderX[] = []
-  public readonly y: GuideBuilderY[] = []
+  // Grid coordinate arrays - using AnchorX and AnchorY instead of GuideBuilder
+  public readonly x: AnchorX[] = []
+  public readonly y: AnchorY[] = []
   public readonly width: Width[] = []
   public readonly height: Height[] = []
 
   constructor(
     private readonly hint: HintFactory,
-    symbols: (ISymbolCharacs | null)[][]
+    symbols: (GridSymbol | null)[][]
   ) {
     // Validate that symbols is a rectangular matrix
     if (symbols.length === 0) {
@@ -70,17 +75,18 @@ export class FluentGridBuilder {
   private initializeGrid(): void {
     const context = this.hint.getLayoutContext()
     
-    // Use createBrandVariableFactory to create branded variables
+    // Create branded variables for type safety
+    // Width and Height types ensure that only dimension variables are used in dimension constraints
     const brandFactory = createBrandVariableFactory((id) => context.variables.createVariable(id))
 
-    // Create x guides (M+1 vertical lines)
+    // Create x guides (M+1 vertical lines) as AnchorX
     for (let i = 0; i <= this.cols; i++) {
-      this.x.push(this.hint.createGuideX())
+      this.x.push(brandFactory.createAnchorX(`grid-x-${i}`))
     }
 
-    // Create y guides (N+1 horizontal lines)
+    // Create y guides (N+1 horizontal lines) as AnchorY
     for (let i = 0; i <= this.rows; i++) {
-      this.y.push(this.hint.createGuideY())
+      this.y.push(brandFactory.createAnchorY(`grid-y-${i}`))
     }
 
     // Create width variables (M columns)
@@ -94,8 +100,8 @@ export class FluentGridBuilder {
         const xCurr = this.x[col]
         if (xNext && xCurr) {
           builder
-            .expr([1, xNext.x])
-            .eq([1, xCurr.x], [1, widthVar])
+            .expr([1, xNext])
+            .eq([1, xCurr], [1, widthVar])
             .required()
         }
       })
@@ -112,8 +118,8 @@ export class FluentGridBuilder {
         const yCurr = this.y[row]
         if (yNext && yCurr) {
           builder
-            .expr([1, yNext.y])
-            .eq([1, yCurr.y], [1, heightVar])
+            .expr([1, yNext])
+            .eq([1, yCurr], [1, heightVar])
             .required()
         }
       })
@@ -171,10 +177,10 @@ export class FluentGridBuilder {
     }
 
     return {
-      left: xLeft.x,
-      top: yTop.y,
-      right: xRight.x,
-      bottom: yBottom.y,
+      left: xLeft,
+      top: yTop,
+      right: xRight,
+      bottom: yBottom,
     }
   }
 
@@ -207,8 +213,8 @@ export class FluentGridBuilder {
           const x0 = this.x[0]
           const y0 = this.y[0]
           if (x0 && y0) {
-            builder.expr([1, x0.x]).eq([1, containerBounds.x]).required()
-            builder.expr([1, y0.y]).eq([1, containerBounds.y]).required()
+            builder.expr([1, x0]).eq([1, containerBounds.x]).required()
+            builder.expr([1, y0]).eq([1, containerBounds.y]).required()
           }
         })
       }
@@ -220,8 +226,15 @@ export class FluentGridBuilder {
         const symbolRow = this.symbols[row]
         if (!symbolRow) continue
         
-        const symbol = symbolRow[col]
-        if (!symbol || symbol === null) continue
+        const gridSymbol = symbolRow[col]
+        if (!gridSymbol || gridSymbol === null) continue
+
+        // Resolve SymbolId to actual symbol if needed
+        const symbol = typeof gridSymbol === "string" ? 
+          this.hint.getConstraintTarget(gridSymbol) : 
+          gridSymbol
+
+        if (!symbol || !symbol.bounds) continue
 
         const symbolBounds = symbol.bounds
 
@@ -236,22 +249,59 @@ export class FluentGridBuilder {
         // y[top] <= symbol.bounds.top; symbol.bounds.top <= y[bottom]
         // x[left] <= symbol.bounds.left; symbol.bounds.left <= x[right]
         // And align bottom and right
-        context.createConstraint(`grid/symbol/${symbol.id}/bounds`, (builder) => {
-          // Top constraint: y[row] <= symbol.top <= y[row+1]
-          builder.expr([1, symbolBounds.top]).ge([1, yTop.y]).strong()
-          builder.expr([1, symbolBounds.top]).le([1, yBottom.y]).strong()
+        let symbolId: string
+        if (typeof gridSymbol === "string") {
+          symbolId = gridSymbol
+        } else if ("id" in symbol && symbol.id) {
+          symbolId = symbol.id as string
+        } else if ("boundId" in symbol) {
+          symbolId = symbol.boundId as string
+        } else {
+          // Fallback
+          symbolId = `grid-symbol-${row}-${col}`
+        }
+        
+        // Create constraints to bound the symbol within its cell
+        // Each constraint must be created separately with its own builder callback
+        if (!symbolBounds || !symbolBounds.top || !symbolBounds.bottom || !symbolBounds.left || !symbolBounds.right) {
+          console.warn(`Skipping symbol at ${row},${col} - invalid symbol bounds`)
+          continue
+        }
+        
+        context.createConstraint(`grid/symbol/${symbolId}/top-ge`, (builder) => {
+          if (!symbolBounds.top || !yTop) {
+            console.error(`Missing: symbolBounds.top=${!!symbolBounds.top}, yTop=${!!yTop}`)
+            return
+          }
+          builder.expr([1, symbolBounds.top]).ge([1, yTop]).strong()
+        })
+        
+        context.createConstraint(`grid/symbol/${symbolId}/top-le`, (builder) => {
+          builder.expr([1, symbolBounds.top]).le([1, yBottom]).strong()
+        })
 
-          // Left constraint: x[col] <= symbol.left <= x[col+1]
-          builder.expr([1, symbolBounds.left]).ge([1, xLeft.x]).strong()
-          builder.expr([1, symbolBounds.left]).le([1, xRight.x]).strong()
+        context.createConstraint(`grid/symbol/${symbolId}/left-ge`, (builder) => {
+          builder.expr([1, symbolBounds.left]).ge([1, xLeft]).strong()
+        })
+        
+        context.createConstraint(`grid/symbol/${symbolId}/left-le`, (builder) => {
+          builder.expr([1, symbolBounds.left]).le([1, xRight]).strong()
+        })
 
-          // Bottom constraint: y[row] <= symbol.bottom <= y[row+1]
-          builder.expr([1, symbolBounds.bottom]).ge([1, yTop.y]).strong()
-          builder.expr([1, symbolBounds.bottom]).le([1, yBottom.y]).strong()
+        context.createConstraint(`grid/symbol/${symbolId}/bottom-ge`, (builder) => {
+          builder.expr([1, symbolBounds.bottom]).ge([1, yTop]).strong()
+        })
+        
+        context.createConstraint(`grid/symbol/${symbolId}/bottom-le`, (builder) => {
+          builder.expr([1, symbolBounds.bottom]).le([1, yBottom]).strong()
+        })
 
-          // Right constraint: x[col] <= symbol.right <= x[col+1]
-          builder.expr([1, symbolBounds.right]).ge([1, xLeft.x]).strong()
-          builder.expr([1, symbolBounds.right]).le([1, xRight.x]).strong()
+        context.createConstraint(`grid/symbol/${symbolId}/right-ge`, (builder) => {
+          builder.expr([1, symbolBounds.right]).ge([1, xLeft]).strong()
+        })
+        
+        context.createConstraint(`grid/symbol/${symbolId}/right-le`, (builder) => {
+          builder.expr([1, symbolBounds.right]).le([1, xRight]).strong()
         })
       }
     }

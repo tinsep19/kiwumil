@@ -17,18 +17,11 @@ TypeDiagram("Fluent Grid: Basic 2x2")
     const box3 = el.core.rectangle("Box 3", { width: 80, height: 60 })
     const box4 = el.core.rectangle("Box 4", { width: 80, height: 60 })
 
-    // Get symbol characs
-    const symbols = hint.getSymbols()
-    const s1 = symbols.find((s) => s.id === box1)
-    const s2 = symbols.find((s) => s.id === box2)
-    const s3 = symbols.find((s) => s.id === box3)
-    const s4 = symbols.find((s) => s.id === box4)
-
-    // Use the new fluent grid API
+    // Use the new fluent grid API - symbols can be passed directly as IDs
     const grid = hint.grid([
-      [s1, s2],
-      [s3, s4],
-    ] as any).layout()
+      [box1, box2],
+      [box3, box4],
+    ]).layout()
 
     // Access grid coordinates
     console.log("Grid has", grid.x.length, "vertical guides (M+1)")
@@ -48,16 +41,11 @@ TypeDiagram("Fluent Grid: With Container")
     const box2 = el.core.rectangle("Service B", { width: 100, height: 60 })
     const box3 = el.core.rectangle("Database", { width: 100, height: 60 })
 
-    const symbols = hint.getSymbols()
-    const s1 = symbols.find((s) => s.id === box1)
-    const s2 = symbols.find((s) => s.id === box2)
-    const s3 = symbols.find((s) => s.id === box3)
-
     // Grid with null cells and container
     const grid = hint.grid([
-      [s1, s2],
-      [null, s3],
-    ] as any).in(container)
+      [box1, box2],
+      [null, box3],
+    ]).in(container)
 
     // The grid coordinates are automatically constrained to the container
     console.log("Container grid:", grid.width.length, "cols x", grid.height.length, "rows")
@@ -75,18 +63,10 @@ TypeDiagram("Fluent Grid: Cell Access")
     const e = el.core.rectangle("E", { width: 60, height: 40 })
     const f = el.core.rectangle("F", { width: 60, height: 40 })
 
-    const symbols = hint.getSymbols()
-    const sa = symbols.find((s) => s.id === a)
-    const sb = symbols.find((s) => s.id === b)
-    const sc = symbols.find((s) => s.id === c)
-    const sd = symbols.find((s) => s.id === d)
-    const se = symbols.find((s) => s.id === e)
-    const sf = symbols.find((s) => s.id === f)
-
     const grid = hint.grid([
-      [sa, sb, sc],
-      [sd, se, sf],
-    ] as any).layout()
+      [a, b, c],
+      [d, e, f],
+    ]).layout()
 
     // Access specific cell bounds
     const topLeftCell = grid.getArea({ top: 0, left: 0, bottom: 1, right: 1 })

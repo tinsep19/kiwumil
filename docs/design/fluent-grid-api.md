@@ -49,8 +49,8 @@ The grid object returned by both `.layout()` and `.in(container)` exposes:
 
 ```typescript
 {
-  x: GuideBuilderX[],  // Array of size M+1 (vertical grid lines)
-  y: GuideBuilderY[],  // Array of size N+1 (horizontal grid lines)
+  x: AnchorX[],  // Array of size M+1 (vertical grid lines)
+  y: AnchorY[],  // Array of size N+1 (horizontal grid lines)
   width: Width[],      // Array of size M (column widths)
   height: Height[]     // Array of size N (row heights)
 }

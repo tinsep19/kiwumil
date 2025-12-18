@@ -49,8 +49,8 @@ hint.grid([
 
 ```typescript
 {
-  x: GuideBuilderX[],  // サイズ M+1 の配列（垂直グリッド線）
-  y: GuideBuilderY[],  // サイズ N+1 の配列（水平グリッド線）
+  x: AnchorX[],  // サイズ M+1 の配列（垂直グリッド線）
+  y: AnchorY[],  // サイズ N+1 の配列（水平グリッド線）
   width: Width[],      // サイズ M の配列（列幅）
   height: Height[]     // サイズ N の配列（行高）
 }

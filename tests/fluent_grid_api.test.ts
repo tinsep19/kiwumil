@@ -17,18 +17,12 @@ describe("Fluent Grid API", () => {
         const symbol3 = el.core.rectangle("Symbol 3")
         const symbol4 = el.core.rectangle("Symbol 4")
 
-        // Get the symbol characs
-        const s1 = hint.getSymbols().find((s) => s.id === symbol1)
-        const s2 = hint.getSymbols().find((s) => s.id === symbol2)
-        const s3 = hint.getSymbols().find((s) => s.id === symbol3)
-        const s4 = hint.getSymbols().find((s) => s.id === symbol4)
-
-        // Use the new fluent grid API
+        // Pass symbol IDs directly - they will be resolved internally
         gridResult = hint.grid([
-          [s1, s2],
-          [null, s3],
-          [null, s4],
-        ] as any).layout()
+          [symbol1, symbol2],
+          [null, symbol3],
+          [null, symbol4],
+        ]).layout()
       })
 
     expect(result.symbols.length).toBeGreaterThanOrEqual(4)
@@ -57,15 +51,10 @@ describe("Fluent Grid API", () => {
         const symbol3 = el.core.rectangle("C")
         const symbol4 = el.core.rectangle("D")
 
-        const s1 = hint.getSymbols().find((s) => s.id === symbol1)
-        const s2 = hint.getSymbols().find((s) => s.id === symbol2)
-        const s3 = hint.getSymbols().find((s) => s.id === symbol3)
-        const s4 = hint.getSymbols().find((s) => s.id === symbol4)
-
         gridResult = hint.grid([
-          [s1, s2],
-          [s3, s4],
-        ] as any).in(container)
+          [symbol1, symbol2],
+          [symbol3, symbol4],
+        ]).in(container)
       })
 
     expect(result.symbols.find((s) => s.label === "Container")).toBeDefined()
@@ -85,15 +74,10 @@ describe("Fluent Grid API", () => {
         const symbol3 = el.core.rectangle("3")
         const symbol4 = el.core.rectangle("4")
 
-        const s1 = hint.getSymbols().find((s) => s.id === symbol1)
-        const s2 = hint.getSymbols().find((s) => s.id === symbol2)
-        const s3 = hint.getSymbols().find((s) => s.id === symbol3)
-        const s4 = hint.getSymbols().find((s) => s.id === symbol4)
-
         gridResult = hint.grid([
-          [s1, s2],
-          [s3, s4],
-        ] as any).layout()
+          [symbol1, symbol2],
+          [symbol3, symbol4],
+        ]).layout()
 
         // Test getArea
         const cell = gridResult.getArea({ top: 0, left: 0, bottom: 1, right: 1 })
@@ -120,10 +104,7 @@ describe("Fluent Grid API", () => {
         const s1 = el.core.rectangle("1")
         const s2 = el.core.rectangle("2")
 
-        const sym1 = hint.getSymbols().find((s) => s.id === s1)
-        const sym2 = hint.getSymbols().find((s) => s.id === s2)
-
-        gridResult = hint.grid([[sym1, sym2]] as any).layout()
+        gridResult = hint.grid([[s1, s2]]).layout()
       })
 
     expect(() => {
@@ -148,12 +129,8 @@ describe("Fluent Grid API", () => {
           const s2 = el.core.rectangle("2")
           const s3 = el.core.rectangle("3")
 
-          const sym1 = hint.getSymbols().find((s) => s.id === s1)
-          const sym2 = hint.getSymbols().find((s) => s.id === s2)
-          const sym3 = hint.getSymbols().find((s) => s.id === s3)
-
           // Non-rectangular matrix should throw
-          hint.grid([[sym1, sym2], [sym3]] as any).layout()
+          hint.grid([[s1, s2], [s3]]).layout()
         })
     }).toThrow(/rectangular matrix/)
   })

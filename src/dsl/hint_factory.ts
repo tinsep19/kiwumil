@@ -39,7 +39,7 @@ export class HintFactory {
    * Grid Builder を返す（矩形行列レイアウト用）
    * 
    * @overload
-   * @param symbols - 2D array of symbols for fluent grid API
+   * @param symbols - 2D array of symbol IDs or symbol objects for fluent grid API
    * @returns FluentGridBuilder with grid coordinate system
    * 
    * @overload
@@ -47,7 +47,7 @@ export class HintFactory {
    * @returns GridBuilder for traditional grid layout
    */
   grid(
-    symbolsOrContainer?: LayoutContainerTarget | (ISymbolCharacs | null)[][]
+    symbolsOrContainer?: LayoutContainerTarget | (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
   ): GridBuilder | FluentGridBuilder {
     // Check if it's a 2D array (fluent grid API)
     if (Array.isArray(symbolsOrContainer)) {
