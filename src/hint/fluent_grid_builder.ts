@@ -74,7 +74,7 @@ export class FluentGridBuilder {
    */
   private initializeGrid(): void {
     const context = this.hint.getLayoutContext()
-    
+
     // Create branded variables for type safety
     // Width and Height types ensure that only dimension variables are used in dimension constraints
     const brandFactory = createBrandVariableFactory((id) => context.variables.createVariable(id))
@@ -99,10 +99,7 @@ export class FluentGridBuilder {
         const xNext = this.x[col + 1]
         const xCurr = this.x[col]
         if (xNext && xCurr) {
-          builder
-            .expr([1, xNext])
-            .eq([1, xCurr], [1, widthVar])
-            .required()
+          builder.expr([1, xNext]).eq([1, xCurr], [1, widthVar]).required()
         }
       })
     }
@@ -117,10 +114,7 @@ export class FluentGridBuilder {
         const yNext = this.y[row + 1]
         const yCurr = this.y[row]
         if (yNext && yCurr) {
-          builder
-            .expr([1, yNext])
-            .eq([1, yCurr], [1, heightVar])
-            .required()
+          builder.expr([1, yNext]).eq([1, yCurr], [1, heightVar]).required()
         }
       })
     }
@@ -155,10 +149,14 @@ export class FluentGridBuilder {
 
     // Validate bounds
     if (top < 0 || top > this.rows || bottom < 0 || bottom > this.rows) {
-      throw new Error(`Invalid row indices: top=${top}, bottom=${bottom}. Must be in [0, ${this.rows}]`)
+      throw new Error(
+        `Invalid row indices: top=${top}, bottom=${bottom}. Must be in [0, ${this.rows}]`
+      )
     }
     if (left < 0 || left > this.cols || right < 0 || right > this.cols) {
-      throw new Error(`Invalid column indices: left=${left}, right=${right}. Must be in [0, ${this.cols}]`)
+      throw new Error(
+        `Invalid column indices: left=${left}, right=${right}. Must be in [0, ${this.cols}]`
+      )
     }
     if (top >= bottom) {
       throw new Error(`Invalid row indices: top=${top} must be less than bottom=${bottom}`)
@@ -199,13 +197,19 @@ export class FluentGridBuilder {
         // Container width = sum of all column widths
         context.createConstraint(`grid/container-width`, (builder) => {
           const widthTerms: [number, Variable][] = this.width.map((w) => [1, w as Variable])
-          builder.expr([1, containerBounds.width]).eq(...widthTerms).required()
+          builder
+            .expr([1, containerBounds.width])
+            .eq(...widthTerms)
+            .required()
         })
 
         // Container height = sum of all row heights
         context.createConstraint(`grid/container-height`, (builder) => {
           const heightTerms: [number, Variable][] = this.height.map((h) => [1, h as Variable])
-          builder.expr([1, containerBounds.height]).eq(...heightTerms).required()
+          builder
+            .expr([1, containerBounds.height])
+            .eq(...heightTerms)
+            .required()
         })
 
         // Align grid origin to container origin
@@ -225,14 +229,13 @@ export class FluentGridBuilder {
       for (let col = 0; col < this.cols; col++) {
         const symbolRow = this.symbols[row]
         if (!symbolRow) continue
-        
+
         const gridSymbol = symbolRow[col]
         if (!gridSymbol || gridSymbol === null) continue
 
         // Resolve SymbolId to actual symbol if needed
-        const symbol = typeof gridSymbol === "string" ? 
-          this.hint.getConstraintTarget(gridSymbol) : 
-          gridSymbol
+        const symbol =
+          typeof gridSymbol === "string" ? this.hint.getConstraintTarget(gridSymbol) : gridSymbol
 
         if (!symbol || !symbol.bounds) continue
 
@@ -260,14 +263,20 @@ export class FluentGridBuilder {
           // Fallback
           symbolId = `grid-symbol-${row}-${col}`
         }
-        
+
         // Create constraints to bound the symbol within its cell
         // Each constraint must be created separately with its own builder callback
-        if (!symbolBounds || !symbolBounds.top || !symbolBounds.bottom || !symbolBounds.left || !symbolBounds.right) {
+        if (
+          !symbolBounds ||
+          !symbolBounds.top ||
+          !symbolBounds.bottom ||
+          !symbolBounds.left ||
+          !symbolBounds.right
+        ) {
           console.warn(`Skipping symbol at ${row},${col} - invalid symbol bounds`)
           continue
         }
-        
+
         // Create constraints to bound the symbol within its cell
         // All constraints for one symbol in a single createConstraint call
         context.createConstraint(`grid/symbol/${symbolId}/bounds`, (builder) => {
@@ -287,18 +296,6 @@ export class FluentGridBuilder {
           builder.expr([1, symbolBounds.right]).ge([1, xLeft]).medium()
           builder.expr([1, symbolBounds.right]).le([1, xRight]).medium()
         })
-        
-        // Ensure the cell is at least as large as the symbol
-        const cellWidth = this.width[col]
-        const cellHeight = this.height[row]
-        if (cellWidth && cellHeight) {
-          context.createConstraint(`grid/cell/${row}/${col}/size`, (builder) => {
-            // Cell width >= symbol width
-            builder.expr([1, cellWidth]).ge([1, symbolBounds.width]).strong()
-            // Cell height >= symbol height
-            builder.expr([1, cellHeight]).ge([1, symbolBounds.height]).strong()
-          })
-        }
       }
     }
   }
