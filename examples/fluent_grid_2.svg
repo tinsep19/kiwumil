@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     width="380" 
+     height="300" 
+     viewBox="0 0 380 300">
+  <rect width="100%" height="100%" fill="white"/>
+  <defs>
+<symbol id="uml-actor" viewBox="0 0 60 60">
+  <title>Actor icon</title>
+  <g fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Head -->
+    <circle cx="30" cy="12" r="6" />
+    <!-- Body -->
+    <line x1="30" y1="20" x2="30" y2="36" />
+    <!-- Arms -->
+    <line x1="12" y1="24" x2="48" y2="24" />
+    <!-- Legs -->
+    <line x1="30" y1="36" x2="18" y2="52" />
+    <line x1="30" y1="36" x2="42" y2="52" />
+  </g>
+</symbol>
+</defs>
+  
+      <g id="uml:systemBoundary/1">
+        <!-- System Boundary Rectangle -->
+        <rect x="40" y="75" width="300" height="200" 
+              fill="#f8f8f8" stroke="#999" stroke-width="2"/>
+        
+        <!-- Label at top -->
+        <text x="50" y="94" 
+              font-size="14" font-family="Arial" font-weight="bold"
+              fill="black">
+          System
+        </text>
+      </g>
+    
+
+      <g id="__builtin__:diagram/0">
+        <!-- Title -->
+        <text x="190" y="30" 
+              text-anchor="middle" 
+              font-size="18" 
+              font-weight="bold"
+              font-family="Arial"
+              fill="black">
+          Fluent Grid: With Container
+        </text>
+        
+      </g>
+    
+
+      <g id="core:rectangle/2">
+        <!-- Rectangle -->
+        <rect x="66.66666666666667" y="116.66666666666667" width="120" height="60" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="126.66666666666667" y="151.66666666666669" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Service A
+        </text>
+      </g>
+    
+
+      <g id="core:rectangle/3">
+        <!-- Rectangle -->
+        <rect x="186.66666666666666" y="116.66666666666667" width="120" height="60" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="246.66666666666666" y="151.66666666666669" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Service B
+        </text>
+      </g>
+    
+
+      <g id="core:rectangle/4">
+        <!-- Rectangle -->
+        <rect x="186.66666666666666" y="176.66666666666669" width="120" height="60" 
+              fill="white" 
+              stroke="black" 
+              stroke-width="2"/>
+        
+        <!-- Label -->
+        <text x="246.66666666666666" y="211.66666666666669" 
+              text-anchor="middle" 
+              font-size="12" 
+              font-family="Arial"
+              fill="black">
+          Database
+        </text>
+      </g>
+    
+</svg>
