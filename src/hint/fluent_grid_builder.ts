@@ -272,21 +272,33 @@ export class FluentGridBuilder {
         // All constraints for one symbol in a single createConstraint call
         context.createConstraint(`grid/symbol/${symbolId}/bounds`, (builder) => {
           // Top constraints: y[row] <= symbol.top <= y[row+1]
-          builder.expr([1, symbolBounds.top]).ge([1, yTop]).strong()
-          builder.expr([1, symbolBounds.top]).le([1, yBottom]).strong()
+          builder.expr([1, symbolBounds.top]).ge([1, yTop]).medium()
+          builder.expr([1, symbolBounds.top]).le([1, yBottom]).medium()
 
           // Left constraints: x[col] <= symbol.left <= x[col+1]
-          builder.expr([1, symbolBounds.left]).ge([1, xLeft]).strong()
-          builder.expr([1, symbolBounds.left]).le([1, xRight]).strong()
+          builder.expr([1, symbolBounds.left]).ge([1, xLeft]).medium()
+          builder.expr([1, symbolBounds.left]).le([1, xRight]).medium()
 
           // Bottom constraints: y[row] <= symbol.bottom <= y[row+1]
-          builder.expr([1, symbolBounds.bottom]).ge([1, yTop]).strong()
-          builder.expr([1, symbolBounds.bottom]).le([1, yBottom]).strong()
+          builder.expr([1, symbolBounds.bottom]).ge([1, yTop]).medium()
+          builder.expr([1, symbolBounds.bottom]).le([1, yBottom]).medium()
 
           // Right constraints: x[col] <= symbol.right <= x[col+1]
-          builder.expr([1, symbolBounds.right]).ge([1, xLeft]).strong()
-          builder.expr([1, symbolBounds.right]).le([1, xRight]).strong()
+          builder.expr([1, symbolBounds.right]).ge([1, xLeft]).medium()
+          builder.expr([1, symbolBounds.right]).le([1, xRight]).medium()
         })
+        
+        // Ensure the cell is at least as large as the symbol
+        const cellWidth = this.width[col]
+        const cellHeight = this.height[row]
+        if (cellWidth && cellHeight) {
+          context.createConstraint(`grid/cell/${row}/${col}/size`, (builder) => {
+            // Cell width >= symbol width
+            builder.expr([1, cellWidth]).ge([1, symbolBounds.width]).strong()
+            // Cell height >= symbol height
+            builder.expr([1, cellHeight]).ge([1, symbolBounds.height]).strong()
+          })
+        }
       }
     }
   }

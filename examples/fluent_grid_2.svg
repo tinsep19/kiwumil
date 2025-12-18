@@ -51,13 +51,13 @@
 
       <g id="core:rectangle/2">
         <!-- Rectangle -->
-        <rect x="66.66666666666669" y="116.66666666666667" width="-1.0658141036401503e-14" height="0" 
+        <rect x="66.66666666666667" y="116.66666666666667" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="66.66666666666669" y="121.66666666666667" 
+        <text x="126.66666666666667" y="151.66666666666669" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -69,13 +69,13 @@
 
       <g id="core:rectangle/3">
         <!-- Rectangle -->
-        <rect x="66.66666666666667" y="116.66666666666667" width="0" height="0" 
+        <rect x="186.66666666666666" y="116.66666666666667" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="66.66666666666667" y="121.66666666666667" 
+        <text x="246.66666666666666" y="151.66666666666669" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
@@ -87,13 +87,13 @@
 
       <g id="core:rectangle/4">
         <!-- Rectangle -->
-        <rect x="66.66666666666667" y="116.66666666666669" width="0" height="0" 
+        <rect x="186.66666666666666" y="176.66666666666669" width="120" height="60" 
               fill="white" 
               stroke="black" 
               stroke-width="2"/>
         
         <!-- Label -->
-        <text x="66.66666666666667" y="121.66666666666669" 
+        <text x="246.66666666666666" y="211.66666666666669" 
               text-anchor="middle" 
               font-size="12" 
               font-family="Arial"
