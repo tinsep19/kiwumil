@@ -268,39 +268,23 @@ export class FluentGridBuilder {
           continue
         }
         
-        context.createConstraint(`grid/symbol/${symbolId}/top-ge`, (builder) => {
-          if (!symbolBounds.top || !yTop) {
-            console.error(`Missing: symbolBounds.top=${!!symbolBounds.top}, yTop=${!!yTop}`)
-            return
-          }
+        // Create constraints to bound the symbol within its cell
+        // All constraints for one symbol in a single createConstraint call
+        context.createConstraint(`grid/symbol/${symbolId}/bounds`, (builder) => {
+          // Top constraints: y[row] <= symbol.top <= y[row+1]
           builder.expr([1, symbolBounds.top]).ge([1, yTop]).strong()
-        })
-        
-        context.createConstraint(`grid/symbol/${symbolId}/top-le`, (builder) => {
           builder.expr([1, symbolBounds.top]).le([1, yBottom]).strong()
-        })
 
-        context.createConstraint(`grid/symbol/${symbolId}/left-ge`, (builder) => {
+          // Left constraints: x[col] <= symbol.left <= x[col+1]
           builder.expr([1, symbolBounds.left]).ge([1, xLeft]).strong()
-        })
-        
-        context.createConstraint(`grid/symbol/${symbolId}/left-le`, (builder) => {
           builder.expr([1, symbolBounds.left]).le([1, xRight]).strong()
-        })
 
-        context.createConstraint(`grid/symbol/${symbolId}/bottom-ge`, (builder) => {
+          // Bottom constraints: y[row] <= symbol.bottom <= y[row+1]
           builder.expr([1, symbolBounds.bottom]).ge([1, yTop]).strong()
-        })
-        
-        context.createConstraint(`grid/symbol/${symbolId}/bottom-le`, (builder) => {
           builder.expr([1, symbolBounds.bottom]).le([1, yBottom]).strong()
-        })
 
-        context.createConstraint(`grid/symbol/${symbolId}/right-ge`, (builder) => {
+          // Right constraints: x[col] <= symbol.right <= x[col+1]
           builder.expr([1, symbolBounds.right]).ge([1, xLeft]).strong()
-        })
-        
-        context.createConstraint(`grid/symbol/${symbolId}/right-le`, (builder) => {
           builder.expr([1, symbolBounds.right]).le([1, xRight]).strong()
         })
       }

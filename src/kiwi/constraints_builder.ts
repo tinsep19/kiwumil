@@ -111,7 +111,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
 
   private finalize(strength: number): void {
     const { lhs, rhs, op } = this.tmp
-    if (!lhs || !rhs?.length || !op) {
+    if (!lhs || !rhs?.length || op === undefined) {
       throw new Error("KiwiConstraintBuilder: incomplete constraint chain")
     }
     const constraint = new kiwi.Constraint(
