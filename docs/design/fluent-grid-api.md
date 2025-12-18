@@ -184,7 +184,7 @@ The API provides clear error messages for common issues:
 
 ## Implementation Notes
 
-- Grid coordinates use GuideBuilder internally for flexibility
+- Grid coordinates use AnchorX and AnchorY types for direct variable access
 - Width and Height are branded types from the constraint system
 - All grid constraints are created with appropriate strength (required or strong)
 - The coordinate system integrates seamlessly with existing layout hints

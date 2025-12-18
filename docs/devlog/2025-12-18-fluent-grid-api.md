@@ -12,8 +12,8 @@ Fluent Grid API を実装し、グリッド座標系への直接アクセスを�
 
 - 2次元配列を受け取り、グリッドレイアウトを構築
 - M×N のグリッドに対して：
-  - `x: GuideBuilderX[]` (サイズ M+1)
-  - `y: GuideBuilderY[]` (サイズ N+1)
+  - `x: AnchorX[]` (サイズ M+1)
+  - `y: AnchorY[]` (サイズ N+1)
   - `width: Width[]` (サイズ M)
   - `height: Height[]` (サイズ N)
 - `getArea()` メソッドでセル境界を取得可能
@@ -86,7 +86,7 @@ Width と Height は `createBrandVariableFactory` を使用してブランド型
 
 ### Cell 型の定義
 
-`Cell` インターフェースは `Variable` 型を使用（ブランド型ではない）。これは GuideBuilder の `.x` と `.y` プロパティが `Variable` を返すため。
+`Cell` インターフェースは `Variable` 型を使用（ブランド型ではない）。これは AnchorX と AnchorY が直接 Variable として公開されるため。
 
 ### 制約の強度
 
