@@ -2,13 +2,13 @@
   <title>Actor icon</title>
   <g fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <!-- Head -->
-    <circle cx="32" cy="12.8" r="6.4" />
+    <circle cx="32" cy="13" r="7" />
     <!-- Body -->
-    <line x1="32" y1="21.3" x2="32" y2="38.4" />
+    <line x1="32" y1="20" x2="32" y2="40" />
     <!-- Arms -->
-    <line x1="12.8" y1="25.6" x2="51.2" y2="25.6" />
+    <line x1="12" y1="25" x2="52" y2="25" />
     <!-- Legs -->
-    <line x1="32" y1="38.4" x2="19.2" y2="55.47" />
-    <line x1="32" y1="38.4" x2="44.8" y2="55.47" />
+    <line x1="32" y1="40" x2="18" y2="56" />
+    <line x1="32" y1="40" x2="46" y2="56" />
   </g>
 </svg>
