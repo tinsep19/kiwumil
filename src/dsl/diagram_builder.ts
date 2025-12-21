@@ -114,12 +114,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
-    const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
-    
-    // Populate icon namespace with factories
-    for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
-      (icon as Record<string, PluginIcons>)[pluginName] = iconFactory
-    }
+    const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
