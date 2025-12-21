@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconRegistry, type IconMeta } from "../icon"
+import { IconRegistry } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -69,10 +69,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   /**
    * ダイアグラムを構築
    *
-   * @param callback - IntelliSense が有効な DSL ブロック
+   * @param block - IntelliSense が有効な DSL ブロック
    * @returns レンダリング可能な図オブジェクト
    */
-  build(callback: IntelliSenseBlock<TPlugins>) {
+  build(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
     const symbols = new Symbols(context.variables)
@@ -105,7 +105,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const iconsRegistry = new IconRegistry()
 
     // Create icon factories from plugins
-    const icon_factories: Record<string, Record<string, () => IconMeta>> = {}
+    const icon_factories: Record<string, PluginIcons> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.createIconFactory === "function") {
         const iconFactory = plugin.createIconFactory(iconsRegistry)
@@ -113,14 +113,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       }
     }
 
-    // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
-    const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
-    const iconRegistry = icon as Record<string, PluginIcons>
-    
-    // Populate icon registry with factories
-    for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
-      iconRegistry[pluginName] = iconFactory
-    }
+    // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta
+    const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
@@ -133,7 +127,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     })
 
     // invoke callback: object-style only
-    callback({ el, rel, hint, icon })
+    block({ el, rel, hint, icon })
 
     const relationshipList = relationships.getAll()
     const symbolList = symbols

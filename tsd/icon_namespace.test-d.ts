@@ -11,7 +11,7 @@ type BuilderCallback = Parameters<typeof builder['build']>[0]
 type ExpectedCallbackParam = {
   icon: {
     myplugin: {
-      icon1: () => IconMeta | null
+      icon1: () => IconMeta
     }
   }
 }
@@ -21,13 +21,13 @@ const iconNamespaceCallback = ({ icon }: { icon: Record<string, PluginIcons> }) 
   const p = icon['myplugin']
   expectType<PluginIcons | undefined>(p)
 
-  // specifically, icon1 should exist and be a zero-arg function returning IconMeta | null
+  // specifically, icon1 should exist and be a zero-arg function returning IconMeta
   const f = p && p['icon1']
-  expectType<(() => IconMeta | null) | undefined>(f)
+  expectType<(() => IconMeta) | undefined>(f)
 
-  // if present, calling should yield IconMeta | null
+  // if present, calling should yield IconMeta
   const v = f && f()
-  expectType<IconMeta | null | undefined>(v)
+  expectType<IconMeta | undefined>(v)
 
   // keyof-based checks: ensure 'myplugin' exists as key and 'icon1' exists under it
   type IconNS = typeof icon

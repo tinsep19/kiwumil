@@ -7,7 +7,7 @@ import type { RelationshipId } from "../model"
 import type { IconMeta } from "../icon"
 import type { ISymbolCharacs } from "../core"
 
-export type PluginIcons = Record<string, () => IconMeta | null>
+export type PluginIcons = Record<string, () => IconMeta>
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
@@ -16,7 +16,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
     createSymbolFactory: (
       symbols: Symbols,
       theme: Theme,
-      icons: Record<string, () => IconMeta | null>
+      icons: Record<string, () => IconMeta>
     ) => Record<string, (...args: any[]) => ISymbolCharacs>
   }
 >
@@ -27,7 +27,7 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
     createRelationshipFactory: (
       relationships: Relationships,
       theme: Theme,
-      icons: Record<string, () => IconMeta | null>
+      icons: Record<string, () => IconMeta>
     ) => Record<string, (...args: any[]) => RelationshipId>
   }
 >
