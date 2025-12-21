@@ -4,37 +4,41 @@
 
 ## 概要
 
-アイコンシステムは、プラグインが図表内でSVGアイコンを登録・使用するための仕組みを提供します。このシステムは、効率的なアイコン読み込みとキャッシングのために`LoaderFactory`を使用し、読み込まれたアイコンを自動的に`IconRegistry`に登録します。
+アイコンシステムは、プラグインが図表内でSVGアイコンを登録・使用するための仕組みを提供します。このシステムは、効率的なアイコン読み込みとキャッシングのために`LoaderFactory`を使用し、`IconRegistry`がローダーファクトリの作成とSVGシンボル管理の両方を行います。
 
 ## アーキテクチャ
 
-### IconRegister（型定義）
+### IconRegistry
 
-**目的**: プラグインが `createIconFactory` で使用するインターフェース
+**目的**: SVGシンボルの登録管理とプラグイン用のローダーファクトリ作成を提供
 
 **責務**:
-- `createLoaderFactory` メソッドを提供し、プラグインが `LoaderFactory` インスタンスを取得できるようにする
+- アイコンSVG内容の登録
+- シンボルIDの正規化
+- `<symbol>`要素を含む`<defs>`セクションの出力
+- `createLoaderFactory` メソッドでプラグイン向けに `LoaderFactory` インスタンスを作成
 
-**型定義**:
+**主要メソッド**:
 ```typescript
-export type IconRegister = {
-  createLoaderFactory: (importMeta: ImportMeta) => LoaderFactory
+class IconRegistry {
+  register(plugin: string, name: string, svgContent: string): string
+  mark_usage(plugin: string, name: string): string
+  emit_symbols(): string
+  createLoaderFactory(plugin: string, importMeta: ImportMeta): LoaderFactory
 }
 ```
 
-**使用例**:
+**プラグインでの使用**:
 ```typescript
-createIconFactory(register: IconRegister) {
-  const loaderFactory = register.createLoaderFactory(import.meta)
+createIconFactory(registry: IconRegistry) {
+  const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
   return {
     icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
   }
 }
 ```
 
-**注意**: `IconRegister` は `IconRegistry` とは異なります：
-- `IconRegister`: プラグインAPI用のインターフェース型（`createIconFactory` の引数）
-- `IconRegistry`: SVGシンボルを管理するランタイムクラス（後述）
+このクラスは、ランタイムレンダリング（シンボル出力）とプラグインがアイコンローダーを作成するためのAPIの両方を処理します。
 
 ### LoaderFactory
 
@@ -74,7 +78,7 @@ class IconLoader {
 - ファイル未検出時に説明的なエラーをスロー
 - ファイルシステムエラーを適切に処理
 
-### IconRegistry
+### IconRegistry（シンボル管理）
 
 **目的**: SVGシンボルの収集と出力のためのランタイムレジストリ
 
@@ -82,6 +86,7 @@ class IconLoader {
 - アイコンSVG内容の登録
 - シンボルIDの正規化
 - `<symbol>`要素を含む`<defs>`セクションの出力
+- プラグインAPI用の `createLoaderFactory` メソッドを提供
 
 このクラスはランタイムレンダリングに関する責務を担当し、実際に使用されたアイコンのみが最終的なSVG出力に含まれることを保証します。
 
@@ -90,8 +95,8 @@ class IconLoader {
 1. **プラグイン登録フェーズ**:
    ```typescript
    // プラグインはアイコンファクトリを定義
-   createIconFactory(register: IconRegister) {
-     const loaderFactory = register.createLoaderFactory(import.meta)
+   createIconFactory(registry: IconRegistry) {
+     const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
      return {
        icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
        icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
@@ -101,12 +106,14 @@ class IconLoader {
 
 2. **ビルドフェーズ**:
    ```typescript
-   // システムはIconRegistryと共にLoaderFactoryを作成
+   // システムはIconRegistryを作成
    const iconsRegistry = new IconRegistry()
-   const loaderFactory = new LoaderFactory('myplugin', baseUrl, iconsRegistry)
+   
+   // プラグインはIconRegistry経由でローダーを作成
+   const iconFactory = plugin.createIconFactory(iconsRegistry)
    
    // cacheLoaderは読み込みとキャッシュを行う関数を返す
-   const iconFn = loaderFactory.cacheLoader('icons/icon1.svg')
+   const iconFn = iconFactory.icon1
    const meta = iconFn() // 読み込みとIconRegistryへの自動登録
    ```
 
@@ -117,6 +124,11 @@ class IconLoader {
    ```
 
 ## 設計の利点
+
+**統一API**:
+- `IconRegistry` がランタイムシンボルマネージャーとプラグインAPIプロバイダーの両方の役割を果たす
+- プラグイン開発者とシステムメンテナーの両方にとって理解すべきクラスが1つ
+- より少ない要素で構成されたシンプルなアーキテクチャ
 
 **自動登録**:
 - アイコンは読み込み時に自動的にIconRegistryに登録される
@@ -129,14 +141,14 @@ class IconLoader {
 - 同じアイコンへの高速な繰り返しアクセス
 
 **責務の分離**:
-- LoaderFactory: キャッシングと登録の調整
+- IconRegistry: シンボル管理とファクトリ作成
+- LoaderFactory: キャッシングと調整
 - IconLoader: ファイル操作（アイコンの読み込み方法）
-- IconRegistry: ランタイムシンボル管理（アイコンの描画方法）
 
 **エラー防止**:
 - 型安全なアイコン参照
 - 欠落アイコンに対する明確なエラーメッセージ
-- 読み込み失敗の適切な処理（nullを返す）
+- 読み込み失敗の適切な処理（例外をスロー）
 
 **テスト容易性**:
 - 各クラスを独立してテスト可能
@@ -160,10 +172,10 @@ class IconLoader {
 システムは完全なTypeScriptサポートを提供します：
 ```typescript
 // 型安全なアイコン名前空間
-icon.myplugin.icon1() // IconMeta | null を返す
+icon.myplugin.icon1() // IconMeta を返す
 
 // 型安全なファクトリ定義
-createIconFactory(register: IconRegister): IconFactoryMap
+createIconFactory(registry: IconRegistry): IconFactoryMap
 ```
 
 ## API例
@@ -173,8 +185,8 @@ createIconFactory(register: IconRegister): IconFactoryMap
 export const MyPlugin = {
   name: 'myplugin',
 
-  createIconFactory(register: IconRegister) {
-    const loaderFactory = register.createLoaderFactory(import.meta)
+  createIconFactory(registry: IconRegistry) {
+    const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
     return {
       icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
       icon2: loaderFactory.cacheLoader('icons/icon2.svg'),

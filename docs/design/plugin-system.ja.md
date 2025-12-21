@@ -33,7 +33,7 @@ interface DiagramPlugin {
   name: string
   createSymbolFactory?: (symbols: Symbols, theme: Theme, icons: PluginIcons) => Record<string, (...args:any[]) => SymbolId>
   createRelationshipFactory?: (relationships: Relationships, theme: Theme, icons: PluginIcons) => Record<string, (...args:any[]) => RelationshipId>
-  createIconFactory?: (register: IconRegister) => IconFactoryMap
+  createIconFactory?: (registry: IconRegistry) => IconFactoryMap
 }
 ```
 
@@ -58,8 +58,8 @@ interface DiagramPlugin {
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
   
-  createIconFactory(register) {
-    const loaderFactory = register.createLoaderFactory(import.meta)
+  createIconFactory(registry: IconRegistry) {
+    const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
     return {
       myicon: loaderFactory.cacheLoader('icons/myicon.svg'),
     }

@@ -53,8 +53,8 @@
 export const MyPlugin = {
   name: 'myplugin',
 
-  createIconFactory(register: IconRegister) {
-    const loaderFactory = register.createLoaderFactory(import.meta)
+  createIconFactory(registry: IconRegistry) {
+    const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
     return {
       icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
       icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
@@ -114,8 +114,8 @@ registerIcons(icons: Icons) {
 }
 
 // After (新しいAPI)
-createIconFactory(register: IconRegister) {
-  const loaderFactory = register.createLoaderFactory(import.meta)
+createIconFactory(registry: IconRegistry) {
+  const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
   return {
     actor: loaderFactory.cacheLoader("icons/actor.svg"),
   }
@@ -125,8 +125,9 @@ createIconFactory(register: IconRegister) {
 ## 得られた知見
 
 1. **シンプルさの重要性**: 2つのAPIパスを維持するよりも、1つの明確なAPIに集約することでコードが大幅に簡潔になった
-2. **自動化の利点**: LoaderFactoryが自動的にIconRegistryに登録することで、手動登録のコードを削除できた
-3. **段階的なリファクタリング**: まず両方のAPIをサポートし、その後レガシーAPIを削除する段階的アプローチが効果的だった
+2. **統一APIの利点**: `IconRegistry` がシンボル管理とプラグインAPIの両方を提供することで、理解しやすく保守しやすいコードになった
+3. **自動化の利点**: LoaderFactoryが自動的にIconRegistryに登録することで、手動登録のコードを削除できた
+4. **段階的なリファクタリング**: まず両方のAPIをサポートし、その後レガシーAPIを削除する段階的アプローチが効果的だった
 
 ## 次のステップ
 

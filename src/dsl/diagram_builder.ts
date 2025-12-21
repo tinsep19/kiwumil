@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconRegistry, LoaderFactory, type IconMeta } from "../icon"
+import { IconRegistry, type IconMeta } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -108,13 +108,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon_factories: Record<string, Record<string, () => IconMeta>> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.createIconFactory === "function") {
-        const pluginName = plugin.name
-        const iconFactory = plugin.createIconFactory({
-          createLoaderFactory: (importMeta: ImportMeta) => {
-            return new LoaderFactory(pluginName, importMeta?.url ?? "", iconsRegistry)
-          },
-        })
-        icon_factories[pluginName] = iconFactory
+        const iconFactory = plugin.createIconFactory(iconsRegistry)
+        icon_factories[plugin.name] = iconFactory
       }
     }
 

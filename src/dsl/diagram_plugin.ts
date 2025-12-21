@@ -4,17 +4,13 @@ import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import type { PluginIcons } from "./namespace_types"
 import type { ISymbolCharacs } from "../core"
-import type { IconMeta } from "../icon"
+import type { IconMeta, IconRegistry } from "../icon"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => ISymbolCharacs>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
 type IconFactoryMap = Record<string, () => IconMeta>
 /* eslint-enable @typescript-eslint/no-explicit-any */
-
-export type IconRegister = {
-  createLoaderFactory: (importMeta: ImportMeta) => { cacheLoader: (relPath: string) => () => IconMeta }
-}
 
 /**
  * Diagram Plugin Interface
@@ -50,5 +46,5 @@ export interface DiagramPlugin {
   /**
    * Optional: plugin can create icon factory. Returns a map of icon names to loader functions.
    */
-  createIconFactory?(register: IconRegister): IconFactoryMap
+  createIconFactory?(registry: IconRegistry): IconFactoryMap
 }

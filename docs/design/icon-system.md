@@ -4,37 +4,41 @@
 
 ## Overview
 
-The icon system provides a way for plugins to register and use SVG icons in diagrams. The system uses `LoaderFactory` for efficient icon loading with caching, and automatically registers icons to `IconRegistry` for SVG symbol generation.
+The icon system provides a way for plugins to register and use SVG icons in diagrams. The system uses `LoaderFactory` for efficient icon loading with caching, and `IconRegistry` manages both the loader factory creation and SVG symbol generation.
 
 ## Architecture
 
-### IconRegister (Type Definition)
+### IconRegistry
 
-**Purpose**: Interface used by plugins in `createIconFactory`
+**Purpose**: Manages SVG symbol registration and provides loader factory creation for plugins.
 
 **Responsibilities**:
-- Provides `createLoaderFactory` method so plugins can obtain `LoaderFactory` instances
+- Register icon SVG content
+- Normalize symbol IDs
+- Emit `<defs>` section with `<symbol>` elements
+- Create `LoaderFactory` instances for plugins via `createLoaderFactory` method
 
-**Type Definition**:
+**Key Methods**:
 ```typescript
-export type IconRegister = {
-  createLoaderFactory: (importMeta: ImportMeta) => LoaderFactory
+class IconRegistry {
+  register(plugin: string, name: string, svgContent: string): string
+  mark_usage(plugin: string, name: string): string
+  emit_symbols(): string
+  createLoaderFactory(plugin: string, importMeta: ImportMeta): LoaderFactory
 }
 ```
 
-**Usage Example**:
+**Usage in Plugins**:
 ```typescript
-createIconFactory(register: IconRegister) {
-  const loaderFactory = register.createLoaderFactory(import.meta)
+createIconFactory(registry: IconRegistry) {
+  const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
   return {
     icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
   }
 }
 ```
 
-**Note**: `IconRegister` is different from `IconRegistry`:
-- `IconRegister`: Interface type for plugin API (argument to `createIconFactory`)
-- `IconRegistry`: Runtime class that manages SVG symbols (described below)
+This class handles both runtime rendering (symbol emission) and provides the API for plugins to create icon loaders.
 
 ### LoaderFactory
 
