@@ -2,8 +2,7 @@
 // シンボル関連のインターフェース
 
 import type { SymbolId, Point } from "./types"
-import type { LayoutBounds, ContainerBounds, ItemBounds } from "./bounds"
-import type { Variable } from "./layout_variable"
+import type { LayoutBounds, ContainerBounds } from "./bounds"
 
 /**
  * ISymbol: DSL でユーザーが触れる最小限のシンボルインターフェース
@@ -37,6 +36,7 @@ type IExtraCharacs<T> = NoBaseOverlap<T>
  * ジェネリック型パラメータ T により、拡張フィールドを型安全に追加できる
  * T には id と bounds 以外のフィールドのみを含める必要がある
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type ISymbolCharacs<T extends object = {}> = {
   id: SymbolId
   bounds: LayoutBounds

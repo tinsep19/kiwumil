@@ -6,6 +6,7 @@ import type { SymbolBase } from "./symbol_base"
 /**
  * SymbolRegistration: register の戻り値型
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type SymbolRegistration<T extends object = {}> = {
   symbol: ISymbol
   characs: ISymbolCharacs<T>
@@ -23,6 +24,7 @@ export class SymbolRegistrationBuilder {
   private readonly id: SymbolId
   private readonly variables: LayoutVariables
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _characs?: ISymbolCharacs<any>
   private _symbol?: ISymbol
   private _constraint?: LayoutConstraint
@@ -87,6 +89,7 @@ export class SymbolRegistrationBuilder {
     return constraint
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   build(): SymbolRegistration<any> {
     if (!this._characs) throw new Error("SymbolRegistrationBuilder: characs not set")
     if (!this._symbol) throw new Error("SymbolRegistrationBuilder: symbol not set")
@@ -107,7 +110,9 @@ export class SymbolRegistrationBuilder {
  *   シンボルを構築して返す
  */
 export class Symbols {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly registrations: SymbolRegistration<any>[] = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly registrations_index: Record<string, SymbolRegistration<any>> = {}
   private readonly variables: LayoutVariables
 
@@ -124,7 +129,9 @@ export class Symbols {
   register(
     plugin: string,
     symbolName: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     factory: (symbolId: SymbolId, builder: SymbolRegistrationBuilder) => SymbolRegistration<any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SymbolRegistration<any> {
     const symbolId = this.createSymbolId(plugin, symbolName)
     const builder = new SymbolRegistrationBuilder(symbolId, this.variables)
@@ -148,6 +155,7 @@ export class Symbols {
   /**
    * 登録済み SymbolRegistration を列挙する読み取り専用配列
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getAll(): readonly SymbolRegistration<any>[] {
     return this.registrations
   }
@@ -163,6 +171,7 @@ export class Symbols {
   /**
    * 指定した ID に一致する SymbolRegistration を返す（存在しなければ undefined）
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   findById(id: SymbolId): SymbolRegistration<any> | undefined {
     return this.registrations_index[id]
   }

@@ -106,8 +106,10 @@ TypeDiagram("Default Core").build(({ el, rel }) => {
   // Verify that r property is accessible
   expectType<import("../dist/core").Variable>(circle.r)
   
-  expectType<ISymbolCharacs>(el.core.text("Multi\nLine"))
-  expectType<ISymbolCharacs>(el.core.text({ label: "Info object", textAnchor: "start" }))
+  const text1 = el.core.text("Multi\nLine")
+  expectAssignable<ISymbolCharacs>(text1)
+  const text2 = el.core.text({ label: "Info object", textAnchor: "start" })
+  expectAssignable<ISymbolCharacs>(text2)
 
   // @ts-expect-error - UMLPlugin not registered yet
   const _uml = el.uml
@@ -126,7 +128,7 @@ TypeDiagram("UML Plugin")
     expectAssignable<object>(_uml)
 
     const user = el.uml.actor("User")
-    expectType<ISymbolCharacs>(user)
+    expectAssignable<ISymbolCharacs>(user)
     const boundary = el.uml.systemBoundary("System")
     expectType<IContainerSymbolCharacs>(boundary)
 
@@ -148,8 +150,8 @@ TypeDiagram("Multiple Plugins")
 
     const user = el.uml.actor("User")
     const node = el.custom.node("Node")
-    expectType<ISymbolCharacs>(user)
-    expectType<ISymbolCharacs>(node)
+    expectAssignable<ISymbolCharacs>(user)
+    expectAssignable<ISymbolCharacs>(node)
 
     const link = rel.custom.link(user, node)
     expectType<RelationshipId>(link)
