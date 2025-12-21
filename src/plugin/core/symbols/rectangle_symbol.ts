@@ -91,7 +91,7 @@ export class RectangleSymbol extends SymbolBase {
   ensureLayoutBounds(builder: LinearConstraintBuilder): void {
     // Add minimum size constraints (weak) so symbols have a default size
     const defaultSize = this.getDefaultSize()
-    builder.expr([1, this.bounds.width]).ge([defaultSize.width, 1]).weak()
-    builder.expr([1, this.bounds.height]).ge([defaultSize.height, 1]).weak()
+    builder.ct([1, this.bounds.width]).ge([defaultSize.width, 1]).weak()
+    builder.ct([1, this.bounds.height]).ge([defaultSize.height, 1]).weak()
   }
 }

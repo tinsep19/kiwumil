@@ -100,7 +100,7 @@ export class FluentGridBuilder {
         const xCurr = this.x[col]
         if (xNext && xCurr) {
           builder
-            .expr([1, xNext])
+            .ct([1, xNext])
             .eq([1, xCurr], [1, widthVar])
             .required()
         }
@@ -118,7 +118,7 @@ export class FluentGridBuilder {
         const yCurr = this.y[row]
         if (yNext && yCurr) {
           builder
-            .expr([1, yNext])
+            .ct([1, yNext])
             .eq([1, yCurr], [1, heightVar])
             .required()
         }
@@ -199,13 +199,13 @@ export class FluentGridBuilder {
         // Container width = sum of all column widths
         context.createConstraint(`grid/container-width`, (builder) => {
           const widthTerms: [number, Variable][] = this.width.map((w) => [1, w as Variable])
-          builder.expr([1, containerBounds.width]).eq(...widthTerms).required()
+          builder.ct([1, containerBounds.width]).eq(...widthTerms).required()
         })
 
         // Container height = sum of all row heights
         context.createConstraint(`grid/container-height`, (builder) => {
           const heightTerms: [number, Variable][] = this.height.map((h) => [1, h as Variable])
-          builder.expr([1, containerBounds.height]).eq(...heightTerms).required()
+          builder.ct([1, containerBounds.height]).eq(...heightTerms).required()
         })
 
         // Align grid origin to container origin
@@ -213,8 +213,8 @@ export class FluentGridBuilder {
           const x0 = this.x[0]
           const y0 = this.y[0]
           if (x0 && y0) {
-            builder.expr([1, x0]).eq([1, containerBounds.x]).required()
-            builder.expr([1, y0]).eq([1, containerBounds.y]).required()
+            builder.ct([1, x0]).eq([1, containerBounds.x]).required()
+            builder.ct([1, y0]).eq([1, containerBounds.y]).required()
           }
         })
       }
@@ -272,20 +272,20 @@ export class FluentGridBuilder {
         // All constraints for one symbol in a single createConstraint call
         context.createConstraint(`grid/symbol/${symbolId}/bounds`, (builder) => {
           // Top constraints: y[row] <= symbol.top <= y[row+1]
-          builder.expr([1, symbolBounds.top]).ge([1, yTop]).medium()
-          builder.expr([1, symbolBounds.top]).le([1, yBottom]).medium()
+          builder.ct([1, symbolBounds.top]).ge([1, yTop]).medium()
+          builder.ct([1, symbolBounds.top]).le([1, yBottom]).medium()
 
           // Left constraints: x[col] <= symbol.left <= x[col+1]
-          builder.expr([1, symbolBounds.left]).ge([1, xLeft]).medium()
-          builder.expr([1, symbolBounds.left]).le([1, xRight]).medium()
+          builder.ct([1, symbolBounds.left]).ge([1, xLeft]).medium()
+          builder.ct([1, symbolBounds.left]).le([1, xRight]).medium()
 
           // Bottom constraints: y[row] <= symbol.bottom <= y[row+1]
-          builder.expr([1, symbolBounds.bottom]).ge([1, yTop]).medium()
-          builder.expr([1, symbolBounds.bottom]).le([1, yBottom]).medium()
+          builder.ct([1, symbolBounds.bottom]).ge([1, yTop]).medium()
+          builder.ct([1, symbolBounds.bottom]).le([1, yBottom]).medium()
 
           // Right constraints: x[col] <= symbol.right <= x[col+1]
-          builder.expr([1, symbolBounds.right]).ge([1, xLeft]).medium()
-          builder.expr([1, symbolBounds.right]).le([1, xRight]).medium()
+          builder.ct([1, symbolBounds.right]).ge([1, xLeft]).medium()
+          builder.ct([1, symbolBounds.right]).le([1, xRight]).medium()
         })
         
         // Ensure the cell is at least as large as the symbol
@@ -294,9 +294,9 @@ export class FluentGridBuilder {
         if (cellWidth && cellHeight) {
           context.createConstraint(`grid/cell/${row}/${col}/size`, (builder) => {
             // Cell width >= symbol width
-            builder.expr([1, cellWidth]).ge([1, symbolBounds.width]).strong()
+            builder.ct([1, cellWidth]).ge([1, symbolBounds.width]).strong()
             // Cell height >= symbol height
-            builder.expr([1, cellHeight]).ge([1, symbolBounds.height]).strong()
+            builder.ct([1, cellHeight]).ge([1, symbolBounds.height]).strong()
           })
         }
       }

@@ -56,13 +56,13 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    builder.expr([1, this.container.x]).eq([1, bounds.x], [padding.left, 1]).strong()
+    builder.ct([1, this.container.x]).eq([1, bounds.x], [padding.left, 1]).strong()
     builder
-      .expr([1, this.container.y])
+      .ct([1, this.container.y])
       .eq([1, bounds.y], [padding.top + header, 1])
       .strong()
-    builder.expr([1, this.container.width]).eq([1, bounds.width], [-horizontalPadding, 1]).strong()
-    builder.expr([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
+    builder.ct([1, this.container.width]).eq([1, bounds.width], [-horizontalPadding, 1]).strong()
+    builder.ct([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
   }
 
   ensureLayoutBounds(builder: LinearConstraintBuilder): void {
@@ -74,15 +74,15 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     const helper = new ConstraintHelper(builder)
 
     // Fix DiagramSymbol's z to 0 (required)
-    builder.expr([1, bounds.z]).eq([0, 1]).required()
+    builder.ct([1, bounds.z]).eq([0, 1]).required()
 
     // Align z values between layout and container
     helper.align(bounds.z, this.container.z).required()
 
-    builder.expr([1, bounds.x]).eq([0, 1]).strong()
-    builder.expr([1, bounds.y]).eq([0, 1]).strong()
-    builder.expr([1, bounds.width]).ge([200, 1]).weak()
-    builder.expr([1, bounds.height]).ge([150, 1]).weak()
+    builder.ct([1, bounds.x]).eq([0, 1]).strong()
+    builder.ct([1, bounds.y]).eq([0, 1]).strong()
+    builder.ct([1, bounds.width]).ge([200, 1]).weak()
+    builder.ct([1, bounds.height]).ge([150, 1]).weak()
     this.constraintsApplied = true
   }
 

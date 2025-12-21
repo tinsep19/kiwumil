@@ -53,13 +53,13 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     const horizontalPadding = padding.left + padding.right
     const verticalPadding = padding.top + padding.bottom + header
 
-    builder.expr([1, this.container.x]).eq([1, bounds.x], [padding.left, 1]).strong()
+    builder.ct([1, this.container.x]).eq([1, bounds.x], [padding.left, 1]).strong()
     builder
-      .expr([1, this.container.y])
+      .ct([1, this.container.y])
       .eq([1, bounds.y], [padding.top + header, 1])
       .strong()
-    builder.expr([1, this.container.width]).eq([1, bounds.width], [-horizontalPadding, 1]).strong()
-    builder.expr([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
+    builder.ct([1, this.container.width]).eq([1, bounds.width], [-horizontalPadding, 1]).strong()
+    builder.ct([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
   }
   getConnectionPoint(from: Point): Point {
     const { x, y, width, height } = getBoundsValues(this.bounds)
@@ -99,8 +99,8 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
     // Align z values between layout and container
     helper.align(bounds.z, this.container.z).required()
 
-    builder.expr([1, bounds.width]).ge([this.defaultWidth, 1]).weak()
-    builder.expr([1, bounds.height]).ge([this.defaultHeight, 1]).weak()
+    builder.ct([1, bounds.width]).ge([this.defaultWidth, 1]).weak()
+    builder.ct([1, bounds.height]).ge([this.defaultHeight, 1]).weak()
     this.constraintsApplied = true
   }
 

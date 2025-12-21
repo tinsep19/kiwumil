@@ -31,15 +31,15 @@ describe("ConstraintHelper", () => {
     const child = createTestBounds(variables, "child")
 
     solver.createConstraint("test-container-size", (builder) => {
-      builder.expr([1, container.width]).eq([200, 1]).strong()
-      builder.expr([1, container.height]).eq([150, 1]).strong()
-      builder.expr([1, container.x]).eq([0, 1]).strong()
-      builder.expr([1, container.y]).eq([0, 1]).strong()
+      builder.ct([1, container.width]).eq([200, 1]).strong()
+      builder.ct([1, container.height]).eq([150, 1]).strong()
+      builder.ct([1, container.x]).eq([0, 1]).strong()
+      builder.ct([1, container.y]).eq([0, 1]).strong()
     })
 
     solver.createConstraint("test-child-size", (builder) => {
-      builder.expr([1, child.width]).eq([100, 1]).strong()
-      builder.expr([1, child.height]).eq([60, 1]).strong()
+      builder.ct([1, child.width]).eq([100, 1]).strong()
+      builder.ct([1, child.height]).eq([60, 1]).strong()
     })
 
     solver.createConstraint("test-enclose", (builder) => {
@@ -61,8 +61,8 @@ describe("ConstraintHelper", () => {
     const next = createTestBounds(variables, "next")
 
     solver.createConstraint("test-prev", (builder) => {
-      builder.expr([1, prev.x]).eq([0, 1]).strong()
-      builder.expr([1, prev.width]).eq([50, 1]).strong()
+      builder.ct([1, prev.x]).eq([0, 1]).strong()
+      builder.ct([1, prev.width]).eq([50, 1]).strong()
     })
 
     solver.createConstraint("test-arrange", (builder) => {
@@ -85,17 +85,17 @@ describe("ConstraintHelper", () => {
     const child2 = createTestBounds(variables, "child2")
 
     solver.createConstraint("test-container-size", (builder) => {
-      builder.expr([1, container.width]).eq([200, 1]).strong()
-      builder.expr([1, container.height]).eq([150, 1]).strong()
-      builder.expr([1, container.x]).eq([0, 1]).strong()
-      builder.expr([1, container.y]).eq([0, 1]).strong()
+      builder.ct([1, container.width]).eq([200, 1]).strong()
+      builder.ct([1, container.height]).eq([150, 1]).strong()
+      builder.ct([1, container.x]).eq([0, 1]).strong()
+      builder.ct([1, container.y]).eq([0, 1]).strong()
     })
 
     solver.createConstraint("test-children-size", (builder) => {
-      builder.expr([1, child1.width]).eq([80, 1]).strong()
-      builder.expr([1, child1.height]).eq([50, 1]).strong()
-      builder.expr([1, child2.width]).eq([80, 1]).strong()
-      builder.expr([1, child2.height]).eq([50, 1]).strong()
+      builder.ct([1, child1.width]).eq([80, 1]).strong()
+      builder.ct([1, child1.height]).eq([50, 1]).strong()
+      builder.ct([1, child2.width]).eq([80, 1]).strong()
+      builder.ct([1, child2.height]).eq([50, 1]).strong()
     })
 
     solver.createConstraint("test-enclose-multi", (builder) => {
@@ -120,7 +120,7 @@ describe("ConstraintHelper", () => {
     const bounds3 = createTestBounds(variables, "b3")
 
     solver.createConstraint("test-b1-x", (builder) => {
-      builder.expr([1, bounds1.x]).eq([10, 1]).strong()
+      builder.ct([1, bounds1.x]).eq([10, 1]).strong()
     })
 
     solver.createConstraint("test-align", (builder) => {
@@ -208,12 +208,12 @@ describe("ConstraintHelper", () => {
     const x3 = createTestBounds(variables, "x3")
 
     solver.createConstraint("test-x1", (builder) => {
-      builder.expr([1, x1.x]).eq([0, 1]).strong()
-      builder.expr([1, x1.width]).eq([50, 1]).strong()
+      builder.ct([1, x1.x]).eq([0, 1]).strong()
+      builder.ct([1, x1.width]).eq([50, 1]).strong()
     })
 
     solver.createConstraint("test-x2-width", (builder) => {
-      builder.expr([1, x2.width]).eq([60, 1]).strong()
+      builder.ct([1, x2.width]).eq([60, 1]).strong()
     })
 
     solver.createConstraint("test-arrange-multi", (builder) => {
@@ -238,12 +238,12 @@ describe("ConstraintHelper", () => {
     const x3 = createTestBounds(variables, "x3")
 
     solver.createConstraint("test-x1", (builder) => {
-      builder.expr([1, x1.y]).eq([0, 1]).strong()
-      builder.expr([1, x1.height]).eq([40, 1]).strong()
+      builder.ct([1, x1.y]).eq([0, 1]).strong()
+      builder.ct([1, x1.height]).eq([40, 1]).strong()
     })
 
     solver.createConstraint("test-x2-height", (builder) => {
-      builder.expr([1, x2.height]).eq([50, 1]).strong()
+      builder.ct([1, x2.height]).eq([50, 1]).strong()
     })
 
     solver.createConstraint("test-arrange-multi-vertical", (builder) => {

@@ -38,7 +38,7 @@ export class AlignBuilder implements StrengthBuilder {
       const current = this.vars[i]
       const next = this.vars[i + 1]
       if (current && next) {
-        this.builder.expr([1, current]).eq([1, next])[strength]()
+        this.builder.ct([1, current]).eq([1, next])[strength]()
       }
     }
   }

@@ -21,10 +21,10 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("test")
 
       context.createConstraint("test-bounds", (builder) => {
-        builder.expr([1, bounds.x]).eq([10, 1]).strong()
-        builder.expr([1, bounds.y]).eq([20, 1]).strong()
-        builder.expr([1, bounds.width]).eq([100, 1]).strong()
-        builder.expr([1, bounds.height]).eq([50, 1]).strong()
+        builder.ct([1, bounds.x]).eq([10, 1]).strong()
+        builder.ct([1, bounds.y]).eq([20, 1]).strong()
+        builder.ct([1, bounds.width]).eq([100, 1]).strong()
+        builder.ct([1, bounds.height]).eq([50, 1]).strong()
       })
       context.solve()
 
@@ -40,10 +40,10 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("test-aliases")
 
       context.createConstraint("test-aliases-bounds", (builder) => {
-        builder.expr([1, bounds.left]).eq([15, 1]).strong()
-        builder.expr([1, bounds.top]).eq([25, 1]).strong()
-        builder.expr([1, bounds.width]).eq([80, 1]).strong()
-        builder.expr([1, bounds.height]).eq([60, 1]).strong()
+        builder.ct([1, bounds.left]).eq([15, 1]).strong()
+        builder.ct([1, bounds.top]).eq([25, 1]).strong()
+        builder.ct([1, bounds.width]).eq([80, 1]).strong()
+        builder.ct([1, bounds.height]).eq([60, 1]).strong()
       })
       context.solve()
 
@@ -61,8 +61,8 @@ describe("Bounds Validation", () => {
 
       // Create a scenario with negative width (right < left)
       context.createConstraint("test-negative-width", (builder) => {
-        builder.expr([1, bounds.x]).eq([100, 1]).strong()
-        builder.expr([1, bounds.width]).eq([-50, 1]).strong()
+        builder.ct([1, bounds.x]).eq([100, 1]).strong()
+        builder.ct([1, bounds.width]).eq([-50, 1]).strong()
       })
       context.solve()
 
@@ -76,8 +76,8 @@ describe("Bounds Validation", () => {
 
       // Create a scenario with negative height (bottom < top)
       context.createConstraint("test-negative-height", (builder) => {
-        builder.expr([1, bounds.y]).eq([100, 1]).strong()
-        builder.expr([1, bounds.height]).eq([-30, 1]).strong()
+        builder.ct([1, bounds.y]).eq([100, 1]).strong()
+        builder.ct([1, bounds.height]).eq([-30, 1]).strong()
       })
       context.solve()
 
@@ -102,10 +102,10 @@ describe("Bounds Validation", () => {
 
       // Set negative width
       context.createConstraint("test-actor-negative-width", (builder) => {
-        builder.expr([1, bounds.x]).eq([0, 1]).strong()
-        builder.expr([1, bounds.y]).eq([0, 1]).strong()
-        builder.expr([1, bounds.width]).eq([-80, 1]).strong()
-        builder.expr([1, bounds.height]).eq([100, 1]).strong()
+        builder.ct([1, bounds.x]).eq([0, 1]).strong()
+        builder.ct([1, bounds.y]).eq([0, 1]).strong()
+        builder.ct([1, bounds.width]).eq([-80, 1]).strong()
+        builder.ct([1, bounds.height]).eq([100, 1]).strong()
       })
       context.solve()
 
@@ -124,10 +124,10 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("actor")
 
       context.createConstraint("test-actor-normal", (builder) => {
-        builder.expr([1, bounds.x]).eq([10, 1]).strong()
-        builder.expr([1, bounds.y]).eq([10, 1]).strong()
-        builder.expr([1, bounds.width]).eq([60, 1]).strong()
-        builder.expr([1, bounds.height]).eq([80, 1]).strong()
+        builder.ct([1, bounds.x]).eq([10, 1]).strong()
+        builder.ct([1, bounds.y]).eq([10, 1]).strong()
+        builder.ct([1, bounds.width]).eq([60, 1]).strong()
+        builder.ct([1, bounds.height]).eq([80, 1]).strong()
       })
       context.solve()
 
@@ -165,10 +165,10 @@ describe("Bounds Validation", () => {
 
       // Set negative height
       context.createConstraint("test-usecase-negative-height", (builder) => {
-        builder.expr([1, bounds.x]).eq([0, 1]).strong()
-        builder.expr([1, bounds.y]).eq([0, 1]).strong()
-        builder.expr([1, bounds.width]).eq([120, 1]).strong()
-        builder.expr([1, bounds.height]).eq([-50, 1]).strong()
+        builder.ct([1, bounds.x]).eq([0, 1]).strong()
+        builder.ct([1, bounds.y]).eq([0, 1]).strong()
+        builder.ct([1, bounds.width]).eq([120, 1]).strong()
+        builder.ct([1, bounds.height]).eq([-50, 1]).strong()
       })
       context.solve()
 
@@ -197,10 +197,10 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("usecase")
 
       context.createConstraint("test-usecase-normal", (builder) => {
-        builder.expr([1, bounds.x]).eq([10, 1]).strong()
-        builder.expr([1, bounds.y]).eq([10, 1]).strong()
-        builder.expr([1, bounds.width]).eq([120, 1]).strong()
-        builder.expr([1, bounds.height]).eq([60, 1]).strong()
+        builder.ct([1, bounds.x]).eq([10, 1]).strong()
+        builder.ct([1, bounds.y]).eq([10, 1]).strong()
+        builder.ct([1, bounds.width]).eq([120, 1]).strong()
+        builder.ct([1, bounds.height]).eq([60, 1]).strong()
       })
       context.solve()
 

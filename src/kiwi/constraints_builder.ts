@@ -18,7 +18,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
 
   constructor(private readonly solver: kiwi.Solver) {}
 
-  expr(...lhs: Term[]): this {
+  ct(...lhs: Term[]): this {
     this.tmp = { lhs }
     return this
   }
@@ -105,7 +105,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
 
   private ensureExpr() {
     if (!this.tmp.lhs) {
-      throw new Error("KiwiConstraintBuilder: call expr(...) before defining rhs")
+      throw new Error("KiwiConstraintBuilder: call ct(...) before defining rhs")
     }
   }
 

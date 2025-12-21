@@ -30,8 +30,8 @@ describe("Symbols Index Map", () => {
         getConnectionPoint: (src) => src,
       })
       builder.setConstraint((cb) => {
-        cb.expr([1, layout.width]).eq([100, 1]).strong()
-        cb.expr([1, layout.height]).eq([100, 1]).strong()
+        cb.ct([1, layout.width]).eq([100, 1]).strong()
+        cb.ct([1, layout.height]).eq([100, 1]).strong()
       })
       return builder.build()
     })

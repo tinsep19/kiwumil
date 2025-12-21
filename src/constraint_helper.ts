@@ -42,9 +42,9 @@ class SetSizeBuilder implements StrengthBuilder {
   }
 
   private applyConstraints(strength: "weak" | "medium" | "strong" | "required"): void {
-    this.builder.expr([1, this.bounds.width]).eq([1, this.width])[strength]()
+    this.builder.ct([1, this.bounds.width]).eq([1, this.width])[strength]()
 
-    this.builder.expr([1, this.bounds.height]).eq([1, this.height])[strength]()
+    this.builder.ct([1, this.bounds.height]).eq([1, this.height])[strength]()
   }
 }
 
@@ -79,21 +79,21 @@ class EnclosePaddingBuilder {
     for (const child of this.children) {
       // container.width >= child.width + 2*padding
       this.builder
-        .expr([1, this.container.width])
+        .ct([1, this.container.width])
         .ge([1, child.width], [2, this.paddingValue])
         [strength]()
 
       // container.height >= child.height + 2*padding
       this.builder
-        .expr([1, this.container.height])
+        .ct([1, this.container.height])
         .ge([1, child.height], [2, this.paddingValue])
         [strength]()
 
       // child.x >= container.x + padding
-      this.builder.expr([1, child.x]).ge([1, this.container.x], [1, this.paddingValue])[strength]()
+      this.builder.ct([1, child.x]).ge([1, this.container.x], [1, this.paddingValue])[strength]()
 
       // child.y >= container.y + padding
-      this.builder.expr([1, child.y]).ge([1, this.container.y], [1, this.paddingValue])[strength]()
+      this.builder.ct([1, child.y]).ge([1, this.container.y], [1, this.paddingValue])[strength]()
     }
   }
 }
@@ -164,14 +164,14 @@ class ArrangeDirectionBuilder implements StrengthBuilder {
         // next.x >= prev.x + prev.width + margin
         // Equivalently: prev.right + margin = next.left
         this.builder
-          .expr([1, next.x])
+          .ct([1, next.x])
           .ge([1, prev.x], [1, prev.width], [1, this.marginValue])
           [strength]()
       } else {
         // next.y >= prev.y + prev.height + margin
         // Equivalently: prev.bottom + margin = next.top
         this.builder
-          .expr([1, next.y])
+          .ct([1, next.y])
           .ge([1, prev.y], [1, prev.height], [1, this.marginValue])
           [strength]()
       }
@@ -246,7 +246,7 @@ class AlignBuilder implements StrengthBuilder {
       const current = this.vars[i]
       const next = this.vars[i + 1]
       if (current && next) {
-        this.builder.expr([1, current]).eq([1, next])[strength]()
+        this.builder.ct([1, current]).eq([1, next])[strength]()
       }
     }
   }

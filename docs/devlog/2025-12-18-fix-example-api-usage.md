@@ -48,12 +48,12 @@
 
 ```typescript
 // 修正前（エラー）
-builder.expr([1, box1.layout.x]).eq([1, centerX.variable]).strong()
-builder.expr([1, box1.layout.y]).eq([1, topY.variable]).strong()
+builder.ct([1, box1.layout.x]).eq([1, centerX.variable]).strong()
+builder.ct([1, box1.layout.y]).eq([1, topY.variable]).strong()
 
 // 修正後（正常）
-builder.expr([1, box1.bounds.x]).eq([1, centerX.variable]).strong()
-builder.expr([1, box1.bounds.y]).eq([1, topY.variable]).strong()
+builder.ct([1, box1.bounds.x]).eq([1, centerX.variable]).strong()
+builder.ct([1, box1.bounds.y]).eq([1, topY.variable]).strong()
 ```
 
 同様の修正を `box2` と `box3` にも適用。

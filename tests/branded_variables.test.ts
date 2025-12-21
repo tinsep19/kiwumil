@@ -121,10 +121,10 @@ describe("Branded Layout Variables", () => {
 
     // Set constraints
     solver.createConstraint("test-constraints", (builder) => {
-      builder.expr([1, bounds.x]).eq([10, 1]).strong()
-      builder.expr([1, bounds.y]).eq([20, 1]).strong()
-      builder.expr([1, bounds.width]).eq([100, 1]).strong()
-      builder.expr([1, bounds.height]).eq([50, 1]).strong()
+      builder.ct([1, bounds.x]).eq([10, 1]).strong()
+      builder.ct([1, bounds.y]).eq([20, 1]).strong()
+      builder.ct([1, bounds.width]).eq([100, 1]).strong()
+      builder.ct([1, bounds.height]).eq([50, 1]).strong()
     })
 
     solver.updateVariables()

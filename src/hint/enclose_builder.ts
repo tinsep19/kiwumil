@@ -35,21 +35,21 @@ export class EnclosePaddingBuilder implements StrengthBuilder {
     for (const child of this.children) {
       // container.width >= child.width + 2*padding
       this.builder
-        .expr([1, this.container.width])
+        .ct([1, this.container.width])
         .ge([1, child.width], [2, this.paddingValue])
         [strength]()
 
       // container.height >= child.height + 2*padding
       this.builder
-        .expr([1, this.container.height])
+        .ct([1, this.container.height])
         .ge([1, child.height], [2, this.paddingValue])
         [strength]()
 
       // child.x >= container.x + padding
-      this.builder.expr([1, child.x]).ge([1, this.container.x], [1, this.paddingValue])[strength]()
+      this.builder.ct([1, child.x]).ge([1, this.container.x], [1, this.paddingValue])[strength]()
 
       // child.y >= container.y + padding
-      this.builder.expr([1, child.y]).ge([1, this.container.y], [1, this.paddingValue])[strength]()
+      this.builder.ct([1, child.y]).ge([1, this.container.y], [1, this.paddingValue])[strength]()
     }
   }
 }
