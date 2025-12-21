@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconSet, IconRegistry, LoaderFactory, type IconMeta } from "../icon"
+import { IconRegistry, LoaderFactory, type IconMeta } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -31,9 +31,6 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (args: {
   hint: HintFactory
   icon: Record<string, PluginIcons>
 }) => void
-
-type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
-type CreateRegistrar = RegisterIconsParam["createRegistrar"]
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
@@ -107,27 +104,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // Create IconRegistry first - it will be shared across all icon operations
     const iconsRegistry = new IconRegistry()
 
-    // Icon loaders registered by plugins (build icons first)
-    const icon_loaders: Record<string, IconSet> = {}
-    for (const plugin of this.plugins) {
-      if (typeof plugin.registerIcons === "function") {
-        const createRegistrar: CreateRegistrar = (
-          pluginName,
-          importMeta,
-          iconRegistrationBlock
-        ) => {
-          const iconSet = new IconSet(pluginName, importMeta?.url ?? "")
-          iconRegistrationBlock(iconSet)
-          icon_loaders[pluginName] = iconSet
-        }
-
-        plugin.registerIcons({
-          createRegistrar,
-        })
-      }
-    }
-
-    // New createIconFactory support - plugins can define icon factories directly
+    // Create icon factories from plugins
     const icon_factories: Record<string, Record<string, () => IconMeta | null>> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.createIconFactory === "function") {
@@ -145,51 +122,14 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
     const iconRegistry = icon as Record<string, PluginIcons>
     
-    // Use icon factories if available, otherwise fall back to icon loaders
+    // Populate icon registry with factories
     for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
       iconRegistry[pluginName] = iconFactory
-    }
-    
-    for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
-      // Only add if not already populated by factory
-      if (!iconRegistry[pluginName]) {
-        iconRegistry[pluginName] = {}
-      }
-      for (const name of iconSet.list()) {
-        // Don't overwrite factory-created icons
-        if (!iconRegistry[pluginName]![name]) {
-          // use sync loader if available
-          iconRegistry[pluginName]![name] = () => {
-            try {
-              const loader = iconSet.createLoader(name)
-              return loader.load_sync()
-            } catch {
-              return null
-            }
-          }
-        }
-      }
     }
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
-
-    // Register icons from IconSet (legacy registerIcons API)
-    // Icons from createIconFactory are automatically registered when cacheLoader is called
-    for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
-      for (const name of iconSet.list()) {
-        try {
-          const loader = iconSet.createLoader(name)
-          const meta = loader.load_sync()
-          if (meta && meta.raw) {
-            iconsRegistry.register(pluginName, name, meta.raw)
-          }
-        } catch {
-          // ignore loader errors for now
-        }
-      }
-    }
 
     const hint = new HintFactory({
       context,

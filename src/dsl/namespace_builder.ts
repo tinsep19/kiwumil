@@ -9,10 +9,6 @@ import type {
 import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
-import { IconSet } from "../icon"
-
-type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
-type CreateRegistrar = RegisterIconsParam["createRegistrar"]
 
 /**
  * Namespace Builder
@@ -92,37 +88,5 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     }
 
     return namespace as BuildRelationshipNamespace<TPlugins>
-  }
-
-  /**
-   * Icon Namespace を構築
-   *
-   * プラグインが registerIcons を提供している場合、簡易的な loader を生成して
-   * BuildIconNamespace 型に従ったオブジェクトを返す（同期 API を想定）。
-   */
-  buildIconNamespace(): BuildIconNamespace<TPlugins> {
-    const namespace: Record<string, PluginIcons> = {}
-
-    for (const plugin of this.plugins) {
-      if (typeof plugin.registerIcons === "function") {
-        const pluginName = plugin.name
-        const iconSet = new IconSet(pluginName, "")
-        // call registerIcons to let plugin register icons into our iconSet
-        const createRegistrar: CreateRegistrar = (_p, _importMeta, cb) => cb(iconSet)
-        plugin.registerIcons({
-          createRegistrar,
-        })
-
-        namespace[pluginName] = {}
-        for (const name of iconSet.list()) {
-          namespace[pluginName]![name] = () => {
-            const loader = iconSet.createLoader(name)
-            return loader.load_sync()
-          }
-        }
-      }
-    }
-
-    return namespace as BuildIconNamespace<TPlugins>
   }
 }

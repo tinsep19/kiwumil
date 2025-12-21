@@ -1,7 +1,7 @@
 // src/plugin/uml/plugin.ts
 import { ActorSymbol, SystemBoundarySymbol, UsecaseSymbol } from "./symbols"
 import { Association, Extend, Generalize, Include } from "./relationships"
-import type { DiagramPlugin, PluginIcons, Relationships, Symbols, Icons, IconRegister } from "../../dsl"
+import type { DiagramPlugin, PluginIcons, Relationships, Symbols, IconRegister } from "../../dsl"
 import type { RelationshipId } from "../../model"
 import type { Theme } from "../../theme"
 import type { IContainerSymbolCharacs } from "../../core"
@@ -14,12 +14,6 @@ import { toSymbolId, type SymbolOrId } from "../../dsl"
  */
 export const UMLPlugin = {
   name: "uml",
-
-  registerIcons(icons: Icons) {
-    icons.createRegistrar("uml", import.meta, (registrar) => {
-      registrar.register("actor", "icons/actor.svg")
-    })
-  },
 
   createIconFactory(register: IconRegister) {
     const loaderFactory = register.createLoaderFactory(import.meta)
