@@ -24,6 +24,12 @@ export class SymbolRegistrationBuilder {
   private readonly id: SymbolId
   private readonly variables: LayoutVariables
 
+  // Using 'any' here is necessary because:
+  // 1. The builder must work with any type of ISymbolCharacs<T> where T varies per symbol
+  // 2. Making the class generic would require propagating the type parameter through
+  //    the entire Symbols class and register method, complicating the API
+  // 3. Type safety is maintained at the call site through the setCharacs method's
+  //    generic constraint and the register factory callback
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _characs?: ISymbolCharacs<any>
   private _symbol?: ISymbol
@@ -70,6 +76,12 @@ export class SymbolRegistrationBuilder {
   }
 
   setCharacs<T extends { id: SymbolId; bounds: LayoutBounds }>(characs: T) {
+    // Type assertion is safe here because:
+    // 1. T is constrained to have id and bounds with correct types
+    // 2. Omit<T, "id" | "bounds"> extracts only the extra fields
+    // 3. The runtime object T contains all necessary fields for ISymbolCharacs<Omit<T, "id" | "bounds">>
+    // We use 'as unknown as' to bypass TypeScript's structural type checking,
+    // which doesn't understand that T is structurally equivalent to ISymbolCharacs<Omit<T, "id" | "bounds">>
     this._characs = characs as unknown as ISymbolCharacs<Omit<T, "id" | "bounds">>
   }
 

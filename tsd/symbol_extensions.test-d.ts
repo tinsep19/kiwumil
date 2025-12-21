@@ -121,6 +121,7 @@ expectType<LayoutBounds>(literalCharacs.bounds)
 expectType<string>(literalCharacs.myField)
 
 // Test 16: Empty extension is equivalent to base ISymbolCharacs
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 type EmptyExtension = ISymbolCharacs<{}>
 declare const emptyExt: EmptyExtension
 const baseCharacs: ISymbolCharacs = emptyExt
