@@ -69,10 +69,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   /**
    * ダイアグラムを構築
    *
-   * @param callback - IntelliSense が有効な DSL ブロック
+   * @param block - IntelliSense が有効な DSL ブロック
    * @returns レンダリング可能な図オブジェクト
    */
-  build(callback: IntelliSenseBlock<TPlugins>) {
+  build(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
     const symbols = new Symbols(context.variables)
@@ -115,11 +115,10 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
     const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
-    const iconRegistry = icon as Record<string, PluginIcons>
     
-    // Populate icon registry with factories
+    // Populate icon namespace with factories
     for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
-      iconRegistry[pluginName] = iconFactory
+      (icon as Record<string, PluginIcons>)[pluginName] = iconFactory
     }
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
@@ -133,7 +132,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     })
 
     // invoke callback: object-style only
-    callback({ el, rel, hint, icon })
+    block({ el, rel, hint, icon })
 
     const relationshipList = relationships.getAll()
     const symbolList = symbols
