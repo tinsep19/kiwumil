@@ -113,7 +113,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       }
     }
 
-    // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
+    // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta
     const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
