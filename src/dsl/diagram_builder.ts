@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconSet, IconRegistry } from "../icon"
+import { IconSet, IconRegistry, LoaderFactory, type IconMeta } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -124,19 +124,45 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       }
     }
 
+    // New createIconFactory support - plugins can define icon factories directly
+    const icon_factories: Record<string, Record<string, () => IconMeta | null>> = {}
+    for (const plugin of this.plugins) {
+      if (typeof plugin.createIconFactory === "function") {
+        const pluginName = plugin.name
+        const iconFactory = plugin.createIconFactory({
+          createLoaderFactory: (importMeta: ImportMeta) => {
+            return new LoaderFactory(pluginName, importMeta?.url ?? "")
+          },
+        })
+        icon_factories[pluginName] = iconFactory
+      }
+    }
+
     // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
     const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
     const iconRegistry = icon as Record<string, PluginIcons>
+    
+    // Use icon factories if available, otherwise fall back to icon loaders
+    for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
+      iconRegistry[pluginName] = iconFactory
+    }
+    
     for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
-      iconRegistry[pluginName] = {}
+      // Only add if not already populated by factory
+      if (!iconRegistry[pluginName]) {
+        iconRegistry[pluginName] = {}
+      }
       for (const name of iconSet.list()) {
-        // use sync loader if available
-        iconRegistry[pluginName]![name] = () => {
-          try {
-            const loader = iconSet.createLoader(name)
-            return loader.load_sync()
-          } catch {
-            return null
+        // Don't overwrite factory-created icons
+        if (!iconRegistry[pluginName]![name]) {
+          // use sync loader if available
+          iconRegistry[pluginName]![name] = () => {
+            try {
+              const loader = iconSet.createLoader(name)
+              return loader.load_sync()
+            } catch {
+              return null
+            }
           }
         }
       }
@@ -148,6 +174,22 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // Register available icon SVGs into runtime IconRegistry so renderers can emit <symbol> defs
     const iconsRegistry = new IconRegistry()
+    
+    // Register icons from factories
+    for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
+      for (const [name, loaderFn] of Object.entries(iconFactory)) {
+        try {
+          const meta = loaderFn()
+          if (meta && meta.raw) {
+            iconsRegistry.register(pluginName, name, meta.raw)
+          }
+        } catch {
+          // ignore loader errors for now
+        }
+      }
+    }
+    
+    // Register icons from IconSet (legacy)
     for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
       for (const name of iconSet.list()) {
         try {
