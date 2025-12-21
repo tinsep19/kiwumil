@@ -9,9 +9,7 @@ import { getBoundsValues } from "../../../core"
  * ICircleSymbolCharacs: 円形シンボルの特性
  * ISymbolCharacs を拡張し、半径 r プロパティを必須にする
  */
-export interface ICircleSymbolCharacs extends ISymbolCharacs {
-  r: Variable
-}
+export type ICircleSymbolCharacs = ISymbolCharacs<{ r: Variable }>
 
 export interface CircleSymbolOptions extends SymbolBaseOptions {
   label: string

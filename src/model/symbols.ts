@@ -1,14 +1,15 @@
 import type { ConstraintSpec } from "../core"
 import type { LayoutVariables } from "./layout_variables"
-import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint } from "../core"
+import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint, LayoutBounds } from "../core"
 import type { SymbolBase } from "./symbol_base"
 
 /**
  * SymbolRegistration: register の戻り値型
  */
-export type SymbolRegistration = {
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type SymbolRegistration<T extends object = {}> = {
   symbol: ISymbol
-  characs: ISymbolCharacs
+  characs: ISymbolCharacs<T>
   constraint: LayoutConstraint
 }
 
@@ -23,7 +24,14 @@ export class SymbolRegistrationBuilder {
   private readonly id: SymbolId
   private readonly variables: LayoutVariables
 
-  private _characs?: ISymbolCharacs
+  // Using 'any' here is necessary because:
+  // 1. The builder must work with any type of ISymbolCharacs<T> where T varies per symbol
+  // 2. Making the class generic would require propagating the type parameter through
+  //    the entire Symbols class and register method, complicating the API
+  // 3. Type safety is maintained at the call site through the setCharacs method's
+  //    generic constraint and the register factory callback
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private _characs?: ISymbolCharacs<any>
   private _symbol?: ISymbol
   private _constraint?: LayoutConstraint
 
@@ -67,8 +75,14 @@ export class SymbolRegistrationBuilder {
     return this.variables.createVariable(`${this.id}#${key}`)
   }
 
-  setCharacs(characs: ISymbolCharacs) {
-    this._characs = characs
+  setCharacs<T extends { id: SymbolId; bounds: LayoutBounds }>(characs: T) {
+    // Type assertion is safe here because:
+    // 1. T is constrained to have id and bounds with correct types
+    // 2. Omit<T, "id" | "bounds"> extracts only the extra fields
+    // 3. The runtime object T contains all necessary fields for ISymbolCharacs<Omit<T, "id" | "bounds">>
+    // We use 'as unknown as' to bypass TypeScript's structural type checking,
+    // which doesn't understand that T is structurally equivalent to ISymbolCharacs<Omit<T, "id" | "bounds">>
+    this._characs = characs as unknown as ISymbolCharacs<Omit<T, "id" | "bounds">>
   }
 
   setSymbol(symbol: ISymbol) {
@@ -87,7 +101,8 @@ export class SymbolRegistrationBuilder {
     return constraint
   }
 
-  build(): SymbolRegistration {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  build(): SymbolRegistration<any> {
     if (!this._characs) throw new Error("SymbolRegistrationBuilder: characs not set")
     if (!this._symbol) throw new Error("SymbolRegistrationBuilder: symbol not set")
     if (!this._constraint) throw new Error("SymbolRegistrationBuilder: constraint not set")
@@ -107,8 +122,10 @@ export class SymbolRegistrationBuilder {
  *   シンボルを構築して返す
  */
 export class Symbols {
-  private readonly registrations: SymbolRegistration[] = []
-  private readonly registrations_index: Record<string, SymbolRegistration> = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly registrations: SymbolRegistration<any>[] = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly registrations_index: Record<string, SymbolRegistration<any>> = {}
   private readonly variables: LayoutVariables
 
   constructor(variables: LayoutVariables) {
@@ -124,8 +141,10 @@ export class Symbols {
   register(
     plugin: string,
     symbolName: string,
-    factory: (symbolId: SymbolId, builder: SymbolRegistrationBuilder) => SymbolRegistration
-  ): SymbolRegistration {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    factory: (symbolId: SymbolId, builder: SymbolRegistrationBuilder) => SymbolRegistration<any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): SymbolRegistration<any> {
     const symbolId = this.createSymbolId(plugin, symbolName)
     const builder = new SymbolRegistrationBuilder(symbolId, this.variables)
     const registration = factory(symbolId, builder)
@@ -148,7 +167,8 @@ export class Symbols {
   /**
    * 登録済み SymbolRegistration を列挙する読み取り専用配列
    */
-  getAll(): readonly SymbolRegistration[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getAll(): readonly SymbolRegistration<any>[] {
     return this.registrations
   }
 
@@ -163,7 +183,8 @@ export class Symbols {
   /**
    * 指定した ID に一致する SymbolRegistration を返す（存在しなければ undefined）
    */
-  findById(id: SymbolId): SymbolRegistration | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  findById(id: SymbolId): SymbolRegistration<any> | undefined {
     return this.registrations_index[id]
   }
 
