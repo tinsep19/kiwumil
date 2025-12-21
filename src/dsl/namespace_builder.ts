@@ -9,7 +9,7 @@ import type {
 import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
-import { IconLoader } from "../icon"
+import { IconSet } from "../icon"
 
 type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
 type CreateRegistrar = RegisterIconsParam["createRegistrar"]
@@ -106,16 +106,19 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === "function") {
         const pluginName = plugin.name
-        const loader = new IconLoader(pluginName, "")
-        // call registerIcons to let plugin register icons into our loader
-        const createRegistrar: CreateRegistrar = (_p, _importMeta, cb) => cb(loader)
+        const iconSet = new IconSet(pluginName, "")
+        // call registerIcons to let plugin register icons into our iconSet
+        const createRegistrar: CreateRegistrar = (_p, _importMeta, cb) => cb(iconSet)
         plugin.registerIcons({
           createRegistrar,
         })
 
         namespace[pluginName] = {}
-        for (const name of loader.list()) {
-          namespace[pluginName]![name] = () => loader.load_sync(name)
+        for (const name of iconSet.list()) {
+          namespace[pluginName]![name] = () => {
+            const loader = iconSet.createLoader(name)
+            return loader.load_sync()
+          }
         }
       }
     }

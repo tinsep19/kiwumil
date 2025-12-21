@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconLoader, IconRegistry } from "../icon"
+import { IconSet, IconRegistry } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -105,7 +105,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
     // Icon loaders registered by plugins (build icons first)
-    const icon_loaders: Record<string, IconLoader> = {}
+    const icon_loaders: Record<string, IconSet> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.registerIcons === "function") {
         const createRegistrar: CreateRegistrar = (
@@ -113,9 +113,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
           importMeta,
           iconRegistrationBlock
         ) => {
-          const loader = new IconLoader(pluginName, importMeta?.url ?? "")
-          iconRegistrationBlock(loader)
-          icon_loaders[pluginName] = loader
+          const iconSet = new IconSet(pluginName, importMeta?.url ?? "")
+          iconRegistrationBlock(iconSet)
+          icon_loaders[pluginName] = iconSet
         }
 
         plugin.registerIcons({
@@ -127,12 +127,18 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
     const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
     const iconRegistry = icon as Record<string, PluginIcons>
-    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
+    for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
       iconRegistry[pluginName] = {}
-      for (const name of loader.list()) {
+      for (const name of iconSet.list()) {
         // use sync loader if available
-        iconRegistry[pluginName]![name] = () =>
-          typeof loader.load_sync === "function" ? loader.load_sync(name) : null
+        iconRegistry[pluginName]![name] = () => {
+          try {
+            const loader = iconSet.createLoader(name)
+            return loader.load_sync()
+          } catch {
+            return null
+          }
+        }
       }
     }
 
@@ -142,10 +148,11 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     // Register available icon SVGs into runtime IconRegistry so renderers can emit <symbol> defs
     const iconsRegistry = new IconRegistry()
-    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
-      for (const name of loader.list()) {
+    for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
+      for (const name of iconSet.list()) {
         try {
-          const meta = typeof loader.load_sync === "function" ? loader.load_sync(name) : null
+          const loader = iconSet.createLoader(name)
+          const meta = loader.load_sync()
           if (meta && meta.raw) {
             iconsRegistry.register(pluginName, name, meta.raw)
           }

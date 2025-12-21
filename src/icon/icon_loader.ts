@@ -11,46 +11,37 @@ export type IconMeta = {
 
 export class IconLoader {
   private plugin: string
+  private name: string
   private baseUrl: string
-  private registry: Record<string, string> = {}
+  private relPath: string
 
-  constructor(plugin: string, baseUrl: string) {
+  constructor(plugin: string, name: string, baseUrl: string, relPath: string) {
     this.plugin = plugin
+    this.name = name
     this.baseUrl = baseUrl // typically import.meta.url or file path
-  }
-
-  // Register an icon file path relative to the plugin (e.g. 'icons/icon1.svg')
-  register(name: string, relPath: string) {
-    this.registry[name] = relPath
-  }
-
-  // List registered icon names
-  list(): string[] {
-    return Object.keys(this.registry)
+    this.relPath = relPath
   }
 
   // Synchronous load helper (returns optimized meta). Real impl should read & sanitize from disk.
-  load_sync(name: string): IconMeta {
-    const rel = this.registry[name]
-    if (!rel) throw new Error(`${name} is not registered.`)
-    const id = `${this.plugin}-${name}`.toLowerCase()
+  load_sync(): IconMeta {
+    const id = `${this.plugin}-${this.name}`.toLowerCase()
     let filePath = ""
     try {
       if (this.baseUrl) {
         try {
-          const resolved = new URL(rel, this.baseUrl)
+          const resolved = new URL(this.relPath, this.baseUrl)
           if (resolved.protocol === "file:") {
             filePath = decodeURIComponent(resolved.pathname)
           } else {
             // unsupported protocol, fall back to resolving as path
-            filePath = path.resolve(process.cwd(), rel)
+            filePath = path.resolve(process.cwd(), this.relPath)
           }
         } catch {
           // baseUrl may be a plain path
-          filePath = path.resolve(this.baseUrl, rel)
+          filePath = path.resolve(this.baseUrl, this.relPath)
         }
       } else {
-        filePath = path.resolve(process.cwd(), rel)
+        filePath = path.resolve(process.cwd(), this.relPath)
       }
 
       const content = fs.readFileSync(filePath, "utf8")
@@ -65,14 +56,16 @@ export class IconLoader {
         "code" in e &&
         (e as { code?: unknown }).code === "ENOENT"
       ) {
-        throw new Error(`Icon file not found: ${rel} resolved to ${filePath}`)
+        throw new Error(
+          `Icon file not found: ${this.relPath} resolved to ${filePath}`
+        )
       }
       // If it's an Error, use its message
       if (e instanceof Error) {
-        throw new Error(`Failed to load icon ${rel}: ${e.message}`)
+        throw new Error(`Failed to load icon ${this.relPath}: ${e.message}`)
       }
       // Fallback for other unknown throwables
-      throw new Error(`Failed to load icon ${rel}: ${String(e)}`)
+      throw new Error(`Failed to load icon ${this.relPath}: ${String(e)}`)
     }
   }
 }
