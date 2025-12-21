@@ -4,33 +4,26 @@
 
 ## Overview
 
-The icon system provides a way for plugins to register and use SVG icons in diagrams. The system is designed with separation of concerns, where `IconSet` manages icon registrations and `IconLoader` handles single file operations.
+The icon system provides a way for plugins to register and use SVG icons in diagrams. The system uses `LoaderFactory` for efficient icon loading with caching, and automatically registers icons to `IconRegistry` for SVG symbol generation.
 
 ## Architecture
 
-### IconSet
+### LoaderFactory
 
-**Purpose**: Manages icon name and path registrations for a plugin.
+**Purpose**: Creates and caches IconLoader instances, automatically registering loaded icons.
 
 **Responsibilities**:
-- Register icon names and their file paths
-- Prevent duplicate registrations
-- List all registered icon names
-- Create `IconLoader` instances for specific icons
+- Create IconLoader instances for specific icon files
+- Cache loaded metadata to avoid redundant file reads
+- Automatically register icons to IconRegistry when loaded
 
 **Key Methods**:
 ```typescript
-class IconSet {
-  constructor(plugin: string, baseUrl: string)
-  register(name: string, relPath: string): void
-  list(): string[]
-  createLoader(name: string): IconLoader
+class LoaderFactory {
+  constructor(plugin: string, baseUrl: string, iconRegistry: IconRegistry)
+  cacheLoader(relPath: string): () => IconMeta | null
 }
 ```
-
-**Error Handling**:
-- Throws error on duplicate icon registration
-- Throws error when creating loader for unregistered icon
 
 ### IconLoader
 
@@ -62,53 +55,60 @@ class IconLoader {
 - Normalize symbol IDs
 - Emit `<defs>` section with `<symbol>` elements
 
-This class is separate from `IconSet`/`IconLoader` and handles runtime rendering concerns.
+This class handles runtime rendering concerns and ensures only used icons are included in the final SVG output.
 
 ## Usage Flow
 
 1. **Plugin Registration Phase**:
    ```typescript
-   // Plugin registers icons during initialization
-   registerIcons(icons) {
-     icons.createRegistrar('myplugin', import.meta, (iconSet) => {
-       iconSet.register('icon1', 'icons/icon1.svg')
-       iconSet.register('icon2', 'icons/icon2.svg')
-     })
+   // Plugin defines icon factory
+   createIconFactory(register: IconRegister) {
+     const loaderFactory = register.createLoaderFactory(import.meta)
+     return {
+       icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+       icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
+     }
    }
    ```
 
 2. **Build Phase**:
    ```typescript
-   // System creates loaders for each icon
-   const iconSet = new IconSet('myplugin', baseUrl)
-   iconSet.register('icon1', 'icons/icon1.svg')
+   // System creates LoaderFactory with IconRegistry
+   const iconsRegistry = new IconRegistry()
+   const loaderFactory = new LoaderFactory('myplugin', baseUrl, iconsRegistry)
    
-   // Create loader for specific icon
-   const loader = iconSet.createLoader('icon1')
-   const meta = loader.load_sync()
+   // cacheLoader returns a function that loads and caches
+   const iconFn = loaderFactory.cacheLoader('icons/icon1.svg')
+   const meta = iconFn() // Loads and auto-registers to IconRegistry
    ```
 
 3. **Render Phase**:
    ```typescript
-   // IconRegistry collects all used icons
-   const registry = new IconRegistry()
-   registry.register('myplugin', 'icon1', svgContent)
-   
-   // Emit symbols in SVG output
-   const defs = registry.emit_symbols()
+   // IconRegistry emits symbols for all registered icons
+   const defs = iconsRegistry.emit_symbols()
    ```
 
 ## Design Benefits
 
+**Automatic Registration**:
+- Icons are automatically registered to IconRegistry when loaded
+- No manual registration needed in diagram builder
+- Only actually used icons are registered
+
+**Efficient Caching**:
+- LoaderFactory caches both IconLoader instances and loaded metadata
+- Eliminates redundant file reads
+- Fast repeated access to the same icon
+
 **Separation of Concerns**:
-- `IconSet`: Registry management (what icons exist)
-- `IconLoader`: File operations (how to load icons)
-- `IconRegistry`: Runtime symbol management (how to render icons)
+- LoaderFactory: Caching and registration coordination
+- IconLoader: File operations (how to load icons)
+- IconRegistry: Runtime symbol management (how to render icons)
 
 **Error Prevention**:
-- Duplicate registration detection
 - Type-safe icon references
 - Clear error messages for missing icons
+- Graceful handling of load failures (returns null)
 
 **Testability**:
 - Each class can be tested independently
@@ -134,39 +134,43 @@ The system provides full TypeScript support:
 // Type-safe icon namespace
 icon.myplugin.icon1() // Returns IconMeta | null
 
-// Type-safe registration
-iconSet.register('name', 'path') // Enforces string types
+// Type-safe factory definition
+createIconFactory(register: IconRegister): IconFactoryMap
 ```
 
-## Migration from Old API
+## API Example
 
-**Before** (single class with multiple responsibilities):
+**Plugin implementation**:
 ```typescript
-const loader = new IconLoader('plugin', baseUrl)
-loader.register('icon1', 'path1.svg')
-loader.register('icon2', 'path2.svg')
-const list = loader.list()
-const meta = loader.load_sync('icon1')
-```
+export const MyPlugin = {
+  name: 'myplugin',
 
-**After** (separated responsibilities):
-```typescript
-const iconSet = new IconSet('plugin', baseUrl)
-iconSet.register('icon1', 'path1.svg')
-iconSet.register('icon2', 'path2.svg')
-const list = iconSet.list()
-const loader = iconSet.createLoader('icon1')
-const meta = loader.load_sync()
+  createIconFactory(register: IconRegister) {
+    const loaderFactory = register.createLoaderFactory(import.meta)
+    return {
+      icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+      icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
+    }
+  },
+
+  createSymbolFactory(symbols, theme, icons) {
+    return {
+      mySymbol(label: string) {
+        const iconMeta = icons.icon1() // Load icon (cached)
+        // ... use iconMeta in symbol creation
+      }
+    }
+  }
+}
 ```
 
 ## Testing
 
 The icon system includes comprehensive tests:
-- Unit tests for `IconSet` (registration, listing, error cases)
+- Unit tests for `LoaderFactory` (caching, registration)
 - Unit tests for `IconLoader` (file loading, metadata parsing)
-- Integration tests (IconSet + IconLoader working together)
-- Tests for duplicate registration prevention
-- Tests for multiple plugin isolation
+- Tests for IconRegistry integration
+- Tests for error cases and edge conditions
 
 ---
 

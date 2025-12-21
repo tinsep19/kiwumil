@@ -4,33 +4,26 @@
 
 ## 概要
 
-アイコンシステムは、プラグインが図表内でSVGアイコンを登録・使用するための仕組みを提供します。このシステムは責務の分離を重視して設計されており、`IconSet`がアイコン登録を管理し、`IconLoader`が単一ファイル操作を処理します。
+アイコンシステムは、プラグインが図表内でSVGアイコンを登録・使用するための仕組みを提供します。このシステムは、効率的なアイコン読み込みとキャッシングのために`LoaderFactory`を使用し、読み込まれたアイコンを自動的に`IconRegistry`に登録します。
 
 ## アーキテクチャ
 
-### IconSet
+### LoaderFactory
 
-**目的**: プラグインのアイコン名とパスの登録を管理
+**目的**: IconLoaderインスタンスを作成・キャッシュし、読み込まれたアイコンを自動登録
 
 **責務**:
-- アイコン名とファイルパスの登録
-- 重複登録の防止
-- 登録済みアイコン名の一覧表示
-- 特定アイコン用の`IconLoader`インスタンスの生成
+- 特定のアイコンファイル用のIconLoaderインスタンスを作成
+- 読み込まれたメタデータをキャッシュして冗長なファイル読み込みを回避
+- 読み込み時にアイコンをIconRegistryに自動登録
 
 **主要メソッド**:
 ```typescript
-class IconSet {
-  constructor(plugin: string, baseUrl: string)
-  register(name: string, relPath: string): void
-  list(): string[]
-  createLoader(name: string): IconLoader
+class LoaderFactory {
+  constructor(plugin: string, baseUrl: string, iconRegistry: IconRegistry)
+  cacheLoader(relPath: string): () => IconMeta | null
 }
 ```
-
-**エラーハンドリング**:
-- アイコンの重複登録時にエラーをスロー
-- 未登録アイコンのローダー生成時にエラーをスロー
 
 ### IconLoader
 
@@ -62,53 +55,60 @@ class IconLoader {
 - シンボルIDの正規化
 - `<symbol>`要素を含む`<defs>`セクションの出力
 
-このクラスは`IconSet`/`IconLoader`とは独立しており、ランタイムレンダリングに関する責務を担当します。
+このクラスはランタイムレンダリングに関する責務を担当し、実際に使用されたアイコンのみが最終的なSVG出力に含まれることを保証します。
 
 ## 使用フロー
 
 1. **プラグイン登録フェーズ**:
    ```typescript
-   // プラグインは初期化時にアイコンを登録
-   registerIcons(icons) {
-     icons.createRegistrar('myplugin', import.meta, (iconSet) => {
-       iconSet.register('icon1', 'icons/icon1.svg')
-       iconSet.register('icon2', 'icons/icon2.svg')
-     })
+   // プラグインはアイコンファクトリを定義
+   createIconFactory(register: IconRegister) {
+     const loaderFactory = register.createLoaderFactory(import.meta)
+     return {
+       icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+       icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
+     }
    }
    ```
 
 2. **ビルドフェーズ**:
    ```typescript
-   // システムは各アイコン用のローダーを生成
-   const iconSet = new IconSet('myplugin', baseUrl)
-   iconSet.register('icon1', 'icons/icon1.svg')
+   // システムはIconRegistryと共にLoaderFactoryを作成
+   const iconsRegistry = new IconRegistry()
+   const loaderFactory = new LoaderFactory('myplugin', baseUrl, iconsRegistry)
    
-   // 特定アイコン用のローダーを生成
-   const loader = iconSet.createLoader('icon1')
-   const meta = loader.load_sync()
+   // cacheLoaderは読み込みとキャッシュを行う関数を返す
+   const iconFn = loaderFactory.cacheLoader('icons/icon1.svg')
+   const meta = iconFn() // 読み込みとIconRegistryへの自動登録
    ```
 
 3. **レンダリングフェーズ**:
    ```typescript
-   // IconRegistryは使用されたアイコンをすべて収集
-   const registry = new IconRegistry()
-   registry.register('myplugin', 'icon1', svgContent)
-   
-   // SVG出力でシンボルを発行
-   const defs = registry.emit_symbols()
+   // IconRegistryは登録されたすべてのアイコンのシンボルを出力
+   const defs = iconsRegistry.emit_symbols()
    ```
 
 ## 設計の利点
 
+**自動登録**:
+- アイコンは読み込み時に自動的にIconRegistryに登録される
+- diagram builderでの手動登録が不要
+- 実際に使用されたアイコンのみが登録される
+
+**効率的なキャッシング**:
+- LoaderFactoryはIconLoaderインスタンスと読み込まれたメタデータの両方をキャッシュ
+- 冗長なファイル読み込みを排除
+- 同じアイコンへの高速な繰り返しアクセス
+
 **責務の分離**:
-- `IconSet`: レジストリ管理（どのアイコンが存在するか）
-- `IconLoader`: ファイル操作（アイコンの読み込み方法）
-- `IconRegistry`: ランタイムシンボル管理（アイコンの描画方法）
+- LoaderFactory: キャッシングと登録の調整
+- IconLoader: ファイル操作（アイコンの読み込み方法）
+- IconRegistry: ランタイムシンボル管理（アイコンの描画方法）
 
 **エラー防止**:
-- 重複登録の検出
 - 型安全なアイコン参照
 - 欠落アイコンに対する明確なエラーメッセージ
+- 読み込み失敗の適切な処理（nullを返す）
 
 **テスト容易性**:
 - 各クラスを独立してテスト可能
@@ -134,39 +134,43 @@ class IconLoader {
 // 型安全なアイコン名前空間
 icon.myplugin.icon1() // IconMeta | null を返す
 
-// 型安全な登録
-iconSet.register('name', 'path') // 文字列型を強制
+// 型安全なファクトリ定義
+createIconFactory(register: IconRegister): IconFactoryMap
 ```
 
-## 旧APIからの移行
+## API例
 
-**以前**（複数の責務を持つ単一クラス）:
+**プラグイン実装**:
 ```typescript
-const loader = new IconLoader('plugin', baseUrl)
-loader.register('icon1', 'path1.svg')
-loader.register('icon2', 'path2.svg')
-const list = loader.list()
-const meta = loader.load_sync('icon1')
-```
+export const MyPlugin = {
+  name: 'myplugin',
 
-**現在**（責務の分離）:
-```typescript
-const iconSet = new IconSet('plugin', baseUrl)
-iconSet.register('icon1', 'path1.svg')
-iconSet.register('icon2', 'path2.svg')
-const list = iconSet.list()
-const loader = iconSet.createLoader('icon1')
-const meta = loader.load_sync()
+  createIconFactory(register: IconRegister) {
+    const loaderFactory = register.createLoaderFactory(import.meta)
+    return {
+      icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+      icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
+    }
+  },
+
+  createSymbolFactory(symbols, theme, icons) {
+    return {
+      mySymbol(label: string) {
+        const iconMeta = icons.icon1() // アイコンを読み込み（キャッシュ済み）
+        // ... シンボル作成でiconMetaを使用
+      }
+    }
+  }
+}
 ```
 
 ## テスト
 
 アイコンシステムには包括的なテストが含まれています：
-- `IconSet`の単体テスト（登録、一覧表示、エラーケース）
+- `LoaderFactory`の単体テスト（キャッシング、登録）
 - `IconLoader`の単体テスト（ファイル読み込み、メタデータ解析）
-- 統合テスト（IconSetとIconLoaderの連携動作）
-- 重複登録防止のテスト
-- 複数プラグイン間の独立性のテスト
+- IconRegistry統合のテスト
+- エラーケースとエッジ条件のテスト
 
 ---
 

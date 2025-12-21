@@ -9,11 +9,11 @@ import type { IconMeta } from "../icon"
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => ISymbolCharacs>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
-type IconFactoryMap = Record<string, () => IconMeta | null>
+type IconFactoryMap = Record<string, () => IconMeta>
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type IconRegister = {
-  createLoaderFactory: (importMeta: ImportMeta) => { cacheLoader: (relPath: string) => () => IconMeta | null }
+  createLoaderFactory: (importMeta: ImportMeta) => { cacheLoader: (relPath: string) => () => IconMeta }
 }
 
 /**

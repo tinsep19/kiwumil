@@ -2,7 +2,7 @@
 
 ## 概要
 
-`IconLoader` クラスを責務分離の原則に基づいてリファクタリングし、保守性を向上させた。
+`IconLoader` クラスを責務分離の原則に基づいてリファクタリングし、保守性を向上させた。最終的に`registerIcons` APIを削除し、`createIconFactory` APIのみをサポートする形に簡素化した。
 
 ## 背景
 
@@ -14,16 +14,15 @@
 
 この構造では、クラスが大きくなりすぎて保守が困難になる可能性があった。
 
-## 実装内容
+## 実装内容（最終版）
 
-### 新しいクラス構造
+### 新しいアーキテクチャ
 
-#### `IconSet` クラス
-- **責務**: アイコンの登録管理と IconLoader インスタンスの生成
+#### `LoaderFactory` クラス
+- **責務**: IconLoaderインスタンスの作成・キャッシュと自動登録
 - **主要メソッド**:
-  - `register(name: string, relPath: string)`: アイコンを登録（重複チェック付き）
-  - `list(): string[]`: 登録済みアイコン名の一覧を返す
-  - `createLoader(name: string): IconLoader`: 指定されたアイコンの IconLoader インスタンスを生成
+  - `cacheLoader(relPath: string)`: アイコンのローダー関数を返す（キャッシュ付き）
+  - 読み込み時に自動的に`IconRegistry`に登録
 
 #### `IconLoader` クラス（リファクタ後）
 - **責務**: 単一ファイルの読み込みとパース
@@ -31,65 +30,106 @@
   - `load_sync(): IconMeta`: ファイルを読み込んでメタデータを返す
 - **変更点**:
   - コンストラクタが `(plugin, name, baseUrl, relPath)` の4引数に変更
-  - `register()` と `list()` メソッドを削除（IconSet に移行）
   - `load_sync()` が引数不要に変更（コンストラクタで指定済みのアイコンを読み込む）
 
-### エラーハンドリング
+#### `IconRegistry` クラス
+- **責務**: ランタイムでのシンボル管理
+- 実際に使用されたアイコンのみを収集し、SVGの`<defs>`セクションを生成
 
-- `IconSet.register()` で重複登録を検出し、エラーをスロー
-- `IconSet.createLoader()` で未登録のアイコンを検出し、エラーをスロー
-- `IconLoader.load_sync()` でファイル読み込みエラーを適切に処理
+### 削除されたクラス・API
+
+1. **`IconSet` クラス** - 削除
+   - `registerIcons` APIのためだけに存在していたため不要に
+   
+2. **`registerIcons` API** - 削除
+   - `DiagramPlugin.registerIcons` メソッド
+   - `Icons`, `IconRegistrar`, `IconRegistrarCallback` 型
+   - すべて `createIconFactory` APIに置き換え
+
+### 新しいプラグインAPI
+
+```typescript
+// プラグインでの実装例
+export const MyPlugin = {
+  name: 'myplugin',
+
+  createIconFactory(register: IconRegister) {
+    const loaderFactory = register.createLoaderFactory(import.meta)
+    return {
+      icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+      icon2: loaderFactory.cacheLoader('icons/icon2.svg'),
+    }
+  },
+
+  createSymbolFactory(symbols, theme, icons) {
+    return {
+      mySymbol(label: string) {
+        const iconMeta = icons.icon1() // 自動キャッシュ・登録
+        // ...
+      }
+    }
+  }
+}
+```
 
 ### 更新されたファイル
 
-1. **新規作成**:
-   - `src/icon/icon_set.ts`: IconSet クラスの実装
-   - `tests/icon_set.test.ts`: IconSet と IconLoader の包括的なテスト
-   - `docs/design/icon-system.md`: アイコンシステムの設計ドキュメント（英語）
-   - `docs/design/icon-system.ja.md`: アイコンシステムの設計ドキュメント（日本語）
+1. **削除**:
+   - `src/icon/icon_set.ts`: IconSet クラス
+   - `tests/icon_loader.test.ts`: 旧IconLoaderテスト
+   - `tests/icon_set.test.ts`: IconSetテスト
 
 2. **更新**:
    - `src/icon/icon_loader.ts`: IconLoader の責務を単一ファイル操作のみに限定
-   - `src/icon/index.ts`: IconSet のエクスポートを追加
-   - `src/dsl/diagram_builder.ts`: IconSet を使用するように更新
-   - `src/dsl/namespace_builder.ts`: IconSet を使用するように更新
-   - `tests/icon_loader.test.ts`: 既存テストを新しい API に対応
-   - `docs/design/plugin-system.md`: アイコンシステムへのリンクを追加
-   - `docs/design/plugin-system.ja.md`: アイコンシステムへのリンクを追加
-
-3. **削除**:
-   - `docs/draft/iconloader-refactor.md`: 設計文書に移行したため削除
+   - `src/icon/loader_factory.ts`: LoaderFactory を追加（キャッシングと自動登録）
+   - `src/icon/index.ts`: IconSet のエクスポートを削除
+   - `src/dsl/diagram_plugin.ts`: registerIcons API と関連型を削除
+   - `src/dsl/diagram_builder.ts`: createIconFactory のみをサポート
+   - `src/dsl/namespace_builder.ts`: buildIconNamespace メソッドを削除
+   - `src/dsl/namespace_types.ts`: createIconFactory ベースの型に更新
+   - `src/dsl/index.ts`: 削除された型のエクスポートを削除
+   - `src/plugin/uml/plugin.ts`: registerIcons を削除、createIconFactory のみに
+   - `tests/loader_factory.test.ts`: LoaderFactory の包括的なテスト
+   - `docs/design/icon-system.md`: 新しいアーキテクチャを反映
+   - `docs/design/icon-system.ja.md`: 新しいアーキテクチャを反映
 
 ## テスト
 
-新しいテストスイート（`tests/icon_set.test.ts`）を追加：
-- `IconSet` の単体テスト（12テスト）
-  - 登録機能
-  - リスト機能
-  - ローダー生成機能
-  - エラーケース（重複登録、未登録アイコン）
-- `IconLoader` の基本的な動作確認
-- IconSet と IconLoader の統合テスト
-
-全テスト（177件）がパス。
+テストを大幅に簡素化：
+- LoaderFactory のテスト（5テスト）
+- IconRegistry のテスト（既存）
+- 全テスト（169件）がパス
 
 ## 後方互換性
 
-外部 API が変更されたため、使用箇所の更新が必要だった。
-主な変更点：
-- `new IconLoader(plugin, baseUrl)` → `new IconSet(plugin, baseUrl)`
-- `loader.register(name, path)` → `iconSet.register(name, path)`
-- `loader.list()` → `iconSet.list()`
-- `loader.load_sync(name)` → `iconSet.createLoader(name).load_sync()`
+**破壊的変更**: `registerIcons` APIは完全に削除され、`createIconFactory` APIのみがサポートされます。
+
+移行方法：
+```typescript
+// Before (削除されたAPI)
+registerIcons(icons: Icons) {
+  icons.createRegistrar("uml", import.meta, (registrar) => {
+    registrar.register("actor", "icons/actor.svg")
+  })
+}
+
+// After (新しいAPI)
+createIconFactory(register: IconRegister) {
+  const loaderFactory = register.createLoaderFactory(import.meta)
+  return {
+    actor: loaderFactory.cacheLoader("icons/actor.svg"),
+  }
+}
+```
 
 ## 得られた知見
 
-1. **責務の分離の重要性**: クラスの責務を明確に分けることで、テストしやすく保守しやすいコードになった
-2. **エラーハンドリングの一貫性**: 各クラスで一貫したエラーメッセージを提供することで、デバッグが容易になった
-3. **段階的なリファクタリング**: テストを先に書き、すべてのテストがパスすることを確認しながら進めることで、安全にリファクタリングできた
+1. **シンプルさの重要性**: 2つのAPIパスを維持するよりも、1つの明確なAPIに集約することでコードが大幅に簡潔になった
+2. **自動化の利点**: LoaderFactoryが自動的にIconRegistryに登録することで、手動登録のコードを削除できた
+3. **段階的なリファクタリング**: まず両方のAPIをサポートし、その後レガシーAPIを削除する段階的アプローチが効果的だった
 
 ## 次のステップ
 
-- 実際のプロジェクトでの使用例を追加
-- パフォーマンステストの実施（大量のアイコン登録時）
+- 実際のプロジェクトでの使用例をドキュメントに追加
+- パフォーマンステストの実施（大量のアイコン読み込み時）
 - 非同期読み込みのサポート検討（将来的な拡張）

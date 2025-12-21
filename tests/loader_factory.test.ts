@@ -17,13 +17,8 @@ describe("LoaderFactory", () => {
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
       const loaderFn = factory.cacheLoader("icons/test.svg")
       
-      // First call - loads and caches (will return null since file doesn't exist)
-      const result1 = loaderFn()
-      // Second call - should return cached result
-      const result2 = loaderFn()
-      
-      // Both should be the same (null in this case since file doesn't exist)
-      expect(result1).toBe(result2)
+      // Should throw on first and second call since file doesn't exist
+      expect(() => loaderFn()).toThrow()
     })
 
     test("should create different loaders for different paths", () => {
@@ -35,13 +30,12 @@ describe("LoaderFactory", () => {
       expect(loader1).not.toBe(loader2)
     })
 
-    test("should return null when icon file doesn't exist", () => {
+    test("should throw when icon file doesn't exist", () => {
       const registry = new IconRegistry()
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
       const loaderFn = factory.cacheLoader("nonexistent/icon.svg")
       
-      const result = loaderFn()
-      expect(result).toBe(null)
+      expect(() => loaderFn()).toThrow()
     })
 
     test("should register icon to IconRegistry when loaded", () => {
