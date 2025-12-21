@@ -41,14 +41,14 @@ export class ArrangeDirectionBuilder implements StrengthBuilder {
         // next.x >= prev.x + prev.width + margin
         // Equivalently: prev.right + margin = next.left
         this.builder
-          .expr([1, next.x])
+          .ct([1, next.x])
           .ge([1, prev.x], [1, prev.width], [1, this.marginValue])
           [strength]()
       } else {
         // next.y >= prev.y + prev.height + margin
         // Equivalently: prev.bottom + margin = next.top
         this.builder
-          .expr([1, next.y])
+          .ct([1, next.y])
           .ge([1, prev.y], [1, prev.height], [1, this.marginValue])
           [strength]()
       }

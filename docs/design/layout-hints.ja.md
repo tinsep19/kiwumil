@@ -860,7 +860,7 @@ const anchor = context.hints.createHintVariable({
 
 // 制約を作成
 context.createConstraint("anchor/position", (builder) => {
-  builder.expr([1, anchor.variable]).eq([100, 1]).strong()
+  builder.ct([1, anchor.variable]).eq([100, 1]).strong()
 })
 ```
 

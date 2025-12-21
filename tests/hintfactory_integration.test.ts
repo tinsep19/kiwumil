@@ -137,12 +137,12 @@ describe("HintFactory with Hints integration", () => {
 
     // Use the anchor in a constraint
     context.createConstraint("anchor/rect1", (builder) => {
-      builder.expr([1, rect1.bounds.x]).eq([1, anchor.variable]).strong()
+      builder.ct([1, rect1.bounds.x]).eq([1, anchor.variable]).strong()
     })
 
     // Set anchor value
     context.createConstraint("anchor/value", (builder) => {
-      builder.expr([1, anchor.variable]).eq([150, 1]).required()
+      builder.ct([1, anchor.variable]).eq([150, 1]).required()
     })
 
     context.solveAndApply([rect1])

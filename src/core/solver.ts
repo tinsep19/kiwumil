@@ -50,7 +50,7 @@ export type Term = [number, Variable | number]
  * LhsBuilder: Interface for building left-hand side of constraints
  */
 export interface LhsBuilder {
-  expr(...lhs: Term[]): OpRhsBuilder
+  ct(...lhs: Term[]): OpRhsBuilder
 }
 
 /**

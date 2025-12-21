@@ -8,7 +8,7 @@ describe("LayoutVariables", () => {
     const x = variables.createVar("x")
 
     solver.createConstraint("test-eq", (builder) => {
-      builder.expr([1, x]).eq([42, 1]).strong()
+      builder.ct([1, x]).eq([42, 1]).strong()
     })
     solver.updateVariables()
 
@@ -22,8 +22,8 @@ describe("LayoutVariables", () => {
     const b = variables.createVar("b")
 
     solver.createConstraint("test-combined", (builder) => {
-      builder.expr([1, a]).eq([10, 1]).strong()
-      builder.expr([1, b]).eq([1, a], [20, 1]).strong()
+      builder.ct([1, a]).eq([10, 1]).strong()
+      builder.ct([1, b]).eq([1, a], [20, 1]).strong()
     })
 
     solver.updateVariables()
@@ -110,7 +110,7 @@ describe("LayoutVariables", () => {
 
     // Set myVar to 100
     solver.createConstraint("test-var-set", (builder) => {
-      builder.expr([1, boundsSet.myVar]).eq([100, 1]).strong()
+      builder.ct([1, boundsSet.myVar]).eq([100, 1]).strong()
     })
     solver.updateVariables()
 
@@ -125,7 +125,7 @@ describe("LayoutVariables", () => {
 
     // Use the new createConstraint method from solver
     solver.createConstraint("test-constraint", (builder) => {
-      builder.expr([1, x]).eq([42, 1]).strong()
+      builder.ct([1, x]).eq([42, 1]).strong()
     })
     solver.updateVariables()
 

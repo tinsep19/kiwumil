@@ -99,7 +99,7 @@ export class CircleSymbol extends SymbolBase {
     // Since we can't express min() directly in constraints, we'll use:
     // r * 2 <= width and r * 2 <= height
     const { width, height } = this.bounds
-    builder.expr([2, this.r]).le([1, width])
-    builder.expr([2, this.r]).le([1, height])
+    builder.ct([2, this.r]).le([1, width])
+    builder.ct([2, this.r]).le([1, height])
   }
 }

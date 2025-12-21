@@ -82,7 +82,7 @@ export class Hints {
         const aBounds = current.bounds
         const bBounds = next.bounds
 
-        builder.expr([1, bBounds.x]).eq([1, aBounds.x], [1, aBounds.width], [gap, 1]).strong()
+        builder.ct([1, bBounds.x]).eq([1, aBounds.x], [1, aBounds.width], [gap, 1]).strong()
       }
     })
 
@@ -101,7 +101,7 @@ export class Hints {
         const aBounds = current.bounds
         const bBounds = next.bounds
 
-        builder.expr([1, bBounds.y]).eq([1, aBounds.y], [1, aBounds.height], [gap, 1]).strong()
+        builder.ct([1, bBounds.y]).eq([1, aBounds.y], [1, aBounds.height], [gap, 1]).strong()
       }
     })
 
@@ -116,7 +116,7 @@ export class Hints {
     const constraint = this.solver.createConstraint("constraints/alignLeft", (builder) => {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
-        builder.expr([1, bounds.x]).eq([1, refBounds.x]).strong()
+        builder.ct([1, bounds.x]).eq([1, refBounds.x]).strong()
       }
     })
 
@@ -132,7 +132,7 @@ export class Hints {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
         builder
-          .expr([1, bounds.x], [1, bounds.width])
+          .ct([1, bounds.x], [1, bounds.width])
           .eq([1, refBounds.x], [1, refBounds.width])
           .strong()
       }
@@ -149,7 +149,7 @@ export class Hints {
     const constraint = this.solver.createConstraint("constraints/alignTop", (builder) => {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
-        builder.expr([1, bounds.y]).eq([1, refBounds.y]).strong()
+        builder.ct([1, bounds.y]).eq([1, refBounds.y]).strong()
       }
     })
 
@@ -165,7 +165,7 @@ export class Hints {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
         builder
-          .expr([1, bounds.y], [1, bounds.height])
+          .ct([1, bounds.y], [1, bounds.height])
           .eq([1, refBounds.y], [1, refBounds.height])
           .strong()
       }
@@ -183,7 +183,7 @@ export class Hints {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
         builder
-          .expr([1, bounds.x], [0.5, bounds.width])
+          .ct([1, bounds.x], [0.5, bounds.width])
           .eq([1, refBounds.x], [0.5, refBounds.width])
           .strong()
       }
@@ -201,7 +201,7 @@ export class Hints {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
         builder
-          .expr([1, bounds.y], [0.5, bounds.height])
+          .ct([1, bounds.y], [0.5, bounds.height])
           .eq([1, refBounds.y], [0.5, refBounds.height])
           .strong()
       }
@@ -218,7 +218,7 @@ export class Hints {
     const constraint = this.solver.createConstraint("constraints/alignWidth", (builder) => {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
-        builder.expr([1, bounds.width]).eq([1, refBounds.width]).strong()
+        builder.ct([1, bounds.width]).eq([1, refBounds.width]).strong()
       }
     })
 
@@ -233,7 +233,7 @@ export class Hints {
     const constraint = this.solver.createConstraint("constraints/alignHeight", (builder) => {
       for (const target of targets.slice(1)) {
         const bounds = target.bounds
-        builder.expr([1, bounds.height]).eq([1, refBounds.height]).strong()
+        builder.ct([1, bounds.height]).eq([1, refBounds.height]).strong()
       }
     })
 
@@ -253,19 +253,19 @@ export class Hints {
       for (const child of childTargets) {
         const childBounds = child.bounds
 
-        builder.expr([1, childBounds.x]).ge([1, containerBounds.x]).required()
-        builder.expr([1, childBounds.y]).ge([1, containerBounds.y]).required()
+        builder.ct([1, childBounds.x]).ge([1, containerBounds.x]).required()
+        builder.ct([1, childBounds.y]).ge([1, containerBounds.y]).required()
         builder
-          .expr([1, containerBounds.x], [1, containerBounds.width])
+          .ct([1, containerBounds.x], [1, containerBounds.width])
           .ge([1, childBounds.x], [1, childBounds.width])
           .required()
         builder
-          .expr([1, containerBounds.y], [1, containerBounds.height])
+          .ct([1, containerBounds.y], [1, containerBounds.height])
           .ge([1, childBounds.y], [1, childBounds.height])
           .required()
 
         // Z-index depth constraint: child.z >= container.z + 1
-        builder.expr([1, childBounds.z]).ge([1, containerBounds.z], [1, 1]).strong()
+        builder.ct([1, childBounds.z]).ge([1, containerBounds.z], [1, 1]).strong()
       }
     })
 
@@ -374,7 +374,7 @@ export class Hints {
         const nextBounds = next.bounds
 
         builder
-          .expr([1, nextBounds.x])
+          .ct([1, nextBounds.x])
           .eq([1, currentBounds.x], [1, currentBounds.width], [actualGap, 1])
           .strong()
       }
@@ -391,7 +391,7 @@ export class Hints {
         const nextBounds = next.bounds
 
         builder
-          .expr([1, nextBounds.y])
+          .ct([1, nextBounds.y])
           .eq([1, currentBounds.y], [1, currentBounds.height], [actualGap, 1])
           .strong()
       }
@@ -407,7 +407,7 @@ export class Hints {
         const currentBounds = targets[i]!.bounds
 
         builder
-          .expr([1, currentBounds.x], [0.5, currentBounds.width])
+          .ct([1, currentBounds.x], [0.5, currentBounds.width])
           .eq([1, firstBounds.x], [0.5, firstBounds.width])
           .strong()
       }
@@ -423,7 +423,7 @@ export class Hints {
         const currentBounds = targets[i]!.bounds
 
         builder
-          .expr([1, currentBounds.x], [1, currentBounds.width])
+          .ct([1, currentBounds.x], [1, currentBounds.width])
           .eq([1, firstBounds.x], [1, firstBounds.width])
           .strong()
       }

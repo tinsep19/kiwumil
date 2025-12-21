@@ -827,7 +827,7 @@ export interface HintTarget {
 
 ### 1. Finish migrating `LayoutConstraints` helpers
 
-- **Steps**: Confirm that `arrange*`, `align*`, `enclose*`, and other utility methods build every constraint using a `ConstraintsBuilder` instance, collect the generated `rawConstraints`, and keep constraint metadata unchanged. Document the required builder flow (e.g., `expr(...).eq(...).strong()` for equality, `.ge()`/`.le()` for inequalities).
+- **Steps**: Confirm that `arrange*`, `align*`, `enclose*`, and other utility methods build every constraint using a `ConstraintsBuilder` instance, collect the generated `rawConstraints`, and keep constraint metadata unchanged. Document the required builder flow (e.g., `ct(...).eq(...).strong()` for equality, `.ge()`/`.le()` for inequalities).
 - **Acceptance**: Each helper uses `createConstraintsBuilder()` rather than `KiwiSolver.expression`/`.addConstraint`, the `rawConstraints` recorded by `record()` still match their previous counts, and `LayoutConstraintType`/`strength` mappings are unchanged.
 
 ### 2. Rewire `LayoutContext`/hint layers and tests

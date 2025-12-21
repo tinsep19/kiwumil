@@ -46,12 +46,12 @@ layout.right >= rect.right + 0.5 * strokeWidth
 これら**線形条件**を、プラットフォームの `ConstraintsBuilder` で記述すると：
 
 ```javascript
-builder.expr([1, layout.width]).ge([1, rect.width], [1, strokeWidth]).strong()
-builder.expr([1, layout.x], [0.5, strokeWidth]).le([1, rect.x]).strong()
-builder.expr([1, layout.right]).ge([1, rect.right], [0.5, strokeWidth]).strong()
+builder.ct([1, layout.width]).ge([1, rect.width], [1, strokeWidth]).strong()
+builder.ct([1, layout.x], [0.5, strokeWidth]).le([1, rect.x]).strong()
+builder.ct([1, layout.right]).ge([1, rect.right], [0.5, strokeWidth]).strong()
 ```
 
-- `expr([...])` : 左辺（係数・変数の組）を指定。
+- `ct([...])` : 左辺（係数・変数の組）を指定。
 - `.ge([...])`, `.le([...])` : 右辺（係数・変数・値）を指定し、大小関係を定義。
 - `.strong()` : 制約の強度（優先度）を設定。
 
@@ -84,21 +84,21 @@ builder.expr([1, layout.right]).ge([1, rect.right], [0.5, strokeWidth]).strong()
    // 面積を固定したい場合、事前に幅と高さを計算
    const width = 100
    const height = 50  // 面積5000を維持するよう事前計算
-   builder.expr([1, bounds.width]).eq([width, 1]).required()
-   builder.expr([1, bounds.height]).eq([height, 1]).required()
+   builder.ct([1, bounds.width]).eq([width, 1]).required()
+   builder.ct([1, bounds.height]).eq([height, 1]).required()
    ```
 
 2. **補助変数の導入**: 複雑な関係を複数の線形制約に分解
    ```typescript
    // 比率を維持したい場合
    // width : height = 16 : 9 → 9 * width = 16 * height
-   builder.expr([9, bounds.width]).eq([16, bounds.height]).strong()
+   builder.ct([9, bounds.width]).eq([16, bounds.height]).strong()
    ```
 
 3. **制約強度の活用**: 優先順位を設定して柔軟なレイアウトを実現
    ```typescript
-   builder.expr([1, bounds.width]).ge([100, 1]).required()  // 最小幅は必須
-   builder.expr([1, bounds.width]).eq([200, 1]).weak()      // 理想幅は弱い制約
+   builder.ct([1, bounds.width]).ge([100, 1]).required()  // 最小幅は必須
+   builder.ct([1, bounds.width]).eq([200, 1]).weak()      // 理想幅は弱い制約
    ```
 
 ---
