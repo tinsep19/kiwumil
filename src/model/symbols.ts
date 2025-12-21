@@ -1,14 +1,14 @@
 import type { ConstraintSpec } from "../core"
 import type { LayoutVariables } from "./layout_variables"
-import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint } from "../core"
+import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint, LayoutBounds } from "../core"
 import type { SymbolBase } from "./symbol_base"
 
 /**
  * SymbolRegistration: register の戻り値型
  */
-export type SymbolRegistration = {
+export type SymbolRegistration<T extends object = {}> = {
   symbol: ISymbol
-  characs: ISymbolCharacs
+  characs: ISymbolCharacs<T>
   constraint: LayoutConstraint
 }
 
@@ -23,7 +23,7 @@ export class SymbolRegistrationBuilder {
   private readonly id: SymbolId
   private readonly variables: LayoutVariables
 
-  private _characs?: ISymbolCharacs
+  private _characs?: ISymbolCharacs<any>
   private _symbol?: ISymbol
   private _constraint?: LayoutConstraint
 
@@ -67,8 +67,8 @@ export class SymbolRegistrationBuilder {
     return this.variables.createVariable(`${this.id}#${key}`)
   }
 
-  setCharacs(characs: ISymbolCharacs) {
-    this._characs = characs
+  setCharacs<T extends { id: SymbolId; bounds: LayoutBounds }>(characs: T) {
+    this._characs = characs as unknown as ISymbolCharacs<Omit<T, "id" | "bounds">>
   }
 
   setSymbol(symbol: ISymbol) {
@@ -87,7 +87,7 @@ export class SymbolRegistrationBuilder {
     return constraint
   }
 
-  build(): SymbolRegistration {
+  build(): SymbolRegistration<any> {
     if (!this._characs) throw new Error("SymbolRegistrationBuilder: characs not set")
     if (!this._symbol) throw new Error("SymbolRegistrationBuilder: symbol not set")
     if (!this._constraint) throw new Error("SymbolRegistrationBuilder: constraint not set")
@@ -107,8 +107,8 @@ export class SymbolRegistrationBuilder {
  *   シンボルを構築して返す
  */
 export class Symbols {
-  private readonly registrations: SymbolRegistration[] = []
-  private readonly registrations_index: Record<string, SymbolRegistration> = {}
+  private readonly registrations: SymbolRegistration<any>[] = []
+  private readonly registrations_index: Record<string, SymbolRegistration<any>> = {}
   private readonly variables: LayoutVariables
 
   constructor(variables: LayoutVariables) {
@@ -124,8 +124,8 @@ export class Symbols {
   register(
     plugin: string,
     symbolName: string,
-    factory: (symbolId: SymbolId, builder: SymbolRegistrationBuilder) => SymbolRegistration
-  ): SymbolRegistration {
+    factory: (symbolId: SymbolId, builder: SymbolRegistrationBuilder) => SymbolRegistration<any>
+  ): SymbolRegistration<any> {
     const symbolId = this.createSymbolId(plugin, symbolName)
     const builder = new SymbolRegistrationBuilder(symbolId, this.variables)
     const registration = factory(symbolId, builder)
@@ -148,7 +148,7 @@ export class Symbols {
   /**
    * 登録済み SymbolRegistration を列挙する読み取り専用配列
    */
-  getAll(): readonly SymbolRegistration[] {
+  getAll(): readonly SymbolRegistration<any>[] {
     return this.registrations
   }
 
@@ -163,7 +163,7 @@ export class Symbols {
   /**
    * 指定した ID に一致する SymbolRegistration を返す（存在しなければ undefined）
    */
-  findById(id: SymbolId): SymbolRegistration | undefined {
+  findById(id: SymbolId): SymbolRegistration<any> | undefined {
     return this.registrations_index[id]
   }
 
