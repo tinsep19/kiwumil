@@ -104,6 +104,9 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
+    // Create IconRegistry first - it will be shared across all icon operations
+    const iconsRegistry = new IconRegistry()
+
     // Icon loaders registered by plugins (build icons first)
     const icon_loaders: Record<string, IconSet> = {}
     for (const plugin of this.plugins) {
@@ -131,7 +134,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
         const pluginName = plugin.name
         const iconFactory = plugin.createIconFactory({
           createLoaderFactory: (importMeta: ImportMeta) => {
-            return new LoaderFactory(pluginName, importMeta?.url ?? "")
+            return new LoaderFactory(pluginName, importMeta?.url ?? "", iconsRegistry)
           },
         })
         icon_factories[pluginName] = iconFactory
@@ -172,24 +175,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
 
-    // Register available icon SVGs into runtime IconRegistry so renderers can emit <symbol> defs
-    const iconsRegistry = new IconRegistry()
-    
-    // Register icons from factories
-    for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
-      for (const [name, loaderFn] of Object.entries(iconFactory)) {
-        try {
-          const meta = loaderFn()
-          if (meta && meta.raw) {
-            iconsRegistry.register(pluginName, name, meta.raw)
-          }
-        } catch {
-          // ignore loader errors for now
-        }
-      }
-    }
-    
-    // Register icons from IconSet (legacy)
+    // Register icons from IconSet (legacy registerIcons API)
+    // Icons from createIconFactory are automatically registered when cacheLoader is called
     for (const [pluginName, iconSet] of Object.entries(icon_loaders)) {
       for (const name of iconSet.list()) {
         try {
