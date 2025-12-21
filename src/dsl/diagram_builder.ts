@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconRegistry, type IconMeta } from "../icon"
+import { IconRegistry } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
