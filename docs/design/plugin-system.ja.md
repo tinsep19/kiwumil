@@ -41,9 +41,11 @@ interface DiagramPlugin {
 
 プラグインは `registerIcons` で SVG アイコンを登録できます。システムは `icon.{plugin}.{name}` 名前空間を構築し、使用されたアイコンのみを `IconRegistry` が `<defs>` に集約して `<use>` で再利用します。
 
+アイコンシステムのアーキテクチャについての詳細は[アイコンシステム](icon-system.ja.md)を参照してください。
+
 セキュリティ/実装上の注意点:
 - プラグインは安全な SVG を登録すること。プロダクションではスクリプトや外部リソースを除去する（SVGO 等）。
-- `IconLoader` / `IconRegistry` は登録、ID 正規化、シンボル出力の責務を持ちます。
+- `IconSet` がアイコン登録を管理し、`IconLoader` がファイル読み込みを処理し、`IconRegistry` がシンボル出力の責務を持ちます。
 - DSL は各プラグインの `PluginIcons` をファクトリに渡すため、ファクトリ内でアイコンを使用できます。
 
 ## 実装ノートとサンプル

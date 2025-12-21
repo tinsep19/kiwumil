@@ -41,9 +41,11 @@ interface DiagramPlugin {
 
 Plugins may register SVG icons via `registerIcons`. The system builds an `icon` namespace (e.g. `icon.{plugin}.{name}`) that the DSL exposes to builders. Runtime rendering collects used icons into an `IconRegistry` which emits `<symbol>` elements into `<defs>` and reuses them via `<use>`.
 
+For detailed information about the icon system architecture, see [Icon System](icon-system.md).
+
 Security/implementation notes:
 - Plugins should register sanitized SVG; production should remove scripts/external references (SVGO or equivalent).
-- `IconLoader` and `IconRegistry` provide APIs to register, normalize ids, and emit symbols.
+- `IconSet` manages icon registrations, `IconLoader` handles file loading, and `IconRegistry` emits symbols.
 - The DSL passes plugin-specific `PluginIcons` into symbol/relationship factories so icons can be used when creating elements.
 
 ## Implementation notes & examples
