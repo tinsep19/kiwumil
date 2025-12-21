@@ -105,7 +105,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const iconsRegistry = new IconRegistry()
 
     // Create icon factories from plugins
-    const icon_factories: Record<string, Record<string, () => IconMeta>> = {}
+    const icon_factories: Record<string, PluginIcons> = {}
     for (const plugin of this.plugins) {
       if (typeof plugin.createIconFactory === "function") {
         const iconFactory = plugin.createIconFactory(iconsRegistry)
