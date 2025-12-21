@@ -8,6 +8,34 @@ The icon system provides a way for plugins to register and use SVG icons in diag
 
 ## Architecture
 
+### IconRegister (Type Definition)
+
+**Purpose**: Interface used by plugins in `createIconFactory`
+
+**Responsibilities**:
+- Provides `createLoaderFactory` method so plugins can obtain `LoaderFactory` instances
+
+**Type Definition**:
+```typescript
+export type IconRegister = {
+  createLoaderFactory: (importMeta: ImportMeta) => LoaderFactory
+}
+```
+
+**Usage Example**:
+```typescript
+createIconFactory(register: IconRegister) {
+  const loaderFactory = register.createLoaderFactory(import.meta)
+  return {
+    icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+  }
+}
+```
+
+**Note**: `IconRegister` is different from `IconRegistry`:
+- `IconRegister`: Interface type for plugin API (argument to `createIconFactory`)
+- `IconRegistry`: Runtime class that manages SVG symbols (described below)
+
 ### LoaderFactory
 
 **Purpose**: Creates and caches IconLoader instances, automatically registering loaded icons.
@@ -21,7 +49,7 @@ The icon system provides a way for plugins to register and use SVG icons in diag
 ```typescript
 class LoaderFactory {
   constructor(plugin: string, baseUrl: string, iconRegistry: IconRegistry)
-  cacheLoader(relPath: string): () => IconMeta | null
+  cacheLoader(relPath: string): () => IconMeta
 }
 ```
 

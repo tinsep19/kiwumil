@@ -8,6 +8,34 @@
 
 ## アーキテクチャ
 
+### IconRegister（型定義）
+
+**目的**: プラグインが `createIconFactory` で使用するインターフェース
+
+**責務**:
+- `createLoaderFactory` メソッドを提供し、プラグインが `LoaderFactory` インスタンスを取得できるようにする
+
+**型定義**:
+```typescript
+export type IconRegister = {
+  createLoaderFactory: (importMeta: ImportMeta) => LoaderFactory
+}
+```
+
+**使用例**:
+```typescript
+createIconFactory(register: IconRegister) {
+  const loaderFactory = register.createLoaderFactory(import.meta)
+  return {
+    icon1: loaderFactory.cacheLoader('icons/icon1.svg'),
+  }
+}
+```
+
+**注意**: `IconRegister` は `IconRegistry` とは異なります：
+- `IconRegister`: プラグインAPI用のインターフェース型（`createIconFactory` の引数）
+- `IconRegistry`: SVGシンボルを管理するランタイムクラス（後述）
+
 ### LoaderFactory
 
 **目的**: IconLoaderインスタンスを作成・キャッシュし、読み込まれたアイコンを自動登録
@@ -21,7 +49,7 @@
 ```typescript
 class LoaderFactory {
   constructor(plugin: string, baseUrl: string, iconRegistry: IconRegistry)
-  cacheLoader(relPath: string): () => IconMeta | null
+  cacheLoader(relPath: string): () => IconMeta
 }
 ```
 
