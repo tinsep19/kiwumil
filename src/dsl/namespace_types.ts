@@ -69,7 +69,7 @@ export type BuildRelationshipNamespace<TPlugins extends readonly DiagramPlugin[]
 type IconEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
   {
-    registerIcons: NonNullable<DiagramPlugin["registerIcons"]>
+    createIconFactory: NonNullable<DiagramPlugin["createIconFactory"]>
   }
 >
 

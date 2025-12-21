@@ -17,7 +17,7 @@ import type {
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { Relationships } from "./relationships"
-import { IconLoader, IconRegistry } from "../icon"
+import { IconRegistry, type IconMeta } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -31,9 +31,6 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (args: {
   hint: HintFactory
   icon: Record<string, PluginIcons>
 }) => void
-
-type RegisterIconsParam = Parameters<NonNullable<DiagramPlugin["registerIcons"]>>[0]
-type CreateRegistrar = RegisterIconsParam["createRegistrar"]
 
 /**
  * DiagramBuilder - TypeDiagram の内部実装クラス
@@ -104,56 +101,30 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
-    // Icon loaders registered by plugins (build icons first)
-    const icon_loaders: Record<string, IconLoader> = {}
-    for (const plugin of this.plugins) {
-      if (typeof plugin.registerIcons === "function") {
-        const createRegistrar: CreateRegistrar = (
-          pluginName,
-          importMeta,
-          iconRegistrationBlock
-        ) => {
-          const loader = new IconLoader(pluginName, importMeta?.url ?? "")
-          iconRegistrationBlock(loader)
-          icon_loaders[pluginName] = loader
-        }
+    // Create IconRegistry first - it will be shared across all icon operations
+    const iconsRegistry = new IconRegistry()
 
-        plugin.registerIcons({
-          createRegistrar,
-        })
+    // Create icon factories from plugins
+    const icon_factories: Record<string, Record<string, () => IconMeta>> = {}
+    for (const plugin of this.plugins) {
+      if (typeof plugin.createIconFactory === "function") {
+        const iconFactory = plugin.createIconFactory(iconsRegistry)
+        icon_factories[plugin.name] = iconFactory
       }
     }
 
     // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta | null
     const icon: BuildIconNamespace<TPlugins> = {} as BuildIconNamespace<TPlugins>
     const iconRegistry = icon as Record<string, PluginIcons>
-    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
-      iconRegistry[pluginName] = {}
-      for (const name of loader.list()) {
-        // use sync loader if available
-        iconRegistry[pluginName]![name] = () =>
-          typeof loader.load_sync === "function" ? loader.load_sync(name) : null
-      }
+    
+    // Populate icon registry with factories
+    for (const [pluginName, iconFactory] of Object.entries(icon_factories)) {
+      iconRegistry[pluginName] = iconFactory
     }
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
-
-    // Register available icon SVGs into runtime IconRegistry so renderers can emit <symbol> defs
-    const iconsRegistry = new IconRegistry()
-    for (const [pluginName, loader] of Object.entries(icon_loaders)) {
-      for (const name of loader.list()) {
-        try {
-          const meta = typeof loader.load_sync === "function" ? loader.load_sync(name) : null
-          if (meta && meta.raw) {
-            iconsRegistry.register(pluginName, name, meta.raw)
-          }
-        } catch {
-          // ignore loader errors for now
-        }
-      }
-    }
 
     const hint = new HintFactory({
       context,

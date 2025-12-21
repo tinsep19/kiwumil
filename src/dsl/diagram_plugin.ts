@@ -4,18 +4,13 @@ import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
 import type { PluginIcons } from "./namespace_types"
 import type { ISymbolCharacs } from "../core"
+import type { IconMeta, IconRegistry } from "../icon"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SymbolFactoryMap = Record<string, (...args: any[]) => ISymbolCharacs>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
+type IconFactoryMap = Record<string, () => IconMeta>
 /* eslint-enable @typescript-eslint/no-explicit-any */
-
-export type IconRegistrar = { register: (name: string, relPath: string) => void }
-export type IconRegistrarCallback = (registrar: IconRegistrar) => void
-
-export type Icons = {
-  createRegistrar: (plugin: string, importMeta: ImportMeta, callback: IconRegistrarCallback) => void
-}
 
 /**
  * Diagram Plugin Interface
@@ -49,7 +44,7 @@ export interface DiagramPlugin {
   ): RelationshipFactoryMap
 
   /**
-   * Optional: plugin can register icons. The icons API provides createRegistrar(plugin, importMeta, callback)
+   * Optional: plugin can create icon factory. Returns a map of icon names to loader functions.
    */
-  registerIcons?(icons: Icons): void
+  createIconFactory?(registry: IconRegistry): IconFactoryMap
 }

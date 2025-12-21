@@ -278,7 +278,7 @@ Inside `TypeDiagram` and `DiagramBuilder`, the following processes occur:
    - Create `Symbols` and `Relationships` instances
    - Generate layout-specific `LayoutContext`
    - Generate ID for DiagramSymbol (special Symbol representing the entire diagram)
-   - Use `NamespaceBuilder` to construct `icon` namespace (calling each plugin's `registerIcons`)
+   - Use `NamespaceBuilder` to construct `icon` namespace (calling each plugin's `createIconFactory`)
    - Use `NamespaceBuilder` to construct `el` and `rel`, passing `symbols`/`relationships` instances, `layout`, and `icons` to each plugin's `createSymbolFactory/RelationshipFactory`
    - Plugin-specific factories register elements via `Symbols` / `Relationships`
    - Execute user-provided callback function
@@ -301,7 +301,7 @@ Namespace DSL is extended by registering any `DiagramPlugin` in addition to the 
 
 - `TypeDiagram().use(MyPlugin)` adds namespaces as `el.myplugin` / `rel.myplugin` / `icon.myplugin`
 - Each plugin registers Symbol/Relationship via `Symbols` / `Relationships`
-- Registering icons through `registerIcons` makes them available as `icon.myplugin.iconName()`
+- Defining icon factories through `createIconFactory` makes them available as `icon.myplugin.iconName()`
 - IDs are automatically generated within `Symbols.register()` / `Relationships.register()`
 - Layout variables (`LayoutBound`) are generated with `layout.variables.createBound()` and injected into constructors
 - Plugin-specific hints and size adjustments can also be applied through the same LayoutContext

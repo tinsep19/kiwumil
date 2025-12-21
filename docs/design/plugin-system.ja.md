@@ -24,7 +24,7 @@ Kiwumil のプラグインシステムは、Symbol と Relationship をモジュ
 
 - `name`: `el.{name}` / `rel.{name}` に使われる名前空間
 - 任意のファクトリ: `createSymbolFactory`, `createRelationshipFactory`
-- 任意で `registerIcons(icons)` を実装してアイコンを提供可能
+- 任意で `createIconFactory(register)` を実装してアイコンを提供可能
 
 簡易な型スケッチ:
 
@@ -33,17 +33,19 @@ interface DiagramPlugin {
   name: string
   createSymbolFactory?: (symbols: Symbols, theme: Theme, icons: PluginIcons) => Record<string, (...args:any[]) => SymbolId>
   createRelationshipFactory?: (relationships: Relationships, theme: Theme, icons: PluginIcons) => Record<string, (...args:any[]) => RelationshipId>
-  registerIcons?: (icons: Icons) => void
+  createIconFactory?: (registry: IconRegistry) => IconFactoryMap
 }
 ```
 
 ## アイコン対応
 
-プラグインは `registerIcons` で SVG アイコンを登録できます。システムは `icon.{plugin}.{name}` 名前空間を構築し、使用されたアイコンのみを `IconRegistry` が `<defs>` に集約して `<use>` で再利用します。
+プラグインは `createIconFactory` で SVG アイコンファクトリを定義できます。システムは `icon.{plugin}.{name}` 名前空間を構築し、使用されたアイコンのみを `IconRegistry` が `<defs>` に集約して `<use>` で再利用します。
+
+アイコンシステムのアーキテクチャについての詳細は[アイコンシステム](icon-system.ja.md)を参照してください。
 
 セキュリティ/実装上の注意点:
 - プラグインは安全な SVG を登録すること。プロダクションではスクリプトや外部リソースを除去する（SVGO 等）。
-- `IconLoader` / `IconRegistry` は登録、ID 正規化、シンボル出力の責務を持ちます。
+- `LoaderFactory` がアイコンの読み込みとキャッシュを管理し、`IconRegistry` がシンボル出力の責務を持ちます。
 - DSL は各プラグインの `PluginIcons` をファクトリに渡すため、ファクトリ内でアイコンを使用できます。
 
 ## 実装ノートとサンプル
@@ -55,11 +57,20 @@ interface DiagramPlugin {
 ```typescript
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
+  
+  createIconFactory(registry: IconRegistry) {
+    const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
+    return {
+      myicon: loaderFactory.cacheLoader('icons/myicon.svg'),
+    }
+  },
+  
   createSymbolFactory(symbols, theme, icons) {
     return {
       mySymbol(label: string) {
         const symbol = symbols.register('myplugin', 'mySymbol', (symbolId, r) => {
           // bounds, instance, characs, constraints を設定
+          const iconMeta = icons.myicon() // アイコンを取得
           return r.build()
         })
         return symbol.id
@@ -80,7 +91,7 @@ ID は `${namespace}:${name}/${index}` 形式です（例: `uml:actor/0`）。`S
 - ファクトリは型安全に保つ。`any` の濫用を避ける。
 - `symbols.register` / `relationships.register` を使う。
 - LayoutBound はビルダー側で生成し、シンボルに注入する。
-- アイコンは `registerIcons` で登録し、`PluginIcons` を利用する。
+- アイコンは `createIconFactory` で定義し、`PluginIcons` を利用する。
 - `name` はユニークにする（`core` を避ける）。
 
 ## テスト

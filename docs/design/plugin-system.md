@@ -24,7 +24,7 @@ All plugins implement `DiagramPlugin`. Key points:
 
 - `name`: plugin namespace used as `el.{name}` and `rel.{name}`.
 - Optional factories: `createSymbolFactory`, `createRelationshipFactory`.
-- Optional `registerIcons(icons)` for providing SVG icons to the DSL.
+- Optional `createIconFactory(register)` for providing SVG icons to the DSL.
 
 Example (type sketch):
 
@@ -33,17 +33,19 @@ interface DiagramPlugin {
   name: string
   createSymbolFactory?: (symbols: Symbols, theme: Theme, icons: PluginIcons) => Record<string, (...args:any[]) => SymbolId>
   createRelationshipFactory?: (relationships: Relationships, theme: Theme, icons: PluginIcons) => Record<string, (...args:any[]) => RelationshipId>
-  registerIcons?: (icons: Icons) => void
+  createIconFactory?: (registry: IconRegistry) => IconFactoryMap
 }
 ```
 
 ## Icon support
 
-Plugins may register SVG icons via `registerIcons`. The system builds an `icon` namespace (e.g. `icon.{plugin}.{name}`) that the DSL exposes to builders. Runtime rendering collects used icons into an `IconRegistry` which emits `<symbol>` elements into `<defs>` and reuses them via `<use>`.
+Plugins may define SVG icon factories via `createIconFactory`. The system builds an `icon` namespace (e.g. `icon.{plugin}.{name}`) that the DSL exposes to builders. Runtime rendering collects used icons into an `IconRegistry` which emits `<symbol>` elements into `<defs>` and reuses them via `<use>`.
+
+For detailed information about the icon system architecture, see [Icon System](icon-system.md).
 
 Security/implementation notes:
 - Plugins should register sanitized SVG; production should remove scripts/external references (SVGO or equivalent).
-- `IconLoader` and `IconRegistry` provide APIs to register, normalize ids, and emit symbols.
+- `LoaderFactory` manages icon loading and caching, and `IconRegistry` emits symbols.
 - The DSL passes plugin-specific `PluginIcons` into symbol/relationship factories so icons can be used when creating elements.
 
 ## Implementation notes & examples
@@ -55,11 +57,20 @@ Example skeleton:
 ```typescript
 export const MyPlugin: DiagramPlugin = {
   name: 'myplugin',
+  
+  createIconFactory(registry: IconRegistry) {
+    const loaderFactory = registry.createLoaderFactory(this.name, import.meta)
+    return {
+      myicon: loaderFactory.cacheLoader('icons/myicon.svg'),
+    }
+  },
+  
   createSymbolFactory(symbols, theme, icons) {
     return {
       mySymbol(label: string) {
         const symbol = symbols.register('myplugin', 'mySymbol', (symbolId, r) => {
           // create bounds, instance, characs, constraints
+          const iconMeta = icons.myicon() // get icon
           return r.build()
         })
         return symbol.id
@@ -80,7 +91,7 @@ IDs follow `${namespace}:${name}/${index}` (e.g. `uml:actor/0`). `Symbols` / `Re
 - Keep plugin factories type-safe; prefer explicit parameter types to `any` where possible.
 - Use `symbols.register` / `relationships.register` rather than manual id management.
 - Inject LayoutBounds/variables from builder context; avoid accessing LayoutContext directly inside symbol constructors.
-- Use `registerIcons` to provide icons and consume `PluginIcons` in factories.
+- Use `createIconFactory` to provide icons and consume `PluginIcons` in factories.
 - Choose unique plugin `name` values (avoid `core`).
 
 ## Testing

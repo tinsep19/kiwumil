@@ -1,4 +1,5 @@
 // Minimal icon registry: collects used icons and emits <symbol> fragments
+import { LoaderFactory } from "./loader_factory"
 
 function normalize_id(plugin: string, name: string): string {
   let id = `${plugin}-${name}`.toLowerCase()
@@ -54,5 +55,17 @@ export class IconRegistry {
     }
     out += "</defs>"
     return out
+  }
+
+  /**
+   * Create a LoaderFactory for the given plugin
+   * This method is used by plugins in createIconFactory to get a factory for creating icon loaders
+   * 
+   * @param plugin - Plugin name
+   * @param importMeta - import.meta from the plugin
+   * @returns LoaderFactory instance
+   */
+  createLoaderFactory(plugin: string, importMeta: ImportMeta): LoaderFactory {
+    return new LoaderFactory(plugin, importMeta?.url ?? "", this)
   }
 }

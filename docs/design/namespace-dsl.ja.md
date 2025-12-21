@@ -278,7 +278,7 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
    - `Symbols` と `Relationships` インスタンスを作成
    - レイアウト専用の `LayoutContext` を生成
    - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成
-   - `NamespaceBuilder` を使って `icon` 名前空間を構築（各プラグインの `registerIcons` を呼び出し）
+   - `NamespaceBuilder` を使って `icon` 名前空間を構築（各プラグインの `createIconFactory` を呼び出し）
    - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout`、および `icons` を渡す
    - プラグインごとのファクトリが `Symbols` / `Relationships` を経由して要素を登録
    - ユーザーが提供したコールバック関数を実行
@@ -301,7 +301,7 @@ Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意�
 
 - `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` / `icon.myplugin` として追加される
 - 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
-- `registerIcons` を通じてアイコンを登録すると `icon.myplugin.iconName()` として利用可能になる
+- `createIconFactory` を通じてアイコンファクトリを定義すると `icon.myplugin.iconName()` として利用可能になる
 - ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
 - レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
 - プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
