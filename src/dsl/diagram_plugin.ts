@@ -7,7 +7,7 @@ import type { ISymbolCharacs } from "../core"
 import type { IconRegistry } from "../icon"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type SymbolFactoryMap = Record<string, (...args: any[]) => ISymbolCharacs>
+type SymbolFactoryMap = Record<string, (...args: any[]) => ISymbolCharacs<any>>
 type RelationshipFactoryMap = Record<string, (...args: any[]) => RelationshipId>
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
