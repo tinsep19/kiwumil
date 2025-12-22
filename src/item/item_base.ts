@@ -9,9 +9,9 @@ export interface ItemBaseOptions {
 }
 
 /**
- * Size: Represents width and height dimensions
+ * EstimateSize: Represents width and height dimensions
  */
-export interface Size {
+export interface EstimateSize {
   width: number
   height: number
 }
@@ -30,9 +30,9 @@ export abstract class Item {
 
   /**
    * Calculate the default size for this item based on its content
-   * @returns Size object with width and height
+   * @returns EstimateSize object with width and height
    */
-  abstract getDefaultSize(): Size
+  abstract getDefaultSize(): EstimateSize
 
   /**
    * Render the item as an SVG string

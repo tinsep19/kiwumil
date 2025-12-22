@@ -1,6 +1,6 @@
 import { getStyleForSymbol } from "../theme"
 import type { Theme, ContainerPadding } from "../theme"
-import type { Point, IContainerSymbolCharacs } from "../core"
+import type { Point, ISymbol, SymbolId, LayoutBounds, ISymbolCharacs } from "../core"
 export interface DiagramInfo {
   title: string
   createdAt?: string
@@ -10,39 +10,43 @@ export interface DiagramInfo {
 import type { ContainerBounds, LinearConstraintBuilder, ItemBounds } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
-import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
 import { TextItem } from "../item"
 
 const DEFAULT_TEXT_ITEM_HEIGHT = 20
 
-export type DiagramSymbolCharacs = IContainerSymbolCharacs & {
+export type DiagramSymbolCharacs = ISymbolCharacs<{
+  container: ContainerBounds
   title: ItemBounds
   author?: ItemBounds
   createdAt?: ItemBounds
-}
+}>
 
-export interface DiagramSymbolOptions extends Omit<SymbolBaseOptions, "id" | "bounds"> {
+export interface DiagramSymbolOptions {
   info: DiagramInfo
   characs: DiagramSymbolCharacs
+  theme: Theme
 }
 
-export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
+export class DiagramSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
   readonly container: ContainerBounds
+  protected readonly theme: Theme
 
   private readonly diagramInfo: DiagramInfo
-  private readonly titleItem: TextItem
-  private readonly authorItem?: TextItem
-  private readonly createdAtItem?: TextItem
+  private readonly items: { title: TextItem; author?: TextItem; createdAt?: TextItem }
   private constraintsApplied = false
 
   constructor(options: DiagramSymbolOptions) {
-    super({ id: options.characs.id, bounds: options.characs.bounds, theme: options.theme })
+    this.id = options.characs.id
+    this.bounds = options.characs.bounds
     this.container = options.characs.container
+    this.theme = options.theme
     this.diagramInfo = options.info
 
     // Create TextItem for title
     const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
-    this.titleItem = new TextItem({
+    const titleItem = new TextItem({
       bounds: options.characs.title,
       text: options.info.title,
       alignment: "center",
@@ -53,30 +57,32 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     })
 
     // Create TextItem for author if provided
-    if (options.info.author && options.characs.author) {
-      this.authorItem = new TextItem({
-        bounds: options.characs.author,
-        text: `Author: ${options.info.author}`,
-        alignment: "right",
-        fontSize: style.fontSize * 0.75,
-        fontFamily: style.fontFamily,
-        textColor: style.textColor,
-        padding: { top: 4, right: 10, bottom: 4, left: 10 },
-      })
-    }
+    const authorItem = options.info.author && options.characs.author
+      ? new TextItem({
+          bounds: options.characs.author,
+          text: `Author: ${options.info.author}`,
+          alignment: "right",
+          fontSize: style.fontSize * 0.75,
+          fontFamily: style.fontFamily,
+          textColor: style.textColor,
+          padding: { top: 4, right: 10, bottom: 4, left: 10 },
+        })
+      : undefined
 
     // Create TextItem for createdAt if provided
-    if (options.info.createdAt && options.characs.createdAt) {
-      this.createdAtItem = new TextItem({
-        bounds: options.characs.createdAt,
-        text: `Created: ${options.info.createdAt}`,
-        alignment: "right",
-        fontSize: style.fontSize * 0.75,
-        fontFamily: style.fontFamily,
-        textColor: style.textColor,
-        padding: { top: 4, right: 10, bottom: 4, left: 10 },
-      })
-    }
+    const createdAtItem = options.info.createdAt && options.characs.createdAt
+      ? new TextItem({
+          bounds: options.characs.createdAt,
+          text: `Created: ${options.info.createdAt}`,
+          alignment: "right",
+          fontSize: style.fontSize * 0.75,
+          fontFamily: style.fontFamily,
+          textColor: style.textColor,
+          padding: { top: 4, right: 10, bottom: 4, left: 10 },
+        })
+      : undefined
+
+    this.items = { title: titleItem, author: authorItem, createdAt: createdAtItem }
   }
 
   private getFallbackStyle() {
@@ -128,32 +134,32 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     builder.ct([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
 
     // Position title at the top center
-    builder.ct([1, this.titleItem.bounds.x]).eq([1, bounds.x]).strong()
-    builder.ct([1, this.titleItem.bounds.y]).eq([1, bounds.y], [padding.top, 1]).strong()
-    builder.ct([1, this.titleItem.bounds.width]).eq([1, bounds.width]).strong()
+    builder.ct([1, this.items.title.bounds.x]).eq([1, bounds.x]).strong()
+    builder.ct([1, this.items.title.bounds.y]).eq([1, bounds.y], [padding.top, 1]).strong()
+    builder.ct([1, this.items.title.bounds.width]).eq([1, bounds.width]).strong()
 
     // Position author and createdAt at the bottom right if they exist
     let bottomOffset = -padding.bottom
-    if (this.createdAtItem) {
-      builder.ct([1, this.createdAtItem.bounds.x]).eq([1, bounds.x]).strong()
+    if (this.items.createdAt) {
+      builder.ct([1, this.items.createdAt.bounds.x]).eq([1, bounds.x]).strong()
       builder
-        .ct([1, this.createdAtItem.bounds.bottom])
+        .ct([1, this.items.createdAt.bounds.bottom])
         .eq([1, bounds.bottom], [bottomOffset, 1])
         .strong()
-      builder.ct([1, this.createdAtItem.bounds.width]).eq([1, bounds.width]).strong()
+      builder.ct([1, this.items.createdAt.bounds.width]).eq([1, bounds.width]).strong()
       // Update offset for author if both exist
-      if (this.authorItem) {
-        bottomOffset -= this.createdAtItem.bounds.height.value() || DEFAULT_TEXT_ITEM_HEIGHT
+      if (this.items.author) {
+        bottomOffset -= this.items.createdAt.bounds.height.value() || DEFAULT_TEXT_ITEM_HEIGHT
       }
     }
 
-    if (this.authorItem) {
-      builder.ct([1, this.authorItem.bounds.x]).eq([1, bounds.x]).strong()
+    if (this.items.author) {
+      builder.ct([1, this.items.author.bounds.x]).eq([1, bounds.x]).strong()
       builder
-        .ct([1, this.authorItem.bounds.bottom])
+        .ct([1, this.items.author.bounds.bottom])
         .eq([1, bounds.bottom], [bottomOffset, 1])
         .strong()
-      builder.ct([1, this.authorItem.bounds.width]).eq([1, bounds.width]).strong()
+      builder.ct([1, this.items.author.bounds.width]).eq([1, bounds.width]).strong()
     }
   }
 
@@ -213,10 +219,14 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     return `
       <g id="${this.id}">
         <!-- Title -->
-        ${this.titleItem.render()}
-        ${this.authorItem ? `<!-- Author -->\n${this.authorItem.render()}` : ""}
-        ${this.createdAtItem ? `<!-- Created At -->\n${this.createdAtItem.render()}` : ""}
+        ${this.items.title.render()}
+        ${this.items.author ? `<!-- Author -->\n${this.items.author.render()}` : ""}
+        ${this.items.createdAt ? `<!-- Created At -->\n${this.items.createdAt.render()}` : ""}
       </g>
     `
+  }
+
+  render(): string {
+    return this.toSVG()
   }
 }

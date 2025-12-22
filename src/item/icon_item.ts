@@ -1,5 +1,5 @@
 // src/item/icon_item.ts
-import { Item, type ItemBaseOptions, type Size } from "./item_base"
+import { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
 import { getBoundsValues } from "../core"
 import type { IconMeta } from "../icon"
 
@@ -39,7 +39,7 @@ export class IconItem extends Item {
   /**
    * Calculate the default size based on icon dimensions
    */
-  getDefaultSize(): Size {
+  getDefaultSize(): EstimateSize {
     return {
       width: this.width,
       height: this.height,

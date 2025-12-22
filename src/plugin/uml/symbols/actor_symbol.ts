@@ -1,7 +1,6 @@
 // src/plugin/uml/symbols/actor_symbol.ts
-import type { LinearConstraintBuilder, ItemBounds, ISymbolCharacs } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
-import { getStyleForSymbol } from "../../../theme"
+import type { LinearConstraintBuilder, ItemBounds, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds } from "../../../core"
+import { getStyleForSymbol, type Theme } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
 import type { IconMeta } from "../../../icon"
@@ -16,22 +15,26 @@ export type ActorSymbolCharacs = ISymbolCharacs<{
   stereotype?: ItemBounds
 }>
 
-export interface ActorSymbolOptions extends Omit<SymbolBaseOptions, "id" | "bounds"> {
+export interface ActorSymbolOptions {
   label: string
   stereotype?: string
   icon: IconMeta
   characs: ActorSymbolCharacs
+  theme: Theme
 }
 
-export class ActorSymbol extends SymbolBase {
+export class ActorSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
   readonly stereotype?: string
-  private readonly iconItem: IconItem
-  private readonly labelItem: TextItem
-  private readonly stereotypeItem?: TextItem
+  private readonly items: { icon: IconItem; label: TextItem; stereotype?: TextItem }
 
   constructor(options: ActorSymbolOptions) {
-    super({ id: options.characs.id, bounds: options.characs.bounds, theme: options.theme })
+    this.id = options.characs.id
+    this.bounds = options.characs.bounds
+    this.theme = options.theme
     this.label = options.label
     this.stereotype = options.stereotype
 
@@ -41,7 +44,7 @@ export class ActorSymbol extends SymbolBase {
       : this.getFallbackStyle()
 
     // Create IconItem for actor figure
-    this.iconItem = new IconItem({
+    const iconItem = new IconItem({
       bounds: options.characs.icon,
       icon: options.icon,
       width: ICON_BASE_SIZE,
@@ -50,7 +53,7 @@ export class ActorSymbol extends SymbolBase {
     })
 
     // Create TextItem for label
-    this.labelItem = new TextItem({
+    const labelItem = new TextItem({
       bounds: options.characs.label,
       text: options.label,
       alignment: "center",
@@ -61,17 +64,19 @@ export class ActorSymbol extends SymbolBase {
     })
 
     // Create TextItem for stereotype if provided
-    if (options.stereotype && options.characs.stereotype) {
-      this.stereotypeItem = new TextItem({
-        bounds: options.characs.stereotype,
-        text: `<<${options.stereotype}>>`,
-        alignment: "center",
-        fontSize: style.fontSize,
-        fontFamily: style.fontFamily,
-        textColor: style.textColor,
-        padding: { top: 2, right: 8, bottom: 2, left: 8 },
-      })
-    }
+    const stereotypeItem = options.stereotype && options.characs.stereotype
+      ? new TextItem({
+          bounds: options.characs.stereotype,
+          text: `<<${options.stereotype}>>`,
+          alignment: "center",
+          fontSize: style.fontSize,
+          fontFamily: style.fontFamily,
+          textColor: style.textColor,
+          padding: { top: 2, right: 8, bottom: 2, left: 8 },
+        })
+      : undefined
+
+    this.items = { icon: iconItem, label: labelItem, stereotype: stereotypeItem }
   }
 
   private getFallbackStyle() {
@@ -122,11 +127,11 @@ export class ActorSymbol extends SymbolBase {
   toSVG(): string {
     return `
       <g id="${this.id}">
-        ${this.stereotypeItem ? `<!-- Stereotype -->\n${this.stereotypeItem.render()}` : ""}
+        ${this.items.stereotype ? `<!-- Stereotype -->\n${this.items.stereotype.render()}` : ""}
         <!-- Actor Icon -->
-        ${this.iconItem.render()}
+        ${this.items.icon.render()}
         <!-- Label -->
-        ${this.labelItem.render()}
+        ${this.items.label.render()}
       </g>
     `
   }
@@ -136,24 +141,28 @@ export class ActorSymbol extends SymbolBase {
     const style = this.theme ? getStyleForSymbol(this.theme, "actor") : this.getFallbackStyle()
 
     // Layout constraints for icon, label, and optional stereotype
-    const stereotypeHeight = this.stereotypeItem ? style.fontSize + 5 : 0
+    const stereotypeHeight = this.items.stereotype ? style.fontSize + 5 : 0
 
     // Position stereotype at top if present
-    if (this.stereotypeItem) {
-      builder.ct([1, this.stereotypeItem.bounds.x]).eq([1, bounds.x]).strong()
-      builder.ct([1, this.stereotypeItem.bounds.y]).eq([1, bounds.y]).strong()
-      builder.ct([1, this.stereotypeItem.bounds.width]).eq([1, bounds.width]).strong()
+    if (this.items.stereotype) {
+      builder.ct([1, this.items.stereotype.bounds.x]).eq([1, bounds.x]).strong()
+      builder.ct([1, this.items.stereotype.bounds.y]).eq([1, bounds.y]).strong()
+      builder.ct([1, this.items.stereotype.bounds.width]).eq([1, bounds.width]).strong()
     }
 
     // Position icon below stereotype (or at top if no stereotype)
-    builder.ct([1, this.iconItem.bounds.x]).eq([1, bounds.x], [0.5, bounds.width], [-ICON_BASE_SIZE / 2, 1]).strong()
-    builder.ct([1, this.iconItem.bounds.y]).eq([1, bounds.y], [stereotypeHeight + 5, 1]).strong()
-    builder.ct([1, this.iconItem.bounds.width]).eq([ICON_BASE_SIZE, 1]).strong()
-    builder.ct([1, this.iconItem.bounds.height]).eq([ICON_BASE_SIZE, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.x]).eq([1, bounds.x], [0.5, bounds.width], [-ICON_BASE_SIZE / 2, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.y]).eq([1, bounds.y], [stereotypeHeight + 5, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.width]).eq([ICON_BASE_SIZE, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.height]).eq([ICON_BASE_SIZE, 1]).strong()
 
     // Position label at bottom
-    builder.ct([1, this.labelItem.bounds.x]).eq([1, bounds.x]).strong()
-    builder.ct([1, this.labelItem.bounds.bottom]).eq([1, bounds.bottom]).strong()
-    builder.ct([1, this.labelItem.bounds.width]).eq([1, bounds.width]).strong()
+    builder.ct([1, this.items.label.bounds.x]).eq([1, bounds.x]).strong()
+    builder.ct([1, this.items.label.bounds.bottom]).eq([1, bounds.bottom]).strong()
+    builder.ct([1, this.items.label.bounds.width]).eq([1, bounds.width]).strong()
+  }
+
+  render(): string {
+    return this.toSVG()
   }
 }

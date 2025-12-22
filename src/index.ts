@@ -21,7 +21,7 @@ export type { Theme } from "./theme"
 export { Item, TextItem, RectItem, IconItem } from "./item"
 export type {
   ItemBaseOptions,
-  Size,
+  EstimateSize,
   TextItemOptions,
   TextAlignment,
   Padding,

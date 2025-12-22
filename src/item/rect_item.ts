@@ -1,5 +1,5 @@
 // src/item/rect_item.ts
-import { Item, type ItemBaseOptions, type Size } from "./item_base"
+import { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
 import { getBoundsValues } from "../core"
 
 /**
@@ -47,7 +47,7 @@ export class RectItem extends Item {
   /**
    * Calculate the default size based on configured dimensions
    */
-  getDefaultSize(): Size {
+  getDefaultSize(): EstimateSize {
     return {
       width: this.width,
       height: this.height,

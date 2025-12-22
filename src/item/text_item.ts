@@ -1,5 +1,5 @@
 // src/item/text_item.ts
-import { Item, type ItemBaseOptions, type Size } from "./item_base"
+import { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
 import { getBoundsValues } from "../core"
 
 /**
@@ -85,7 +85,7 @@ export class TextItem extends Item {
   /**
    * Calculate the default size based on text content and padding
    */
-  getDefaultSize(): Size {
+  getDefaultSize(): EstimateSize {
     const lines = this.getLines()
     const longestLine = Math.max(...lines.map((line) => line.length), 1)
 

@@ -82,16 +82,16 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
     const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
-      const diagramBound = r.createLayoutBounds("layout")
-      const containerBound = r.createContainerBounds("container")
+      const bounds = r.createLayoutBounds("bounds")
+      const container = r.createContainerBounds("container")
       const title = r.createItemBounds("title")
       const author = diagramInfo.author ? r.createItemBounds("author") : undefined
       const createdAt = diagramInfo.createdAt ? r.createItemBounds("createdAt") : undefined
       const symbol = new DiagramSymbol({
         characs: {
           id,
-          bounds: diagramBound,
-          container: containerBound,
+          bounds,
+          container,
           title,
           author,
           createdAt,
@@ -100,7 +100,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
         theme: this.currentTheme,
       })
       r.setSymbol(symbol)
-      r.setCharacs({ id, bounds: diagramBound, container: containerBound })
+      r.setCharacs({ id, bounds, container })
       r.setConstraint((builder) => {
         symbol.ensureLayoutBounds(builder)
       })
@@ -142,7 +142,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
       .map((reg) => reg.symbol as SymbolBase)
-    const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
+    const allSymbols: SymbolBase[] = [diagramSymbol as any, ...symbolList]
 
     if (symbolList.length > 0) {
       hint.enclose(
