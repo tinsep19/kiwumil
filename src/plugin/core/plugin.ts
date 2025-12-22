@@ -10,6 +10,7 @@ import {
 } from "./symbols"
 import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
 import type { Theme } from "../../theme"
+import type { IconRegistry } from "../../icon"
 
 /**
  * Core Plugin (Namespace-based)
@@ -19,7 +20,7 @@ import type { Theme } from "../../theme"
 export const CorePlugin = {
   name: "core",
 
-  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons, _iconRegistry?: IconRegistry) {
     const plugin = this.name
 
     return {

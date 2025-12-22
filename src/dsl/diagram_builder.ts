@@ -84,10 +84,15 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
       const diagramBound = r.createLayoutBounds("layout")
       const containerBound = r.createContainerBounds("container")
+      const titleBounds = r.createItemBounds("title")
+      const metadataBounds =
+        diagramInfo.createdAt || diagramInfo.author ? r.createItemBounds("metadata") : undefined
       const symbol = new DiagramSymbol({
         id,
         bounds: diagramBound,
         container: containerBound,
+        titleBounds,
+        metadataBounds,
         info: diagramInfo,
         theme: this.currentTheme,
       })
@@ -117,7 +122,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
-    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
+    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon, iconsRegistry)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
 
     const hint = new HintFactory({

@@ -23,7 +23,7 @@ export const UMLPlugin = {
     }
   },
 
-  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons, iconRegistry?: IconRegistry) {
     const plugin = this.name
 
     return {
@@ -39,13 +39,25 @@ export const UMLPlugin = {
 
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createLayoutBounds("layout")
-          const iconGetter = icons.actor
+          const iconBounds = r.createItemBounds("icon")
+          const labelBounds = r.createItemBounds("label")
+          const stereotypeBounds = stereotype ? r.createItemBounds("stereotype") : undefined
+
+          if (!iconRegistry) {
+            throw new Error("IconRegistry is required for ActorSymbol")
+          }
+
           const actor = new ActorSymbol({
             id: symbolId,
             bounds: bound,
             label,
             stereotype,
-            icon: iconGetter ? iconGetter() : null,
+            iconRegistry,
+            iconPlugin: plugin,
+            iconName: "actor",
+            iconBounds,
+            labelBounds,
+            stereotypeBounds,
             theme,
           })
           r.setSymbol(actor)
