@@ -62,33 +62,19 @@ expectType<string>(extendedNode.additionalProp)
 
 // Test: Property access suggestions - エディタがitemとvのプロパティを提案できることを検証
 // When user types "node.", the editor should suggest: id, bounds, item, v
-type NodeKeys = keyof TestSymbolCharacs
-type HasId = 'id' extends NodeKeys ? true : false
-type HasBounds = 'bounds' extends NodeKeys ? true : false
-type HasItem = 'item' extends NodeKeys ? true : false
-type HasV = 'v' extends NodeKeys ? true : false
-expectType<true>(null as unknown as HasId)
-expectType<true>(null as unknown as HasBounds)
-expectType<true>(null as unknown as HasItem)
-expectType<true>(null as unknown as HasV)
+expectType<'id' | 'bounds' | 'item' | 'v'>(null as unknown as keyof TestSymbolCharacs)
 
-// Test: Nested property access - ユーザーがnode.itemやnode.vの深いプロパティにアクセスできることを検証
+// Test: Nested property access for item - ユーザーがnode.itemの深いプロパティにアクセスできることを検証
 // When user types "node.item.", editor should suggest LayoutBounds properties (x, y, width, height, etc.)
-type ItemProperties = keyof typeof node.item
-type ItemHasX = 'x' extends ItemProperties ? true : false
-type ItemHasY = 'y' extends ItemProperties ? true : false
-type ItemHasWidth = 'width' extends ItemProperties ? true : false
-type ItemHasHeight = 'height' extends ItemProperties ? true : false
-expectType<true>(null as unknown as ItemHasX)
-expectType<true>(null as unknown as ItemHasY)
-expectType<true>(null as unknown as ItemHasWidth)
-expectType<true>(null as unknown as ItemHasHeight)
+expectType<number>(node.item.x.value())
+expectType<number>(node.item.y.value())
+expectType<number>(node.item.width.value())
+expectType<number>(node.item.height.value())
 
 // Test: Variable property access - node.vがVariableの全プロパティにアクセスできることを検証
 // When user types "node.v.", editor should suggest Variable properties
-type VariableProperties = keyof typeof node.v
-type VarHasValue = 'value' extends VariableProperties ? true : false
-expectType<true>(null as unknown as VarHasValue)
+expectType<string>(node.v.id)
+expectType<number>(node.v.value())
 
 // Test: Type safety in assignment - 型安全な代入が保証されることを検証
 // エディタがnode.itemに正しくLayoutBoundsのみを代入できることを示唆する
