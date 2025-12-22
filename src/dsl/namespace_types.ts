@@ -17,7 +17,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
       symbols: Symbols,
       theme: Theme,
       icons: Record<string, () => IconMeta>
-    ) => Record<string, (...args: any[]) => ISymbolCharacs>
+    ) => Record<string, (...args: any[]) => ISymbolCharacs<any>>
   }
 >
 

@@ -23,7 +23,7 @@ const CustomPlugin = {
   name: 'custom',
   createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons) {
     return {
-      node(label: string): ISymbolCharacs {
+      node(label: string): TestSymbolCharacs {
         const registration = symbols.register('custom', 'node', (symbolId, builder) => {
           const bounds = builder.createLayoutBounds('bounds')
           const item = builder.createLayoutBounds('item')
@@ -72,8 +72,8 @@ const testCallback: BuilderCallback = ({ el }) => {
 
   // === Type Tests for TestSymbolCharacs ===
   
-  // Test: Verify the node has extended properties (type assertion to access extended fields)
-  const typedNode = node as TestSymbolCharacs
+  // Test: Verify the node has extended properties (no type assertion needed!)
+  const typedNode = node
   
   // Test: Verify base properties from ISymbolCharacs
   expectType<string>(typedNode.id)
