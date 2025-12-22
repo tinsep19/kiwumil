@@ -2,9 +2,8 @@
 import {
   RelationshipBase,
   type RelationshipBaseOptions,
-  type SymbolBase,
-  type SymbolId,
 } from "../../../model"
+import type { ISymbol, SymbolId } from "../../../core"
 import { getBoundsValues } from "../../../core"
 
 export class Generalize extends RelationshipBase {
@@ -12,7 +11,7 @@ export class Generalize extends RelationshipBase {
     super(options)
   }
 
-  toSVG(symbols: Map<SymbolId, SymbolBase>): string {
+  toSVG(symbols: Map<SymbolId, ISymbol>): string {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
 

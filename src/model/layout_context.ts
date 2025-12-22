@@ -1,6 +1,6 @@
 // src/model/layout_context.ts
 import type { Theme } from "../theme"
-import type { SymbolBase } from "./"
+import type { ISymbol } from "../core"
 import type { Variable, LayoutConstraint, ConstraintSpec, CassowarySolver } from "../core"
 import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
@@ -32,7 +32,7 @@ export class LayoutContext {
     return this.solver.createConstraint(id, spec)
   }
 
-  solveAndApply(_symbols: SymbolBase[]) {
+  solveAndApply(_symbols: ISymbol[]) {
     this.solve()
     // Symbols now use .bounds directly in toSVG/getConnectionPoint
     // No longer need to populate the deprecated bounds property

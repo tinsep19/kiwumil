@@ -3,7 +3,8 @@ import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
 import { DiagramSymbol, Symbols, LayoutContext } from "../model"
-import type { DiagramInfo, SymbolBase } from "../model"
+import type { DiagramInfo } from "../model"
+import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
 import { KiwiSolver } from "../kiwi"
 import { convertMetaUrlToSvgPath } from "../utils"
@@ -141,8 +142,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const symbolList = symbols
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
-      .map((reg) => reg.symbol as SymbolBase)
-    const allSymbols: SymbolBase[] = [diagramSymbol as unknown as SymbolBase, ...symbolList]
+      .map((reg) => reg.symbol)
+    const allSymbols: ISymbol[] = [diagramSymbol, ...symbolList]
 
     if (symbolList.length > 0) {
       hint.enclose(
