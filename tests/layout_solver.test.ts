@@ -23,10 +23,19 @@ describe("Layout pipeline", () => {
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
+      const iconBounds = r.createItemBounds("icon")
+      const labelBounds = r.createItemBounds("label")
+      const iconMeta = {
+        raw: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>',
+        viewBox: "0 0 24 24",
+      }
       const actor = new ActorSymbol({
         id: symbolId,
         bounds: bound,
         label: id,
+        icon: iconMeta,
+        iconBounds,
+        labelBounds,
         theme: DefaultTheme,
       })
       r.setSymbol(actor)
@@ -80,10 +89,12 @@ describe("Layout pipeline", () => {
     const diagramId = "__diagram__"
     const diagramBound = context.variables.createBounds(diagramId)
     const diagramContainer = context.variables.createBounds(`${diagramId}.container`, "container")
+    const titleBounds = context.variables.createBounds(`${diagramId}.title`, "item")
     const diagram = new DiagramSymbol({
       id: diagramId,
       bounds: diagramBound,
       container: diagramContainer,
+      titleBounds,
       info: { title: "Test" },
       theme: DefaultTheme,
     })

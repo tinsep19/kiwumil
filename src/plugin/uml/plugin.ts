@@ -43,18 +43,19 @@ export const UMLPlugin = {
           const labelBounds = r.createItemBounds("label")
           const stereotypeBounds = stereotype ? r.createItemBounds("stereotype") : undefined
 
-          if (!iconRegistry) {
-            throw new Error("IconRegistry is required for ActorSymbol")
+          // Get icon from icons factory
+          const iconGetter = icons.actor
+          if (!iconGetter) {
+            throw new Error("Actor icon is not available")
           }
+          const iconMeta = iconGetter()
 
           const actor = new ActorSymbol({
             id: symbolId,
             bounds: bound,
             label,
             stereotype,
-            iconRegistry,
-            iconPlugin: plugin,
-            iconName: "actor",
+            icon: iconMeta,
             iconBounds,
             labelBounds,
             stereotypeBounds,

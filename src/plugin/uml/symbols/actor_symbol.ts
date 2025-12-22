@@ -4,7 +4,7 @@ import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
-import type { IconRegistry } from "../../../icon"
+import type { IconMeta } from "../../../icon"
 import { IconItem, TextItem } from "../../../item"
 
 // Icon size constant
@@ -13,9 +13,7 @@ const ICON_BASE_SIZE = 60
 export interface ActorSymbolOptions extends SymbolBaseOptions {
   label: string
   stereotype?: string
-  iconRegistry: IconRegistry
-  iconPlugin: string
-  iconName: string
+  icon: IconMeta
   iconBounds: ItemBounds
   labelBounds: ItemBounds
   stereotypeBounds?: ItemBounds
@@ -41,9 +39,7 @@ export class ActorSymbol extends SymbolBase {
     // Create IconItem for actor figure
     this.iconItem = new IconItem({
       bounds: options.iconBounds,
-      iconRegistry: options.iconRegistry,
-      plugin: options.iconPlugin,
-      iconName: options.iconName,
+      icon: options.icon,
       width: ICON_BASE_SIZE,
       height: ICON_BASE_SIZE,
       color: style.strokeColor,
