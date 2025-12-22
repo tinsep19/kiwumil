@@ -21,10 +21,19 @@ describe("LayoutConstraints metadata", () => {
   function createActor(id: string) {
     return symbols.register("test", "actor", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
+      const iconBounds = r.createItemBounds("icon")
+      const labelBounds = r.createItemBounds("label")
+      const iconMeta = {
+        raw: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>',
+        viewBox: "0 0 24 24",
+      }
       const actor = new ActorSymbol({
         id: symbolId,
         bounds: bound,
         label: id,
+        icon: iconMeta,
+        iconBounds,
+        labelBounds,
         theme: DefaultTheme,
       })
       r.setSymbol(actor)

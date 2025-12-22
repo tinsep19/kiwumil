@@ -122,7 +122,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
-    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon, iconsRegistry)
+    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
     const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
 
     const hint = new HintFactory({

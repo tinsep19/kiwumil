@@ -9,7 +9,6 @@ import type {
 import type { Symbols } from "../model"
 import type { Relationships } from "./relationships"
 import type { Theme } from "../theme"
-import type { IconRegistry } from "../icon"
 
 /**
  * Namespace Builder
@@ -38,8 +37,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
   buildElementNamespace(
     symbols: Symbols,
     theme: Theme,
-    icons: BuildIconNamespace<TPlugins>,
-    iconRegistry?: IconRegistry
+    icons: BuildIconNamespace<TPlugins>
   ): BuildElementNamespace<TPlugins> {
     const namespace: Record<string, unknown> = {}
     const iconNamespace = icons as Record<string, PluginIcons>
@@ -50,8 +48,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
         namespace[plugin.name] = plugin.createSymbolFactory(
           symbols,
           theme,
-          pluginIcons as PluginIcons,
-          iconRegistry
+          pluginIcons as PluginIcons
         )
       }
     }

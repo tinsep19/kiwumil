@@ -23,7 +23,7 @@ export const UMLPlugin = {
     }
   },
 
-  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons, iconRegistry?: IconRegistry) {
+  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons) {
     const plugin = this.name
 
     return {
