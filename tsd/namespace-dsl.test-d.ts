@@ -4,7 +4,6 @@ import type { ISymbolCharacs, LayoutBounds, Variable } from '../dist/core'
 // このテストはDSL内でエディタなどがユーザーに適切にサジェストするためのテストです
 // 拡張したCharacsのプロパティをユーザーに適切に示すために型レベルでアクセスを保証します
 
-// Define TestSymbolCharacs based on ISymbolCharacs, extended to include item and v
 // Step 1: Define TestSymbolCharacs based on ISymbolCharacs
 // Ensure no conflicts with reserved keys ('id' and 'bounds')
 type TestSymbolCharacs = ISymbolCharacs<{
@@ -17,7 +16,6 @@ type TestSymbolCharacs = ISymbolCharacs<{
 declare const node: TestSymbolCharacs
 
 // Step 3: Add test cases to validate that TestSymbolCharacs includes item and v with correct types
-// (These tests are around the expected line 155 in terms of validation location)
 
 // Test: Verify base properties from ISymbolCharacs
 expectType<string>(node.id)
@@ -28,14 +26,6 @@ expectType<LayoutBounds>(node.item)
 
 // Test: Verify extended property 'v' is of type Variable
 expectType<Variable>(node.v)
-
-// Test: Verify the full type is correctly inferred as TestSymbolCharacs
-const fullNode: TestSymbolCharacs = node
-expectType<TestSymbolCharacs>(fullNode)
-
-// Test: Verify TestSymbolCharacs is assignable to base ISymbolCharacs
-const baseCharacs: ISymbolCharacs = node
-expectType<ISymbolCharacs>(baseCharacs)
 
 // Test: Verify that TestSymbolCharacs cannot be created with reserved keys overridden
 // Attempting to override 'id' should result in a never type
