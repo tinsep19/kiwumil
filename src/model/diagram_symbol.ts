@@ -8,26 +8,79 @@ export interface DiagramInfo {
   author?: string
 }
 
-import type { ContainerBounds, LinearConstraintBuilder } from "../core"
+import type { ContainerBounds, LinearConstraintBuilder, ItemBounds } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
 import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
+import { TextItem } from "../item"
 
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
   container: ContainerBounds
+  titleBounds: ItemBounds
+  metadataBounds?: ItemBounds
 }
 
 export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   readonly container: ContainerBounds
 
   private readonly diagramInfo: DiagramInfo
+  private readonly titleItem: TextItem
+  private readonly metadataItem?: TextItem
   private constraintsApplied = false
 
   constructor(options: DiagramSymbolOptions) {
     super(options)
     this.container = options.container
     this.diagramInfo = options.info
+
+    // Create TextItem for title
+    const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
+    this.titleItem = new TextItem({
+      bounds: options.titleBounds,
+      text: options.info.title,
+      alignment: "center",
+      fontSize: style.fontSize * 1.5,
+      fontFamily: style.fontFamily,
+      textColor: style.textColor,
+      padding: { top: 8, right: 12, bottom: 8, left: 12 },
+    })
+
+    // Create TextItem for metadata if provided
+    if (options.metadataBounds && (options.info.createdAt || options.info.author)) {
+      let metaText = ""
+      if (options.info.createdAt && options.info.author) {
+        metaText = `Created: ${options.info.createdAt} | Author: ${options.info.author}`
+      } else if (options.info.createdAt) {
+        metaText = `Created: ${options.info.createdAt}`
+      } else if (options.info.author) {
+        metaText = `Author: ${options.info.author}`
+      }
+
+      this.metadataItem = new TextItem({
+        bounds: options.metadataBounds,
+        text: metaText,
+        alignment: "right",
+        fontSize: style.fontSize * 0.75,
+        fontFamily: style.fontFamily,
+        textColor: style.textColor,
+        padding: { top: 4, right: 10, bottom: 4, left: 10 },
+      })
+    }
+  }
+
+  private getFallbackStyle() {
+    return {
+      strokeColor: "#e0e0e0",
+      strokeWidth: 1,
+      fillColor: "white",
+      textColor: "black",
+      fontSize: 12,
+      fontFamily: "Arial",
+      backgroundColor: "white",
+      horizontalGap: 80,
+      verticalGap: 50,
+    }
   }
 
   getDefaultSize() {
@@ -63,6 +116,21 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       .strong()
     builder.ct([1, this.container.width]).eq([1, bounds.width], [-horizontalPadding, 1]).strong()
     builder.ct([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
+
+    // Position title at the top center
+    builder.ct([1, this.titleItem.bounds.x]).eq([1, bounds.x]).strong()
+    builder.ct([1, this.titleItem.bounds.y]).eq([1, bounds.y], [padding.top, 1]).strong()
+    builder.ct([1, this.titleItem.bounds.width]).eq([1, bounds.width]).strong()
+
+    // Position metadata at the bottom right if it exists
+    if (this.metadataItem) {
+      builder.ct([1, this.metadataItem.bounds.x]).eq([1, bounds.x]).strong()
+      builder
+        .ct([1, this.metadataItem.bounds.bottom])
+        .eq([1, bounds.bottom], [-padding.bottom, 1])
+        .strong()
+      builder.ct([1, this.metadataItem.bounds.width]).eq([1, bounds.width]).strong()
+    }
   }
 
   ensureLayoutBounds(builder: LinearConstraintBuilder): void {
@@ -116,59 +184,13 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   toSVG(): string {
     const { x, y, width, height } = getBoundsValues(this.bounds)
 
-    const cx = x + width / 2
-
-    const style = this.theme
-      ? getStyleForSymbol(this.theme, "rectangle")
-      : {
-          strokeColor: "#e0e0e0",
-          strokeWidth: 1,
-          fillColor: "white",
-          textColor: "black",
-          fontSize: 12,
-          fontFamily: "Arial",
-          backgroundColor: "white",
-          horizontalGap: 80,
-          verticalGap: 50,
-        }
-
-    const titleFontSize = style.fontSize * 1.5
-    const metaFontSize = style.fontSize * 0.75
-
-    let metaText = ""
-    if (this.diagramInfo.createdAt && this.diagramInfo.author) {
-      metaText = `Created: ${this.diagramInfo.createdAt} | Author: ${this.diagramInfo.author}`
-    } else if (this.diagramInfo.createdAt) {
-      metaText = `Created: ${this.diagramInfo.createdAt}`
-    } else if (this.diagramInfo.author) {
-      metaText = `Author: ${this.diagramInfo.author}`
-    }
+    const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
 
     return `
       <g id="${this.id}">
         <!-- Title -->
-        <text x="${cx}" y="${y + 30}" 
-              text-anchor="middle" 
-              font-size="${titleFontSize}" 
-              font-weight="bold"
-              font-family="${style.fontFamily}"
-              fill="${style.textColor}">
-          ${this.diagramInfo.title}
-        </text>
-        ${
-          metaText
-            ? `
-        <!-- Metadata -->
-        <text x="${x + width - 10}" y="${y + height - 10}" 
-              text-anchor="end" 
-              font-size="${metaFontSize}" 
-              font-family="${style.fontFamily}"
-              fill="${style.textColor}"
-              opacity="0.5">
-          ${metaText}
-        </text>`
-            : ""
-        }
+        ${this.titleItem.render()}
+        ${this.metadataItem ? `<!-- Metadata -->\n${this.metadataItem.render()}` : ""}
       </g>
     `
   }
