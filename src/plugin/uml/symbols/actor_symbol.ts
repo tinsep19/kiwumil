@@ -11,9 +11,9 @@ import { IconItem, TextItem } from "../../../item"
 const ICON_BASE_SIZE = 60
 
 export type ActorSymbolCharacs = ISymbolCharacs<{
-  iconBounds: ItemBounds
-  labelBounds: ItemBounds
-  stereotypeBounds?: ItemBounds
+  icon: ItemBounds
+  label: ItemBounds
+  stereotype?: ItemBounds
 }>
 
 export interface ActorSymbolOptions extends Omit<SymbolBaseOptions, "id" | "bounds"> {
@@ -42,7 +42,7 @@ export class ActorSymbol extends SymbolBase {
 
     // Create IconItem for actor figure
     this.iconItem = new IconItem({
-      bounds: options.characs.iconBounds,
+      bounds: options.characs.icon,
       icon: options.icon,
       width: ICON_BASE_SIZE,
       height: ICON_BASE_SIZE,
@@ -51,7 +51,7 @@ export class ActorSymbol extends SymbolBase {
 
     // Create TextItem for label
     this.labelItem = new TextItem({
-      bounds: options.characs.labelBounds,
+      bounds: options.characs.label,
       text: options.label,
       alignment: "center",
       fontSize: style.fontSize,
@@ -61,9 +61,9 @@ export class ActorSymbol extends SymbolBase {
     })
 
     // Create TextItem for stereotype if provided
-    if (options.stereotype && options.characs.stereotypeBounds) {
+    if (options.stereotype && options.characs.stereotype) {
       this.stereotypeItem = new TextItem({
-        bounds: options.characs.stereotypeBounds,
+        bounds: options.characs.stereotype,
         text: `<<${options.stereotype}>>`,
         alignment: "center",
         fontSize: style.fontSize,

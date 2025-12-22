@@ -16,9 +16,9 @@ import { TextItem } from "../item"
 const DEFAULT_TEXT_ITEM_HEIGHT = 20
 
 export type DiagramSymbolCharacs = IContainerSymbolCharacs & {
-  titleBounds: ItemBounds
-  authorBounds?: ItemBounds
-  createdAtBounds?: ItemBounds
+  title: ItemBounds
+  author?: ItemBounds
+  createdAt?: ItemBounds
 }
 
 export interface DiagramSymbolOptions extends Omit<SymbolBaseOptions, "id" | "bounds"> {
@@ -43,7 +43,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     // Create TextItem for title
     const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
     this.titleItem = new TextItem({
-      bounds: options.characs.titleBounds,
+      bounds: options.characs.title,
       text: options.info.title,
       alignment: "center",
       fontSize: style.fontSize * 1.5,
@@ -53,9 +53,9 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     })
 
     // Create TextItem for author if provided
-    if (options.info.author && options.characs.authorBounds) {
+    if (options.info.author && options.characs.author) {
       this.authorItem = new TextItem({
-        bounds: options.characs.authorBounds,
+        bounds: options.characs.author,
         text: `Author: ${options.info.author}`,
         alignment: "right",
         fontSize: style.fontSize * 0.75,
@@ -66,9 +66,9 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     }
 
     // Create TextItem for createdAt if provided
-    if (options.info.createdAt && options.characs.createdAtBounds) {
+    if (options.info.createdAt && options.characs.createdAt) {
       this.createdAtItem = new TextItem({
-        bounds: options.characs.createdAtBounds,
+        bounds: options.characs.createdAt,
         text: `Created: ${options.info.createdAt}`,
         alignment: "right",
         fontSize: style.fontSize * 0.75,

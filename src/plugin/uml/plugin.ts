@@ -39,9 +39,9 @@ export const UMLPlugin = {
 
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createLayoutBounds("layout")
-          const iconBounds = r.createItemBounds("icon")
-          const labelBounds = r.createItemBounds("label")
-          const stereotypeBounds = stereotype ? r.createItemBounds("stereotype") : undefined
+          const iconItem = r.createItemBounds("icon")
+          const labelItem = r.createItemBounds("label")
+          const stereotypeItem = stereotype ? r.createItemBounds("stereotype") : undefined
 
           // Get icon from icons factory
           const iconGetter = icons.actor
@@ -57,9 +57,9 @@ export const UMLPlugin = {
             characs: {
               id: symbolId,
               bounds: bound,
-              iconBounds,
-              labelBounds,
-              stereotypeBounds,
+              icon: iconItem,
+              label: labelItem,
+              stereotype: stereotypeItem,
             },
             theme,
           })
