@@ -1,5 +1,5 @@
 // src/plugin/uml/symbols/actor_symbol.ts
-import type { LinearConstraintBuilder, ItemBounds } from "../../../core"
+import type { LinearConstraintBuilder, ItemBounds, ISymbolCharacs } from "../../../core"
 import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
@@ -10,17 +10,17 @@ import { IconItem, TextItem } from "../../../item"
 // Icon size constant
 const ICON_BASE_SIZE = 60
 
-export interface ActorSymbolItemCharacs {
+export type ActorSymbolCharacs = ISymbolCharacs<{
   iconBounds: ItemBounds
   labelBounds: ItemBounds
   stereotypeBounds?: ItemBounds
-}
+}>
 
-export interface ActorSymbolOptions extends SymbolBaseOptions {
+export interface ActorSymbolOptions extends Omit<SymbolBaseOptions, "id" | "bounds"> {
   label: string
   stereotype?: string
   icon: IconMeta
-  characs: ActorSymbolItemCharacs
+  characs: ActorSymbolCharacs
 }
 
 export class ActorSymbol extends SymbolBase {
@@ -31,7 +31,7 @@ export class ActorSymbol extends SymbolBase {
   private readonly stereotypeItem?: TextItem
 
   constructor(options: ActorSymbolOptions) {
-    super(options)
+    super({ id: options.characs.id, bounds: options.characs.bounds, theme: options.theme })
     this.label = options.label
     this.stereotype = options.stereotype
 

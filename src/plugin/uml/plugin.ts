@@ -51,12 +51,12 @@ export const UMLPlugin = {
           const iconMeta = iconGetter()
 
           const actor = new ActorSymbol({
-            id: symbolId,
-            bounds: bound,
             label,
             stereotype,
             icon: iconMeta,
             characs: {
+              id: symbolId,
+              bounds: bound,
               iconBounds,
               labelBounds,
               stereotypeBounds,

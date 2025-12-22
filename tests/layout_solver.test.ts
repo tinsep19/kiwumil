@@ -30,11 +30,11 @@ describe("Layout pipeline", () => {
         viewBox: "0 0 24 24",
       }
       const actor = new ActorSymbol({
-        id: symbolId,
-        bounds: bound,
         label: id,
         icon: iconMeta,
         characs: {
+          id: symbolId,
+          bounds: bound,
           iconBounds,
           labelBounds,
         },
@@ -93,10 +93,10 @@ describe("Layout pipeline", () => {
     const diagramContainer = context.variables.createBounds(`${diagramId}.container`, "container")
     const titleBounds = context.variables.createBounds(`${diagramId}.title`, "item")
     const diagram = new DiagramSymbol({
-      id: diagramId,
-      bounds: diagramBound,
-      container: diagramContainer,
       characs: {
+        id: diagramId,
+        bounds: diagramBound,
+        container: diagramContainer,
         titleBounds,
       },
       info: { title: "Test" },

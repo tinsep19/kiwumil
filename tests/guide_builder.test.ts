@@ -29,11 +29,11 @@ describe("GuideBuilder (refactored common implementation)", () => {
         viewBox: "0 0 24 24",
       }
       const actor = new ActorSymbol({
-        id: symbolId,
-        bounds: bound,
         label: id,
         icon: iconMeta,
         characs: {
+          id: symbolId,
+          bounds: bound,
           iconBounds,
           labelBounds,
         },

@@ -1,6 +1,6 @@
 import { getStyleForSymbol } from "../theme"
 import type { Theme, ContainerPadding } from "../theme"
-import type { Point } from "../core"
+import type { Point, IContainerSymbolCharacs } from "../core"
 export interface DiagramInfo {
   title: string
   createdAt?: string
@@ -15,16 +15,15 @@ import { TextItem } from "../item"
 
 const DEFAULT_TEXT_ITEM_HEIGHT = 20
 
-export interface DiagramSymbolItemCharacs {
+export type DiagramSymbolCharacs = IContainerSymbolCharacs & {
   titleBounds: ItemBounds
   authorBounds?: ItemBounds
   createdAtBounds?: ItemBounds
 }
 
-export interface DiagramSymbolOptions extends SymbolBaseOptions {
+export interface DiagramSymbolOptions extends Omit<SymbolBaseOptions, "id" | "bounds"> {
   info: DiagramInfo
-  container: ContainerBounds
-  characs: DiagramSymbolItemCharacs
+  characs: DiagramSymbolCharacs
 }
 
 export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
@@ -37,8 +36,8 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   private constraintsApplied = false
 
   constructor(options: DiagramSymbolOptions) {
-    super(options)
-    this.container = options.container
+    super({ id: options.characs.id, bounds: options.characs.bounds, theme: options.theme })
+    this.container = options.characs.container
     this.diagramInfo = options.info
 
     // Create TextItem for title
