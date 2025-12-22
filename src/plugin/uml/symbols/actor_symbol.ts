@@ -10,13 +10,17 @@ import { IconItem, TextItem } from "../../../item"
 // Icon size constant
 const ICON_BASE_SIZE = 60
 
+export interface ActorSymbolItemCharacs {
+  iconBounds: ItemBounds
+  labelBounds: ItemBounds
+  stereotypeBounds?: ItemBounds
+}
+
 export interface ActorSymbolOptions extends SymbolBaseOptions {
   label: string
   stereotype?: string
   icon: IconMeta
-  iconBounds: ItemBounds
-  labelBounds: ItemBounds
-  stereotypeBounds?: ItemBounds
+  characs: ActorSymbolItemCharacs
 }
 
 export class ActorSymbol extends SymbolBase {
@@ -38,7 +42,7 @@ export class ActorSymbol extends SymbolBase {
 
     // Create IconItem for actor figure
     this.iconItem = new IconItem({
-      bounds: options.iconBounds,
+      bounds: options.characs.iconBounds,
       icon: options.icon,
       width: ICON_BASE_SIZE,
       height: ICON_BASE_SIZE,
@@ -47,7 +51,7 @@ export class ActorSymbol extends SymbolBase {
 
     // Create TextItem for label
     this.labelItem = new TextItem({
-      bounds: options.labelBounds,
+      bounds: options.characs.labelBounds,
       text: options.label,
       alignment: "center",
       fontSize: style.fontSize,
@@ -57,9 +61,9 @@ export class ActorSymbol extends SymbolBase {
     })
 
     // Create TextItem for stereotype if provided
-    if (options.stereotype && options.stereotypeBounds) {
+    if (options.stereotype && options.characs.stereotypeBounds) {
       this.stereotypeItem = new TextItem({
-        bounds: options.stereotypeBounds,
+        bounds: options.characs.stereotypeBounds,
         text: `<<${options.stereotype}>>`,
         alignment: "center",
         fontSize: style.fontSize,

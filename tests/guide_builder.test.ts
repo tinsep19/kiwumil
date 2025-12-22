@@ -33,8 +33,10 @@ describe("GuideBuilder (refactored common implementation)", () => {
         bounds: bound,
         label: id,
         icon: iconMeta,
-        iconBounds,
-        labelBounds,
+        characs: {
+          iconBounds,
+          labelBounds,
+        },
         theme: DefaultTheme,
       })
       r.setSymbol(actor)

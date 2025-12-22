@@ -32,8 +32,10 @@ describe("LayoutConstraints metadata", () => {
         bounds: bound,
         label: id,
         icon: iconMeta,
-        iconBounds,
-        labelBounds,
+        characs: {
+          iconBounds,
+          labelBounds,
+        },
         theme: DefaultTheme,
       })
       r.setSymbol(actor)

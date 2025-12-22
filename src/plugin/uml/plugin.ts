@@ -56,9 +56,11 @@ export const UMLPlugin = {
             label,
             stereotype,
             icon: iconMeta,
-            iconBounds,
-            labelBounds,
-            stereotypeBounds,
+            characs: {
+              iconBounds,
+              labelBounds,
+              stereotypeBounds,
+            },
             theme,
           })
           r.setSymbol(actor)

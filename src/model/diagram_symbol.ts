@@ -14,11 +14,16 @@ import { ConstraintHelper } from "../hint"
 import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
 import { TextItem } from "../item"
 
+export interface DiagramSymbolItemCharacs {
+  titleBounds: ItemBounds
+  authorBounds?: ItemBounds
+  createdAtBounds?: ItemBounds
+}
+
 export interface DiagramSymbolOptions extends SymbolBaseOptions {
   info: DiagramInfo
   container: ContainerBounds
-  titleBounds: ItemBounds
-  metadataBounds?: ItemBounds
+  characs: DiagramSymbolItemCharacs
 }
 
 export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
@@ -26,7 +31,8 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
 
   private readonly diagramInfo: DiagramInfo
   private readonly titleItem: TextItem
-  private readonly metadataItem?: TextItem
+  private readonly authorItem?: TextItem
+  private readonly createdAtItem?: TextItem
   private constraintsApplied = false
 
   constructor(options: DiagramSymbolOptions) {
@@ -37,7 +43,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     // Create TextItem for title
     const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
     this.titleItem = new TextItem({
-      bounds: options.titleBounds,
+      bounds: options.characs.titleBounds,
       text: options.info.title,
       alignment: "center",
       fontSize: style.fontSize * 1.5,
@@ -46,20 +52,24 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       padding: { top: 8, right: 12, bottom: 8, left: 12 },
     })
 
-    // Create TextItem for metadata if provided
-    if (options.metadataBounds && (options.info.createdAt || options.info.author)) {
-      let metaText = ""
-      if (options.info.createdAt && options.info.author) {
-        metaText = `Created: ${options.info.createdAt} | Author: ${options.info.author}`
-      } else if (options.info.createdAt) {
-        metaText = `Created: ${options.info.createdAt}`
-      } else if (options.info.author) {
-        metaText = `Author: ${options.info.author}`
-      }
+    // Create TextItem for author if provided
+    if (options.info.author && options.characs.authorBounds) {
+      this.authorItem = new TextItem({
+        bounds: options.characs.authorBounds,
+        text: `Author: ${options.info.author}`,
+        alignment: "right",
+        fontSize: style.fontSize * 0.75,
+        fontFamily: style.fontFamily,
+        textColor: style.textColor,
+        padding: { top: 4, right: 10, bottom: 4, left: 10 },
+      })
+    }
 
-      this.metadataItem = new TextItem({
-        bounds: options.metadataBounds,
-        text: metaText,
+    // Create TextItem for createdAt if provided
+    if (options.info.createdAt && options.characs.createdAtBounds) {
+      this.createdAtItem = new TextItem({
+        bounds: options.characs.createdAtBounds,
+        text: `Created: ${options.info.createdAt}`,
         alignment: "right",
         fontSize: style.fontSize * 0.75,
         fontFamily: style.fontFamily,
@@ -122,14 +132,28 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
     builder.ct([1, this.titleItem.bounds.y]).eq([1, bounds.y], [padding.top, 1]).strong()
     builder.ct([1, this.titleItem.bounds.width]).eq([1, bounds.width]).strong()
 
-    // Position metadata at the bottom right if it exists
-    if (this.metadataItem) {
-      builder.ct([1, this.metadataItem.bounds.x]).eq([1, bounds.x]).strong()
+    // Position author and createdAt at the bottom right if they exist
+    let bottomOffset = -padding.bottom
+    if (this.createdAtItem) {
+      builder.ct([1, this.createdAtItem.bounds.x]).eq([1, bounds.x]).strong()
       builder
-        .ct([1, this.metadataItem.bounds.bottom])
-        .eq([1, bounds.bottom], [-padding.bottom, 1])
+        .ct([1, this.createdAtItem.bounds.bottom])
+        .eq([1, bounds.bottom], [bottomOffset, 1])
         .strong()
-      builder.ct([1, this.metadataItem.bounds.width]).eq([1, bounds.width]).strong()
+      builder.ct([1, this.createdAtItem.bounds.width]).eq([1, bounds.width]).strong()
+      // Update offset for author if both exist
+      if (this.authorItem) {
+        bottomOffset -= this.createdAtItem.bounds.height.value() || 20
+      }
+    }
+
+    if (this.authorItem) {
+      builder.ct([1, this.authorItem.bounds.x]).eq([1, bounds.x]).strong()
+      builder
+        .ct([1, this.authorItem.bounds.bottom])
+        .eq([1, bounds.bottom], [bottomOffset, 1])
+        .strong()
+      builder.ct([1, this.authorItem.bounds.width]).eq([1, bounds.width]).strong()
     }
   }
 
@@ -190,7 +214,8 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       <g id="${this.id}">
         <!-- Title -->
         ${this.titleItem.render()}
-        ${this.metadataItem ? `<!-- Metadata -->\n${this.metadataItem.render()}` : ""}
+        ${this.authorItem ? `<!-- Author -->\n${this.authorItem.render()}` : ""}
+        ${this.createdAtItem ? `<!-- Created At -->\n${this.createdAtItem.render()}` : ""}
       </g>
     `
   }

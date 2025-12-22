@@ -85,14 +85,17 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       const diagramBound = r.createLayoutBounds("layout")
       const containerBound = r.createContainerBounds("container")
       const titleBounds = r.createItemBounds("title")
-      const metadataBounds =
-        diagramInfo.createdAt || diagramInfo.author ? r.createItemBounds("metadata") : undefined
+      const authorBounds = diagramInfo.author ? r.createItemBounds("author") : undefined
+      const createdAtBounds = diagramInfo.createdAt ? r.createItemBounds("createdAt") : undefined
       const symbol = new DiagramSymbol({
         id,
         bounds: diagramBound,
         container: containerBound,
-        titleBounds,
-        metadataBounds,
+        characs: {
+          titleBounds,
+          authorBounds,
+          createdAtBounds,
+        },
         info: diagramInfo,
         theme: this.currentTheme,
       })

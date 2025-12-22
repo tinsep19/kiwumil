@@ -34,8 +34,10 @@ describe("Layout pipeline", () => {
         bounds: bound,
         label: id,
         icon: iconMeta,
-        iconBounds,
-        labelBounds,
+        characs: {
+          iconBounds,
+          labelBounds,
+        },
         theme: DefaultTheme,
       })
       r.setSymbol(actor)
@@ -94,7 +96,9 @@ describe("Layout pipeline", () => {
       id: diagramId,
       bounds: diagramBound,
       container: diagramContainer,
-      titleBounds,
+      characs: {
+        titleBounds,
+      },
       info: { title: "Test" },
       theme: DefaultTheme,
     })
