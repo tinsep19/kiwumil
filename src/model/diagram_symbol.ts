@@ -212,10 +212,6 @@ export class DiagramSymbol implements ISymbol {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.bounds)
-
-    const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
-
     return `
       <g id="${this.id}">
         <!-- Title -->

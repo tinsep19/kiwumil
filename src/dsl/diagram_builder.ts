@@ -142,7 +142,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
       .map((reg) => reg.symbol as SymbolBase)
-    const allSymbols: SymbolBase[] = [diagramSymbol as any, ...symbolList]
+    const allSymbols: SymbolBase[] = [diagramSymbol as unknown as SymbolBase, ...symbolList]
 
     if (symbolList.length > 0) {
       hint.enclose(
