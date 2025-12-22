@@ -1,4 +1,3 @@
-// src/model/diagram_symbol.ts
 import { getStyleForSymbol } from "../theme"
 import type { Theme, ContainerPadding } from "../theme"
 import type { Point } from "../core"
@@ -13,6 +12,8 @@ import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
 import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
 import { TextItem } from "../item"
+
+const DEFAULT_TEXT_ITEM_HEIGHT = 20
 
 export interface DiagramSymbolItemCharacs {
   titleBounds: ItemBounds
@@ -143,7 +144,7 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       builder.ct([1, this.createdAtItem.bounds.width]).eq([1, bounds.width]).strong()
       // Update offset for author if both exist
       if (this.authorItem) {
-        bottomOffset -= this.createdAtItem.bounds.height.value() || 20
+        bottomOffset -= this.createdAtItem.bounds.height.value() || DEFAULT_TEXT_ITEM_HEIGHT
       }
     }
 
