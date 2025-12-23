@@ -473,8 +473,7 @@ export class HintFactory {
    * ```
    */
   enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]): this {
-    const containerId = toSymbolId(container)
-    const containerTarget = this.resolveConstraintTarget(containerId)
+    const containerTarget = this.resolveConstraintTarget(container)
     if (!containerTarget) {
       return this
     }

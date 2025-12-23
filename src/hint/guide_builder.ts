@@ -1,8 +1,8 @@
 // src/hint/guide_builder.ts
 import type { SymbolBase, LayoutContext } from "../model"
-import type { SymbolId, Term, HintTarget, Variable } from "../core"
+import type { Term, HintTarget, Variable, ISymbolCharacs } from "../core"
 
-type LayoutTargetId = SymbolId
+type LayoutTargetId = ISymbolCharacs
 
 /**
  * GuideBuilderX インターフェイス

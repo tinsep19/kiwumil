@@ -1,5 +1,5 @@
 // src/hint/fluent_enclose_builder.ts
-import type { SymbolId, HintTarget, ISymbolCharacs } from "../core"
+import type { HintTarget, ISymbolCharacs } from "../core"
 import type { LayoutContext } from "../model"
 
 /**
@@ -29,7 +29,7 @@ export class FluentEncloseBuilder {
     private readonly context: LayoutContext,
     private readonly resolveTargets: (targets: ISymbolCharacs[]) => HintTarget[],
     private readonly childIds: ISymbolCharacs[],
-    private readonly diagramContainer: SymbolId
+    private readonly diagramContainer: ISymbolCharacs
   ) {}
 
   /**

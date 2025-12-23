@@ -1,5 +1,5 @@
 // src/hint/fluent_arrange_builder.ts
-import type { Variable, ISymbolCharacs } from "../core"
+import type { ISymbolCharacs } from "../core"
 import type { LayoutContext } from "../model"
 import type { HintTarget } from "../core"
 
@@ -24,7 +24,7 @@ import type { HintTarget } from "../core"
  * ```
  */
 export class FluentArrangeBuilder {
-  private gapValue?: number | Variable
+  private gapValue?: number
 
   constructor(
     private readonly context: LayoutContext,
@@ -37,7 +37,7 @@ export class FluentArrangeBuilder {
    * 
    * If not specified, the theme's default gap will be used.
    * 
-   * @param value - Gap size as a number or Variable
+   * @param value - Gap size as a number
    * @returns This builder for method chaining
    * 
    * @example
@@ -45,7 +45,7 @@ export class FluentArrangeBuilder {
    * hint.arrange(sym1, sym2, sym3).margin(30).vertical();
    * ```
    */
-  margin(value: number | Variable): this {
+  margin(value: number): this {
     this.gapValue = value
     return this
   }
