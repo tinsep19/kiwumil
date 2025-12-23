@@ -1,6 +1,7 @@
 export { FigureBuilder } from "./figure_builder"
 export { GridBuilder } from "./grid_builder"
 export { FluentGridBuilder, type Cell } from "./fluent_grid_builder"
+export { FluentArrangeBuilder } from "./fluent_arrange_builder"
 export { GuideBuilderImpl, type GuideBuilderX, type GuideBuilderY } from "./guide_builder"
 export { ConstraintHelper } from "./constraint_helper"
 export type { StrengthBuilder } from "./strength_builder"

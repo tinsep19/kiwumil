@@ -5,6 +5,7 @@ import {
   FigureBuilder,
   GridBuilder,
   FluentGridBuilder,
+  FluentArrangeBuilder,
   GuideBuilderImpl,
   type GuideBuilderX,
   type GuideBuilderY,
@@ -187,18 +188,51 @@ export class HintFactory {
   // ============================================================================
 
   /**
+   * Creates a fluent arrangement builder for organizing symbols.
+   * 
+   * This method returns a builder that allows specifying:
+   * - Symbols to arrange (passed as arguments)
+   * - Optional margin/gap via `.margin(value)`
+   * - Direction via `.vertical()` or `.horizontal()`
+   * 
+   * @param symbolIds - Symbols to arrange
+   * @returns FluentArrangeBuilder for method chaining
+   * 
+   * @example
+   * ```typescript
+   * // Basic vertical arrangement
+   * hint.arrange(sym1, sym2, sym3).vertical();
+   * 
+   * // With custom margin
+   * hint.arrange(sym1, sym2, sym3).margin(20).vertical();
+   * 
+   * // Horizontal arrangement
+   * hint.arrange(sym1, sym2, sym3).horizontal();
+   * ```
+   */
+  arrange(...symbolIds: LayoutTargetId[]): FluentArrangeBuilder {
+    return new FluentArrangeBuilder(
+      this.context,
+      (targets) => this.resolveConstraintTargets(targets),
+      symbolIds
+    )
+  }
+
+  /**
    * Arranges symbols horizontally with equal spacing.
    * Alias for arrangeHorizontal for backward compatibility.
    * 
    * @param symbolIds - Symbols to arrange from left to right
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.horizontal(sym1, sym2, sym3);
+   * hint.horizontal(sym1, sym2, sym3).alignTop(sym1, sym2, sym3);
    * ```
    */
-  horizontal(...symbolIds: LayoutTargetId[]): void {
+  horizontal(...symbolIds: LayoutTargetId[]): this {
     this.arrangeHorizontal(...symbolIds)
+    return this
   }
 
   /**
@@ -206,14 +240,16 @@ export class HintFactory {
    * Alias for arrangeVertical for backward compatibility.
    * 
    * @param symbolIds - Symbols to arrange from top to bottom
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.vertical(sym1, sym2, sym3);
+   * hint.vertical(sym1, sym2, sym3).alignLeft(sym1, sym2, sym3);
    * ```
    */
-  vertical(...symbolIds: LayoutTargetId[]): void {
+  vertical(...symbolIds: LayoutTargetId[]): this {
     this.arrangeVertical(...symbolIds)
+    return this
   }
 
   /**
@@ -223,15 +259,17 @@ export class HintFactory {
    * with consistent gaps between them, using the theme's default horizontal gap.
    * 
    * @param symbolIds - Symbols to arrange
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.arrangeHorizontal(sym1, sym2, sym3);
+   * hint.arrangeHorizontal(sym1, sym2, sym3).alignTop(sym1, sym2, sym3);
    * // Results in: [sym1] -- gap -- [sym2] -- gap -- [sym3]
    * ```
    */
-  arrangeHorizontal(...symbolIds: LayoutTargetId[]): void {
+  arrangeHorizontal(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.arrangeHorizontal(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -241,10 +279,11 @@ export class HintFactory {
    * with consistent gaps between them, using the theme's default vertical gap.
    * 
    * @param symbolIds - Symbols to arrange
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.arrangeVertical(sym1, sym2, sym3);
+   * hint.arrangeVertical(sym1, sym2, sym3).alignLeft(sym1, sym2, sym3);
    * // Results in: [sym1]
    * //             gap
    * //             [sym2]
@@ -252,8 +291,9 @@ export class HintFactory {
    * //             [sym3]
    * ```
    */
-  arrangeVertical(...symbolIds: LayoutTargetId[]): void {
+  arrangeVertical(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.arrangeVertical(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   // ============================================================================
@@ -266,14 +306,16 @@ export class HintFactory {
    * All symbols will have their left edges (x coordinate) aligned to the same position.
    * 
    * @param symbolIds - Symbols to align
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignLeft(sym1, sym2, sym3);
+   * hint.alignLeft(sym1, sym2, sym3).arrangeVertical(sym1, sym2, sym3);
    * ```
    */
-  alignLeft(...symbolIds: LayoutTargetId[]): void {
+  alignLeft(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignLeft(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -282,14 +324,16 @@ export class HintFactory {
    * All symbols will have their right edges (x + width) aligned to the same position.
    * 
    * @param symbolIds - Symbols to align
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignRight(sym1, sym2, sym3);
+   * hint.alignRight(sym1, sym2, sym3).arrangeVertical(sym1, sym2, sym3);
    * ```
    */
-  alignRight(...symbolIds: LayoutTargetId[]): void {
+  alignRight(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignRight(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -298,14 +342,16 @@ export class HintFactory {
    * All symbols will have their top edges (y coordinate) aligned to the same position.
    * 
    * @param symbolIds - Symbols to align
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignTop(sym1, sym2, sym3);
+   * hint.alignTop(sym1, sym2, sym3).arrangeHorizontal(sym1, sym2, sym3);
    * ```
    */
-  alignTop(...symbolIds: LayoutTargetId[]): void {
+  alignTop(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignTop(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -314,14 +360,16 @@ export class HintFactory {
    * All symbols will have their bottom edges (y + height) aligned to the same position.
    * 
    * @param symbolIds - Symbols to align
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignBottom(sym1, sym2, sym3);
+   * hint.alignBottom(sym1, sym2, sym3).arrangeHorizontal(sym1, sym2, sym3);
    * ```
    */
-  alignBottom(...symbolIds: LayoutTargetId[]): void {
+  alignBottom(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignBottom(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -330,14 +378,16 @@ export class HintFactory {
    * All symbols will have their horizontal centers (x + width/2) aligned.
    * 
    * @param symbolIds - Symbols to align
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignCenterX(sym1, sym2, sym3);
+   * hint.alignCenterX(sym1, sym2, sym3).arrangeVertical(sym1, sym2, sym3);
    * ```
    */
-  alignCenterX(...symbolIds: LayoutTargetId[]): void {
+  alignCenterX(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignCenterX(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -346,42 +396,48 @@ export class HintFactory {
    * All symbols will have their vertical centers (y + height/2) aligned.
    * 
    * @param symbolIds - Symbols to align
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignCenterY(sym1, sym2, sym3);
+   * hint.alignCenterY(sym1, sym2, sym3).arrangeHorizontal(sym1, sym2, sym3);
    * ```
    */
-  alignCenterY(...symbolIds: LayoutTargetId[]): void {
+  alignCenterY(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignCenterY(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
    * Makes all specified symbols have the same width.
    * 
    * @param symbolIds - Symbols to make equal width
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignWidth(sym1, sym2, sym3);
+   * hint.alignWidth(sym1, sym2, sym3).alignCenterX(sym1, sym2, sym3);
    * ```
    */
-  alignWidth(...symbolIds: LayoutTargetId[]): void {
+  alignWidth(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignWidth(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
    * Makes all specified symbols have the same height.
    * 
    * @param symbolIds - Symbols to make equal height
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignHeight(sym1, sym2, sym3);
+   * hint.alignHeight(sym1, sym2, sym3).alignCenterY(sym1, sym2, sym3);
    * ```
    */
-  alignHeight(...symbolIds: LayoutTargetId[]): void {
+  alignHeight(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignHeight(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   /**
@@ -390,14 +446,16 @@ export class HintFactory {
    * This is equivalent to calling both alignWidth and alignHeight.
    * 
    * @param symbolIds - Symbols to make equal size
+   * @returns This HintFactory instance for method chaining
    * 
    * @example
    * ```typescript
-   * hint.alignSize(sym1, sym2, sym3);
+   * hint.alignSize(sym1, sym2, sym3).alignCenterX(sym1, sym2, sym3);
    * ```
    */
-  alignSize(...symbolIds: LayoutTargetId[]): void {
+  alignSize(...symbolIds: LayoutTargetId[]): this {
     this.context.hints.alignSize(this.resolveConstraintTargets(symbolIds))
+    return this
   }
 
   // ============================================================================
@@ -414,6 +472,7 @@ export class HintFactory {
    * 
    * @param container - The container symbol that will enclose the children
    * @param childIds - Array of child symbols to be enclosed
+   * @returns This HintFactory instance for method chaining
    * 
    * @remarks
    * Z-depth constraints should be handled by hints.enclose() implementation
@@ -421,18 +480,20 @@ export class HintFactory {
    * 
    * @example
    * ```typescript
-   * hint.enclose(systemBoundary, [usecase1, usecase2, usecase3]);
+   * hint.enclose(systemBoundary, [usecase1, usecase2, usecase3])
+   *     .alignCenterX(usecase1, usecase2, usecase3);
    * ```
    */
-  enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]): void {
+  enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]): this {
     const containerId = toSymbolId(container)
     const containerTarget = this.resolveConstraintTarget(containerId)
     if (!containerTarget) {
-      return
+      return this
     }
 
     const childTargets = this.resolveConstraintTargets(childIds)
     this.context.hints.enclose(containerTarget, childTargets)
+    return this
   }
 
   // ============================================================================
