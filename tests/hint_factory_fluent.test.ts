@@ -15,7 +15,15 @@ describe("HintFactory Fluent API", () => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
-    hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
+    
+    // Create diagram container characs
+    const diagramCharacs = {
+      id: diagramContainerId,
+      bounds: context.variables.createBounds(diagramContainerId, "layout"),
+      container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
+    }
+    
+    hint = new HintFactory({ context, symbols, diagramContainer: diagramCharacs })
   })
 
   function createRectangle(id: string) {

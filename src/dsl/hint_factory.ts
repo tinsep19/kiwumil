@@ -49,7 +49,7 @@ type LayoutContainerTarget = ContainerSymbolOrId
  */
 export class HintFactory {
   private guideCounter = 0
-  private readonly diagramContainer: SymbolId
+  private readonly diagramContainer: IContainerSymbolCharacs
   private readonly context: LayoutContext
   private readonly symbols: Symbols
 
@@ -59,7 +59,7 @@ export class HintFactory {
    * @param params - Configuration object
    * @param params.context - The layout context containing solver and theme
    * @param params.symbols - The symbols registry for resolving symbol references
-   * @param params.diagramContainer - The ID of the root diagram container
+   * @param params.diagramContainer - The container characteristics of the root diagram container
    */
   constructor({
     context,
@@ -68,7 +68,7 @@ export class HintFactory {
   }: {
     context: LayoutContext
     symbols: Symbols
-    diagramContainer: SymbolId
+    diagramContainer: IContainerSymbolCharacs
   }) {
     this.context = context
     this.symbols = symbols
@@ -109,7 +109,7 @@ export class HintFactory {
   grid(
     symbols: (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
   ): FluentGridBuilder {
-    return new FluentGridBuilder(this, symbols, this.diagramContainer)
+    return new FluentGridBuilder(this, symbols, this.diagramContainer.id)
   }
 
   /**
@@ -131,7 +131,7 @@ export class HintFactory {
    * ```
    */
   figure(container?: LayoutContainerTarget): FigureBuilder {
-    const targetContainer = container ? toSymbolId(container) : this.diagramContainer
+    const targetContainer = container ? toSymbolId(container) : this.diagramContainer.id
     return new FigureBuilder(this, targetContainer)
   }
 
