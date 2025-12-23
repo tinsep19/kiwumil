@@ -51,7 +51,7 @@ export class HintFactory {
   ): GridBuilder | FluentGridBuilder {
     // Check if it's a 2D array (fluent grid API)
     if (Array.isArray(symbolsOrContainer)) {
-      return new FluentGridBuilder(this, symbolsOrContainer)
+      return new FluentGridBuilder(this, symbolsOrContainer, this.diagramContainer)
     }
     
     // Traditional grid builder

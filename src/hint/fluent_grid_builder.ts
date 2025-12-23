@@ -28,6 +28,7 @@ export class FluentGridBuilder {
   private readonly symbols: (GridSymbol | null)[][]
   private readonly rows: number
   private readonly cols: number
+  private readonly diagram: SymbolId
   private container?: SymbolId
 
   // Grid coordinate arrays - using AnchorX and AnchorY instead of GuideBuilder
@@ -38,7 +39,8 @@ export class FluentGridBuilder {
 
   constructor(
     private readonly hint: HintFactory,
-    symbols: (GridSymbol | null)[][]
+    symbols: (GridSymbol | null)[][],
+    diagram: SymbolId
   ) {
     // Validate that symbols is a rectangular matrix
     if (symbols.length === 0) {
@@ -63,6 +65,7 @@ export class FluentGridBuilder {
     this.symbols = symbols
     this.rows = symbols.length // N
     this.cols = firstRow.length // M
+    this.diagram = diagram
   }
 
 
@@ -82,6 +85,7 @@ export class FluentGridBuilder {
    * Uses the diagram as the container
    */
   layout(): this {
+    this.container = this.diagram
     this.applyLayout()
     return this
   }
@@ -131,10 +135,23 @@ export class FluentGridBuilder {
   private applyLayout(): void {
     const context = this.hint.getLayoutContext()
     
+    // Early validation: container must be set and valid
+    if (!this.container) {
+      throw new Error("FluentGridBuilder: container must be set before applying layout")
+    }
+    
+    const containerTarget = this.hint.getConstraintTarget(this.container)
+    if (!containerTarget || !containerTarget.container) {
+      throw new Error(`FluentGridBuilder: container "${this.container}" not found or is not a container symbol`)
+    }
+    
+    const containerBounds = containerTarget.container
+    
     // Create branded variables for type safety
     // Width and Height types ensure that only dimension variables are used in dimension constraints
     const brandFactory = createBrandVariableFactory((id) => context.variables.createVariable(id))
 
+    // Create all variables first
     // Create x guides (M+1 vertical lines) as AnchorX
     for (let i = 0; i <= this.cols; i++) {
       this.x.push(brandFactory.createAnchorX(`grid-x-${i}`))
@@ -151,9 +168,15 @@ export class FluentGridBuilder {
       this.width.push(widthVar)
     }
 
-    // Create all width constraints in a single createConstraint call
-    // Constraint: x[i+1] = x[i] + width[i] for all columns
-    context.createConstraint(`grid/width-all`, (builder) => {
+    // Create height variables (N rows)
+    for (let row = 0; row < this.rows; row++) {
+      const heightVar = brandFactory.createHeight(`grid-height-${row}`)
+      this.height.push(heightVar)
+    }
+
+    // Now create all constraints in a single createConstraint call
+    context.createConstraint(`grid/layout`, (builder) => {
+      // Width constraints: x[i+1] = x[i] + width[i] for all columns
       for (let col = 0; col < this.cols; col++) {
         const xNext = this.x[col + 1]
         const xCurr = this.x[col]
@@ -165,17 +188,8 @@ export class FluentGridBuilder {
             .required()
         }
       }
-    })
 
-    // Create height variables (N rows)
-    for (let row = 0; row < this.rows; row++) {
-      const heightVar = brandFactory.createHeight(`grid-height-${row}`)
-      this.height.push(heightVar)
-    }
-
-    // Create all height constraints in a single createConstraint call
-    // Constraint: y[i+1] = y[i] + height[i] for all rows
-    context.createConstraint(`grid/height-all`, (builder) => {
+      // Height constraints: y[i+1] = y[i] + height[i] for all rows
       for (let row = 0; row < this.rows; row++) {
         const yNext = this.y[row + 1]
         const yCurr = this.y[row]
@@ -187,34 +201,23 @@ export class FluentGridBuilder {
             .required()
         }
       }
-    })
 
-    // If container is specified, constrain grid bounds to container
-    if (this.container) {
-      const containerTarget = this.hint.getConstraintTarget(this.container)
-      if (containerTarget && containerTarget.container) {
-        const containerBounds = containerTarget.container
+      // Container width = sum of all column widths
+      const widthTerms: [number, Variable][] = this.width.map((w) => [1, w as Variable])
+      builder.ct([1, containerBounds.width]).eq(...widthTerms).required()
 
-        // Consolidate all container constraints into a single createConstraint call
-        context.createConstraint(`grid/container-bounds`, (builder) => {
-          // Container width = sum of all column widths
-          const widthTerms: [number, Variable][] = this.width.map((w) => [1, w as Variable])
-          builder.ct([1, containerBounds.width]).eq(...widthTerms).required()
+      // Container height = sum of all row heights
+      const heightTerms: [number, Variable][] = this.height.map((h) => [1, h as Variable])
+      builder.ct([1, containerBounds.height]).eq(...heightTerms).required()
 
-          // Container height = sum of all row heights
-          const heightTerms: [number, Variable][] = this.height.map((h) => [1, h as Variable])
-          builder.ct([1, containerBounds.height]).eq(...heightTerms).required()
-
-          // Align grid origin to container origin
-          const x0 = this.x[0]
-          const y0 = this.y[0]
-          if (x0 && y0) {
-            builder.ct([1, x0]).eq([1, containerBounds.x]).required()
-            builder.ct([1, y0]).eq([1, containerBounds.y]).required()
-          }
-        })
+      // Align grid origin to container origin
+      const x0 = this.x[0]
+      const y0 = this.y[0]
+      if (x0 && y0) {
+        builder.ct([1, x0]).eq([1, containerBounds.x]).required()
+        builder.ct([1, y0]).eq([1, containerBounds.y]).required()
       }
-    }
+    })
 
     // Apply symbol-specific constraints
     for (let row = 0; row < this.rows; row++) {
