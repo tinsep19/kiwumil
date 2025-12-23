@@ -86,10 +86,10 @@ export class FluentEncloseBuilder {
   /**
    * Internal method to apply the enclosure constraints.
    * 
-   * @param containerId - Container to use
+   * @param container - Container to use
    */
-  private applyEnclose(containerId: IContainerSymbolCharacs): void {
-    const containerTargets = this.resolveTargets([containerId])
+  private applyEnclose(container: IContainerSymbolCharacs): void {
+    const containerTargets = this.resolveTargets([container])
     if (containerTargets.length === 0) {
       return
     }
