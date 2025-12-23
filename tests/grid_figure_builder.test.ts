@@ -53,118 +53,13 @@ describe("Matrix Utils", () => {
   })
 })
 
-describe("Grid Builder", () => {
-  test("should create grid layout with default gap", () => {
-    let boundaryId: any
-    let symbolIds: any[] = []
-
-    const result = TypeDiagram("Grid Test")
-      .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
-        boundaryId = el.uml.systemBoundary("Boundary")
-
-        const a = el.core.rectangle("A")
-        const b = el.core.rectangle("B")
-        const c = el.core.rectangle("C")
-        const d = el.core.rectangle("D")
-
-        symbolIds = [a, b, c, d]
-
-        hint
-          .grid(boundaryId)
-          .enclose([
-            [a, b],
-            [c, d],
-          ] as const)
-          .layout()
-      })
-
-    expect(result.symbols.length).toBeGreaterThan(4)
-    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
-    expect(result.symbols.find((s) => s.label === "A")).toBeDefined()
-  })
-
-  test("should create grid layout with custom gap", () => {
-    let boundaryId: any
-
-    const result = TypeDiagram("Grid Custom Gap")
-      .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
-        boundaryId = el.uml.systemBoundary("Boundary")
-
-        const a = el.core.rectangle("A")
-        const b = el.core.rectangle("B")
-        const c = el.core.rectangle("C")
-        const d = el.core.rectangle("D")
-
-        hint
-          .grid(boundaryId)
-          .enclose([
-            [a, b],
-            [c, d],
-          ] as const)
-          .gap(20)
-          .layout()
-      })
-
-    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
-  })
-
-  test("should create grid layout with row/col gap", () => {
-    let boundaryId: any
-
-    const result = TypeDiagram("Grid Row/Col Gap")
-      .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
-        boundaryId = el.uml.systemBoundary("Boundary")
-
-        const a = el.core.rectangle("A")
-        const b = el.core.rectangle("B")
-        const c = el.core.rectangle("C")
-        const d = el.core.rectangle("D")
-
-        hint
-          .grid(boundaryId)
-          .enclose([
-            [a, b],
-            [c, d],
-          ] as const)
-          .gap({ row: 30, col: 60 })
-          .layout()
-      })
-
-    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
-  })
-
-  test("should throw error for non-rectangular matrix", () => {
-    expect(() => {
-      TypeDiagram("Grid Invalid")
-        .use(UMLPlugin)
-        .build(({ el, rel, hint }) => {
-          const boundaryId = el.uml.systemBoundary("Boundary")
-
-          const a = el.core.rectangle("A")
-          const b = el.core.rectangle("B")
-          const c = el.core.rectangle("C")
-
-          hint
-            .grid(boundaryId)
-            .enclose([[a, b], [c]] as const)
-            .layout()
-        })
-    }).toThrow(/rectangular matrix/)
-  })
-
-  test("should throw error when enclose not called", () => {
-    expect(() => {
-      TypeDiagram("Grid No Enclose")
-        .use(UMLPlugin)
-        .build(({ el, rel, hint }) => {
-          const boundaryId = el.uml.systemBoundary("Boundary")
-
-          hint.grid(boundaryId).layout()
-        })
-    }).toThrow(/enclose.*must be called/)
+describe("Grid Builder (deprecated - tests removed)", () => {
+  // These tests have been removed because GridBuilder is deprecated
+  // and grid() now only supports FluentGridBuilder.
+  // See fluent_grid_api.test.ts for FluentGridBuilder tests.
+  test("GridBuilder is deprecated", () => {
+    // This is a placeholder test to indicate the old GridBuilder API is no longer supported
+    expect(true).toBe(true)
   })
 })
 

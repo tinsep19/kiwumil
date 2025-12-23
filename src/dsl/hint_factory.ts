@@ -3,7 +3,6 @@ import { SymbolBase, Symbols, LayoutContext, type ContainerSymbol } from "../mod
 import type { SymbolId, HintTarget, ISymbolCharacs } from "../core"
 import {
   FigureBuilder,
-  GridBuilder,
   FluentGridBuilder,
   GuideBuilderImpl,
   type GuideBuilderX,
@@ -38,25 +37,16 @@ export class HintFactory {
   /**
    * Grid Builder を返す（矩形行列レイアウト用）
    * 
-   * @overload
    * @param symbols - 2D array of symbol IDs or symbol objects for fluent grid API
    * @returns FluentGridBuilder with grid coordinate system
    * 
-   * @overload
-   * @param container - コンテナID。省略時は diagram 全体を対象とする
-   * @returns GridBuilder for traditional grid layout
+   * @deprecated GridBuilder is deprecated. Only FluentGridBuilder is supported.
+   * Pass a 2D array of symbols to use the fluent grid API.
    */
   grid(
-    symbolsOrContainer?: LayoutContainerTarget | (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
-  ): GridBuilder | FluentGridBuilder {
-    // Check if it's a 2D array (fluent grid API)
-    if (Array.isArray(symbolsOrContainer)) {
-      return new FluentGridBuilder(this, symbolsOrContainer, this.diagramContainer)
-    }
-    
-    // Traditional grid builder
-    const targetContainer = symbolsOrContainer ? toSymbolId(symbolsOrContainer) : this.diagramContainer
-    return new GridBuilder(this, targetContainer)
+    symbols: (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
+  ): FluentGridBuilder {
+    return new FluentGridBuilder(this, symbols, this.diagramContainer)
   }
 
   /**
