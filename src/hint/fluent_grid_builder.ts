@@ -63,68 +63,9 @@ export class FluentGridBuilder {
     this.symbols = symbols
     this.rows = symbols.length // N
     this.cols = firstRow.length // M
-
-    // Initialize grid coordinates and dimensions
-    this.initializeGrid()
   }
 
-  /**
-   * Initialize grid coordinate system
-   * Creates M+1 x guides, N+1 y guides, M width variables, and N height variables
-   */
-  private initializeGrid(): void {
-    const context = this.hint.getLayoutContext()
-    
-    // Create branded variables for type safety
-    // Width and Height types ensure that only dimension variables are used in dimension constraints
-    const brandFactory = createBrandVariableFactory((id) => context.variables.createVariable(id))
 
-    // Create x guides (M+1 vertical lines) as AnchorX
-    for (let i = 0; i <= this.cols; i++) {
-      this.x.push(brandFactory.createAnchorX(`grid-x-${i}`))
-    }
-
-    // Create y guides (N+1 horizontal lines) as AnchorY
-    for (let i = 0; i <= this.rows; i++) {
-      this.y.push(brandFactory.createAnchorY(`grid-y-${i}`))
-    }
-
-    // Create width variables (M columns)
-    for (let col = 0; col < this.cols; col++) {
-      const widthVar = brandFactory.createWidth(`grid-width-${col}`)
-      this.width.push(widthVar)
-
-      // Constraint: x[i+1] = x[i] + width[i]
-      context.createConstraint(`grid/width/${col}`, (builder) => {
-        const xNext = this.x[col + 1]
-        const xCurr = this.x[col]
-        if (xNext && xCurr) {
-          builder
-            .ct([1, xNext])
-            .eq([1, xCurr], [1, widthVar])
-            .required()
-        }
-      })
-    }
-
-    // Create height variables (N rows)
-    for (let row = 0; row < this.rows; row++) {
-      const heightVar = brandFactory.createHeight(`grid-height-${row}`)
-      this.height.push(heightVar)
-
-      // Constraint: y[i+1] = y[i] + height[i]
-      context.createConstraint(`grid/height/${row}`, (builder) => {
-        const yNext = this.y[row + 1]
-        const yCurr = this.y[row]
-        if (yNext && yCurr) {
-          builder
-            .ct([1, yNext])
-            .eq([1, yCurr], [1, heightVar])
-            .required()
-        }
-      })
-    }
-  }
 
   /**
    * Specify the container for this grid layout
@@ -189,6 +130,68 @@ export class FluentGridBuilder {
    */
   private applyLayout(): void {
     const context = this.hint.getLayoutContext()
+    
+    // Create branded variables for type safety
+    // Width and Height types ensure that only dimension variables are used in dimension constraints
+    const brandFactory = createBrandVariableFactory((id) => context.variables.createVariable(id))
+
+    // Create x guides (M+1 vertical lines) as AnchorX
+    for (let i = 0; i <= this.cols; i++) {
+      this.x.push(brandFactory.createAnchorX(`grid-x-${i}`))
+    }
+
+    // Create y guides (N+1 horizontal lines) as AnchorY
+    for (let i = 0; i <= this.rows; i++) {
+      this.y.push(brandFactory.createAnchorY(`grid-y-${i}`))
+    }
+
+    // Create width variables (M columns) and add all width constraints in one call
+    const widthVars: Width[] = []
+    for (let col = 0; col < this.cols; col++) {
+      const widthVar = brandFactory.createWidth(`grid-width-${col}`)
+      widthVars.push(widthVar)
+      this.width.push(widthVar)
+    }
+
+    // Create all width constraints in a single createConstraint call
+    // Constraint: x[i+1] = x[i] + width[i] for all columns
+    context.createConstraint(`grid/width-all`, (builder) => {
+      for (let col = 0; col < this.cols; col++) {
+        const xNext = this.x[col + 1]
+        const xCurr = this.x[col]
+        const widthVar = widthVars[col]
+        if (xNext && xCurr && widthVar) {
+          builder
+            .ct([1, xNext])
+            .eq([1, xCurr], [1, widthVar])
+            .required()
+        }
+      }
+    })
+
+    // Create height variables (N rows) and add all height constraints in one call
+    const heightVars: Height[] = []
+    for (let row = 0; row < this.rows; row++) {
+      const heightVar = brandFactory.createHeight(`grid-height-${row}`)
+      heightVars.push(heightVar)
+      this.height.push(heightVar)
+    }
+
+    // Create all height constraints in a single createConstraint call
+    // Constraint: y[i+1] = y[i] + height[i] for all rows
+    context.createConstraint(`grid/height-all`, (builder) => {
+      for (let row = 0; row < this.rows; row++) {
+        const yNext = this.y[row + 1]
+        const yCurr = this.y[row]
+        const heightVar = heightVars[row]
+        if (yNext && yCurr && heightVar) {
+          builder
+            .ct([1, yNext])
+            .eq([1, yCurr], [1, heightVar])
+            .required()
+        }
+      }
+    })
 
     // If container is specified, constrain grid bounds to container
     if (this.container) {
@@ -196,20 +199,17 @@ export class FluentGridBuilder {
       if (containerTarget && containerTarget.container) {
         const containerBounds = containerTarget.container
 
-        // Container width = sum of all column widths
-        context.createConstraint(`grid/container-width`, (builder) => {
+        // Consolidate all container constraints into a single createConstraint call
+        context.createConstraint(`grid/container-bounds`, (builder) => {
+          // Container width = sum of all column widths
           const widthTerms: [number, Variable][] = this.width.map((w) => [1, w as Variable])
           builder.ct([1, containerBounds.width]).eq(...widthTerms).required()
-        })
 
-        // Container height = sum of all row heights
-        context.createConstraint(`grid/container-height`, (builder) => {
+          // Container height = sum of all row heights
           const heightTerms: [number, Variable][] = this.height.map((h) => [1, h as Variable])
           builder.ct([1, containerBounds.height]).eq(...heightTerms).required()
-        })
 
-        // Align grid origin to container origin
-        context.createConstraint(`grid/container-origin`, (builder) => {
+          // Align grid origin to container origin
           const x0 = this.x[0]
           const y0 = this.y[0]
           if (x0 && y0) {
