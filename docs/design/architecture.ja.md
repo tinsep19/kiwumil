@@ -7,17 +7,18 @@ Kiwumil は循環依存を避け、メンテナンス性を保つためにレイ
 ```
 Layer 4: DSL        (dsl/)
    ↓
-Layer 3: Plugins    (plugin/)
+Layer 3: Plugins    (plugin/, render/)
    ↓
 Layer 2: Model      (model/, hint/)
    ↓
-Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, item/, utils/)
 ```
 
 ルール:
 - 上位レイヤーは下位レイヤーに依存可能だが、下位レイヤーは上位レイヤーに依存してはいけない。
 - `core/` はインターフェースと型定義のみを提供する。
 - `kiwi/` は `core/` に依存しているが、これは差替可能なソルバーのデフォルト実装としてここに置いている。
+- `item/` は `core/` と `icon/` に依存し、レンダリング可能なアイテム（ラベル、タイトルなど）の基底クラスを提供する。
 - これらのルールはレイヤーに基づく ESLint ルール によるガードレールが提供されています。
 
 詳細は [循環依存防止ガイドライン](../guidelines/circular-dependency-prevention.ja.md) を参照してください。

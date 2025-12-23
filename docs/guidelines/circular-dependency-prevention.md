@@ -38,7 +38,7 @@ Layer 3: Plugins    (plugin/, render/)
    ↓  
 Layer 2: Model      (model/, hint/)
    ↓
-Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, item/, utils/)
 ```
 
 Rule: Higher layers may depend on lower layers, but lower layers must not depend on higher layers.
@@ -51,13 +51,14 @@ Avoid cycles within each layer.
 - `core/`: only type definitions, no external dependencies
 - `kiwi/`: depends only on `core/`
 - `theme/`, `icon/`, `utils/`: depend only on `core/`
+- `item/`: depends on `core/` and `icon/` (base classes for renderable items)
 
 #### Model Layer (Layer 2)
-- `model/`: depends on `core/`, `kiwi/`, `theme/`
+- `model/`: depends on `core/`, `kiwi/`, `theme/`, `item/`
 - `hint/`: depends on `model/`, `kiwi/`, `core/`
 
 #### Plugin Layer (Layer 3)
-- `plugin/`: may depend on lower layers
+- `plugin/`: may depend on lower layers (`core/`, `theme/`, `icon/`, `item/`, `utils/`, `model/`, `hint/`)
 
 #### DSL Layer (Layer 4)
 - `dsl/`: may depend on all layers (DSL-only dependency on `kiwi/` is allowed)
@@ -72,12 +73,13 @@ const LAYER_RULES = {
   'kiwi/**': ['core/**'],
   'theme/**': ['core/**'], 
   'icon/**': ['core/**'],
+  'item/**': ['core/**', 'icon/**'],
   'utils/**': ['core/**'],
-  'model/**': ['core/**', 'theme/**'],
+  'model/**': ['core/**', 'theme/**', 'item/**'],
   'hint/**': ['core/**', 'model/**'],
-  'plugin/**': ['core/**', 'theme/**', 'model/**', 'hint/**'],
+  'plugin/**': ['core/**', 'theme/**', 'item/**', 'model/**', 'hint/**'],
   'render/**': ['core/**', 'theme/**', 'model/**', 'plugin/**'],
-  'dsl/**': ['core/**', 'kiwi/**', 'theme/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
+  'dsl/**': ['core/**', 'kiwi/**', 'theme/**', 'item/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
 }
 ```
 
@@ -171,6 +173,7 @@ const LAYERS = {
   kiwi: 1, 
   theme: 1,
   icon: 1,
+  item: 1,
   utils: 1,
   model: 2,
   hint: 2,

@@ -41,7 +41,7 @@ Layer 3: Plugins    (plugin/, render/)
    ↓  
 Layer 2: Model      (model/, hint/)
    ↓
-Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, item/, utils/)
 ```
 
 **ルール**: 上位レイヤーは下位レイヤーを依存できるが、下位レイヤーは上位レイヤーに依存してはならない。
@@ -54,13 +54,14 @@ Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
 - `core/`: 型定義のみ、他への依存なし
 - `kiwi/`: `core/` のみ依存
 - `theme/`, `icon/`, `utils/`: `core/` のみ依存
+- `item/`: `core/`, `icon/` に依存（レンダリング可能なアイテムの基底クラス）
 
 #### Model Layer (Layer 2)  
-- `model/`: `core/`, `kiwi/`, `theme/` に依存
+- `model/`: `core/`, `kiwi/`, `theme/`, `item/` に依存
 - `hint/`: `model/`, `kiwi/`, `core/` に依存
 
 #### Plugin Layer (Layer 3)
-- `plugin/`: 下位レイヤーすべてに依存可能
+- `plugin/`: 下位レイヤーすべてに依存可能（`core/`, `theme/`, `icon/`, `item/`, `utils/`, `model/`, `hint/`）
 
 #### DSL Layer (Layer 4)
 - `dsl/`: 全レイヤーに依存可能（kiwi/ への依存は DSL のみ許可）
@@ -76,12 +77,13 @@ const LAYER_RULES = {
   'kiwi/**': ['core/**'],
   'theme/**': ['core/**'], 
   'icon/**': ['core/**'],
+  'item/**': ['core/**', 'icon/**'],
   'utils/**': ['core/**'],
-  'model/**': ['core/**', 'theme/**'],
+  'model/**': ['core/**', 'theme/**', 'item/**'],
   'hint/**': ['core/**', 'model/**'],
-  'plugin/**': ['core/**', 'theme/**', 'model/**', 'hint/**'],
+  'plugin/**': ['core/**', 'theme/**', 'item/**', 'model/**', 'hint/**'],
   'render/**': ['core/**', 'theme/**', 'model/**', 'plugin/**'],
-  'dsl/**': ['core/**', 'kiwi/**', 'theme/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
+  'dsl/**': ['core/**', 'kiwi/**', 'theme/**', 'item/**', 'model/**', 'hint/**', 'plugin/**', 'render/**']
 }
 ```
 
@@ -173,6 +175,7 @@ const LAYERS = {
   kiwi: 1, 
   theme: 1,
   icon: 1,
+  item: 1,
   utils: 1,
   model: 2,
   hint: 2,
