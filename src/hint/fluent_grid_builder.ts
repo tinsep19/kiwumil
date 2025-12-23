@@ -145,11 +145,9 @@ export class FluentGridBuilder {
       this.y.push(brandFactory.createAnchorY(`grid-y-${i}`))
     }
 
-    // Create width variables (M columns) and add all width constraints in one call
-    const widthVars: Width[] = []
+    // Create width variables (M columns)
     for (let col = 0; col < this.cols; col++) {
       const widthVar = brandFactory.createWidth(`grid-width-${col}`)
-      widthVars.push(widthVar)
       this.width.push(widthVar)
     }
 
@@ -159,8 +157,8 @@ export class FluentGridBuilder {
       for (let col = 0; col < this.cols; col++) {
         const xNext = this.x[col + 1]
         const xCurr = this.x[col]
-        const widthVar = widthVars[col]
-        if (xNext && xCurr && widthVar) {
+        const widthVar = this.width[col]
+        if (xNext && xCurr) {
           builder
             .ct([1, xNext])
             .eq([1, xCurr], [1, widthVar])
@@ -169,11 +167,9 @@ export class FluentGridBuilder {
       }
     })
 
-    // Create height variables (N rows) and add all height constraints in one call
-    const heightVars: Height[] = []
+    // Create height variables (N rows)
     for (let row = 0; row < this.rows; row++) {
       const heightVar = brandFactory.createHeight(`grid-height-${row}`)
-      heightVars.push(heightVar)
       this.height.push(heightVar)
     }
 
@@ -183,8 +179,8 @@ export class FluentGridBuilder {
       for (let row = 0; row < this.rows; row++) {
         const yNext = this.y[row + 1]
         const yCurr = this.y[row]
-        const heightVar = heightVars[row]
-        if (yNext && yCurr && heightVar) {
+        const heightVar = this.height[row]
+        if (yNext && yCurr) {
           builder
             .ct([1, yNext])
             .eq([1, yCurr], [1, heightVar])
