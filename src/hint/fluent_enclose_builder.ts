@@ -1,5 +1,5 @@
 // src/hint/fluent_enclose_builder.ts
-import type { HintTarget, ISymbolCharacs } from "../core"
+import type { HintTarget, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
 import type { LayoutContext } from "../model"
 
 /**
@@ -16,7 +16,7 @@ import type { LayoutContext } from "../model"
  * hint.enclose(child1, child2).in(container);
  * 
  * // With overlay elements
- * hint.enclose(child1, child2).through(overlay1).in(container);
+ * hint.enclose(child1, child2).over(overlay1).in(container);
  * 
  * // Using diagram container (shortcut)
  * hint.enclose(child1, child2).layout();
@@ -29,7 +29,7 @@ export class FluentEncloseBuilder {
     private readonly context: LayoutContext,
     private readonly resolveTargets: (targets: ISymbolCharacs[]) => HintTarget[],
     private readonly childIds: ISymbolCharacs[],
-    private readonly diagramContainer: ISymbolCharacs
+    private readonly diagramContainer: IContainerSymbolCharacs
   ) {}
 
   /**
@@ -38,16 +38,16 @@ export class FluentEncloseBuilder {
    * Overlay elements are also enclosed within the container but may have different
    * visual treatment or z-ordering.
    * 
-   * @param overlayIds - IDs of symbols to use as overlays
+   * @param overtaken - Symbols to use as overlays
    * @returns This builder for method chaining
    * 
    * @example
    * ```typescript
-   * hint.enclose(child1, child2).through(border, label).in(container);
+   * hint.enclose(child1, child2).over(border, label).in(container);
    * ```
    */
-  through(...overlayIds: ISymbolCharacs[]): this {
-    this.overlayIds = overlayIds
+  over(...overtaken: ISymbolCharacs[]): this {
+    this.overlayIds = overtaken
     return this
   }
 
@@ -57,15 +57,15 @@ export class FluentEncloseBuilder {
    * This finalizes the enclosure relationship by applying constraints
    * to ensure the container bounds contain all children and overlays.
    * 
-   * @param containerId - ID of the container symbol
+   * @param container - Container symbol
    * 
    * @example
    * ```typescript
    * hint.enclose(child1, child2).in(systemBoundary);
    * ```
    */
-  in(containerId: ISymbolCharacs): void {
-    this.applyEnclose(containerId)
+  in(container: IContainerSymbolCharacs): void {
+    this.applyEnclose(container)
   }
 
   /**
@@ -86,9 +86,9 @@ export class FluentEncloseBuilder {
   /**
    * Internal method to apply the enclosure constraints.
    * 
-   * @param containerId - ID of the container to use
+   * @param containerId - Container to use
    */
-  private applyEnclose(containerId: ISymbolCharacs): void {
+  private applyEnclose(containerId: IContainerSymbolCharacs): void {
     const containerTargets = this.resolveTargets([containerId])
     if (containerTargets.length === 0) {
       return
