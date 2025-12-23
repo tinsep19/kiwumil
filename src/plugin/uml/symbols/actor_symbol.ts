@@ -1,42 +1,96 @@
 // src/plugin/uml/symbols/actor_symbol.ts
-import type { LinearConstraintBuilder } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
-import { getStyleForSymbol } from "../../../theme"
+import type { LinearConstraintBuilder, ItemBounds, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds } from "../../../core"
+import { getStyleForSymbol, type Theme } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
 import type { IconMeta } from "../../../icon"
+import { IconItem, TextItem } from "../../../item"
 
 // Icon size constant
 const ICON_BASE_SIZE = 60
 
-export interface ActorSymbolOptions extends SymbolBaseOptions {
+export type ActorSymbolCharacs = ISymbolCharacs<{
+  icon: ItemBounds
+  label: ItemBounds
+  stereotype?: ItemBounds
+}>
+
+export interface ActorSymbolOptions {
   label: string
   stereotype?: string
-  icon?: IconMeta | null
+  icon: IconMeta
+  characs: ActorSymbolCharacs
+  theme: Theme
 }
 
-/**
- * Escape XML/HTML special characters to prevent XSS
- */
-function escapeXml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;")
-}
-
-export class ActorSymbol extends SymbolBase {
+export class ActorSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
   readonly stereotype?: string
-  readonly icon?: IconMeta | null
+  private readonly items: { icon: IconItem; label: TextItem; stereotype?: TextItem }
 
   constructor(options: ActorSymbolOptions) {
-    super(options)
+    this.id = options.characs.id
+    this.bounds = options.characs.bounds
+    this.theme = options.theme
     this.label = options.label
     this.stereotype = options.stereotype
-    this.icon = options.icon
+
+    // Get style from theme
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "actor")
+      : this.getFallbackStyle()
+
+    // Create IconItem for actor figure
+    const iconItem = new IconItem({
+      bounds: options.characs.icon,
+      icon: options.icon,
+      width: ICON_BASE_SIZE,
+      height: ICON_BASE_SIZE,
+      color: style.strokeColor,
+    })
+
+    // Create TextItem for label
+    const labelItem = new TextItem({
+      bounds: options.characs.label,
+      text: options.label,
+      alignment: "center",
+      fontSize: style.fontSize,
+      fontFamily: style.fontFamily,
+      textColor: style.textColor,
+      padding: { top: 4, right: 8, bottom: 4, left: 8 },
+    })
+
+    // Create TextItem for stereotype if provided
+    const stereotypeItem = options.stereotype && options.characs.stereotype
+      ? new TextItem({
+          bounds: options.characs.stereotype,
+          text: `<<${options.stereotype}>>`,
+          alignment: "center",
+          fontSize: style.fontSize,
+          fontFamily: style.fontFamily,
+          textColor: style.textColor,
+          padding: { top: 2, right: 8, bottom: 2, left: 8 },
+        })
+      : undefined
+
+    this.items = { icon: iconItem, label: labelItem, stereotype: stereotypeItem }
+  }
+
+  private getFallbackStyle() {
+    return {
+      strokeColor: "black",
+      strokeWidth: 2,
+      textColor: "black",
+      fontSize: 12,
+      fontFamily: "Arial",
+      fillColor: "white",
+      backgroundColor: "white",
+      horizontalGap: 80,
+      verticalGap: 50,
+    }
   }
 
   getDefaultSize() {
@@ -71,83 +125,44 @@ export class ActorSymbol extends SymbolBase {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.bounds)
-
-    // 負の値や極端に小さい値を安全な値にクランプ（二次防御）
-    const safeWidth = Math.max(10, Math.abs(width))
-    const safeHeight = Math.max(20, Math.abs(height))
-
-    const cx = x + safeWidth / 2
-
-    // Get style from theme
-    const style = this.theme
-      ? getStyleForSymbol(this.theme, "actor")
-      : {
-          strokeColor: "black",
-          strokeWidth: 2,
-          textColor: "black",
-          fontSize: 12,
-          fontFamily: "Arial",
-          fillColor: "white",
-          backgroundColor: "white",
-          horizontalGap: 80,
-          verticalGap: 50,
-        }
-
-    // Reserve space above the figure when stereotype is present
-    const stereotypeHeight = this.stereotype ? style.fontSize + 5 : 0
-    const actorStartY = y + stereotypeHeight
-
-    // Icon is required - throw error if not available
-    if (!this.icon?.raw) {
-      throw new Error(`Actor icon is required but not available for symbol ${this.id}`)
-    }
-
-    // Use icon at fixed size (no scaling)
-    const iconX = x + (safeWidth - ICON_BASE_SIZE) / 2
-    const iconY = actorStartY + 5
-
-    // Render icon via <use> referencing the symbol id; fall back to raw svg if href missing
-    const iconSvg = this.icon.href
-      ? `<svg width="${ICON_BASE_SIZE}" height="${ICON_BASE_SIZE}" viewBox="${this.icon.viewBox ?? `0 0 ${ICON_BASE_SIZE} ${ICON_BASE_SIZE}`}" xmlns="http://www.w3.org/2000/svg"><use href="#${this.icon.href}"/></svg>`
-      : this.icon.raw || ""
-
-    const bodyContent = `
-      <g transform="translate(${iconX}, ${iconY})">
-        ${iconSvg}
-      </g>
-    `
-
-    // Add stereotype if present (above the actor figure)
-    let stereotypeText = ""
-    if (this.stereotype) {
-      const escapedStereotype = escapeXml(this.stereotype)
-      stereotypeText = `
-        <text x="${cx}" y="${y + style.fontSize}" 
-              text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
-              fill="${style.textColor}">
-          &lt;&lt;${escapedStereotype}&gt;&gt;
-        </text>
-      `
-    }
-
-    const escapedLabel = escapeXml(this.label)
-
     return `
       <g id="${this.id}">
-        ${stereotypeText}
-        ${bodyContent}
+        ${this.items.stereotype ? `<!-- Stereotype -->\n${this.items.stereotype.render()}` : ""}
+        <!-- Actor Icon -->
+        ${this.items.icon.render()}
         <!-- Label -->
-        <text x="${cx}" y="${y + safeHeight}" 
-              text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
-              fill="${style.textColor}">
-          ${escapedLabel}
-        </text>
+        ${this.items.label.render()}
       </g>
     `
   }
 
-  ensureLayoutBounds(_builder: LinearConstraintBuilder): void {
-    // Controller constraints handled elsewhere
+  ensureLayoutBounds(builder: LinearConstraintBuilder): void {
+    const bounds = this.bounds
+    const style = this.theme ? getStyleForSymbol(this.theme, "actor") : this.getFallbackStyle()
+
+    // Layout constraints for icon, label, and optional stereotype
+    const stereotypeHeight = this.items.stereotype ? style.fontSize + 5 : 0
+
+    // Position stereotype at top if present
+    if (this.items.stereotype) {
+      builder.ct([1, this.items.stereotype.bounds.x]).eq([1, bounds.x]).strong()
+      builder.ct([1, this.items.stereotype.bounds.y]).eq([1, bounds.y]).strong()
+      builder.ct([1, this.items.stereotype.bounds.width]).eq([1, bounds.width]).strong()
+    }
+
+    // Position icon below stereotype (or at top if no stereotype)
+    builder.ct([1, this.items.icon.bounds.x]).eq([1, bounds.x], [0.5, bounds.width], [-ICON_BASE_SIZE / 2, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.y]).eq([1, bounds.y], [stereotypeHeight + 5, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.width]).eq([ICON_BASE_SIZE, 1]).strong()
+    builder.ct([1, this.items.icon.bounds.height]).eq([ICON_BASE_SIZE, 1]).strong()
+
+    // Position label at bottom
+    builder.ct([1, this.items.label.bounds.x]).eq([1, bounds.x]).strong()
+    builder.ct([1, this.items.label.bounds.bottom]).eq([1, bounds.bottom]).strong()
+    builder.ct([1, this.items.label.bounds.width]).eq([1, bounds.width]).strong()
+  }
+
+  render(): string {
+    return this.toSVG()
   }
 }

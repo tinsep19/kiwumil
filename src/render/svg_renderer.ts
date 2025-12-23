@@ -1,6 +1,6 @@
 // src/render/svg_renderer.ts
-import type { RelationshipBase, SymbolBase } from "../model"
-import type { SymbolId } from "../core"
+import type { RelationshipBase } from "../model"
+import type { ISymbol, SymbolId } from "../core"
 import type { Theme } from "../theme"
 import { DiagramSymbol } from "../model"
 import { getBoundsValues } from "../core"
@@ -11,11 +11,11 @@ interface RenderElement {
   svg: string
 }
 
-function hasLabel(symbol: SymbolBase): symbol is SymbolBase & { label: string } {
+function hasLabel(symbol: ISymbol): symbol is ISymbol & { label: string } {
   return typeof (symbol as { label?: unknown }).label === "string"
 }
 
-function getSymbolLabel(symbol: SymbolBase): string {
+function getSymbolLabel(symbol: ISymbol): string {
   if (hasLabel(symbol)) {
     return symbol.label
   }
@@ -23,13 +23,13 @@ function getSymbolLabel(symbol: SymbolBase): string {
 }
 
 export class SvgRenderer {
-  private symbols: SymbolBase[]
+  private symbols: ISymbol[]
   private relationships: RelationshipBase[]
   private theme?: Theme
   private iconRegistry?: IconRegistry
 
   constructor(
-    symbols: SymbolBase[],
+    symbols: ISymbol[],
     relationships: RelationshipBase[] = [],
     theme?: Theme,
     iconRegistry?: IconRegistry
@@ -40,7 +40,7 @@ export class SvgRenderer {
     this.iconRegistry = iconRegistry
   }
 
-  private calculateSymbolZIndex(symbol: SymbolBase): number {
+  private calculateSymbolZIndex(symbol: ISymbol): number {
     // Read z from layout.z via getBoundsValues, default to 0 if not finite
     const bounds = getBoundsValues(symbol.bounds)
     const z = Number.isFinite(bounds.z) ? bounds.z : 0
@@ -59,7 +59,7 @@ export class SvgRenderer {
     const renderElements: RenderElement[] = []
 
     // Create symbol map for relationship rendering
-    const symbolMap = new Map<SymbolId, SymbolBase>()
+    const symbolMap = new Map<SymbolId, ISymbol>()
     for (const symbol of this.symbols) {
       symbolMap.set(symbol.id, symbol)
     }
@@ -67,7 +67,7 @@ export class SvgRenderer {
     // Symbols
     for (const symbol of this.symbols) {
       const zIndex = this.calculateSymbolZIndex(symbol)
-      renderElements.push({ zIndex, svg: symbol.toSVG() })
+      renderElements.push({ zIndex, svg: symbol.render() })
     }
 
     // Relationships

@@ -9,6 +9,7 @@ import type { LayoutBounds, ContainerBounds } from "./bounds"
  */
 export interface ISymbol {
   id: SymbolId
+  bounds: LayoutBounds
   render(): string
   getConnectionPoint(src: Point): Point
 }

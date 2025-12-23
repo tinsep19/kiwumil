@@ -39,13 +39,28 @@ export const UMLPlugin = {
 
         return symbols.register(plugin, "actor", (symbolId, r) => {
           const bound = r.createLayoutBounds("layout")
+          const iconItem = r.createItemBounds("icon")
+          const labelItem = r.createItemBounds("label")
+          const stereotypeItem = stereotype ? r.createItemBounds("stereotype") : undefined
+
+          // Get icon from icons factory
           const iconGetter = icons.actor
+          if (!iconGetter) {
+            throw new Error("Actor icon is not available")
+          }
+          const iconMeta = iconGetter()
+
           const actor = new ActorSymbol({
-            id: symbolId,
-            bounds: bound,
             label,
             stereotype,
-            icon: iconGetter ? iconGetter() : null,
+            icon: iconMeta,
+            characs: {
+              id: symbolId,
+              bounds: bound,
+              icon: iconItem,
+              label: labelItem,
+              stereotype: stereotypeItem,
+            },
             theme,
           })
           r.setSymbol(actor)
