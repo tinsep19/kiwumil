@@ -40,7 +40,7 @@ export class HintFactory {
    * @param symbols - 2D array of symbol IDs or symbol objects for fluent grid API
    * @returns FluentGridBuilder with grid coordinate system
    * 
-   * @deprecated GridBuilder is deprecated. Only FluentGridBuilder is supported.
+   * Note: GridBuilder has been removed. Only FluentGridBuilder is supported.
    * Pass a 2D array of symbols to use the fluent grid API.
    */
   grid(
