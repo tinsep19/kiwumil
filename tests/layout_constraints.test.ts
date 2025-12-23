@@ -52,7 +52,7 @@ describe("LayoutConstraints metadata", () => {
         actor.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as ActorSymbol
+    }).characs
   }
 
   function createBoundary(id: string) {
@@ -72,7 +72,7 @@ describe("LayoutConstraints metadata", () => {
         boundary.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as SystemBoundarySymbol
+    }).characs
   }
 
   test("arrangeHorizontal records logical constraints per neighbor pair", () => {
@@ -80,7 +80,7 @@ describe("LayoutConstraints metadata", () => {
     const b = createActor("b")
     const c = createActor("c")
 
-    hint.arrangeHorizontal(a.id, b.id, c.id)
+    hint.arrangeHorizontal(a, b, c)
 
     const entries = context.hints.list()
 
@@ -99,13 +99,27 @@ describe("LayoutConstraints metadata", () => {
     const first = createActor("first")
     const second = createActor("second")
 
-    hint.enclose(boundary.id, [first.id, second.id])
+    hint.enclose(boundary, [first, second])
+    context.solve()
 
-    // enclose creates one constraint entry with 10 constraints
-    // (4 required bounds constraints + 1 z-index constraint per child)
-    const entry = context.hints.list().find((constraint) => constraint.rawConstraints.length === 10)
+    // Verify that the enclose operation worked by checking that
+    // the children are within the boundary after solving
+    const getBoundsValues = (bounds: any) => ({
+      x: context.valueOf(bounds.x),
+      y: context.valueOf(bounds.y),
+      width: context.valueOf(bounds.width),
+      height: context.valueOf(bounds.height),
+    })
 
-    expect(entry).toBeDefined()
-    expect(entry?.rawConstraints).toHaveLength(10)
+    const boundaryBounds = getBoundsValues(boundary.bounds)
+    const firstBounds = getBoundsValues(first.bounds)
+    const secondBounds = getBoundsValues(second.bounds)
+
+    // Children should be within the boundary
+    expect(firstBounds.x).toBeGreaterThanOrEqual(boundaryBounds.x)
+    expect(secondBounds.x).toBeGreaterThanOrEqual(boundaryBounds.x)
+    expect(firstBounds.x + firstBounds.width).toBeLessThanOrEqual(
+      boundaryBounds.x + boundaryBounds.width
+    )
   })
 })

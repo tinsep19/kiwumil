@@ -140,16 +140,16 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     block({ el, rel, hint, icon })
 
     const relationshipList = relationships.getAll()
-    const symbolList = symbols
+    const symbolRegistrations = symbols
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
-      .map((reg) => reg.symbol)
+    const symbolList = symbolRegistrations.map((reg) => reg.symbol)
     const allSymbols: ISymbol[] = [diagramSymbol, ...symbolList]
 
-    if (symbolList.length > 0) {
+    if (symbolRegistrations.length > 0) {
       hint.enclose(
-        diagramSymbol.id,
-        symbolList.map((s) => s.id)
+        diagramRegistration.characs,
+        symbolRegistrations.map((reg) => reg.characs)
       )
     }
 

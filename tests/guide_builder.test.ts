@@ -53,7 +53,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
         actor.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as ActorSymbol
+    }).characs
   }
 
   describe("GuideBuilderX", () => {
@@ -62,7 +62,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideX(100)
-      guide.alignLeft(a.id, b.id)
+      guide.alignLeft(a, b)
 
       context.solve()
 
@@ -77,7 +77,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideX(200)
-      guide.alignRight(a.id, b.id)
+      guide.alignRight(a, b)
 
       context.solve()
 
@@ -92,7 +92,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideX(150)
-      guide.alignCenter(a.id, b.id)
+      guide.alignCenter(a, b)
 
       context.solve()
 
@@ -106,9 +106,9 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const a = createActor("a")
       const b = createActor("b")
 
-      hint.arrangeHorizontal(a.id, b.id)
+      hint.arrangeHorizontal(a, b)
       const guide = hint.guideX()
-      guide.followLeft(b.id).alignLeft(a.id)
+      guide.followLeft(b).alignLeft(a)
 
       context.solve()
 
@@ -122,7 +122,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideX(100)
-      guide.alignCenter(a.id, b.id).arrange()
+      guide.alignCenter(a, b).arrange()
 
       context.solve()
 
@@ -137,7 +137,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
     test("throws error when using Y-axis methods on X-axis guide", () => {
       const guide = hint.guideX()
 
-      expect(() => guide.alignTop(createActor("a").id)).toThrow(
+      expect(() => guide.alignTop(createActor("a"))).toThrow(
         "GuideBuilderX.alignTop(): This method is only available for GuideBuilderY"
       )
     })
@@ -147,9 +147,9 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
       const guide = hint.guideX()
 
-      guide.followLeft(a.id)
+      guide.followLeft(a)
 
-      expect(() => guide.followRight(b.id)).toThrow(
+      expect(() => guide.followRight(b)).toThrow(
         "GuideBuilderX.followRight(): guide already follows another symbol"
       )
     })
@@ -161,7 +161,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideY(50)
-      guide.alignTop(a.id, b.id)
+      guide.alignTop(a, b)
 
       context.solve()
 
@@ -176,7 +176,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideY(200)
-      guide.alignBottom(a.id, b.id)
+      guide.alignBottom(a, b)
 
       context.solve()
 
@@ -191,7 +191,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideY(100)
-      guide.alignCenter(a.id, b.id)
+      guide.alignCenter(a, b)
 
       context.solve()
 
@@ -205,9 +205,9 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const a = createActor("a")
       const b = createActor("b")
 
-      hint.arrangeVertical(a.id, b.id)
+      hint.arrangeVertical(a, b)
       const guide = hint.guideY()
-      guide.followTop(b.id).alignTop(a.id)
+      guide.followTop(b).alignTop(a)
 
       context.solve()
 
@@ -221,7 +221,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
 
       const guide = hint.guideY(100)
-      guide.alignCenter(a.id, b.id).arrange()
+      guide.alignCenter(a, b).arrange()
 
       context.solve()
 
@@ -236,7 +236,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
     test("throws error when using X-axis methods on Y-axis guide", () => {
       const guide = hint.guideY()
 
-      expect(() => guide.alignLeft(createActor("a").id)).toThrow(
+      expect(() => guide.alignLeft(createActor("a"))).toThrow(
         "GuideBuilderY.alignLeft(): This method is only available for GuideBuilderX"
       )
     })
@@ -246,9 +246,9 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const b = createActor("b")
       const guide = hint.guideY()
 
-      guide.followTop(a.id)
+      guide.followTop(a)
 
-      expect(() => guide.followBottom(b.id)).toThrow(
+      expect(() => guide.followBottom(b)).toThrow(
         "GuideBuilderY.followBottom(): guide already follows another symbol"
       )
     })
@@ -275,7 +275,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const a = createActor("top")
       const b = createActor("bottom")
 
-      const guide = hint.guideY().alignTop(a.id).alignBottom(b.id).arrange()
+      const guide = hint.guideY().alignTop(a).alignBottom(b).arrange()
 
       context.solve()
 

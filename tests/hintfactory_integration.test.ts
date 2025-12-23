@@ -41,7 +41,7 @@ describe("HintFactory with Hints integration", () => {
         rect.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as RectangleSymbol
+    }).characs
   }
 
   test("GuideBuilder creates hint variables through Hints", () => {
@@ -50,7 +50,7 @@ describe("HintFactory with Hints integration", () => {
 
     // Create a guide which should use Hints.createHintVariable internally
     const guideX = hint.guideX(100)
-    guideX.alignLeft(rect1.id, rect2.id)
+    guideX.alignLeft(rect1, rect2)
 
     context.solve()
 
@@ -98,8 +98,8 @@ describe("HintFactory with Hints integration", () => {
     const guideY = hint.guideY(200)
 
     // Align rectangles to guides
-    guideX.alignLeft(rect1.id, rect2.id, rect3.id)
-    guideY.alignTop(rect1.id, rect2.id, rect3.id)
+    guideX.alignLeft(rect1, rect2, rect3)
+    guideY.alignTop(rect1, rect2, rect3)
 
     context.solve()
 
