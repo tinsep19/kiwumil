@@ -1,7 +1,6 @@
 // src/dsl/namespace_types.ts
 import type { DiagramPlugin } from "./diagram_plugin"
-import type { Symbols } from "../model"
-import type { Relationships } from "./relationships"
+import type { Symbols, Relationships } from "../model"
 import type { Theme } from "../theme"
 import type { RelationshipId } from "../model"
 import type { IconMeta } from "../icon"

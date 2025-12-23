@@ -1,5 +1,6 @@
 // メインエントリポイント
-export { TypeDiagram, Symbols, Relationships } from "./dsl"
+export { TypeDiagram } from "./dsl"
+export { Symbols, Relationships } from "./model"
 
 // プラグイン
 export { CorePlugin, UMLPlugin } from "./plugin"

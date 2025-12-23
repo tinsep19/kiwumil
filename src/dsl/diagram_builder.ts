@@ -17,7 +17,7 @@ import type {
   PluginIcons,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import { Relationships } from "./relationships"
+import { Relationships } from "../model"
 import { IconRegistry } from "../icon"
 
 /**
