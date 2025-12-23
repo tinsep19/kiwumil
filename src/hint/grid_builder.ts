@@ -1,15 +1,15 @@
 // src/hint/grid_builder.ts
 
-import type { SymbolId } from "../core"
+import type { SymbolId, ISymbolCharacs } from "../core"
 import type { HintFactory } from "../dsl"
-import { isRectMatrix, toSymbolId, type SymbolOrId } from "../dsl"
+import { isRectMatrix, toSymbolId } from "../dsl"
 
 /**
  * Grid レイアウト用の Builder
  * 矩形行列（N×M）の配置をサポート
  */
 export class GridBuilder {
-  private matrix?: SymbolOrId[][]
+  private matrix?: ISymbolCharacs[][]
   private options: {
     rowGap?: number
     colGap?: number
@@ -26,7 +26,7 @@ export class GridBuilder {
    * @param matrix - N×M の矩形行列
    * @throws 矩形でない場合はエラー
    */
-  enclose(matrix: SymbolOrId[][]): this {
+  enclose(matrix: ISymbolCharacs[][]): this {
     if (!isRectMatrix(matrix)) {
       throw new Error(
         "GridBuilder.enclose() requires a rectangular matrix. Use FigureBuilder for non-rectangular layouts."

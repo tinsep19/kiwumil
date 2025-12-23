@@ -12,4 +12,3 @@ export type {
 export { isRectMatrix } from "./matrix_utils"
 export type { Matrix, IsRectMatrix } from "./matrix_utils"
 export { toSymbolId } from "./symbol_helpers"
-export type { SymbolOrId, ContainerSymbolOrId } from "./symbol_helpers"

@@ -1,7 +1,6 @@
 // src/hint/fluent_arrange_builder.ts
-import type { Variable } from "../core"
+import type { Variable, ISymbolCharacs } from "../core"
 import type { LayoutContext } from "../model"
-import type { SymbolOrId } from "../dsl"
 import type { HintTarget } from "../core"
 
 /**
@@ -29,8 +28,8 @@ export class FluentArrangeBuilder {
 
   constructor(
     private readonly context: LayoutContext,
-    private readonly resolveTargets: (targets: SymbolOrId[]) => HintTarget[],
-    private readonly symbolIds: SymbolOrId[]
+    private readonly resolveTargets: (targets: ISymbolCharacs[]) => HintTarget[],
+    private readonly symbolIds: ISymbolCharacs[]
   ) {}
 
   /**

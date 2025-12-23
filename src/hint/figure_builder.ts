@@ -1,7 +1,7 @@
 // src/hint/figure_builder.ts
 
-import type { SymbolId } from "../core"
-import type { HintFactory, SymbolOrId } from "../dsl"
+import type { SymbolId, ISymbolCharacs } from "../core"
+import type { HintFactory } from "../dsl"
 import { toSymbolId } from "../dsl"
 
 /**
@@ -9,7 +9,7 @@ import { toSymbolId } from "../dsl"
  * 非矩形配置（行ごとに異なる要素数）をサポート
  */
 export class FigureBuilder {
-  private rows?: SymbolOrId[][]
+  private rows?: ISymbolCharacs[][]
   private options: {
     rowGap?: number
     align?: "left" | "center" | "right"
@@ -25,7 +25,7 @@ export class FigureBuilder {
    * 配置するシンボルを指定（行配列）
    * @param rows - 行ごとの配列（各行の要素数は異なってもOK）
    */
-  enclose(rows: SymbolOrId[][]): this {
+  enclose(rows: ISymbolCharacs[][]): this {
     this.rows = rows
     return this
   }

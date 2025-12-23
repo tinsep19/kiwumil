@@ -1,6 +1,6 @@
 // src/hint/fluent_grid_builder.ts
 
-import type { SymbolId, ISymbolCharacs, Variable, AnchorX, AnchorY } from "../core"
+import type { ISymbolCharacs, Variable, AnchorX, AnchorY, IContainerSymbolCharacs } from "../core"
 import { createBrandVariableFactory, type Width, type Height } from "../core"
 import type { HintFactory } from "../dsl"
 
@@ -16,9 +16,9 @@ export interface Cell {
 
 /**
  * GridSymbol: Minimal interface required for grid symbols
- * Accepts any object with id and bounds properties, or just a SymbolId
+ * Accepts any object with id and bounds properties
  */
-type GridSymbol = Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId
+type GridSymbol = Pick<ISymbolCharacs, "id" | "bounds">
 
 /**
  * FluentGridBuilder provides a fluent API for grid-based layouts
@@ -28,8 +28,8 @@ export class FluentGridBuilder {
   private readonly symbols: (GridSymbol | null)[][]
   private readonly rows: number
   private readonly cols: number
-  private readonly diagram: SymbolId
-  private container?: SymbolId
+  private readonly diagram: IContainerSymbolCharacs
+  private container?: IContainerSymbolCharacs
 
   // Grid coordinate arrays - using AnchorX and AnchorY instead of GuideBuilder
   public readonly x: AnchorX[] = []
@@ -40,7 +40,7 @@ export class FluentGridBuilder {
   constructor(
     private readonly hint: HintFactory,
     symbols: (GridSymbol | null)[][],
-    diagram: SymbolId
+    diagramContainer: IContainerSymbolCharacs
   ) {
     // Validate that symbols is a rectangular matrix
     if (symbols.length === 0) {
@@ -65,16 +65,16 @@ export class FluentGridBuilder {
     this.symbols = symbols
     this.rows = symbols.length // N
     this.cols = firstRow.length // M
-    this.diagram = diagram
+    this.diagram = diagramContainer
   }
 
 
 
   /**
    * Specify the container for this grid layout
-   * @param container - The container symbol ID
+   * @param container - The container symbol
    */
-  in(container: SymbolId): this {
+  in(container: IContainerSymbolCharacs): this {
     this.container = container
     this.applyLayout()
     return this
@@ -142,7 +142,7 @@ export class FluentGridBuilder {
     
     const containerTarget = this.hint.getConstraintTarget(this.container)
     if (!containerTarget || !containerTarget.container) {
-      throw new Error(`FluentGridBuilder: container "${this.container}" not found or is not a container symbol`)
+      throw new Error(`FluentGridBuilder: container "${this.container.id}" not found or is not a container symbol`)
     }
     
     const containerBounds = containerTarget.container
@@ -228,14 +228,9 @@ export class FluentGridBuilder {
         const gridSymbol = symbolRow[col]
         if (!gridSymbol || gridSymbol === null) continue
 
-        // Resolve SymbolId to actual symbol if needed
-        const symbol = typeof gridSymbol === "string" ? 
-          this.hint.getConstraintTarget(gridSymbol) : 
-          gridSymbol
-
-        if (!symbol || !symbol.bounds) continue
-
-        const symbolBounds = symbol.bounds
+        // gridSymbol is now always an object with id and bounds
+        const symbolBounds = gridSymbol.bounds
+        if (!symbolBounds) continue
 
         const yTop = this.y[row]
         const yBottom = this.y[row + 1]
@@ -248,17 +243,7 @@ export class FluentGridBuilder {
         // y[top] <= symbol.bounds.top; symbol.bounds.top <= y[bottom]
         // x[left] <= symbol.bounds.left; symbol.bounds.left <= x[right]
         // And align bottom and right
-        let symbolId: string
-        if (typeof gridSymbol === "string") {
-          symbolId = gridSymbol
-        } else if ("id" in symbol && symbol.id) {
-          symbolId = symbol.id as string
-        } else if ("boundId" in symbol) {
-          symbolId = symbol.boundId as string
-        } else {
-          // Fallback
-          symbolId = `grid-symbol-${row}-${col}`
-        }
+        const symbolId = gridSymbol.id
         
         // Create constraints to bound the symbol within its cell
         // Each constraint must be created separately with its own builder callback

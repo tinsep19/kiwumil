@@ -41,7 +41,7 @@ describe("HintFactory Fluent API", () => {
         rect.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as RectangleSymbol
+    }).characs
   }
 
   test("should support method chaining for alignment methods", () => {
@@ -51,9 +51,9 @@ describe("HintFactory Fluent API", () => {
 
     // Test fluent API - all methods return this
     const result = hint
-      .alignLeft(rect1.id, rect2.id, rect3.id)
-      .arrangeVertical(rect1.id, rect2.id, rect3.id)
-      .alignWidth(rect1.id, rect2.id, rect3.id)
+      .alignLeft(rect1, rect2, rect3)
+      .arrangeVertical(rect1, rect2, rect3)
+      .alignWidth(rect1, rect2, rect3)
 
     // Verify it returns the same HintFactory instance
     expect(result).toBe(hint)
@@ -73,8 +73,8 @@ describe("HintFactory Fluent API", () => {
 
     // Test horizontal and vertical aliases
     const result = hint
-      .horizontal(rect1.id, rect2.id)
-      .vertical(rect1.id, rect3.id)
+      .horizontal(rect1, rect2)
+      .vertical(rect1, rect3)
 
     expect(result).toBe(hint)
 
@@ -109,8 +109,8 @@ describe("HintFactory Fluent API", () => {
 
     // Old API: enclose(container, [children]) - returns this for chaining
     const result = hint
-      .enclose(container.id, [child1.id, child2.id])
-      .alignCenterX(child1.id, child2.id)
+      .enclose(container, [child1, child2])
+      .alignCenterX(child1, child2)
 
     expect(result).toBe(hint)
 
@@ -129,7 +129,7 @@ describe("HintFactory Fluent API", () => {
     const rect3 = createRectangle("rect3")
 
     // New fluent API: arrange(...).vertical()
-    hint.arrange(rect1.id, rect2.id, rect3.id).vertical()
+    hint.arrange(rect1, rect2, rect3).vertical()
 
     context.solve()
 
@@ -144,7 +144,7 @@ describe("HintFactory Fluent API", () => {
     const rect3 = createRectangle("rect3")
 
     // New fluent API: arrange(...).horizontal()
-    hint.arrange(rect1.id, rect2.id, rect3.id).horizontal()
+    hint.arrange(rect1, rect2, rect3).horizontal()
 
     context.solve()
 
@@ -160,7 +160,7 @@ describe("HintFactory Fluent API", () => {
     const customMargin = 50
 
     // New fluent API: arrange(...).margin(value).vertical()
-    hint.arrange(rect1.id, rect2.id).margin(customMargin).vertical()
+    hint.arrange(rect1, rect2).margin(customMargin).vertical()
 
     context.solve()
 
@@ -176,12 +176,12 @@ describe("HintFactory Fluent API", () => {
 
     // Complex chain
     hint
-      .arrangeHorizontal(rect1.id, rect2.id)
-      .arrangeHorizontal(rect3.id, rect4.id)
-      .alignTop(rect1.id, rect2.id)
-      .alignTop(rect3.id, rect4.id)
-      .alignSize(rect1.id, rect2.id, rect3.id, rect4.id)
-      .alignCenterX(rect1.id, rect3.id)
+      .arrangeHorizontal(rect1, rect2)
+      .arrangeHorizontal(rect3, rect4)
+      .alignTop(rect1, rect2)
+      .alignTop(rect3, rect4)
+      .alignSize(rect1, rect2, rect3, rect4)
+      .alignCenterX(rect1, rect3)
 
     context.solve()
 

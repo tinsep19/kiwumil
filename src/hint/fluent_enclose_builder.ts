@@ -1,7 +1,6 @@
 // src/hint/fluent_enclose_builder.ts
-import type { SymbolId, HintTarget } from "../core"
+import type { SymbolId, HintTarget, ISymbolCharacs } from "../core"
 import type { LayoutContext } from "../model"
-import type { SymbolOrId } from "../dsl"
 
 /**
  * FluentEncloseBuilder provides a fluent API for creating enclosure relationships.
@@ -24,12 +23,12 @@ import type { SymbolOrId } from "../dsl"
  * ```
  */
 export class FluentEncloseBuilder {
-  private overlayIds: SymbolOrId[] = []
+  private overlayIds: ISymbolCharacs[] = []
 
   constructor(
     private readonly context: LayoutContext,
-    private readonly resolveTargets: (targets: SymbolOrId[]) => HintTarget[],
-    private readonly childIds: SymbolOrId[],
+    private readonly resolveTargets: (targets: ISymbolCharacs[]) => HintTarget[],
+    private readonly childIds: ISymbolCharacs[],
     private readonly diagramContainer: SymbolId
   ) {}
 
@@ -47,7 +46,7 @@ export class FluentEncloseBuilder {
    * hint.enclose(child1, child2).through(border, label).in(container);
    * ```
    */
-  through(...overlayIds: SymbolOrId[]): this {
+  through(...overlayIds: ISymbolCharacs[]): this {
     this.overlayIds = overlayIds
     return this
   }
@@ -65,7 +64,7 @@ export class FluentEncloseBuilder {
    * hint.enclose(child1, child2).in(systemBoundary);
    * ```
    */
-  in(containerId: SymbolOrId): void {
+  in(containerId: ISymbolCharacs): void {
     this.applyEnclose(containerId)
   }
 
@@ -89,7 +88,7 @@ export class FluentEncloseBuilder {
    * 
    * @param containerId - ID of the container to use
    */
-  private applyEnclose(containerId: SymbolOrId): void {
+  private applyEnclose(containerId: ISymbolCharacs): void {
     const containerTargets = this.resolveTargets([containerId])
     if (containerTargets.length === 0) {
       return

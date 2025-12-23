@@ -1,18 +1,17 @@
 // src/dsl/hint_factory.ts
 import { SymbolBase, Symbols, LayoutContext, type ContainerSymbol } from "../model"
-import type { SymbolId, HintTarget, ISymbolCharacs } from "../core"
+import type { HintTarget, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
 import {
-  FigureBuilder,
   FluentGridBuilder,
   FluentArrangeBuilder,
   GuideBuilderImpl,
   type GuideBuilderX,
   type GuideBuilderY,
 } from "../hint"
-import { ContainerSymbolOrId, toSymbolId, type SymbolOrId } from "./symbol_helpers"
+import { toSymbolId } from "./symbol_helpers"
 
-type LayoutTargetId = SymbolOrId
-type LayoutContainerTarget = ContainerSymbolOrId
+type LayoutTargetId = ISymbolCharacs
+type LayoutContainerTarget = IContainerSymbolCharacs
 
 /**
  * HintFactory provides a high-level API for creating layout hints and constraints.
@@ -107,32 +106,9 @@ export class HintFactory {
    * ```
    */
   grid(
-    symbols: (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
+    symbols: (Pick<ISymbolCharacs, "id" | "bounds"> | null)[][]
   ): FluentGridBuilder {
-    return new FluentGridBuilder(this, symbols, this.diagramContainer.id)
-  }
-
-  /**
-   * Creates a figure layout builder for non-rectangular layouts.
-   * 
-   * Figure layouts support rows with different numbers of elements,
-   * unlike grid layouts which require rectangular matrices.
-   * 
-   * @param container - Container ID. If omitted, uses the diagram container
-   * @returns FigureBuilder instance for configuring the layout
-   * 
-   * @example
-   * ```typescript
-   * hint.figure(container)
-   *   .enclose([[sym1], [sym2, sym3]])
-   *   .align('center')
-   *   .gap(20)
-   *   .layout();
-   * ```
-   */
-  figure(container?: LayoutContainerTarget): FigureBuilder {
-    const targetContainer = container ? toSymbolId(container) : this.diagramContainer.id
-    return new FigureBuilder(this, targetContainer)
+    return new FluentGridBuilder(this, symbols, this.diagramContainer)
   }
 
   /**

@@ -3,19 +3,21 @@
 import type { SymbolId, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
 
 /**
- * ISymbolCharacs or SymbolId union for DSL helpers.
+ * Type alias for DSL helpers - accepts only ISymbolCharacs.
+ * No longer accepts SymbolId strings.
  */
-export type SymbolOrId = ISymbolCharacs | SymbolId
+export type SymbolOrId = ISymbolCharacs
 
 /**
- * IContainerSymbolCharacs (which extends ISymbolCharacs with container property) or its ID type.
+ * Type alias for container symbols - accepts only IContainerSymbolCharacs.
+ * No longer accepts SymbolId strings.
  */
-export type ContainerSymbolOrId = IContainerSymbolCharacs | SymbolId
+export type ContainerSymbolOrId = IContainerSymbolCharacs
 
 /**
- * Resolve a symbol identifier from ISymbolCharacs or SymbolId.
+ * Resolve a symbol identifier from ISymbolCharacs.
  * Also accepts IContainerSymbolCharacs since it extends ISymbolCharacs.
  */
-export function toSymbolId(symbol: SymbolOrId): SymbolId {
-  return typeof symbol === "string" ? symbol : symbol.id
+export function toSymbolId(symbol: ISymbolCharacs): SymbolId {
+  return symbol.id
 }
