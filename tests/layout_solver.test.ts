@@ -106,7 +106,7 @@ describe("Layout pipeline", () => {
     context.createConstraint(`constraints/${diagram.id}`, (builder) => {
       diagram.ensureLayoutBounds(builder)
     })
-    context.solveAndApply([...symbols.getAllSymbols(), diagram])
+    context.solve()
 
     const bounds = getBoundsValues(diagram.bounds)
     expect(bounds.x).toBeCloseTo(0)
@@ -120,7 +120,7 @@ describe("Layout pipeline", () => {
     const b = createActor("b")
 
     hint.arrangeHorizontal(a.id, b.id)
-    context.solveAndApply(symbols.getAllSymbols())
+    context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
     const bBounds = getBoundsValues(b.bounds)
@@ -136,7 +136,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeHorizontal(a.id, b.id, c.id)
     hint.alignCenterY(a.id, b.id, c.id)
-    context.solveAndApply(symbols.getAllSymbols())
+    context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
     const bBounds = getBoundsValues(b.bounds)
@@ -152,7 +152,7 @@ describe("Layout pipeline", () => {
 
     hint.arrangeVertical(a.id, b.id)
     hint.enclose(boundary.id, [a.id, b.id])
-    context.solveAndApply(symbols.getAllSymbols())
+    context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
     const bBounds = getBoundsValues(b.bounds)
@@ -167,7 +167,7 @@ describe("Layout pipeline", () => {
 
     const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
 
-    context.solveAndApply(symbols.getAllSymbols())
+    context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
     const bBounds = getBoundsValues(b.bounds)

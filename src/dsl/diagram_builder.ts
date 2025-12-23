@@ -153,7 +153,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     // レイアウト計算
-    context.solveAndApply(allSymbols)
+    context.solve()
 
     return {
       symbols: allSymbols,

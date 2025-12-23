@@ -44,7 +44,7 @@ describe("HintFactory with Hints integration", () => {
     const guideX = hint.createGuideX(100)
     guideX.alignLeft(rect1.id, rect2.id)
 
-    context.solveAndApply([rect1, rect2])
+    context.solve()
 
     // Both rectangles should be aligned to the guide at x=100
     expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(100, 1)
@@ -93,7 +93,7 @@ describe("HintFactory with Hints integration", () => {
     guideX.alignLeft(rect1.id, rect2.id, rect3.id)
     guideY.alignTop(rect1.id, rect2.id, rect3.id)
 
-    context.solveAndApply([rect1, rect2, rect3])
+    context.solve()
 
     // All rectangles should be at the guide positions
     expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(50, 1)
@@ -145,7 +145,7 @@ describe("HintFactory with Hints integration", () => {
       builder.ct([1, anchor.variable]).eq([150, 1]).required()
     })
 
-    context.solveAndApply([rect1])
+    context.solve()
 
     expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(150, 1)
   })
