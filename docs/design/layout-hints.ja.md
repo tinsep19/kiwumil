@@ -251,21 +251,28 @@ hint.alignCenterX(a, b, c)
 
 ### Grid Builder - 矩形行列配置
 
-N×M の矩形配置をサポート。すべての行が同じ列数である必要があります。
+**注意: FluentGridBuilder のみサポート**
+
+`grid()` メソッドは FluentGridBuilder のみをサポートするようになりました。2D配列でシンボルを直接指定します。
 
 ```typescript
-// 基本的な使い方（container引数省略 - diagram全体がデフォルト）
-hint.grid()
-  .enclose([[a, b], [c, d]] as const)
-  .gap(10)                              // 行・列共通
-  .gap({ row: 20, col: 10 })           // 個別指定
-  .layout()
+// 基本的な使い方（diagramをコンテナとして使用）
+hint.grid([
+  [a, b],
+  [c, d]
+]).layout()
 
 // 特定のコンテナを指定する場合
-hint.grid(container)
-  .enclose([[a, b], [c, d]] as const)
-  .gap(10)
-  .layout()
+hint.grid([
+  [a, b],
+  [c, d]
+]).in(container)
+
+// null でセルを空にできる
+hint.grid([
+  [a, b],
+  [null, c]
+]).layout()
 
 // 結果:
 // ┌─────────────┐
@@ -275,10 +282,10 @@ hint.grid(container)
 ```
 
 **特徴:**
-- **引数省略対応**: `grid()` の引数を省略すると、diagram全体（`DIAGRAM_CONTAINER_ID`）がデフォルトコンテナになる
-- 矩形検証: `isRectMatrix()` で検証、非矩形の場合はエラー
-- gap設定: row/col 別々に指定可能
-- alignment: なし（矩形グリッドのため）
+- **FluentGridBuilder のみ**: 旧 GridBuilder は非推奨。`grid()` には 2D配列を渡す必要があります
+- 矩形検証: すべての行が同じ列数である必要があります
+- グリッド座標: `x[]`, `y[]`, `width[]`, `height[]` 配列を返します
+- コンテナ指定: `.in(container)` または `.layout()` で適用
 
 ### Figure Builder - 非矩形配置
 
@@ -316,7 +323,7 @@ hint.figure(container)
 
 Grid/Figure Builder は diagram 全体のレイアウトにも対応しています。
 
-**引数省略版（推奨）:**
+**FluentGridBuilder を使用:**
 
 ```typescript
 TypeDiagram("System Architecture")
@@ -325,14 +332,11 @@ TypeDiagram("System Architecture")
     const backend = el.core.rectangle("Backend")
     const database = el.core.rectangle("Database")
     
-    // ✅ 引数なしで diagram 全体を Grid レイアウト
-    hint.grid()
-      .enclose([
-        [frontend],
-        [backend, database]
-      ])
-      .gap({ row: 40, col: 60 })
-      .layout()
+    // ✅ FluentGridBuilder で diagram 全体をレイアウト
+    hint.grid([
+      [frontend],
+      [backend, database]
+    ]).layout()
   })
 ```
 
