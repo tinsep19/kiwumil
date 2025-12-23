@@ -23,24 +23,35 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="100" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="#003366">
-          E-Commerce System
-        </text>
         
-        <!-- Metadata -->
-        <text x="190" y="140" 
-              text-anchor="end" 
-              font-size="9" 
-              font-family="Arial"
-              fill="#003366"
-              opacity="0.5">
-          Created: 2025-11-13 | Author: Architecture Team
-        </text>
+      <text x="100" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="100" dy="0">E-Commerce System</tspan>
+      </text>
+    
+        <!-- Author -->
+
+      <text x="190" y="118"
+            text-anchor="end"
+            font-size="9"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="190" dy="0">Author: Architecture Team</tspan>
+      </text>
+    
+        <!-- Created At -->
+
+      <text x="190" y="138"
+            text-anchor="end"
+            font-size="9"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="190" dy="0">Created: 2025-11-13</tspan>
+      </text>
+    
       </g>
     
 
@@ -58,17 +69,23 @@
 
       <g id="uml:actor/1">
         
+        <!-- Actor Icon -->
         
-      <g transform="translate(70, 80)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
-    
+        <svg x="70" y="80" width="60" height="60" viewBox="0 0 64 64"
+             fill="#003366">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="100" y="125" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="#003366">
-          User
-        </text>
+        
+      <text x="100" y="141"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="100" dy="0">User</tspan>
+      </text>
+    
       </g>
     
 

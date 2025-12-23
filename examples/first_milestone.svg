@@ -37,47 +37,61 @@
 
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="190" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          First Milestone
-        </text>
+        
+      <text x="190" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="190" dy="0">First Milestone</tspan>
+      </text>
+    
+        
         
       </g>
     
 
       <g id="uml:actor/1">
         
+        <!-- Actor Icon -->
         
-      <g transform="translate(50, 80)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
-    
+        <svg x="-30" y="80" width="60" height="60" viewBox="0 0 64 64"
+             fill="black">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="80" y="275" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          User
-        </text>
+        
+      <text x="0" y="291"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="0" dy="0">User</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:actor/2">
         
+        <!-- Actor Icon -->
         
-      <g transform="translate(160, 330)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
-    
+        <svg x="160" y="330" width="60" height="60" viewBox="0 0 64 64"
+             fill="black">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="190" y="375" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Admin
-        </text>
+        
+      <text x="190" y="291"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="190" dy="0">Admin</tspan>
+      </text>
+    
       </g>
     
 

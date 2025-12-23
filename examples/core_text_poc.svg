@@ -8,14 +8,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="100" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Core Text PoC
-        </text>
+        
+      <text x="100" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">Core Text PoC</tspan>
+      </text>
+    
+        
         
       </g>
     

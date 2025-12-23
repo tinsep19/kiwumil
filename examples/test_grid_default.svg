@@ -8,14 +8,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="175" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Grid Default Test
-        </text>
+        
+      <text x="175" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="175" dy="0">Grid Default Test</tspan>
+      </text>
+    
+        
         
       </g>
     

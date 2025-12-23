@@ -37,14 +37,16 @@
 
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="216.66666666666669" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Nested System Boundaries
-        </text>
+        
+      <text x="216.66666666666669" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="216.66666666666669" dy="0">Nested System Boundaries</tspan>
+      </text>
+    
+        
         
       </g>
     
@@ -65,17 +67,23 @@
 
       <g id="uml:actor/5">
         
+        <!-- Actor Icon -->
         
-      <g transform="translate(483.33333333333337, 80)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
-    
+        <svg x="403.33333333333337" y="80" width="60" height="60" viewBox="0 0 64 64"
+             fill="black">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="513.3333333333334" y="333.33333333333337" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          User
-        </text>
+        
+      <text x="433.33333333333337" y="349.33333333333337"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="433.33333333333337" dy="0">User</tspan>
+      </text>
+    
       </g>
     
 

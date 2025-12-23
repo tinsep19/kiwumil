@@ -8,14 +8,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="160" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Fluent Grid: Basic 2x2
-        </text>
+        
+      <text x="160" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="160" dy="0">Fluent Grid: Basic 2x2</tspan>
+      </text>
+    
+        
         
       </g>
     

@@ -23,14 +23,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="100" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="#d4d4d4">
-          Usecase with Actor (Dark Theme)
-        </text>
+        
+      <text x="100" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="#d4d4d4">
+        <tspan x="100" dy="0">Usecase with Actor (Dark Theme)</tspan>
+      </text>
+    
+        
         
       </g>
     
@@ -45,17 +47,23 @@
 
       <g id="uml:actor/1">
         
+        <!-- Actor Icon -->
         
-      <g transform="translate(70, 80)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
-    
+        <svg x="70" y="80" width="60" height="60" viewBox="0 0 64 64"
+             fill="#4ec9b0">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="100" y="125" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="#d4d4d4">
-          User
-        </text>
+        
+      <text x="100" y="141"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="#d4d4d4">
+        <tspan x="100" dy="0">User</tspan>
+      </text>
+    
       </g>
     
 

@@ -23,14 +23,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="100" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Actor with Stereotype Example
-        </text>
+        
+      <text x="100" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">Actor with Stereotype Example</tspan>
+      </text>
+    
+        
         
       </g>
     
@@ -49,61 +51,85 @@
 
       <g id="uml:actor/1">
         
+        <!-- Actor Icon -->
         
-      <g transform="translate(70, 80)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
-    
+        <svg x="70" y="80" width="60" height="60" viewBox="0 0 64 64"
+             fill="black">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="100" y="125" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          User
-        </text>
+        
+      <text x="100" y="141"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">User</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:actor/2">
-        
-        <text x="100" y="87" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          &lt;&lt;primary&gt;&gt;
-        </text>
-      
-        
-      <g transform="translate(70, 97)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
+        <!-- Stereotype -->
+
+      <text x="100" y="89"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">&lt;&lt;primary&gt;&gt;</tspan>
+      </text>
     
+        <!-- Actor Icon -->
+        
+        <svg x="70" y="97" width="60" height="60" viewBox="0 0 64 64"
+             fill="black">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="100" y="125" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Administrator
-        </text>
+        
+      <text x="100" y="41"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">Administrator</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:actor/3">
-        
-        <text x="100" y="187" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          &lt;&lt;secondary&gt;&gt;
-        </text>
-      
-        
-      <g transform="translate(70, 197)">
-        <svg width="60" height="60" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><use href="#uml-actor"/></svg>
-      </g>
+        <!-- Stereotype -->
+
+      <text x="100" y="189"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">&lt;&lt;secondary&gt;&gt;</tspan>
+      </text>
     
+        <!-- Actor Icon -->
+        
+        <svg x="70" y="197" width="60" height="60" viewBox="0 0 64 64"
+             fill="black">
+          <use href="#uml-actor" />
+        </svg>
+      
         <!-- Label -->
-        <text x="100" y="225" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Guest
-        </text>
+        
+      <text x="100" y="141"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">Guest</tspan>
+      </text>
+    
       </g>
     
 

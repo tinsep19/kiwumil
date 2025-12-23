@@ -8,14 +8,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="230" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Hints API Example: Custom Anchors
-        </text>
+        
+      <text x="230" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="230" dy="0">Hints API Example: Custom Anchors</tspan>
+      </text>
+    
+        
         
       </g>
     

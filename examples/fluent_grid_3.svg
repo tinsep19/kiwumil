@@ -8,14 +8,16 @@
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
-        <text x="220" y="30" 
-              text-anchor="middle" 
-              font-size="18" 
-              font-weight="bold"
-              font-family="Arial"
-              fill="black">
-          Fluent Grid: Cell Access
-        </text>
+        
+      <text x="220" y="51"
+            text-anchor="middle"
+            font-size="18"
+            font-family="Arial"
+            fill="black">
+        <tspan x="220" dy="0">Fluent Grid: Cell Access</tspan>
+      </text>
+    
+        
         
       </g>
     
