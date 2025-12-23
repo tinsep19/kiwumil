@@ -7,11 +7,11 @@ Kiwumil is layered to avoid circular dependencies and to keep the codebase maint
 ```
 Layer 4: DSL        (dsl/)
    ↓
-Layer 3: Plugins    (plugin/)
+Layer 3: Plugins    (plugin/, render/)
    ↓
 Layer 2: Model      (model/, hint/)
    ↓
-Layer 1: Core       (core/, kiwi/, theme/, icon/, utils/)
+Layer 1: Core       (core/, kiwi/, theme/, icon/, item/, utils/)
 ```
 
 Rules:
@@ -20,6 +20,7 @@ Rules:
 Within-layer dependencies:
 - `core/` provides only interfaces and type definitions.
 - `kiwi/` depends on `core/`, but is placed here as a default implementation of a replaceable solver.
+- `item/` depends on `core/` and `icon/`, providing base classes for renderable items (labels, titles, etc.).
 - layer-based ESLint rule implementation guidance.
 
 See [Circular Dependency Prevention Guidelines](../guidelines/circular-dependency-prevention.md) 

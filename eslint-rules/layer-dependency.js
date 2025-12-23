@@ -9,6 +9,7 @@ const LAYERS = {
   kiwi: 1, 
   theme: 1,
   icon: 1,
+  item: 1,
   utils: 1,
   model: 2,
   hint: 2,
@@ -23,12 +24,13 @@ const ALLOWED_DEPENDENCIES = {
   kiwi: ["core"],
   theme: ["core"],
   icon: ["core"],
+  item: ["core", "icon"],
   utils: ["core"],
-  model: ["core", "theme", "icon", "utils"],
+  model: ["core", "theme", "icon", "item", "utils"],
   hint: ["core", "model"],
-  plugin: ["core", "theme", "icon", "utils", "model", "hint"],
+  plugin: ["core", "theme", "icon", "item", "utils", "model", "hint"],
   render: ["core", "theme", "icon", "utils", "model", "plugin"],
-  dsl: ["core", "kiwi", "theme", "icon", "utils", "model", "hint", "plugin", "render"]
+  dsl: ["core", "kiwi", "theme", "icon", "item", "utils", "model", "hint", "plugin", "render"]
 }
 
 /**
