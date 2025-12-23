@@ -3,7 +3,6 @@ import { SymbolBase, Symbols, LayoutContext, type ContainerSymbol } from "../mod
 import type { SymbolId, HintTarget, ISymbolCharacs } from "../core"
 import {
   FigureBuilder,
-  GridBuilder,
   FluentGridBuilder,
   FluentArrangeBuilder,
   GuideBuilderImpl,
@@ -81,34 +80,36 @@ export class HintFactory {
   // ============================================================================
 
   /**
-   * Creates a grid layout builder for rectangular matrix layouts.
+   * Creates a fluent grid layout builder for rectangular matrix layouts.
    * 
-   * This method has two overloads:
-   * 1. Fluent Grid API - Pass a 2D array of symbols directly
-   * 2. Traditional Grid API - Pass a container (or omit for diagram-level grid)
+   * This method creates a grid layout by accepting a 2D array of symbols.
+   * The grid automatically creates guide variables for rows and columns,
+   * and provides methods to access grid coordinates and areas.
    * 
-   * @param symbolsOrContainer - Either a 2D array of symbols for fluent grid, 
-   *                             or a container ID for traditional grid
-   * @returns FluentGridBuilder for 2D array input, GridBuilder otherwise
+   * @param symbols - 2D array of symbols (rectangular matrix required)
+   * @returns FluentGridBuilder with grid coordinate system
    * 
    * @example
    * ```typescript
-   * // Fluent grid API
-   * hint.grid([[sym1, sym2], [sym3, sym4]]).layout();
+   * // Create a 2x2 grid
+   * const grid = hint.grid([
+   *   [sym1, sym2],
+   *   [sym3, sym4]
+   * ]).layout();
    * 
-   * // Traditional grid API
-   * hint.grid(container).enclose([[sym1, sym2]]).layout();
+   * // Access grid coordinates
+   * const grid = hint.grid([[sym1, sym2], [sym3, sym4]]);
+   * grid.layout();
+   * // grid.x[0], grid.x[1], grid.x[2] - vertical guides
+   * // grid.y[0], grid.y[1], grid.y[2] - horizontal guides
+   * // grid.width[0], grid.width[1] - column widths
+   * // grid.height[0], grid.height[1] - row heights
    * ```
    */
   grid(
-    symbolsOrContainer?: LayoutContainerTarget | (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
-  ): GridBuilder | FluentGridBuilder {
-    if (Array.isArray(symbolsOrContainer)) {
-      return new FluentGridBuilder(this, symbolsOrContainer, this.diagramContainer)
-    }
-    
-    const targetContainer = symbolsOrContainer ? toSymbolId(symbolsOrContainer) : this.diagramContainer
-    return new GridBuilder(this, targetContainer)
+    symbols: (Pick<ISymbolCharacs, "id" | "bounds"> | SymbolId | null)[][]
+  ): FluentGridBuilder {
+    return new FluentGridBuilder(this, symbols, this.diagramContainer)
   }
 
   /**
