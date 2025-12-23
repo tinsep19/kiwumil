@@ -159,12 +159,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       symbols: allSymbols,
       relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(
-          allSymbols,
-          [...relationshipList],
-          this.currentTheme,
-          iconsRegistry
-        )
+        const renderer = new SvgRenderer(symbols, relationships, this.currentTheme, iconsRegistry)
 
         if (typeof target === "string") {
           renderer.saveToFile(target)

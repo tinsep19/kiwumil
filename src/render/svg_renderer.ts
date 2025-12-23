@@ -1,8 +1,7 @@
 // src/render/svg_renderer.ts
-import type { RelationshipBase } from "../model"
 import type { ISymbol, SymbolId } from "../core"
 import type { Theme } from "../theme"
-import { DiagramSymbol } from "../model"
+import { DiagramSymbol, Symbols, Relationships } from "../model"
 import { getBoundsValues } from "../core"
 import { IconRegistry } from "../icon"
 
@@ -23,14 +22,14 @@ function getSymbolLabel(symbol: ISymbol): string {
 }
 
 export class SvgRenderer {
-  private symbols: ISymbol[]
-  private relationships: RelationshipBase[]
+  private symbols: Symbols
+  private relationships: Relationships
   private theme?: Theme
   private iconRegistry?: IconRegistry
 
   constructor(
-    symbols: ISymbol[],
-    relationships: RelationshipBase[] = [],
+    symbols: Symbols,
+    relationships: Relationships,
     theme?: Theme,
     iconRegistry?: IconRegistry
   ) {
@@ -58,20 +57,24 @@ export class SvgRenderer {
     // すべての描画要素を収集
     const renderElements: RenderElement[] = []
 
+    // Get symbols and relationships using new APIs
+    const allSymbols = this.symbols.getAllSymbols()
+    const allRelationships = this.relationships.getAll()
+
     // Create symbol map for relationship rendering
     const symbolMap = new Map<SymbolId, ISymbol>()
-    for (const symbol of this.symbols) {
+    for (const symbol of allSymbols) {
       symbolMap.set(symbol.id, symbol)
     }
 
     // Symbols
-    for (const symbol of this.symbols) {
+    for (const symbol of allSymbols) {
       const zIndex = this.calculateSymbolZIndex(symbol)
       renderElements.push({ zIndex, svg: symbol.render() })
     }
 
     // Relationships
-    for (const rel of this.relationships) {
+    for (const rel of allRelationships) {
       const zIndex = rel.calculateZIndex(symbolMap)
       renderElements.push({ zIndex, svg: rel.toSVG(symbolMap) })
     }
@@ -86,7 +89,7 @@ export class SvgRenderer {
     const minBoundsSize = 0.1 // bounds の最小有効サイズ
     const maxBoundsSize = 10000 // bounds の最大有効サイズ
 
-    for (const symbol of this.symbols) {
+    for (const symbol of allSymbols) {
       const bounds = getBoundsValues(symbol.bounds)
       // 極端に小さい、大きい、または不正な値をチェック
       if (
@@ -107,7 +110,7 @@ export class SvgRenderer {
     // Calculate viewport size based on DiagramSymbol bounds if available
     let diagramWidth: number | undefined
     let diagramHeight: number | undefined
-    for (const symbol of this.symbols) {
+    for (const symbol of allSymbols) {
       if (symbol instanceof DiagramSymbol) {
         const bounds = getBoundsValues(symbol.bounds)
         diagramWidth = bounds.width
@@ -142,7 +145,7 @@ export class SvgRenderer {
 
       let maxX = 0
       let maxY = 0
-      for (const symbol of this.symbols) {
+      for (const symbol of allSymbols) {
         const bounds = getBoundsValues(symbol.bounds)
         maxX = Math.max(maxX, bounds.x + bounds.width)
         maxY = Math.max(maxY, bounds.y + bounds.height)
