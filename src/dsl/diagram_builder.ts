@@ -3,7 +3,8 @@ import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
 import { DiagramSymbol, Symbols, LayoutContext } from "../model"
-import type { DiagramInfo, SymbolBase } from "../model"
+import type { DiagramInfo } from "../model"
+import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
 import { KiwiSolver } from "../kiwi"
 import { convertMetaUrlToSvgPath } from "../utils"
@@ -82,17 +83,25 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
     const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
-      const diagramBound = r.createLayoutBounds("layout")
-      const containerBound = r.createContainerBounds("container")
+      const bounds = r.createLayoutBounds("bounds")
+      const container = r.createContainerBounds("container")
+      const title = r.createItemBounds("title")
+      const author = diagramInfo.author ? r.createItemBounds("author") : undefined
+      const createdAt = diagramInfo.createdAt ? r.createItemBounds("createdAt") : undefined
       const symbol = new DiagramSymbol({
-        id,
-        bounds: diagramBound,
-        container: containerBound,
+        characs: {
+          id,
+          bounds,
+          container,
+          title,
+          author,
+          createdAt,
+        },
         info: diagramInfo,
         theme: this.currentTheme,
       })
       r.setSymbol(symbol)
-      r.setCharacs({ id, bounds: diagramBound, container: containerBound })
+      r.setCharacs({ id, bounds, container })
       r.setConstraint((builder) => {
         symbol.ensureLayoutBounds(builder)
       })
@@ -133,8 +142,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const symbolList = symbols
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
-      .map((reg) => reg.symbol as SymbolBase)
-    const allSymbols: SymbolBase[] = [diagramSymbol, ...symbolList]
+      .map((reg) => reg.symbol)
+    const allSymbols: ISymbol[] = [diagramSymbol, ...symbolList]
 
     if (symbolList.length > 0) {
       hint.enclose(
@@ -144,7 +153,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
 
     // レイアウト計算
-    context.solveAndApply(allSymbols)
+    context.solve()
 
     return {
       symbols: allSymbols,

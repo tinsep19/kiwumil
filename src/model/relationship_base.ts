@@ -1,6 +1,5 @@
 // src/model/relationship_base.ts
-import type { SymbolBase } from "./symbol_base"
-import type { SymbolId } from "../core"
+import type { ISymbol, SymbolId } from "../core"
 import type { RelationshipId } from "./types"
 import type { Theme } from "../theme"
 import { getBoundsValues } from "../core"
@@ -25,7 +24,7 @@ export abstract class RelationshipBase {
     this.theme = options.theme
   }
 
-  calculateZIndex(symbols: Map<SymbolId, SymbolBase>): number {
+  calculateZIndex(symbols: Map<SymbolId, ISymbol>): number {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
 
@@ -46,5 +45,5 @@ export abstract class RelationshipBase {
     return maxZ * 100 + 10
   }
 
-  abstract toSVG(symbols: Map<SymbolId, SymbolBase>): string
+  abstract toSVG(symbols: Map<SymbolId, ISymbol>): string
 }

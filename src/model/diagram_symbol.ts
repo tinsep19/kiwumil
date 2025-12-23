@@ -1,33 +1,102 @@
-// src/model/diagram_symbol.ts
 import { getStyleForSymbol } from "../theme"
 import type { Theme, ContainerPadding } from "../theme"
-import type { Point } from "../core"
+import type { Point, ISymbol, SymbolId, LayoutBounds, ISymbolCharacs } from "../core"
 export interface DiagramInfo {
   title: string
   createdAt?: string
   author?: string
 }
 
-import type { ContainerBounds, LinearConstraintBuilder } from "../core"
+import type { ContainerBounds, LinearConstraintBuilder, ItemBounds } from "../core"
 import { getBoundsValues } from "../core"
 import { ConstraintHelper } from "../hint"
-import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "./symbol_base"
+import { TextItem } from "../item"
 
-export interface DiagramSymbolOptions extends SymbolBaseOptions {
-  info: DiagramInfo
+const DEFAULT_TEXT_ITEM_HEIGHT = 20
+
+export type DiagramSymbolCharacs = ISymbolCharacs<{
   container: ContainerBounds
+  title: ItemBounds
+  author?: ItemBounds
+  createdAt?: ItemBounds
+}>
+
+export interface DiagramSymbolOptions {
+  info: DiagramInfo
+  characs: DiagramSymbolCharacs
+  theme: Theme
 }
 
-export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
+export class DiagramSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
   readonly container: ContainerBounds
+  protected readonly theme: Theme
 
   private readonly diagramInfo: DiagramInfo
+  private readonly items: { title: TextItem; author?: TextItem; createdAt?: TextItem }
   private constraintsApplied = false
 
   constructor(options: DiagramSymbolOptions) {
-    super(options)
-    this.container = options.container
+    this.id = options.characs.id
+    this.bounds = options.characs.bounds
+    this.container = options.characs.container
+    this.theme = options.theme
     this.diagramInfo = options.info
+
+    // Create TextItem for title
+    const style = this.theme ? getStyleForSymbol(this.theme, "rectangle") : this.getFallbackStyle()
+    const titleItem = new TextItem({
+      bounds: options.characs.title,
+      text: options.info.title,
+      alignment: "center",
+      fontSize: style.fontSize * 1.5,
+      fontFamily: style.fontFamily,
+      textColor: style.textColor,
+      padding: { top: 8, right: 12, bottom: 8, left: 12 },
+    })
+
+    // Create TextItem for author if provided
+    const authorItem = options.info.author && options.characs.author
+      ? new TextItem({
+          bounds: options.characs.author,
+          text: `Author: ${options.info.author}`,
+          alignment: "right",
+          fontSize: style.fontSize * 0.75,
+          fontFamily: style.fontFamily,
+          textColor: style.textColor,
+          padding: { top: 4, right: 10, bottom: 4, left: 10 },
+        })
+      : undefined
+
+    // Create TextItem for createdAt if provided
+    const createdAtItem = options.info.createdAt && options.characs.createdAt
+      ? new TextItem({
+          bounds: options.characs.createdAt,
+          text: `Created: ${options.info.createdAt}`,
+          alignment: "right",
+          fontSize: style.fontSize * 0.75,
+          fontFamily: style.fontFamily,
+          textColor: style.textColor,
+          padding: { top: 4, right: 10, bottom: 4, left: 10 },
+        })
+      : undefined
+
+    this.items = { title: titleItem, author: authorItem, createdAt: createdAtItem }
+  }
+
+  private getFallbackStyle() {
+    return {
+      strokeColor: "#e0e0e0",
+      strokeWidth: 1,
+      fillColor: "white",
+      textColor: "black",
+      fontSize: 12,
+      fontFamily: "Arial",
+      backgroundColor: "white",
+      horizontalGap: 80,
+      verticalGap: 50,
+    }
   }
 
   getDefaultSize() {
@@ -63,6 +132,35 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
       .strong()
     builder.ct([1, this.container.width]).eq([1, bounds.width], [-horizontalPadding, 1]).strong()
     builder.ct([1, this.container.height]).eq([1, bounds.height], [-verticalPadding, 1]).strong()
+
+    // Position title at the top center
+    builder.ct([1, this.items.title.bounds.x]).eq([1, bounds.x]).strong()
+    builder.ct([1, this.items.title.bounds.y]).eq([1, bounds.y], [padding.top, 1]).strong()
+    builder.ct([1, this.items.title.bounds.width]).eq([1, bounds.width]).strong()
+
+    // Position author and createdAt at the bottom right if they exist
+    let bottomOffset = -padding.bottom
+    if (this.items.createdAt) {
+      builder.ct([1, this.items.createdAt.bounds.x]).eq([1, bounds.x]).strong()
+      builder
+        .ct([1, this.items.createdAt.bounds.bottom])
+        .eq([1, bounds.bottom], [bottomOffset, 1])
+        .strong()
+      builder.ct([1, this.items.createdAt.bounds.width]).eq([1, bounds.width]).strong()
+      // Update offset for author if both exist
+      if (this.items.author) {
+        bottomOffset -= this.items.createdAt.bounds.height.value() || DEFAULT_TEXT_ITEM_HEIGHT
+      }
+    }
+
+    if (this.items.author) {
+      builder.ct([1, this.items.author.bounds.x]).eq([1, bounds.x]).strong()
+      builder
+        .ct([1, this.items.author.bounds.bottom])
+        .eq([1, bounds.bottom], [bottomOffset, 1])
+        .strong()
+      builder.ct([1, this.items.author.bounds.width]).eq([1, bounds.width]).strong()
+    }
   }
 
   ensureLayoutBounds(builder: LinearConstraintBuilder): void {
@@ -114,62 +212,17 @@ export class DiagramSymbol extends SymbolBase implements ContainerSymbol {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.bounds)
-
-    const cx = x + width / 2
-
-    const style = this.theme
-      ? getStyleForSymbol(this.theme, "rectangle")
-      : {
-          strokeColor: "#e0e0e0",
-          strokeWidth: 1,
-          fillColor: "white",
-          textColor: "black",
-          fontSize: 12,
-          fontFamily: "Arial",
-          backgroundColor: "white",
-          horizontalGap: 80,
-          verticalGap: 50,
-        }
-
-    const titleFontSize = style.fontSize * 1.5
-    const metaFontSize = style.fontSize * 0.75
-
-    let metaText = ""
-    if (this.diagramInfo.createdAt && this.diagramInfo.author) {
-      metaText = `Created: ${this.diagramInfo.createdAt} | Author: ${this.diagramInfo.author}`
-    } else if (this.diagramInfo.createdAt) {
-      metaText = `Created: ${this.diagramInfo.createdAt}`
-    } else if (this.diagramInfo.author) {
-      metaText = `Author: ${this.diagramInfo.author}`
-    }
-
     return `
       <g id="${this.id}">
         <!-- Title -->
-        <text x="${cx}" y="${y + 30}" 
-              text-anchor="middle" 
-              font-size="${titleFontSize}" 
-              font-weight="bold"
-              font-family="${style.fontFamily}"
-              fill="${style.textColor}">
-          ${this.diagramInfo.title}
-        </text>
-        ${
-          metaText
-            ? `
-        <!-- Metadata -->
-        <text x="${x + width - 10}" y="${y + height - 10}" 
-              text-anchor="end" 
-              font-size="${metaFontSize}" 
-              font-family="${style.fontFamily}"
-              fill="${style.textColor}"
-              opacity="0.5">
-          ${metaText}
-        </text>`
-            : ""
-        }
+        ${this.items.title.render()}
+        ${this.items.author ? `<!-- Author -->\n${this.items.author.render()}` : ""}
+        ${this.items.createdAt ? `<!-- Created At -->\n${this.items.createdAt.render()}` : ""}
       </g>
     `
+  }
+
+  render(): string {
+    return this.toSVG()
   }
 }

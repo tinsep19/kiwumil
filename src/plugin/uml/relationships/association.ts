@@ -1,7 +1,6 @@
 // src/plugin/uml/relationships/association.ts
 import { RelationshipBase, type RelationshipBaseOptions } from "../../../model/relationship_base"
-import type { SymbolBase } from "../../../model/symbol_base"
-import type { SymbolId } from "../../../core"
+import type { ISymbol, SymbolId } from "../../../core"
 import { getBoundsValues } from "../../../core"
 
 export class Association extends RelationshipBase {
@@ -9,7 +8,7 @@ export class Association extends RelationshipBase {
     super(options)
   }
 
-  toSVG(symbols: Map<SymbolId, SymbolBase>): string {
+  toSVG(symbols: Map<SymbolId, ISymbol>): string {
     const fromSymbol = symbols.get(this.from)
     const toSymbol = symbols.get(this.to)
 

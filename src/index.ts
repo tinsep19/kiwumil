@@ -16,3 +16,15 @@ export type { Bounds, BoundsType } from "./core"
 // テーマ
 export { DefaultTheme, BlueTheme, DarkTheme } from "./theme"
 export type { Theme } from "./theme"
+
+// Item システム
+export { Item, TextItem, RectItem, IconItem } from "./item"
+export type {
+  ItemBaseOptions,
+  EstimateSize,
+  TextItemOptions,
+  TextAlignment,
+  Padding,
+  RectItemOptions,
+  IconItemOptions,
+} from "./item"
