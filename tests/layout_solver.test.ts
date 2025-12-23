@@ -165,7 +165,7 @@ describe("Layout pipeline", () => {
     const a = createActor("top")
     const b = createActor("bottom")
 
-    const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
+    const guide = hint.guideY().alignTop(a.id).alignBottom(b.id).arrange()
 
     context.solve()
 

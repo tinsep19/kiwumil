@@ -14,7 +14,7 @@ TypeDiagram("Guide Example: Basic Alignment")
     const content = el.core.rectangle("Content", { width: 150, height: 100 })
     
     // 垂直ガイドを作成（X = 300）
-    const centerGuide = hint.createGuideX(300)
+    const centerGuide = hint.guideX(300)
     
     // すべてのシンボルを X 軸中央揃え
     centerGuide.alignCenter(title, subtitle, content)

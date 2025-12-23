@@ -26,7 +26,7 @@ type LayoutContainerTarget = ContainerSymbolOrId
  * layout specifications into constraint solver primitives. It supports:
  * - Grid and figure-based layouts
  * - Alignment constraints (left, right, top, bottom, center, size)
- * - Arrangement constraints (horizontal, vertical)
+ * - Arrangement constraints (horizontal, vertical) with fluent API
  * - Guide-based layouts with custom anchors
  * - Container enclosure relationships
  * 
@@ -34,14 +34,17 @@ type LayoutContainerTarget = ContainerSymbolOrId
  * ```typescript
  * const hint = new HintFactory({ context, symbols, diagramContainer });
  * 
- * // Align symbols
- * hint.alignLeft(symbol1, symbol2);
+ * // Fluent API - Align symbols
+ * hint.alignLeft(symbol1, symbol2).arrangeVertical(symbol1, symbol2);
+ * 
+ * // Fluent API - Arrange with margin
+ * hint.arrange(symbol1, symbol2, symbol3).margin(30).vertical();
  * 
  * // Create grid layout
  * hint.grid([[symbol1, symbol2], [symbol3, symbol4]]).layout();
  * 
  * // Create guides
- * const guideX = hint.createGuideX(100);
+ * const guideX = hint.guideX(100);
  * guideX.alignLeft(symbol1, symbol2);
  * ```
  */
@@ -142,11 +145,15 @@ export class HintFactory {
    * 
    * @example
    * ```typescript
-   * const guide = hint.createGuideX(100);
+   * const guide = hint.guideX(100);
    * guide.alignLeft(sym1, sym2, sym3);
+   * 
+   * // Without initial value
+   * const guide2 = hint.guideX();
+   * guide2.followLeft(sym1).alignLeft(sym2, sym3);
    * ```
    */
-  createGuideX(value?: number): GuideBuilderX {
+  guideX(value?: number): GuideBuilderX {
     return new GuideBuilderImpl(
       this.context,
       (id: LayoutTargetId) => this.findSymbolById(id),
@@ -168,11 +175,15 @@ export class HintFactory {
    * 
    * @example
    * ```typescript
-   * const guide = hint.createGuideY(50);
+   * const guide = hint.guideY(50);
    * guide.alignTop(sym1, sym2, sym3);
+   * 
+   * // Without initial value
+   * const guide2 = hint.guideY();
+   * guide2.followTop(sym1).alignTop(sym2, sym3);
    * ```
    */
-  createGuideY(value?: number): GuideBuilderY {
+  guideY(value?: number): GuideBuilderY {
     return new GuideBuilderImpl(
       this.context,
       (id: LayoutTargetId) => this.findSymbolById(id),
