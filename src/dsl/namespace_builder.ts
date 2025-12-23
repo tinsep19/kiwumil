@@ -6,8 +6,7 @@ import type {
   BuildIconNamespace,
   PluginIcons,
 } from "./namespace_types"
-import type { Symbols } from "../model"
-import type { Relationships } from "./relationships"
+import type { Symbols, Relationships } from "../model"
 import type { Theme } from "../theme"
 
 /**

@@ -1,6 +1,5 @@
 // src/dsl/diagram_plugin.ts
-import type { RelationshipId, Symbols } from "../model"
-import type { Relationships } from "./relationships"
+import type { RelationshipId, Symbols, Relationships } from "../model"
 import type { Theme } from "../theme"
 import type { PluginIcons } from "./namespace_types"
 import type { ISymbolCharacs } from "../core"

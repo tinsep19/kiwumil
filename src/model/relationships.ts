@@ -1,4 +1,5 @@
-import type { RelationshipBase, RelationshipId } from "../model"
+import type { RelationshipBase } from "./relationship_base"
+import type { RelationshipId } from "./types"
 
 /**
  * Relationship 管理クラス

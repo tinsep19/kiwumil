@@ -1,8 +1,8 @@
 // src/plugin/uml/plugin.ts
 import { ActorSymbol, SystemBoundarySymbol, UsecaseSymbol } from "./symbols"
 import { Association, Extend, Generalize, Include } from "./relationships"
-import type { DiagramPlugin, PluginIcons, Relationships, Symbols } from "../../dsl"
-import type { RelationshipId } from "../../model"
+import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
+import type { RelationshipId, Relationships } from "../../model"
 import type { Theme } from "../../theme"
 import type { IContainerSymbolCharacs } from "../../core"
 import { toSymbolId, type SymbolOrId } from "../../dsl"
