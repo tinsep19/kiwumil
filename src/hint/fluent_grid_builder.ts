@@ -181,7 +181,7 @@ export class FluentGridBuilder {
         const xNext = this.x[col + 1]
         const xCurr = this.x[col]
         const widthVar = this.width[col]
-        if (xNext && xCurr) {
+        if (xNext && xCurr && widthVar) {
           builder
             .ct([1, xNext])
             .eq([1, xCurr], [1, widthVar])
@@ -194,7 +194,7 @@ export class FluentGridBuilder {
         const yNext = this.y[row + 1]
         const yCurr = this.y[row]
         const heightVar = this.height[row]
-        if (yNext && yCurr) {
+        if (yNext && yCurr && heightVar) {
           builder
             .ct([1, yNext])
             .eq([1, yCurr], [1, heightVar])
