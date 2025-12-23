@@ -2,11 +2,70 @@ import * as fs from "fs"
 import * as path from "path"
 
 export type IconMeta = {
-  width?: number
-  height?: number
-  viewBox?: string
-  href?: string // symbol id reference
-  raw?: string // raw svg content (optimized)
+  width: number
+  height: number
+  viewBox: string
+  href: string // symbol id reference
+  raw: string // raw svg content (optimized)
+}
+
+/**
+ * Parse SVG content and extract all required IconMeta properties.
+ * 
+ * @param content - Raw SVG content as a string
+ * @param id - Symbol ID for the icon (used as href)
+ * @returns IconMeta with all required properties
+ * @throws {Error} if any required property cannot be extracted
+ */
+export function parse(content: string, id: string): IconMeta {
+  // Extract viewBox
+  const viewBoxMatch = content.match(/<svg[^>]*viewBox=["']([^"']+)["'][^>]*>/i)
+  if (!viewBoxMatch || !viewBoxMatch[1]) {
+    throw new Error(`Failed to extract viewBox from SVG content`)
+  }
+  const viewBox = viewBoxMatch[1]
+
+  // Extract width - try width attribute first, then fall back to viewBox
+  let width: number | undefined
+  const widthMatch = content.match(/<svg[^>]*width=["'](\d+(?:\.\d+)?)["'][^>]*>/i)
+  if (widthMatch && widthMatch[1]) {
+    width = parseFloat(widthMatch[1])
+  } else {
+    // Try to extract from viewBox (format: "minX minY width height")
+    const viewBoxParts = viewBox.split(/\s+/)
+    if (viewBoxParts.length === 4 && viewBoxParts[2]) {
+      width = parseFloat(viewBoxParts[2])
+    }
+  }
+  
+  if (width === undefined || isNaN(width)) {
+    throw new Error(`Failed to extract width from SVG content`)
+  }
+
+  // Extract height - try height attribute first, then fall back to viewBox
+  let height: number | undefined
+  const heightMatch = content.match(/<svg[^>]*height=["'](\d+(?:\.\d+)?)["'][^>]*>/i)
+  if (heightMatch && heightMatch[1]) {
+    height = parseFloat(heightMatch[1])
+  } else {
+    // Try to extract from viewBox (format: "minX minY width height")
+    const viewBoxParts = viewBox.split(/\s+/)
+    if (viewBoxParts.length === 4 && viewBoxParts[3]) {
+      height = parseFloat(viewBoxParts[3])
+    }
+  }
+  
+  if (height === undefined || isNaN(height)) {
+    throw new Error(`Failed to extract height from SVG content`)
+  }
+
+  return {
+    width,
+    height,
+    viewBox,
+    href: id,
+    raw: content
+  }
 }
 
 export class IconLoader {
@@ -45,9 +104,7 @@ export class IconLoader {
       }
 
       const content = fs.readFileSync(filePath, "utf8")
-      const vbMatch = content.match(/<svg[^>]*viewBox=["']([^"']+)["'][^>]*>/i)
-      const viewBox = vbMatch ? vbMatch[1] : undefined
-      return { href: id, raw: content, viewBox }
+      return parse(content, id)
     } catch (e: unknown) {
       // If file not found (Node's ErrnoException), check for code property safely
       if (
