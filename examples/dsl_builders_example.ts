@@ -9,6 +9,14 @@
  */
 
 import { TypeDiagram } from "../src/index"
+import type {
+  HintTarget,
+  MinimalTarget,
+  TargetWithContainer,
+  BuilderState,
+  WithAxis,
+  ReadyState,
+} from "../src/core/layout_hint"
 
 /**
  * Example 1: ArrangeBuilder Pattern
@@ -145,15 +153,6 @@ function exampleTypeSafety() {
   // This is a compile-time demonstration showing how type utilities
   // would be used in builder implementations
   
-  import type {
-    HintTarget,
-    MinimalTarget,
-    TargetWithContainer,
-    BuilderState,
-    WithAxis,
-    ReadyState,
-  } from "../src/core/layout_hint"
-  
   // Example: Extract minimal fields
   function processMinimalTarget(target: MinimalTarget) {
     // Only boundId and bounds are available
@@ -194,8 +193,6 @@ function exampleTypeSafety() {
  * Shows practical patterns for using Pick and Omit in custom code.
  */
 function exampleUtilityTypePatterns() {
-  import type { HintTarget } from "../src/core/layout_hint"
-  
   // Pattern 1: Extract only position info
   type PositionOnly = Pick<HintTarget, "bounds">
   
