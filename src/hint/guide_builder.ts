@@ -2,7 +2,7 @@
 import type { SymbolBase, LayoutContext } from "../model"
 import type { Term, HintTarget, Variable, ISymbolCharacs } from "../core"
 
-type LayoutTargetId = ISymbolCharacs
+type LayoutTarget = ISymbolCharacs
 
 /**
  * GuideBuilderX インターフェイス
@@ -10,12 +10,12 @@ type LayoutTargetId = ISymbolCharacs
  */
 export interface GuideBuilderX {
   readonly x: Variable
-  alignLeft(...symbolIds: LayoutTargetId[]): this
-  alignRight(...symbolIds: LayoutTargetId[]): this
-  alignCenter(...symbolIds: LayoutTargetId[]): this
-  followLeft(symbolId: LayoutTargetId): this
-  followRight(symbolId: LayoutTargetId): this
-  followCenter(symbolId: LayoutTargetId): this
+  alignLeft(...symbolIds: LayoutTarget[]): this
+  alignRight(...symbolIds: LayoutTarget[]): this
+  alignCenter(...symbolIds: LayoutTarget[]): this
+  followLeft(symbolId: LayoutTarget): this
+  followRight(symbolId: LayoutTarget): this
+  followCenter(symbolId: LayoutTarget): this
   arrange(gap?: number): this
 }
 
@@ -25,12 +25,12 @@ export interface GuideBuilderX {
  */
 export interface GuideBuilderY {
   readonly y: Variable
-  alignTop(...symbolIds: LayoutTargetId[]): this
-  alignBottom(...symbolIds: LayoutTargetId[]): this
-  alignCenter(...symbolIds: LayoutTargetId[]): this
-  followTop(symbolId: LayoutTargetId): this
-  followBottom(symbolId: LayoutTargetId): this
-  followCenter(symbolId: LayoutTargetId): this
+  alignTop(...symbolIds: LayoutTarget[]): this
+  alignBottom(...symbolIds: LayoutTarget[]): this
+  alignCenter(...symbolIds: LayoutTarget[]): this
+  followTop(symbolId: LayoutTarget): this
+  followBottom(symbolId: LayoutTarget): this
+  followCenter(symbolId: LayoutTarget): this
   arrange(gap?: number): this
 }
 
@@ -44,13 +44,13 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   readonly x!: Variable
   readonly y!: Variable
   private readonly guideVar: Variable
-  private readonly alignedSymbols = new Set<LayoutTargetId>()
+  private readonly alignedSymbols = new Set<LayoutTarget>()
   private hasFollowConstraint = false
 
   constructor(
     private readonly context: LayoutContext,
-    private readonly resolveSymbol: (id: LayoutTargetId) => SymbolBase | undefined,
-    private readonly resolveTarget: (id: LayoutTargetId) => HintTarget | undefined,
+    private readonly resolveSymbol: (id: LayoutTarget) => SymbolBase | undefined,
+    private readonly resolveTarget: (id: LayoutTarget) => HintTarget | undefined,
     private readonly axis: Axis,
     variableName: string,
     initialValue?: number
@@ -77,7 +77,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   }
 
   // X軸専用メソッド
-  alignLeft(...symbolIds: LayoutTargetId[]): this {
+  alignLeft(...symbolIds: LayoutTarget[]): this {
     this.ensureAxisIs("x", "alignLeft")
     this.collect(symbolIds)
     for (const id of symbolIds) {
@@ -89,7 +89,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  alignRight(...symbolIds: LayoutTargetId[]): this {
+  alignRight(...symbolIds: LayoutTarget[]): this {
     this.ensureAxisIs("x", "alignRight")
     this.collect(symbolIds)
     for (const id of symbolIds) {
@@ -105,7 +105,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  followLeft(symbolId: LayoutTargetId): this {
+  followLeft(symbolId: LayoutTarget): this {
     this.ensureAxisIs("x", "followLeft")
     this.ensureFollowAvailable("followLeft")
     const symbol = this.resolveSymbol(symbolId)
@@ -119,7 +119,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  followRight(symbolId: LayoutTargetId): this {
+  followRight(symbolId: LayoutTarget): this {
     this.ensureAxisIs("x", "followRight")
     this.ensureFollowAvailable("followRight")
     const symbol = this.resolveSymbol(symbolId)
@@ -134,7 +134,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   }
 
   // Y軸専用メソッド
-  alignTop(...symbolIds: LayoutTargetId[]): this {
+  alignTop(...symbolIds: LayoutTarget[]): this {
     this.ensureAxisIs("y", "alignTop")
     this.collect(symbolIds)
     for (const id of symbolIds) {
@@ -146,7 +146,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  alignBottom(...symbolIds: LayoutTargetId[]): this {
+  alignBottom(...symbolIds: LayoutTarget[]): this {
     this.ensureAxisIs("y", "alignBottom")
     this.collect(symbolIds)
     for (const id of symbolIds) {
@@ -162,7 +162,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  followTop(symbolId: LayoutTargetId): this {
+  followTop(symbolId: LayoutTarget): this {
     this.ensureAxisIs("y", "followTop")
     this.ensureFollowAvailable("followTop")
     const symbol = this.resolveSymbol(symbolId)
@@ -172,7 +172,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  followBottom(symbolId: LayoutTargetId): this {
+  followBottom(symbolId: LayoutTarget): this {
     this.ensureAxisIs("y", "followBottom")
     this.ensureFollowAvailable("followBottom")
     const symbol = this.resolveSymbol(symbolId)
@@ -187,7 +187,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
   }
 
   // 共通メソッド（X軸とY軸で振る舞いが異なる）
-  alignCenter(...symbolIds: LayoutTargetId[]): this {
+  alignCenter(...symbolIds: LayoutTarget[]): this {
     this.collect(symbolIds)
     for (const id of symbolIds) {
       const symbol = this.resolveSymbol(id)
@@ -199,7 +199,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  followCenter(symbolId: LayoutTargetId): this {
+  followCenter(symbolId: LayoutTarget): this {
     this.ensureFollowAvailable("followCenter")
     const symbol = this.resolveSymbol(symbolId)
     if (!symbol) return this
@@ -233,7 +233,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     return this
   }
 
-  private collect(symbolIds: LayoutTargetId[]) {
+  private collect(symbolIds: LayoutTarget[]) {
     for (const id of symbolIds) {
       this.alignedSymbols.add(id)
     }
