@@ -81,6 +81,7 @@ TypeDiagram("First Milestone")
 - **[Namespace-based DSL](docs/design/namespace-dsl.md)** - DSL設計とAPI使い方
 - **[Plugin System](docs/design/plugin-system.md)** - プラグイン作成ガイド
 - **[Layout Hints API](docs/design/layout-hints.md)** - レイアウトヒントAPIの使い方（ユーザー向け）
+- **[Layout DSL Vocabulary](docs/design/layout_dsl.md)** - DSL語彙とビルダーインターフェースの詳細仕様
 - **[Layout System](docs/design/layout-system.md)** - レイアウトエンジンの内部実装（開発者向け）
 - **[Theme System](docs/design/theme-system.md)** - テーマシステムの設計
 - **[Web Rendering](docs/design/web-rendering.md)** - ブラウザ環境でのレンダリング

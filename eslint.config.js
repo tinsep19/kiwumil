@@ -82,6 +82,6 @@ export default [
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", "*.js", "example/**", "index.ts"],
+    ignores: ["dist/**", "node_modules/**", "*.js", "example/**", "examples/**", "index.ts"],
   },
 ];
