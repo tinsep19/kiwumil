@@ -15,7 +15,15 @@ describe("HintFactory with Hints integration", () => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
-    hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
+    
+    // Create diagram container characs
+    const diagramCharacs = {
+      id: diagramContainerId,
+      bounds: context.variables.createBounds(diagramContainerId, "layout"),
+      container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
+    }
+    
+    hint = new HintFactory({ context, symbols, diagramContainer: diagramCharacs })
   })
 
   function createRectangle(id: string) {
@@ -33,7 +41,7 @@ describe("HintFactory with Hints integration", () => {
         rect.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as RectangleSymbol
+    }).characs
   }
 
   test("GuideBuilder creates hint variables through Hints", () => {
@@ -41,8 +49,8 @@ describe("HintFactory with Hints integration", () => {
     const rect2 = createRectangle("rect2")
 
     // Create a guide which should use Hints.createHintVariable internally
-    const guideX = hint.createGuideX(100)
-    guideX.alignLeft(rect1.id, rect2.id)
+    const guideX = hint.guideX(100)
+    guideX.alignLeft(rect1, rect2)
 
     context.solve()
 
@@ -54,8 +62,8 @@ describe("HintFactory with Hints integration", () => {
   test("Hints tracks variables created by GuideBuilder", () => {
     const initialVarCount = context.hints.getHintVariables().length
 
-    hint.createGuideX()
-    hint.createGuideY()
+    hint.guideX()
+    hint.guideY()
 
     const allHintVars = context.hints.getHintVariables()
     expect(allHintVars.length).toBe(initialVarCount + 2)
@@ -65,9 +73,9 @@ describe("HintFactory with Hints integration", () => {
   })
 
   test("Multiple guides create separate hint variables", () => {
-    const guide1 = hint.createGuideX()
-    const guide2 = hint.createGuideX()
-    const guide3 = hint.createGuideY()
+    const guide1 = hint.guideX()
+    const guide2 = hint.guideX()
+    const guide3 = hint.guideY()
 
     const allVars = context.hints.getHintVariables()
 
@@ -86,12 +94,12 @@ describe("HintFactory with Hints integration", () => {
     const rect3 = createRectangle("rect3")
 
     // Create guides for alignment
-    const guideX = hint.createGuideX(50)
-    const guideY = hint.createGuideY(200)
+    const guideX = hint.guideX(50)
+    const guideY = hint.guideY(200)
 
     // Align rectangles to guides
-    guideX.alignLeft(rect1.id, rect2.id, rect3.id)
-    guideY.alignTop(rect1.id, rect2.id, rect3.id)
+    guideX.alignLeft(rect1, rect2, rect3)
+    guideY.alignTop(rect1, rect2, rect3)
 
     context.solve()
 
@@ -106,8 +114,8 @@ describe("HintFactory with Hints integration", () => {
   })
 
   test("Hint variables have proper naming convention", () => {
-    const guideX = hint.createGuideX()
-    const guideY = hint.createGuideY()
+    const guideX = hint.guideX()
+    const guideY = hint.guideY()
 
     const allVars = context.hints.getHintVariables()
 

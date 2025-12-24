@@ -7,7 +7,7 @@ TypeDiagram("Guide builder sample")
     )
 
     hint
-      .createGuideY()
+      .guideY()
       .alignBottom(k, i1, w)
       .alignTop(u, m)
       .alignBottom(i2)

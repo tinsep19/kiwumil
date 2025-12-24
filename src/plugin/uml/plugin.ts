@@ -4,8 +4,8 @@ import { Association, Extend, Generalize, Include } from "./relationships"
 import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
 import type { RelationshipId, Relationships } from "../../model"
 import type { Theme } from "../../theme"
-import type { IContainerSymbolCharacs } from "../../core"
-import { toSymbolId, type SymbolOrId } from "../../dsl"
+import type { IContainerSymbolCharacs, ISymbolCharacs } from "../../core"
+import { toSymbolId } from "../../dsl"
 import type { IconRegistry } from "../../icon"
 
 /**
@@ -128,11 +128,11 @@ export const UMLPlugin = {
     return {
       /**
        * Association Relationship を作成
-       * @param from - 開始 Symbol（SymbolBase または SymbolId）
-       * @param to - 終了 Symbol（SymbolBase または SymbolId）
+       * @param from - 開始 Symbol（ISymbolCharacs）
+       * @param to - 終了 Symbol（ISymbolCharacs）
        * @returns 生成された RelationshipId
        */
-      associate(from: SymbolOrId, to: SymbolOrId): RelationshipId {
+      associate(from: ISymbolCharacs, to: ISymbolCharacs): RelationshipId {
         const relationship = relationships.register(
           plugin,
           "association",
@@ -149,11 +149,11 @@ export const UMLPlugin = {
 
       /**
        * Include Relationship を作成
-       * @param from - 開始 Symbol（SymbolBase または SymbolId）
-       * @param to - 終了 Symbol（SymbolBase または SymbolId）
+       * @param from - 開始 Symbol（ISymbolCharacs）
+       * @param to - 終了 Symbol（ISymbolCharacs）
        * @returns 生成された RelationshipId
        */
-      include(from: SymbolOrId, to: SymbolOrId): RelationshipId {
+      include(from: ISymbolCharacs, to: ISymbolCharacs): RelationshipId {
         const relationship = relationships.register(
           plugin,
           "include",
@@ -170,11 +170,11 @@ export const UMLPlugin = {
 
       /**
        * Extend Relationship を作成
-       * @param from - 開始 Symbol（SymbolBase または SymbolId）
-       * @param to - 終了 Symbol（SymbolBase または SymbolId）
+       * @param from - 開始 Symbol（ISymbolCharacs）
+       * @param to - 終了 Symbol（ISymbolCharacs）
        * @returns 生成された RelationshipId
        */
-      extend(from: SymbolOrId, to: SymbolOrId): RelationshipId {
+      extend(from: ISymbolCharacs, to: ISymbolCharacs): RelationshipId {
         const relationship = relationships.register(
           plugin,
           "extend",
@@ -191,11 +191,11 @@ export const UMLPlugin = {
 
       /**
        * Generalize Relationship を作成
-       * @param from - 開始 Symbol（SymbolBase または SymbolId）
-       * @param to - 終了 Symbol（SymbolBase または SymbolId）
+       * @param from - 開始 Symbol（ISymbolCharacs）
+       * @param to - 終了 Symbol（ISymbolCharacs）
        * @returns 生成された RelationshipId
        */
-      generalize(from: SymbolOrId, to: SymbolOrId): RelationshipId {
+      generalize(from: ISymbolCharacs, to: ISymbolCharacs): RelationshipId {
         const relationship = relationships.register(
           plugin,
           "generalize",

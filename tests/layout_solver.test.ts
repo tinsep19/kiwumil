@@ -17,7 +17,15 @@ describe("Layout pipeline", () => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
     symbols = new Symbols(context.variables)
-    hint = new HintFactory({ context, symbols, diagramContainer: diagramContainerId })
+    
+    // Create diagram container characs
+    const diagramCharacs = {
+      id: diagramContainerId,
+      bounds: context.variables.createBounds(diagramContainerId, "layout"),
+      container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
+    }
+    
+    hint = new HintFactory({ context, symbols, diagramContainer: diagramCharacs })
   })
 
   function createActor(id: string) {
@@ -46,7 +54,7 @@ describe("Layout pipeline", () => {
         actor.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as ActorSymbol
+    }).characs
   }
 
   function createUsecase(id: string) {
@@ -64,7 +72,7 @@ describe("Layout pipeline", () => {
         usecase.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as UsecaseSymbol
+    }).characs
   }
 
   function createBoundary(id: string) {
@@ -84,7 +92,7 @@ describe("Layout pipeline", () => {
         boundary.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as SystemBoundarySymbol
+    }).characs
   }
 
   test("diagram symbol is anchored at the origin with minimum size", () => {
@@ -119,7 +127,7 @@ describe("Layout pipeline", () => {
     const a = createActor("a")
     const b = createActor("b")
 
-    hint.arrangeHorizontal(a.id, b.id)
+    hint.arrangeHorizontal(a, b)
     context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
@@ -134,8 +142,8 @@ describe("Layout pipeline", () => {
     const b = createActor("b")
     const c = createUsecase("c")
 
-    hint.arrangeHorizontal(a.id, b.id, c.id)
-    hint.alignCenterY(a.id, b.id, c.id)
+    hint.arrangeHorizontal(a, b, c)
+    hint.alignCenterY(a, b, c)
     context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
@@ -150,8 +158,8 @@ describe("Layout pipeline", () => {
     const a = createActor("child-a")
     const b = createActor("child-b")
 
-    hint.arrangeVertical(a.id, b.id)
-    hint.enclose(boundary.id, [a.id, b.id])
+    hint.arrangeVertical(a, b)
+    hint.enclose(boundary, [a, b])
     context.solve()
 
     const aBounds = getBoundsValues(a.bounds)
@@ -165,7 +173,7 @@ describe("Layout pipeline", () => {
     const a = createActor("top")
     const b = createActor("bottom")
 
-    const guide = hint.createGuideY().alignTop(a.id).alignBottom(b.id).arrange()
+    const guide = hint.guideY().alignTop(a).alignBottom(b).arrange()
 
     context.solve()
 

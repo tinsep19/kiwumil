@@ -82,7 +82,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
-    const diagramSymbol = symbols.register("__builtin__", "diagram", (id, r) => {
+    const diagramRegistration = symbols.register("__builtin__", "diagram", (id, r) => {
       const bounds = r.createLayoutBounds("bounds")
       const container = r.createContainerBounds("container")
       const title = r.createItemBounds("title")
@@ -106,7 +106,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
         symbol.ensureLayoutBounds(builder)
       })
       return r.build()
-    }).symbol as DiagramSymbol
+    })
+    const diagramSymbol = diagramRegistration.symbol as DiagramSymbol
 
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
@@ -132,23 +133,23 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const hint = new HintFactory({
       context,
       symbols,
-      diagramContainer: diagramSymbol.id,
+      diagramContainer: diagramRegistration.characs,
     })
 
     // invoke callback: object-style only
     block({ el, rel, hint, icon })
 
     const relationshipList = relationships.getAll()
-    const symbolList = symbols
+    const symbolRegistrations = symbols
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
-      .map((reg) => reg.symbol)
+    const symbolList = symbolRegistrations.map((reg) => reg.symbol)
     const allSymbols: ISymbol[] = [diagramSymbol, ...symbolList]
 
-    if (symbolList.length > 0) {
+    if (symbolRegistrations.length > 0) {
       hint.enclose(
-        diagramSymbol.id,
-        symbolList.map((s) => s.id)
+        diagramRegistration.characs,
+        symbolRegistrations.map((reg) => reg.characs)
       )
     }
 

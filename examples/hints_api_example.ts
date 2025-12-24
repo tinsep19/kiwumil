@@ -75,6 +75,6 @@ TypeDiagram("Hints API Example: Custom Anchors")
  * - デバッグ時に getHintVariables() で追跡可能
  * 
  * 注意：
- * - 通常のレイアウトには hint.createGuideX/Y() や hint.arrange*() を推奨
+ * - 通常のレイアウトには hint.guideX/Y() や hint.arrange*() を推奨
  * - createHintVariable() は高度なユースケース向け
  */
