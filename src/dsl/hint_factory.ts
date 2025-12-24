@@ -10,7 +10,7 @@ import {
 } from "../hint"
 import { toSymbolId } from "./symbol_helpers"
 
-type LayoutTargetId = ISymbolCharacs
+type LayoutTarget = ISymbolCharacs
 type LayoutContainerTarget = IContainerSymbolCharacs
 
 /**
@@ -133,8 +133,8 @@ export class HintFactory {
   guideX(value?: number): GuideBuilderX {
     return new GuideBuilderImpl(
       this.context,
-      (id: LayoutTargetId) => this.findSymbolById(id),
-      (id: LayoutTargetId) => this.resolveConstraintTarget(id),
+      this.findSymbolById.bind(this),
+      this.resolveConstraintTarget.bind(this),
       "x",
       `guideX-${this.guideCounter++}`,
       value
@@ -163,8 +163,8 @@ export class HintFactory {
   guideY(value?: number): GuideBuilderY {
     return new GuideBuilderImpl(
       this.context,
-      (id: LayoutTargetId) => this.findSymbolById(id),
-      (id: LayoutTargetId) => this.resolveConstraintTarget(id),
+      this.findSymbolById.bind(this),
+      this.resolveConstraintTarget.bind(this),
       "y",
       `guideY-${this.guideCounter++}`,
       value
@@ -198,7 +198,7 @@ export class HintFactory {
    * hint.arrange(sym1, sym2, sym3).horizontal();
    * ```
    */
-  arrange(...symbolIds: LayoutTargetId[]): FluentArrangeBuilder {
+  arrange(...symbolIds: LayoutTarget[]): FluentArrangeBuilder {
     return new FluentArrangeBuilder(
       this.context,
       (targets) => this.resolveConstraintTargets(targets),
@@ -218,7 +218,7 @@ export class HintFactory {
    * hint.horizontal(sym1, sym2, sym3).alignTop(sym1, sym2, sym3);
    * ```
    */
-  horizontal(...symbolIds: LayoutTargetId[]): this {
+  horizontal(...symbolIds: LayoutTarget[]): this {
     this.arrangeHorizontal(...symbolIds)
     return this
   }
@@ -235,7 +235,7 @@ export class HintFactory {
    * hint.vertical(sym1, sym2, sym3).alignLeft(sym1, sym2, sym3);
    * ```
    */
-  vertical(...symbolIds: LayoutTargetId[]): this {
+  vertical(...symbolIds: LayoutTarget[]): this {
     this.arrangeVertical(...symbolIds)
     return this
   }
@@ -255,7 +255,7 @@ export class HintFactory {
    * // Results in: [sym1] -- gap -- [sym2] -- gap -- [sym3]
    * ```
    */
-  arrangeHorizontal(...symbolIds: LayoutTargetId[]): this {
+  arrangeHorizontal(...symbolIds: LayoutTarget[]): this {
     this.context.hints.arrangeHorizontal(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -279,7 +279,7 @@ export class HintFactory {
    * //             [sym3]
    * ```
    */
-  arrangeVertical(...symbolIds: LayoutTargetId[]): this {
+  arrangeVertical(...symbolIds: LayoutTarget[]): this {
     this.context.hints.arrangeVertical(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -301,7 +301,7 @@ export class HintFactory {
    * hint.alignLeft(sym1, sym2, sym3).arrangeVertical(sym1, sym2, sym3);
    * ```
    */
-  alignLeft(...symbolIds: LayoutTargetId[]): this {
+  alignLeft(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignLeft(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -319,7 +319,7 @@ export class HintFactory {
    * hint.alignRight(sym1, sym2, sym3).arrangeVertical(sym1, sym2, sym3);
    * ```
    */
-  alignRight(...symbolIds: LayoutTargetId[]): this {
+  alignRight(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignRight(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -337,7 +337,7 @@ export class HintFactory {
    * hint.alignTop(sym1, sym2, sym3).arrangeHorizontal(sym1, sym2, sym3);
    * ```
    */
-  alignTop(...symbolIds: LayoutTargetId[]): this {
+  alignTop(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignTop(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -355,7 +355,7 @@ export class HintFactory {
    * hint.alignBottom(sym1, sym2, sym3).arrangeHorizontal(sym1, sym2, sym3);
    * ```
    */
-  alignBottom(...symbolIds: LayoutTargetId[]): this {
+  alignBottom(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignBottom(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -373,7 +373,7 @@ export class HintFactory {
    * hint.alignCenterX(sym1, sym2, sym3).arrangeVertical(sym1, sym2, sym3);
    * ```
    */
-  alignCenterX(...symbolIds: LayoutTargetId[]): this {
+  alignCenterX(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignCenterX(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -391,7 +391,7 @@ export class HintFactory {
    * hint.alignCenterY(sym1, sym2, sym3).arrangeHorizontal(sym1, sym2, sym3);
    * ```
    */
-  alignCenterY(...symbolIds: LayoutTargetId[]): this {
+  alignCenterY(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignCenterY(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -407,7 +407,7 @@ export class HintFactory {
    * hint.alignWidth(sym1, sym2, sym3).alignCenterX(sym1, sym2, sym3);
    * ```
    */
-  alignWidth(...symbolIds: LayoutTargetId[]): this {
+  alignWidth(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignWidth(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -423,7 +423,7 @@ export class HintFactory {
    * hint.alignHeight(sym1, sym2, sym3).alignCenterY(sym1, sym2, sym3);
    * ```
    */
-  alignHeight(...symbolIds: LayoutTargetId[]): this {
+  alignHeight(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignHeight(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -441,7 +441,7 @@ export class HintFactory {
    * hint.alignSize(sym1, sym2, sym3).alignCenterX(sym1, sym2, sym3);
    * ```
    */
-  alignSize(...symbolIds: LayoutTargetId[]): this {
+  alignSize(...symbolIds: LayoutTarget[]): this {
     this.context.hints.alignSize(this.resolveConstraintTargets(symbolIds))
     return this
   }
@@ -472,7 +472,7 @@ export class HintFactory {
    *     .alignCenterX(usecase1, usecase2, usecase3);
    * ```
    */
-  enclose(container: LayoutContainerTarget, childIds: LayoutTargetId[]): this {
+  enclose(container: LayoutContainerTarget, childIds: LayoutTarget[]): this {
     const containerTarget = this.resolveConstraintTarget(container)
     if (!containerTarget) {
       return this
@@ -531,7 +531,7 @@ export class HintFactory {
    * @remarks
    * This method is primarily used by builder classes and internal methods.
    */
-  resolveConstraintTargets(targets: LayoutTargetId[]): HintTarget[] {
+  resolveConstraintTargets(targets: LayoutTarget[]): HintTarget[] {
     return targets
       .map((target) => this.resolveConstraintTarget(target))
       .filter((target): target is HintTarget => Boolean(target))
@@ -548,7 +548,7 @@ export class HintFactory {
    * @remarks
    * This method is primarily used by builder classes.
    */
-  getConstraintTarget(target: LayoutTargetId): HintTarget | undefined {
+  getConstraintTarget(target: LayoutTarget): HintTarget | undefined {
     return this.resolveConstraintTarget(target)
   }
 
@@ -566,7 +566,7 @@ export class HintFactory {
    * @param target - Symbol ID or symbol object to resolve
    * @returns HintTarget if symbol is found, undefined otherwise
    */
-  private resolveConstraintTarget(target: LayoutTargetId): HintTarget | undefined {
+  private resolveConstraintTarget(target: LayoutTarget): HintTarget | undefined {
     const symbol = this.findSymbolById(target)
     if (!symbol) {
       return undefined
@@ -602,7 +602,7 @@ export class HintFactory {
    * @param id - Symbol ID or symbol object
    * @returns Symbol if found, undefined otherwise
    */
-  private findSymbolById(id: LayoutTargetId): SymbolBase | undefined {
+  private findSymbolById(id: LayoutTarget): SymbolBase | undefined {
     return this.symbols.findSymbolById(toSymbolId(id))
   }
 }

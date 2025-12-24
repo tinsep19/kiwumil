@@ -188,7 +188,7 @@ protected ensureContentBounds(): LayoutBounds {
 #### Before: 冗長な expression
 
 ```typescript
-alignRight(...symbolIds: LayoutTargetId[]) {
+alignRight(...symbolIds: LayoutTarget[]) {
   this.collect(symbolIds)
   for (const id of symbolIds) {
     const symbol = this.resolveSymbol(id)
@@ -211,7 +211,7 @@ alignRight(...symbolIds: LayoutTargetId[]) {
 #### After: 派生変数を直接使用
 
 ```typescript
-alignRight(...symbolIds: LayoutTargetId[]) {
+alignRight(...symbolIds: LayoutTarget[]) {
   this.collect(symbolIds)
   for (const id of symbolIds) {
     const symbol = this.resolveSymbol(id)
