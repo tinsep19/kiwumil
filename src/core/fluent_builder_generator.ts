@@ -8,6 +8,7 @@
  * ============================================================
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Fn = (...a: any[]) => any;
 
 /**
@@ -32,11 +33,13 @@ export type FluentSpec = {
 };
 
 // ---- 型ユーティリティ
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Args<F> = F extends (...a: infer A) => any ? A : never;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Ret<F>  = F extends (...a: any[]) => infer R ? R : never;
 
 type Keys<T> = keyof T & string;
-type ObjKeys<T> = T extends Record<string, any> ? Keys<T> : never;
+type ObjKeys<T> = T extends Record<string, Fn> ? Keys<T> : never;
 
 type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
 type RequiredGroupNames<T extends FluentSpec> = ObjKeys<NonNullable<T["requiredGroups"]>>;
@@ -68,7 +71,7 @@ type Chain<
                 Chain<T, Exclude<REQ, K>, REQG, OPTG_LOCKED>
             : never;
       }
-    : {})
+    : Record<string, never>)
   &
   // ---- requiredGroups（OR 必須）----
   (T["requiredGroups"] extends Record<string, Record<string, Fn>>
@@ -82,7 +85,7 @@ type Chain<
               }
             : { [M in keyof T["requiredGroups"][G] & string]: never };
       }[keyof T["requiredGroups"] & string]
-    : {})
+    : Record<string, never>)
   &
   // ---- optional（何回でもOK）----
   (T["optional"] extends Record<string, Fn>
@@ -91,7 +94,7 @@ type Chain<
           (...a: Args<T["optional"][K]>) =>
             Chain<T, REQ, REQG, OPTG_LOCKED>;
       }
-    : {})
+    : Record<string, never>)
   &
   // ---- optionalGroup（OR オプション・最大1回）----
   (T["optionalGroup"] extends Record<string, Record<string, Fn>>
@@ -105,7 +108,7 @@ type Chain<
                     Chain<T, REQ, REQG, OPTG_LOCKED | G>;
               };
       }[keyof T["optionalGroup"] & string]
-    : {})
+    : Record<string, never>)
   &
   // ---- terminal（required + requiredGroups 完了で解禁）----
   (REQ extends never
@@ -114,5 +117,5 @@ type Chain<
             [K in keyof T["terminal"] & string]:
               (...a: Args<T["terminal"][K]>) => Ret<T["terminal"][K]>;
           }
-        : {})
-    : {});
+        : Record<string, never>)
+    : Record<string, never>);
