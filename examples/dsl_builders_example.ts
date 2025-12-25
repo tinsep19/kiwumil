@@ -6,6 +6,8 @@
  * 
  * Note: This is an example of how the API would be used once builder
  * implementations are created in HintFactory or a dedicated builder module.
+ * 
+ * The builders are now generated using the FluentSpec pattern with BuildFluent.
  */
 
 import { TypeDiagram } from "../src/index"
@@ -13,9 +15,6 @@ import type {
   HintTarget,
   MinimalTarget,
   TargetWithContainer,
-  BuilderState,
-  WithAxis,
-  ReadyState,
 } from "../src/core/layout_hint"
 
 /**
@@ -144,14 +143,14 @@ function exampleCombinedBuilders() {
 }
 
 /**
- * Example 5: Type-Safe Builder State
+ * Example 5: Type-Safe Fluent Builder
  * 
- * Demonstrates how TypeScript utility types ensure type safety
- * in builder chains.
+ * Demonstrates how the generic BuildFluent type ensures type safety
+ * through spec-based builder generation.
  */
 function exampleTypeSafety() {
-  // This is a compile-time demonstration showing how type utilities
-  // would be used in builder implementations
+  // This is a compile-time demonstration showing how the fluent builder
+  // pattern ensures type safety through the FluentSpec
   
   // Example: Extract minimal fields
   function processMinimalTarget(target: MinimalTarget) {
@@ -167,24 +166,14 @@ function exampleTypeSafety() {
     console.log(target.container.boundId)
   }
   
-  // Example: Builder state progression
-  function demonstrateBuilderState() {
-    const initialState: BuilderState = {
-      targets: [],
-    }
-    
-    const withAxis: WithAxis = {
-      targets: [],
-      axis: "x", // Required by WithAxis type
-    }
-    
-    const readyState: ReadyState = {
-      targets: [],
-      axis: "y", // Required
-      gap: 20,   // Optional
-      // container is optional
-    }
-  }
+  // The new fluent builders use FluentSpec to define:
+  // - init methods (arrange, flow, align)
+  // - requiredGroups (axis selection for arrange, direction for flow)
+  // - optional methods (gap, wrap)
+  // - terminal methods (in)
+  //
+  // BuildFluent<Spec> generates the type-safe builder that ensures
+  // required methods are called before terminal methods are available
 }
 
 /**

@@ -6,14 +6,8 @@ import type {
   MinimalTarget,
   TargetWithContainer,
   BoundsOnlyTarget,
-  BuilderState,
-  WithAxis,
-  ReadyState,
-  FlowState,
   ArrangeBuilder,
-  ArrangeAxisBuilder,
   FlowBuilder,
-  FlowDirectionBuilder,
   AlignBuilder,
 } from "@/core/layout_hint"
 import type { BoundId } from "@/core/types"
@@ -65,122 +59,31 @@ describe("HintTarget Type Utilities", () => {
   })
 })
 
-describe("Builder State Types", () => {
-  test("BuilderState has correct structure", () => {
-    const state: BuilderState = {
-      targets: [],
-      axis: "x", // Optional
-      gap: 10, // Optional
-      container: {} as ContainerBounds, // Optional
-    }
-    
-    expect(state.targets).toEqual([])
-    expect(state.axis).toBe("x")
-    expect(state.gap).toBe(10)
-  })
-
-  test("WithAxis requires axis to be defined", () => {
-    const withAxis: WithAxis = {
-      targets: [],
-      axis: "y", // Required by WithAxis
-    }
-    
-    expect(withAxis.axis).toBe("y")
-  })
-
-  test("ReadyState requires targets and axis", () => {
-    const ready: ReadyState = {
-      targets: [],
-      axis: "x", // Required
-      gap: 20, // Optional
-      // container is optional
-    }
-    
-    expect(ready.targets).toBeDefined()
-    expect(ready.axis).toBeDefined()
-  })
-
-  test("FlowState has correct structure", () => {
-    const flowState: FlowState = {
-      targets: [],
-      direction: "horizontal", // Optional
-      wrapThreshold: 400, // Optional
-      gap: 15, // Optional
-      container: {} as ContainerBounds, // Optional
-    }
-    
-    expect(flowState.targets).toEqual([])
-    expect(flowState.direction).toBe("horizontal")
-    expect(flowState.wrapThreshold).toBe(400)
-  })
-})
 
 describe("Builder Interface Types", () => {
-  test("ArrangeBuilder interface shape", () => {
-    // This is a compile-time test to ensure interface is well-formed
-    const mockBuilder: ArrangeBuilder = {
-      x: () => ({} as ArrangeAxisBuilder),
-      y: () => ({} as ArrangeAxisBuilder),
-    }
+  test("ArrangeBuilder has arrange init method", () => {
+    // The new fluent builder has arrange() as the init method
+    // This is a compile-time test to ensure the type is well-formed
+    type HasArrange = ArrangeBuilder extends { arrange: (...args: any[]) => any } ? true : false
+    const hasArrange: HasArrange = true
     
-    expect(mockBuilder.x).toBeDefined()
-    expect(mockBuilder.y).toBeDefined()
+    expect(hasArrange).toBe(true)
   })
 
-  test("ArrangeAxisBuilder interface shape", () => {
-    const mockAxisBuilder: ArrangeAxisBuilder = {
-      gap: (space: number) => mockAxisBuilder,
-      in: (container: ContainerBounds) => {},
-    }
+  test("FlowBuilder has flow init method", () => {
+    // The new fluent builder has flow() as the init method
+    type HasFlow = FlowBuilder extends { flow: (...args: any[]) => any } ? true : false
+    const hasFlow: HasFlow = true
     
-    expect(mockAxisBuilder.gap).toBeDefined()
-    expect(mockAxisBuilder.in).toBeDefined()
+    expect(hasFlow).toBe(true)
   })
 
-  test("FlowBuilder interface shape", () => {
-    const mockFlowBuilder: FlowBuilder = {
-      horizontal: () => ({} as FlowDirectionBuilder),
-      vertical: () => ({} as FlowDirectionBuilder),
-    }
+  test("AlignBuilder has align init method", () => {
+    // The new fluent builder has align() as the init method
+    type HasAlign = AlignBuilder extends { align: (...args: any[]) => any } ? true : false
+    const hasAlign: HasAlign = true
     
-    expect(mockFlowBuilder.horizontal).toBeDefined()
-    expect(mockFlowBuilder.vertical).toBeDefined()
-  })
-
-  test("FlowDirectionBuilder interface shape", () => {
-    const mockDirectionBuilder: FlowDirectionBuilder = {
-      wrap: (threshold: number) => mockDirectionBuilder,
-      gap: (space: number) => mockDirectionBuilder,
-      in: (container: ContainerBounds) => {},
-    }
-    
-    expect(mockDirectionBuilder.wrap).toBeDefined()
-    expect(mockDirectionBuilder.gap).toBeDefined()
-    expect(mockDirectionBuilder.in).toBeDefined()
-  })
-
-  test("AlignBuilder interface shape", () => {
-    const mockAlignBuilder: AlignBuilder = {
-      left: () => {},
-      right: () => {},
-      top: () => {},
-      bottom: () => {},
-      centerX: () => {},
-      centerY: () => {},
-      width: () => {},
-      height: () => {},
-      size: () => {},
-    }
-    
-    expect(mockAlignBuilder.left).toBeDefined()
-    expect(mockAlignBuilder.right).toBeDefined()
-    expect(mockAlignBuilder.top).toBeDefined()
-    expect(mockAlignBuilder.bottom).toBeDefined()
-    expect(mockAlignBuilder.centerX).toBeDefined()
-    expect(mockAlignBuilder.centerY).toBeDefined()
-    expect(mockAlignBuilder.width).toBeDefined()
-    expect(mockAlignBuilder.height).toBeDefined()
-    expect(mockAlignBuilder.size).toBeDefined()
+    expect(hasAlign).toBe(true)
   })
 })
 

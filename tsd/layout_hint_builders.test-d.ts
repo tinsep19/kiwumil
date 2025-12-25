@@ -7,14 +7,8 @@ import type {
   MinimalTarget,
   TargetWithContainer,
   BoundsOnlyTarget,
-  BuilderState,
-  WithAxis,
-  ReadyState,
-  FlowState,
   ArrangeBuilder,
-  ArrangeAxisBuilder,
   FlowBuilder,
-  FlowDirectionBuilder,
   AlignBuilder,
 } from "../src/core/layout_hint"
 import type { BoundId } from "../src/core/types"
@@ -54,96 +48,20 @@ expectNotAssignable<BoundsOnlyTarget>({
 // Test Builder State Types
 // ============================================================================
 
-// BuilderState allows all fields to be optional except targets
-expectAssignable<BuilderState>({
-  targets: [],
-})
-
-expectAssignable<BuilderState>({
-  targets: [],
-  axis: "x",
-  gap: 10,
-  container: {} as ContainerBounds,
-})
-
-// WithAxis requires axis field
-expectNotAssignable<WithAxis>({
-  targets: [],
-  // Missing axis
-})
-
-expectAssignable<WithAxis>({
-  targets: [],
-  axis: "y",
-})
-
-// ReadyState requires targets and axis
-expectNotAssignable<ReadyState>({
-  targets: [],
-  // Missing axis
-})
-
-expectAssignable<ReadyState>({
-  targets: [],
-  axis: "x",
-})
-
-expectAssignable<ReadyState>({
-  targets: [],
-  axis: "y",
-  gap: 20,
-  container: {} as ContainerBounds,
-})
-
-// FlowState structure
-expectAssignable<FlowState>({
-  targets: [],
-})
-
-expectAssignable<FlowState>({
-  targets: [],
-  direction: "horizontal",
-  wrapThreshold: 400,
-  gap: 15,
-  container: {} as ContainerBounds,
-})
 
 // ============================================================================
-// Test Builder Interfaces
+// Test Builder Interfaces (Generated from FluentSpec)
 // ============================================================================
 
-// ArrangeBuilder should have x() and y() methods
-const arrangeBuilder = {} as ArrangeBuilder
-expectType<ArrangeAxisBuilder>(arrangeBuilder.x())
-expectType<ArrangeAxisBuilder>(arrangeBuilder.y())
+// Test that builders have their init methods
+declare const arrangeBuilder: ArrangeBuilder
+declare const flowBuilder: FlowBuilder
+declare const alignBuilder: AlignBuilder
 
-// ArrangeAxisBuilder should support method chaining
-const axisBuilder = {} as ArrangeAxisBuilder
-expectType<ArrangeAxisBuilder>(axisBuilder.gap(10))
-expectType<void>(axisBuilder.in({} as ContainerBounds))
-
-// FlowBuilder should have horizontal() and vertical() methods
-const flowBuilder = {} as FlowBuilder
-expectType<FlowDirectionBuilder>(flowBuilder.horizontal())
-expectType<FlowDirectionBuilder>(flowBuilder.vertical())
-
-// FlowDirectionBuilder should support method chaining
-const directionBuilder = {} as FlowDirectionBuilder
-expectType<FlowDirectionBuilder>(directionBuilder.wrap(400))
-expectType<FlowDirectionBuilder>(directionBuilder.gap(10))
-expectType<void>(directionBuilder.in({} as ContainerBounds))
-
-// AlignBuilder should have all alignment methods
-const alignBuilder = {} as AlignBuilder
-expectType<void>(alignBuilder.left())
-expectType<void>(alignBuilder.right())
-expectType<void>(alignBuilder.top())
-expectType<void>(alignBuilder.bottom())
-expectType<void>(alignBuilder.centerX())
-expectType<void>(alignBuilder.centerY())
-expectType<void>(alignBuilder.width())
-expectType<void>(alignBuilder.height())
-expectType<void>(alignBuilder.size())
+// These should compile if the types are correctly generated
+void arrangeBuilder.arrange
+void flowBuilder.flow
+void alignBuilder.align
 
 // ============================================================================
 // Test Type Composition

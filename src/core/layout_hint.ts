@@ -36,116 +36,221 @@ export type TargetWithContainer = Required<HintTarget>
 export type BoundsOnlyTarget = Omit<HintTarget, "boundId">
 
 // ============================================================================
-// Fluent DSL Builder Interfaces
+// Fluent Builder Generic Type Generator
 // ============================================================================
 
 /**
- * ArrangeBuilder: Fluent interface for arranging elements sequentially
+ * ============================================================
+ * Fluent Builder (TypeScript) - Generic Type Generator
+ *  - FluentSpec を「初期子/必須/グループ必須/オプション/グループオプション/終端子」で規定
+ *  - BuildFluent<Spec> で fluent builder の型を生成
+ *  - required / requiredGroups が満たされるまで terminal は補完に出ない
+ *  - optionalGroup は「グループ内のどれか1つ」を最大1回だけ（呼ぶと補完から消える）
+ * ============================================================
+ */
+
+type Fn = (...a: any[]) => any;
+
+/**
+ * FluentSpec:
+ * - init: 初期子（入口）。ここからチェーンが開始される
+ * - required: AND必須（全て呼ぶ必要がある）
+ * - requiredGroups: OR必須（各グループからどれか1つ必要）
+ * - optional: 通常オプション（何回でも可）
+ * - optionalGroup: ORオプション（各グループで最大1回）
+ * - terminal: 終端子（複数可）。必須を満たした時だけ呼べる
+ */
+export type FluentSpec = {
+  init: Record<string, Fn>;
+
+  required?: Record<string, Fn>;
+  requiredGroups?: Record<string, Record<string, Fn>>;
+
+  optional?: Record<string, Fn>;
+  optionalGroup?: Record<string, Record<string, Fn>>;
+
+  terminal: Record<string, Fn>;
+};
+
+// ---- 型ユーティリティ
+type Args<F> = F extends (...a: infer A) => any ? A : never;
+type Ret<F>  = F extends (...a: any[]) => infer R ? R : never;
+
+type Keys<T> = keyof T & string;
+type ObjKeys<T> = T extends Record<string, any> ? Keys<T> : never;
+
+type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
+type RequiredGroupNames<T extends FluentSpec> = ObjKeys<NonNullable<T["requiredGroups"]>>;
+
+// ---- Builder生成
+export type BuildFluent<T extends FluentSpec> = {
+  [K in keyof T["init"] & string]: (
+    ...a: Args<T["init"][K]>
+  ) => Chain<
+    T,
+    RequiredKeys<T>,          // 未完了 required（AND）
+    RequiredGroupNames<T>,    // 未完了 requiredGroups（OR）
+    never                     // ロック済み optionalGroup 名集合
+  >;
+};
+
+type Chain<
+  T extends FluentSpec,
+  REQ extends string,     // 未完了 required（AND）
+  REQG extends string,    // 未完了 requiredGroups（OR）
+  OPTG_LOCKED extends string
+> =
+  // ---- required（AND）----
+  (T["required"] extends Record<string, Fn>
+    ? {
+        [K in keyof T["required"] & string]:
+          K extends REQ
+            ? (...a: Args<T["required"][K]>) =>
+                Chain<T, Exclude<REQ, K>, REQG, OPTG_LOCKED>
+            : never;
+      }
+    : {})
+  &
+  // ---- requiredGroups（OR 必須）----
+  (T["requiredGroups"] extends Record<string, Record<string, Fn>>
+    ? {
+        [G in keyof T["requiredGroups"] & string]:
+          G extends REQG
+            ? {
+                [M in keyof T["requiredGroups"][G] & string]:
+                  (...a: Args<T["requiredGroups"][G][M]>) =>
+                    Chain<T, REQ, Exclude<REQG, G>, OPTG_LOCKED>;
+              }
+            : { [M in keyof T["requiredGroups"][G] & string]: never };
+      }[keyof T["requiredGroups"] & string]
+    : {})
+  &
+  // ---- optional（何回でもOK）----
+  (T["optional"] extends Record<string, Fn>
+    ? {
+        [K in keyof T["optional"] & string]:
+          (...a: Args<T["optional"][K]>) =>
+            Chain<T, REQ, REQG, OPTG_LOCKED>;
+      }
+    : {})
+  &
+  // ---- optionalGroup（OR オプション・最大1回）----
+  (T["optionalGroup"] extends Record<string, Record<string, Fn>>
+    ? {
+        [G in keyof T["optionalGroup"] & string]:
+          G extends OPTG_LOCKED
+            ? { [M in keyof T["optionalGroup"][G] & string]: never } // 補完から消える
+            : {
+                [M in keyof T["optionalGroup"][G] & string]:
+                  (...a: Args<T["optionalGroup"][G][M]>) =>
+                    Chain<T, REQ, REQG, OPTG_LOCKED | G>;
+              };
+      }[keyof T["optionalGroup"] & string]
+    : {})
+  &
+  // ---- terminal（required + requiredGroups 完了で解禁）----
+  (REQ extends never
+    ? (REQG extends never
+        ? {
+            [K in keyof T["terminal"] & string]:
+              (...a: Args<T["terminal"][K]>) => Ret<T["terminal"][K]>;
+          }
+        : {})
+    : {});
+
+// ============================================================================
+// Fluent DSL Builder Specifications and Types
+// ============================================================================
+
+/**
+ * ArrangeSpec: Specification for arrange builder
  * 
- * Provides methods to specify arrangement direction (x or y axis) followed by
- * optional gap configuration and container finalization.
+ * Required: axis selection (x or y)
+ * Optional: gap setting
+ * Terminal: in (finalize with container)
  * 
  * @example
  * ```typescript
  * hint.arrange(targets)
- *   .x()              // Arrange horizontally
- *   .gap(30)          // 30px spacing
- *   .in(container)    // Finalize in container
+ *   .x()              // Required: Select horizontal axis
+ *   .gap(30)          // Optional: 30px spacing
+ *   .in(container)    // Terminal: Finalize in container
  * ```
  */
-export interface ArrangeBuilder {
-  /**
-   * Arrange elements along X axis (horizontal)
-   * @returns ArrangeAxisBuilder for further configuration
-   */
-  x(): ArrangeAxisBuilder
-
-  /**
-   * Arrange elements along Y axis (vertical)
-   * @returns ArrangeAxisBuilder for further configuration
-   */
-  y(): ArrangeAxisBuilder
-}
+export type ArrangeSpec = {
+  init: {
+    arrange: (targets: HintTarget[]) => void;
+  };
+  requiredGroups: {
+    axis: {
+      x: () => void;
+      y: () => void;
+    };
+  };
+  optional: {
+    gap: (space: number) => void;
+  };
+  terminal: {
+    in: (container: ContainerBounds) => void;
+  };
+};
 
 /**
- * ArrangeAxisBuilder: Configuration interface after axis selection
+ * ArrangeBuilder: Type-safe fluent builder for sequential arrangements
  * 
- * Allows setting gap spacing and finalizing the arrangement within a container.
+ * Generated from ArrangeSpec using BuildFluent.
+ * Ensures axis is selected before terminal methods are available.
  */
-export interface ArrangeAxisBuilder {
-  /**
-   * Set gap between consecutive elements
-   * @param space - Distance between elements in pixels
-   * @returns This builder for method chaining
-   */
-  gap(space: number): this
-
-  /**
-   * Finalize arrangement within specified container
-   * @param container - Container bounds to arrange within
-   */
-  in(container: ContainerBounds): void
-}
+export type ArrangeBuilder = BuildFluent<ArrangeSpec>;
 
 /**
- * FlowBuilder: Fluent interface for flowing layouts with wrapping
+ * FlowSpec: Specification for flow builder
  * 
- * Similar to CSS flexbox, allows elements to flow along a primary axis and
- * wrap to the next line/column when reaching a threshold.
+ * Required: direction selection (horizontal or vertical)
+ * Optional: wrap threshold and gap setting
+ * Terminal: in (finalize with container)
  * 
  * @example
  * ```typescript
  * hint.flow(targets)
- *   .horizontal()     // Flow left-to-right
- *   .wrap(400)        // Wrap at 400px
- *   .gap(10)          // 10px spacing
- *   .in(container)    // Finalize
+ *   .horizontal()     // Required: Flow left-to-right
+ *   .wrap(400)        // Optional: Wrap at 400px
+ *   .gap(10)          // Optional: 10px spacing
+ *   .in(container)    // Terminal: Finalize
  * ```
  */
-export interface FlowBuilder {
-  /**
-   * Set primary flow direction to horizontal
-   * @returns FlowDirectionBuilder for further configuration
-   */
-  horizontal(): FlowDirectionBuilder
-
-  /**
-   * Set primary flow direction to vertical
-   * @returns FlowDirectionBuilder for further configuration
-   */
-  vertical(): FlowDirectionBuilder
-}
-
-/**
- * FlowDirectionBuilder: Configuration interface after flow direction selection
- */
-export interface FlowDirectionBuilder {
-  /**
-   * Set wrap threshold - maximum width/height before wrapping
-   * @param threshold - Wrap point in pixels
-   * @returns This builder for method chaining
-   */
-  wrap(threshold: number): this
-
-  /**
-   * Set gap between elements
-   * @param space - Distance between elements in pixels
-   * @returns This builder for method chaining
-   */
-  gap(space: number): this
-
-  /**
-   * Finalize flow layout within specified container
-   * @param container - Container bounds to flow within
-   */
-  in(container: ContainerBounds): void
-}
+export type FlowSpec = {
+  init: {
+    flow: (targets: HintTarget[]) => void;
+  };
+  requiredGroups: {
+    direction: {
+      horizontal: () => void;
+      vertical: () => void;
+    };
+  };
+  optional: {
+    wrap: (threshold: number) => void;
+    gap: (space: number) => void;
+  };
+  terminal: {
+    in: (container: ContainerBounds) => void;
+  };
+};
 
 /**
- * AlignBuilder: Fluent interface for alignment constraints
+ * FlowBuilder: Type-safe fluent builder for flowing layouts with wrapping
  * 
- * Provides methods to align multiple elements along edges or centers.
- * Each method directly applies the alignment constraint.
+ * Generated from FlowSpec using BuildFluent.
+ * Similar to CSS flexbox - ensures direction is selected before terminal.
+ */
+export type FlowBuilder = BuildFluent<FlowSpec>;
+
+/**
+ * AlignSpec: Specification for align builder
+ * 
+ * Required groups: one alignment method must be selected
+ * Terminal: all alignment methods are terminal (directly apply constraints)
  * 
  * @example
  * ```typescript
@@ -154,127 +259,28 @@ export interface FlowDirectionBuilder {
  * hint.align(targets).size()      // Align both width and height
  * ```
  */
-export interface AlignBuilder {
-  /**
-   * Align left edges (x coordinates)
-   */
-  left(): void
-
-  /**
-   * Align right edges
-   */
-  right(): void
-
-  /**
-   * Align top edges (y coordinates)
-   */
-  top(): void
-
-  /**
-   * Align bottom edges
-   */
-  bottom(): void
-
-  /**
-   * Align horizontal centers
-   */
-  centerX(): void
-
-  /**
-   * Align vertical centers
-   */
-  centerY(): void
-
-  /**
-   * Align widths
-   */
-  width(): void
-
-  /**
-   * Align heights
-   */
-  height(): void
-
-  /**
-   * Align both width and height (equivalent to calling width() and height())
-   */
-  size(): void
-}
-
-// ============================================================================
-// Builder State Types for Type-Safe Implementation
-// ============================================================================
+export type AlignSpec = {
+  init: {
+    align: (targets: HintTarget[]) => void;
+  };
+  terminal: {
+    left: () => void;
+    right: () => void;
+    top: () => void;
+    bottom: () => void;
+    centerX: () => void;
+    centerY: () => void;
+    width: () => void;
+    height: () => void;
+    size: () => void;
+  };
+};
 
 /**
- * BuilderState: Internal state for tracking builder configuration
+ * AlignBuilder: Type-safe fluent builder for alignment constraints
  * 
- * Used by builder implementations to maintain configuration through the
- * method chain. Not typically used directly by end users.
+ * Generated from AlignSpec using BuildFluent.
+ * All methods are terminal and directly apply alignment constraints.
  */
-export interface BuilderState {
-  /**
-   * Target elements to apply layout to
-   */
-  targets: HintTarget[]
+export type AlignBuilder = BuildFluent<AlignSpec>;
 
-  /**
-   * Selected axis for arrangement (undefined until x() or y() called)
-   */
-  axis?: "x" | "y"
-
-  /**
-   * Gap spacing between elements (optional, uses default if not set)
-   */
-  gap?: number
-
-  /**
-   * Container to arrange within (set by in() method)
-   */
-  container?: ContainerBounds
-}
-
-/**
- * WithAxis: Builder state after axis selection
- * 
- * Type utility that guarantees axis has been selected in the builder chain.
- */
-export type WithAxis = BuilderState & { axis: "x" | "y" }
-
-/**
- * ReadyState: Builder state ready for finalization
- * 
- * Ensures required fields (targets, axis) are present while gap and container
- * remain optional.
- */
-export type ReadyState = Required<Pick<BuilderState, "targets" | "axis">> &
-  Partial<Pick<BuilderState, "gap" | "container">>
-
-/**
- * FlowState: State for flow builder configuration
- */
-export interface FlowState {
-  /**
-   * Target elements to flow
-   */
-  targets: HintTarget[]
-
-  /**
-   * Flow direction (undefined until horizontal() or vertical() called)
-   */
-  direction?: "horizontal" | "vertical"
-
-  /**
-   * Wrap threshold in pixels (optional)
-   */
-  wrapThreshold?: number
-
-  /**
-   * Gap spacing between elements (optional)
-   */
-  gap?: number
-
-  /**
-   * Container to flow within (set by in() method)
-   */
-  container?: ContainerBounds
-}
