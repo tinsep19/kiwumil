@@ -4,6 +4,8 @@ import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
 import { TextItem } from "../../../item"
 
+const sqrt2 = Math.sqrt(2)
+
 /**
  * IUsecaseSymbolCharacs: ユースケースシンボルの特性
  * ISymbolCharacs を拡張し、rx と ry プロパティを必須にする
@@ -156,9 +158,9 @@ export class UsecaseSymbol implements ISymbol {
     builder.ct([1, labelBounds.height]).ge([labelDefaultSize.height, 1]).medium()
 
     // Ensure ellipse is large enough to contain the label (medium constraint)
-    // Since label is centered, rx must be at least labelWidth/2 and ry must be at least labelHeight/2
-    builder.ct([2, this.rx]).ge([1, labelBounds.width]).medium()
-    builder.ct([2, this.ry]).ge([1, labelBounds.height]).medium()
+    // Since label is centered, rx must be at least labelWidth/sqrt2 and ry must be at least labelHeight/sqrt2
+    builder.ct([sqrt2, this.rx]).ge([1, labelBounds.width]).medium()
+    builder.ct([sqrt2, this.ry]).ge([1, labelBounds.height]).medium()
   }
 
   render(): string {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
      width="577.3333333333334" 
-     height="430.73333333333335" 
-     viewBox="0 0 577.3333333333334 430.73333333333335">
+     height="440.0117171304907" 
+     viewBox="0 0 577.3333333333334 440.0117171304907">
   <rect width="100%" height="100%" fill="white"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -23,7 +23,7 @@
   
       <g id="uml:systemBoundary/1">
         <!-- System Boundary Rectangle -->
-        <rect x="40" y="75" width="353.33333333333337" height="330.73333333333335" 
+        <rect x="40" y="75" width="353.33333333333337" height="340.0117171304907" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
@@ -87,45 +87,45 @@
       </g>
     
 
-      <line x1="473.33333333333337" y1="139.25405405405405" x2="147.42426801948903" y2="371.7106715752373"
+      <line x1="473.33333333333337" y1="140.66774769364343" x2="179.81839109294054" y2="373.4042686002016"
             stroke="black" stroke-width="2"/>
     
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="110.66666666666667" cy="377.8666666666667" rx="44" ry="11.2" 
+        <ellipse cx="128.89206341108286" cy="382.5058585652454" rx="62.22539674441617" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="110.66666666666667" y="382.6666666666667"
+      <text x="128.89206341108286" y="387.30585856524533"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="110.66666666666667" dy="0">Outer Task</tspan>
+        <tspan x="128.89206341108286" dy="0">Outer Task</tspan>
       </text>
     
       </g>
     
 
-      <line x1="473.33333333333337" y1="133.03478260869565" x2="177.2523753794751" y2="284.08939525578035"
+      <line x1="473.33333333333337" y1="133.3833375259806" x2="211.77687101625557" y2="277.37097507566284"
             stroke="black" stroke-width="2"/>
     
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="137.33333333333334" cy="288.79999999999995" rx="44" ry="11.2" 
+        <ellipse cx="155.55873007774952" cy="284.1608081014213" rx="62.22539674441617" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="137.33333333333334" y="293.59999999999997"
+      <text x="155.55873007774952" y="288.9608081014213"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="137.33333333333334" dy="0">Inner Task</tspan>
+        <tspan x="155.55873007774952" dy="0">Inner Task</tspan>
       </text>
     
       </g>

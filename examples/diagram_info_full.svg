@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="348" 
-     height="267.2" 
-     viewBox="0 0 348 267.2">
+     width="399.3624817342637" 
+     height="295.03515139147197" 
+     viewBox="0 0 399.3624817342637 295.03515139147197">
   <rect width="100%" height="100%" fill="#f0f8ff"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -24,46 +24,46 @@
       <g id="__builtin__:diagram/0">
         <!-- Title -->
         
-      <text x="174" y="51"
+      <text x="199.68124086713186" y="51"
             text-anchor="middle"
             font-size="18"
             font-family="Arial"
             fill="#003366">
-        <tspan x="174" dy="0">E-Commerce System</tspan>
+        <tspan x="199.68124086713186" dy="0">E-Commerce System</tspan>
       </text>
     
         <!-- Author -->
 
-      <text x="338" y="235.20000000000002"
+      <text x="389.3624817342637" y="263.03515139147197"
             text-anchor="end"
             font-size="9"
             font-family="Arial"
             fill="#003366">
-        <tspan x="338" dy="0">Author: Architecture Team</tspan>
+        <tspan x="389.3624817342637" dy="0">Author: Architecture Team</tspan>
       </text>
     
         <!-- Created At -->
 
-      <text x="338" y="255.20000000000002"
+      <text x="389.3624817342637" y="283.03515139147197"
             text-anchor="end"
             font-size="9"
             font-family="Arial"
             fill="#003366">
-        <tspan x="338" dy="0">Created: 2025-11-13</tspan>
+        <tspan x="389.3624817342637" dy="0">Created: 2025-11-13</tspan>
       </text>
     
       </g>
     
 
-      <line x1="104" y1="112.31494252873563" x2="185.0226187642974" y2="88.2257965734961"
+      <line x1="104" y1="205.04106254830256" x2="199.2112157137662" y2="99.7552621942353"
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="88.68118811881187" y1="161.4" x2="70.45368882141322" y2="148.15187071470731"
+      <line x1="100.08806565899093" y1="183.635151391472" x2="70.62241450235906" y2="185.7967120279749"
             stroke="#0066cc" stroke-width="2"/>
     
 
-      <line x1="73.83829787234042" y1="161.4" x2="75.23545842820685" y2="219.81012658434904"
+      <line x1="103.64600072149446" y1="270.03515139147197" x2="61.288175817596496" y2="241.41836208907228"
             stroke="#0066cc" stroke-width="2"/>
     
 
@@ -71,14 +71,14 @@
         
         <!-- Actor Icon -->
         
-        <svg x="40" y="86.2" width="64" height="64" viewBox="0 0 64 64"
+        <svg x="40" y="194.83515139147198" width="64" height="64" viewBox="0 0 64 64"
              fill="#003366">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="72" y="166.2"
+      <text x="72" y="274.835151391472"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
@@ -91,17 +91,17 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="246" cy="86.2" rx="61.99999999999999" ry="11.2" 
+        <ellipse cx="271.68124086713186" cy="90.83919189857866" rx="87.68124086713189" ry="15.839191898578662" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="246" y="91"
+      <text x="271.68124086713186" y="95.63919189857866"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#003366">
-        <tspan x="246" dy="0">Browse Products</tspan>
+        <tspan x="271.68124086713186" dy="0">Browse Products</tspan>
       </text>
     
       </g>
@@ -109,17 +109,17 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="87.6" cy="158.60000000000002" rx="47.599999999999994" ry="11.2" 
+        <ellipse cx="107.3165655689593" cy="172.51757569573599" rx="67.3165655689593" ry="15.839191898578662" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="87.6" y="163.4"
+      <text x="107.3165655689593" y="177.31757569573597"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#003366">
-        <tspan x="87.6" dy="0">Add to Cart</tspan>
+        <tspan x="107.3165655689593" dy="0">Add to Cart</tspan>
       </text>
     
       </g>
@@ -127,17 +127,17 @@
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="76.8" cy="231" rx="36.8" ry="11.2" 
+        <ellipse cx="92.04305909532988" cy="254.1959594928933" rx="52.04305909532989" ry="15.839191898578662" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="76.8" y="235.8"
+      <text x="92.04305909532988" y="258.99595949289335"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#003366">
-        <tspan x="76.8" dy="0">Checkout</tspan>
+        <tspan x="92.04305909532988" dy="0">Checkout</tspan>
       </text>
     
       </g>
