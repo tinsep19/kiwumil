@@ -1,4 +1,3 @@
-// src/plugin/uml/symbols/usecase_symbol.ts
 import type { LinearConstraintBuilder, Variable, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds, ItemBounds } from "../../../core"
 import { getStyleForSymbol, type Theme } from "../../../theme"
 import type { Point } from "../../../core"
@@ -159,6 +158,11 @@ export class UsecaseSymbol implements ISymbol {
     // Label minimum size (medium constraint)
     builder.ct([1, labelBounds.width]).ge([labelDefaultSize.width, 1]).medium()
     builder.ct([1, labelBounds.height]).ge([labelDefaultSize.height, 1]).medium()
+
+    // Ensure label fits within ellipse bounds
+    const sqrt1_2 = 1 / Math.sqrt(2) // Constant for 1/√2
+    builder.ct([sqrt1_2 * 2, this.rx]).ge([1, labelBounds.width]).medium()
+    builder.ct([sqrt1_2 * 2, this.ry]).ge([1, labelBounds.height]).medium()
   }
 
   render(): string {
