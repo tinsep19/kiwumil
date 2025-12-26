@@ -7,7 +7,7 @@
  * Note: This is an example of how the API would be used once builder
  * implementations are created in HintFactory or a dedicated builder module.
  * 
- * The builders are now generated using the FluentSpec pattern with BuildFluent.
+ * The builders are now generated using the FluentSpec pattern with Fluent.
  */
 
 import { TypeDiagram } from "../src/index"
@@ -145,7 +145,7 @@ function exampleCombinedBuilders() {
 /**
  * Example 5: Type-Safe Fluent Builder
  * 
- * Demonstrates how the generic BuildFluent type ensures type safety
+ * Demonstrates how the generic Fluent type ensures type safety
  * through spec-based builder generation.
  */
 function exampleTypeSafety() {
@@ -172,7 +172,7 @@ function exampleTypeSafety() {
   // - optional methods (gap, wrap)
   // - terminal methods (in)
   //
-  // BuildFluent<Spec> generates the type-safe builder that ensures
+  // Fluent<Spec> generates the type-safe builder that ensures
   // required methods are called before terminal methods are available
 }
 

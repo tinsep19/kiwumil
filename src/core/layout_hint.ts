@@ -3,7 +3,7 @@
 
 import type { BoundId } from "./types"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
-import type { BuildFluent } from "./fluent_builder_generator"
+import type { Fluent } from "./fluent_builder_generator"
 import type { FluentSpec } from "./fluent_builder_generator"
 
 // Re-export FluentSpec for external use
@@ -80,10 +80,10 @@ export type ArrangeSpec = {
 /**
  * ArrangeBuilder: Type-safe fluent builder for sequential arrangements
  * 
- * Generated from ArrangeSpec using BuildFluent.
+ * Generated from ArrangeSpec using Fluent.
  * Ensures axis is selected before terminal methods are available.
  */
-export type ArrangeBuilder = BuildFluent<ArrangeSpec>;
+export type ArrangeBuilder = Fluent<ArrangeSpec>;
 
 /**
  * FlowSpec: Specification for flow builder
@@ -123,10 +123,10 @@ export type FlowSpec = {
 /**
  * FlowBuilder: Type-safe fluent builder for flowing layouts with wrapping
  * 
- * Generated from FlowSpec using BuildFluent.
+ * Generated from FlowSpec using Fluent.
  * Similar to CSS flexbox - ensures direction is selected before terminal.
  */
-export type FlowBuilder = BuildFluent<FlowSpec>;
+export type FlowBuilder = Fluent<FlowSpec>;
 
 /**
  * AlignSpec: Specification for align builder
@@ -161,8 +161,8 @@ export type AlignSpec = {
 /**
  * AlignBuilder: Type-safe fluent builder for alignment constraints
  * 
- * Generated from AlignSpec using BuildFluent.
+ * Generated from AlignSpec using Fluent.
  * All methods are terminal and directly apply alignment constraints.
  */
-export type AlignBuilder = BuildFluent<AlignSpec>;
+export type AlignBuilder = Fluent<AlignSpec>;
 
