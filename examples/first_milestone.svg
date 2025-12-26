@@ -117,43 +117,55 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="334" cy="141.66666666666669" rx="123.33333333333334" ry="25" 
+        <ellipse cx="334" cy="91.66666666666667" rx="123.33333333333334" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="334" y="146.66666666666669" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Login
-        </text>
+        
+      <text x="334" y="96.46666666666667"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="334" dy="0">Login</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="333.99999999999994" cy="141.66666666666669" rx="123.33333333333333" ry="25" 
+        <ellipse cx="334" cy="91.66666666666667" rx="123.33333333333333" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="333.99999999999994" y="146.66666666666669" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Logout
-        </text>
+        
+      <text x="334" y="96.46666666666667"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="334" dy="0">Logout</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/5">
         <!-- Ellipse -->
-        <ellipse cx="333.99999999999994" cy="187.5" rx="123.33333333333333" ry="70.83333333333331" 
+        <ellipse cx="334" cy="187.5" rx="123.33333333333333" ry="70.83333333333331" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="333.99999999999994" y="192.5" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Manage Users
-        </text>
+        
+      <text x="333.99999999999994" y="192.3"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="333.99999999999994" dy="0">Manage Users</tspan>
+      </text>
+    
       </g>
     
 </svg>

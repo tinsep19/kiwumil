@@ -66,39 +66,51 @@
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="105" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          UseCase A
-        </text>
+        
+      <text x="100" y="104.8"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">UseCase A</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="100" cy="200" rx="60" ry="25" 
+        <ellipse cx="100" cy="150" rx="60" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="205" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          UseCase B
-        </text>
+        
+      <text x="100" y="154.8"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="100" dy="0">UseCase B</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="280" cy="100" rx="40" ry="25" 
+        <ellipse cx="200" cy="100" rx="2" ry="25" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="280" y="105" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          UseCase C
-        </text>
+        
+      <text x="200" y="104.8"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="200" dy="0">UseCase C</tspan>
+      </text>
+    
       </g>
     
 </svg>

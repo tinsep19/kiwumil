@@ -93,15 +93,19 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="216.66666666666669" cy="391.6666666666667" rx="150" ry="25" 
+        <ellipse cx="216.66666666666669" cy="341.6666666666667" rx="150" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="216.66666666666669" y="396.6666666666667" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Outer Task
-        </text>
+        
+      <text x="216.66666666666669" y="346.4666666666667"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="216.66666666666669" dy="0">Outer Task</tspan>
+      </text>
+    
       </g>
     
 
@@ -111,15 +115,19 @@
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="216.66666666666669" cy="229.16666666666666" rx="123.33333333333333" ry="70.83333333333331" 
+        <ellipse cx="216.66666666666666" cy="229.16666666666666" rx="123.33333333333333" ry="70.83333333333331" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="216.66666666666669" y="234.16666666666666" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Inner Task
-        </text>
+        
+      <text x="216.66666666666666" y="233.96666666666664"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="216.66666666666666" dy="0">Inner Task</tspan>
+      </text>
+    
       </g>
     
 </svg>

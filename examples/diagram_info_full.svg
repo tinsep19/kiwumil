@@ -91,43 +91,55 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="196" cy="118.2" rx="12" ry="43.2" 
+        <ellipse cx="172" cy="118.2" rx="2" ry="43.2" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="196" y="123.2" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="#003366">
-          Browse Products
-        </text>
+        
+      <text x="172" y="123"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="172" dy="0">Browse Products</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="100" cy="236.4" rx="60" ry="25" 
+        <ellipse cx="100" cy="186.4" rx="60" ry="2" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="241.4" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="#003366">
-          Add to Cart
-        </text>
+        
+      <text x="100" y="191.2"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="100" dy="0">Add to Cart</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="100" cy="236.39999999999998" rx="60" ry="24.999999999999986" 
+        <ellipse cx="100" cy="186.39999999999998" rx="60" ry="2" 
                  fill="#e6f3ff" stroke="#0066cc" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="241.39999999999998" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="#003366">
-          Checkout
-        </text>
+        
+      <text x="100" y="191.20000000000005"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="#003366">
+        <tspan x="100" dy="0">Checkout</tspan>
+      </text>
+    
       </g>
     
 </svg>

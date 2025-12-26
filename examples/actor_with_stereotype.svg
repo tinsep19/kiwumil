@@ -135,29 +135,37 @@
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="196" cy="273" rx="12" ry="198" 
+        <ellipse cx="172" cy="273" rx="2" ry="198" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="196" y="278" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Login
-        </text>
+        
+      <text x="172" y="277.8"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="172" dy="0">Login</tspan>
+      </text>
+    
       </g>
     
 
       <g id="uml:usecase/5">
         <!-- Ellipse -->
-        <ellipse cx="264.4" cy="273" rx="34.8" ry="198" 
+        <ellipse cx="194.8" cy="273" rx="2" ry="198" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="264.4" y="278" 
-              text-anchor="middle" font-size="12" font-family="Arial"
-              fill="black">
-          Manage System
-        </text>
+        
+      <text x="194.8" y="277.8"
+            text-anchor="middle"
+            font-size="12"
+            font-family="Arial"
+            fill="black">
+        <tspan x="194.8" dy="0">Manage System</tspan>
+      </text>
+    
       </g>
     
 </svg>
