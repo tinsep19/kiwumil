@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
      width="524" 
-     height="325.5333333333334" 
-     viewBox="0 0 524 325.5333333333334">
+     height="322.8" 
+     viewBox="0 0 524 322.8">
   <rect width="100%" height="100%" fill="white"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -23,7 +23,7 @@
   
       <g id="uml:systemBoundary/6">
         <!-- System Boundary Rectangle -->
-        <rect x="184" y="75" width="300" height="225.5333333333334" 
+        <rect x="184" y="75" width="300" height="200" 
               fill="#f8f8f8" stroke="#999" stroke-width="2"/>
         
         <!-- Label at top -->
@@ -55,14 +55,14 @@
         
         <!-- Actor Icon -->
         
-        <svg x="40" y="88.93333333333338" width="64" height="64" viewBox="0 0 64 64"
+        <svg x="40" y="86.2" width="64" height="64" viewBox="0 0 64 64"
              fill="black">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="72" y="168.93333333333337"
+      <text x="72" y="166.2"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
@@ -77,14 +77,14 @@
         
         <!-- Actor Icon -->
         
-        <svg x="40" y="225.3333333333334" width="64" height="64" viewBox="0 0 64 64"
+        <svg x="40" y="222.60000000000002" width="64" height="64" viewBox="0 0 64 64"
              fill="black">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="72" y="305.33333333333337"
+      <text x="72" y="302.6"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
@@ -95,39 +95,39 @@
       </g>
     
 
-      <line x1="104" y1="121.55077303648737" x2="394.57062339200627" y2="127.56110648014136"
+      <line x1="104" y1="118.07266435986159" x2="457.33333333333326" y2="116.66666666666667"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="104" y1="130.6229007633588" x2="293.9356966897084" y2="195.67639575579773"
+      <line x1="104" y1="129.3846153846154" x2="210.66666666666663" y2="166.66666666666669"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="104" y1="245.80383426097714" x2="396.7405979335042" y2="133.23562507997082"
+      <line x1="104" y1="243.1453287197232" x2="457.33333333333326" y2="116.66666666666667"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="104" y1="250.36335877862598" x2="293.09826510313866" y2="203.63759295099368"
+      <line x1="104" y1="234.30769230769232" x2="210.66666666666663" y2="166.66666666666669"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="104" y1="259.20610687022906" x2="261.7159490768496" y2="271.74127447530003"
+      <line x1="104" y1="245.84615384615387" x2="210.66666666666663" y2="216.66666666666669"
             stroke="black" stroke-width="2"/>
     
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="431.3333333333333" cy="127.86666666666667" rx="36.76955262170047" ry="15.839191898578662" 
+        <ellipse cx="457.33333333333326" cy="116.66666666666667" rx="2" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="431.3333333333333" y="132.66666666666669"
+      <text x="457.33333333333326" y="132.66666666666669"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="431.3333333333333" dy="0">Login</tspan>
+        <tspan x="457.33333333333326" dy="0">Login</tspan>
       </text>
     
       </g>
@@ -135,17 +135,17 @@
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="334" cy="200.2666666666667" rx="41.86072144624361" ry="15.839191898578662" 
+        <ellipse cx="210.66666666666663" cy="166.66666666666669" rx="2" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="334" y="205.06666666666672"
+      <text x="210.66666666666663" y="182.66666666666669"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="334" dy="0">Logout</tspan>
+        <tspan x="210.66666666666663" dy="0">Logout</tspan>
       </text>
     
       </g>
@@ -153,17 +153,17 @@
 
       <g id="uml:usecase/5">
         <!-- Ellipse -->
-        <ellipse cx="334" cy="272.6666666666667" rx="72.40773439350245" ry="15.839191898578662" 
+        <ellipse cx="210.66666666666663" cy="216.66666666666669" rx="2" ry="2" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="333.99999999999994" y="277.4666666666667"
+      <text x="210.66666666666663" y="232.66666666666669"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="333.99999999999994" dy="0">Manage Users</tspan>
+        <tspan x="210.66666666666663" dy="0">Manage Users</tspan>
       </text>
     
       </g>
