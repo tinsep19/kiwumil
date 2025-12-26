@@ -104,10 +104,8 @@ export class UsecaseSymbol extends SymbolBase {
     builder.ct([2, this.rx]).le([1, width])
     builder.ct([2, this.ry]).le([1, height])
     
-    // For proper ellipse sizing, we want rx and ry to approximately fill the bounds
-    // rx should be approximately width/2 and ry should be approximately height/2
-    // Using weak constraints to allow flexibility while maintaining the π/4 direction representation
-    // Note: 0.5 = 1/2, and Math.sin(Math.PI/4) = 1/√2 ≈ 0.707 for the π/4 angle
+    // For proper ellipse sizing, we want rx and ry to fill the bounds
+    // rx = width/2 and ry = height/2 (weak constraints for flexibility)
     builder.ct([1, this.rx]).eq([0.5, width]).weak()
     builder.ct([1, this.ry]).eq([0.5, height]).weak()
   }
