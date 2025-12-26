@@ -124,15 +124,20 @@ export class UsecaseSymbol implements ISymbol {
 
   ensureLayoutBounds(builder: LinearConstraintBuilder): void {
     // rx and ry are linear free variables constrained by the bounds dimensions
-    // The ellipse should fit within the layout bounds: rx * 2 <= width and ry * 2 <= height
     const { width, height } = this.bounds
-    builder.ct([2, this.rx]).le([1, width])
-    builder.ct([2, this.ry]).le([1, height])
+    const sqrt2 = Math.sqrt(2)
     
-    // For proper ellipse sizing, we want rx and ry to fill the bounds
-    // rx = width/2 and ry = height/2 (weak constraints for flexibility)
-    builder.ct([1, this.rx]).eq([0.5, width]).weak()
-    builder.ct([1, this.ry]).eq([0.5, height]).weak()
+    // Constraint: √2 * rx <= width and √2 * ry <= height
+    // This ensures the ellipse dimensions allow for proper label fitting within the inscribed square.
+    // Combined with the label fitting constraints below, this creates the relationship:
+    // label.width <= √2 * rx <= width, ensuring the label fits within the available space.
+    builder.ct([sqrt2, this.rx]).le([1, width]).required()
+    builder.ct([sqrt2, this.ry]).le([1, height]).required()
+    
+    // Minimize rx and ry (weak constraints for flexibility)
+    // This encourages the ellipse to be as small as possible while still fitting the label
+    builder.ct([1, this.rx]).eq([0, 1]).weak()
+    builder.ct([1, this.ry]).eq([0, 1]).weak()
 
     // Ellipse bounds constraints
     // Ellipse width = 2 * rx, height = 2 * ry
@@ -159,10 +164,12 @@ export class UsecaseSymbol implements ISymbol {
     builder.ct([1, labelBounds.width]).ge([labelDefaultSize.width, 1]).medium()
     builder.ct([1, labelBounds.height]).ge([labelDefaultSize.height, 1]).medium()
 
-    // Ensure label fits within ellipse bounds
-    const sqrt1_2 = 1 / Math.sqrt(2) // Constant for 1/√2
-    builder.ct([sqrt1_2 * 2, this.rx]).ge([1, labelBounds.width]).medium()
-    builder.ct([sqrt1_2 * 2, this.ry]).ge([1, labelBounds.height]).medium()
+    // Ensure label fits within ellipse inscribed square
+    // For an ellipse with semi-axes rx and ry, the largest axis-aligned rectangle
+    // that fits inside has dimensions (√2 * rx) by (√2 * ry).
+    // Therefore: √2 * rx >= label.width and √2 * ry >= label.height
+    builder.ct([sqrt2, this.rx]).ge([1, labelBounds.width]).medium()
+    builder.ct([sqrt2, this.ry]).ge([1, labelBounds.height]).medium()
   }
 
   render(): string {
