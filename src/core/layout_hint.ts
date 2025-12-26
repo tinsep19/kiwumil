@@ -3,7 +3,7 @@
 
 import type { BoundId } from "./types"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
-import type { Fluent } from "./fluent_builder_generator"
+import type { Fluent, flow } from "./fluent_builder_generator"
 import type { FluentSpec } from "./fluent_builder_generator"
 
 // Re-export FluentSpec for external use
@@ -61,19 +61,19 @@ export type BoundsOnlyTarget = Omit<HintTarget, "boundId">
  */
 export type ArrangeSpec = {
   init: {
-    arrange: (targets: HintTarget[]) => void;
+    arrange: flow.Entry<[targets: HintTarget[]]>;
   };
   requiredGroups: {
     axis: {
-      x: () => void;
-      y: () => void;
+      x: flow.Step;
+      y: flow.Step;
     };
   };
   optional: {
-    gap: (space: number) => void;
+    gap: flow.Step<[space: number]>;
   };
   terminal: {
-    in: (container: ContainerBounds) => void;
+    in: flow.Terminal<[container: ContainerBounds]>;
   };
 };
 
@@ -103,20 +103,20 @@ export type ArrangeBuilder = Fluent<ArrangeSpec>;
  */
 export type FlowSpec = {
   init: {
-    flow: (targets: HintTarget[]) => void;
+    flow: flow.Entry<[targets: HintTarget[]]>;
   };
   requiredGroups: {
     direction: {
-      horizontal: () => void;
-      vertical: () => void;
+      horizontal: flow.Step;
+      vertical: flow.Step;
     };
   };
   optional: {
-    wrap: (threshold: number) => void;
-    gap: (space: number) => void;
+    wrap: flow.Step<[threshold: number]>;
+    gap: flow.Step<[space: number]>;
   };
   terminal: {
-    in: (container: ContainerBounds) => void;
+    in: flow.Terminal<[container: ContainerBounds]>;
   };
 };
 
@@ -143,18 +143,18 @@ export type FlowBuilder = Fluent<FlowSpec>;
  */
 export type AlignSpec = {
   init: {
-    align: (targets: HintTarget[]) => void;
+    align: flow.Entry<[targets: HintTarget[]]>;
   };
   terminal: {
-    left: () => void;
-    right: () => void;
-    top: () => void;
-    bottom: () => void;
-    centerX: () => void;
-    centerY: () => void;
-    width: () => void;
-    height: () => void;
-    size: () => void;
+    left: flow.Terminal;
+    right: flow.Terminal;
+    top: flow.Terminal;
+    bottom: flow.Terminal;
+    centerX: flow.Terminal;
+    centerY: flow.Terminal;
+    width: flow.Terminal;
+    height: flow.Terminal;
+    size: flow.Terminal;
   };
 };
 
