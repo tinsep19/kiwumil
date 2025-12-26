@@ -1,7 +1,7 @@
 import { TypeDiagram } from "../src/index"
 import { CorePlugin } from "../src/plugin/core/plugin"
 
-// 引数なしの grid() のテスト
+// grid() の基本的な使い方のテスト
 TypeDiagram("Grid Default Test")
   .use(CorePlugin)
   .build(({ el, rel, hint }) => {
@@ -10,14 +10,11 @@ TypeDiagram("Grid Default Test")
     const c = el.core.rectangle("C")
     const d = el.core.rectangle("D")
     
-    // 引数なしで diagram 全体をレイアウト
-    hint.grid()
-      .enclose([
-        [a, b],
-        [c, d]
-      ])
-      .gap({ row: 20, col: 30 })
-      .layout()
+    // Pass symbols directly to grid() as a 2D matrix
+    hint.grid([
+      [a, b],
+      [c, d]
+    ]).layout()
   })
   .render(import.meta)
 
