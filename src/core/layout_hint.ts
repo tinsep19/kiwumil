@@ -4,10 +4,6 @@
 import type { BoundId } from "./types"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
 import type { Fluent, flow } from "./fluent_builder_generator"
-import type { FluentSpec } from "./fluent_builder_generator"
-
-// Re-export FluentSpec for external use
-export type { FluentSpec }
 
 /**
  * HintTarget: 制約適用の対象となるシンボルの境界情報
