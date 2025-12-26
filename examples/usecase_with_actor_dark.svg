@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
      width="200" 
-     height="150" 
-     viewBox="0 0 200 150">
+     height="186.4" 
+     viewBox="0 0 200 186.4">
   <rect width="100%" height="100%" fill="#1e1e1e"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -37,11 +37,11 @@
       </g>
     
 
-      <line x1="160" y1="100" x2="240" y2="100"
+      <line x1="104" y1="118.2" x2="184" y2="118.2"
             stroke="#569cd6" stroke-width="2"/>
     
 
-      <line x1="100" y1="125" x2="100" y2="175"
+      <line x1="89.73607038123167" y1="161.4" x2="77.21233014167223" y2="209.52677208836243"
             stroke="#569cd6" stroke-width="2"/>
     
 
@@ -49,19 +49,19 @@
         
         <!-- Actor Icon -->
         
-        <svg x="70" y="80" width="60" height="60" viewBox="0 0 64 64"
+        <svg x="40" y="86.2" width="64" height="64" viewBox="0 0 64 64"
              fill="#4ec9b0">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="100" y="141"
+      <text x="72" y="166.2"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="100" dy="0">User</tspan>
+        <tspan x="72" dy="0">User</tspan>
       </text>
     
       </g>
@@ -69,11 +69,11 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="280" cy="100" rx="40" ry="25" 
+        <ellipse cx="196" cy="118.2" rx="12" ry="43.2" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="280" y="105" 
+        <text x="196" y="123.2" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#d4d4d4">
           Login
@@ -83,11 +83,11 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="100" cy="200" rx="60" ry="25" 
+        <ellipse cx="100" cy="236.4" rx="60" ry="25" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
-        <text x="100" y="205" 
+        <text x="100" y="241.4" 
               text-anchor="middle" font-size="12" font-family="Arial"
               fill="#d4d4d4">
           Logout
