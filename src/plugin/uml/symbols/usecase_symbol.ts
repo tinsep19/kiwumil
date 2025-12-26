@@ -129,6 +129,11 @@ export class UsecaseSymbol implements ISymbol {
     builder.ct([2, this.rx]).le([1, width]).required()
     builder.ct([2, this.ry]).le([1, height]).required()
     
+    // Additional constraints for inscribed square to fit within bounds based on label fitting
+    const sqrt2 = Math.sqrt(2)
+    builder.ct([sqrt2, this.rx]).le([1, width]).strong()
+    builder.ct([sqrt2, this.ry]).le([1, height]).strong()
+    
     // For proper ellipse sizing, we want rx and ry to fill the bounds
     // rx = width/2 and ry = height/2 (weak constraints for flexibility)
     builder.ct([1, this.rx]).eq([0.5, width]).weak()
