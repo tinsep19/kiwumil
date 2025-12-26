@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="433.33333333333337" 
+     width="577.3333333333334" 
      height="358.33333333333337" 
-     viewBox="0 0 433.33333333333337 358.33333333333337">
+     viewBox="0 0 577.3333333333334 358.33333333333337">
   <rect width="100%" height="100%" fill="white"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -38,12 +38,12 @@
       <g id="__builtin__:diagram/0">
         <!-- Title -->
         
-      <text x="216.66666666666669" y="51"
+      <text x="288.6666666666667" y="51"
             text-anchor="middle"
             font-size="18"
             font-family="Arial"
             fill="black">
-        <tspan x="216.66666666666669" dy="0">Nested System Boundaries</tspan>
+        <tspan x="288.6666666666667" dy="0">Nested System Boundaries</tspan>
       </text>
     
         
@@ -69,25 +69,25 @@
         
         <!-- Actor Icon -->
         
-        <svg x="403.33333333333337" y="80" width="60" height="60" viewBox="0 0 64 64"
+        <svg x="473.33333333333337" y="86.2" width="64" height="64" viewBox="0 0 64 64"
              fill="black">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="433.33333333333337" y="349.33333333333337"
+      <text x="505.33333333333337" y="166.2"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="433.33333333333337" dy="0">User</tspan>
+        <tspan x="505.33333333333337" dy="0">User</tspan>
       </text>
     
       </g>
     
 
-      <line x1="473.33333333333337" y1="178.7820512820513" x2="343.31607969410675" y2="355.0622776599536"
+      <line x1="473.33333333333337" y1="142.97228637413394" x2="335.2786446319085" y2="356.97025982061166"
             stroke="black" stroke-width="2"/>
     
 
@@ -105,7 +105,7 @@
       </g>
     
 
-      <line x1="473.33333333333337" y1="199.55128205128207" x2="339.18710209077284" y2="221.04745901771992"
+      <line x1="473.33333333333337" y1="130.50115473441107" x2="331.78716969332913" y2="203.7507491685864"
             stroke="black" stroke-width="2"/>
     
 
