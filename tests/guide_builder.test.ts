@@ -32,9 +32,13 @@ describe("GuideBuilder (refactored common implementation)", () => {
       const bound = r.createLayoutBounds("layout")
       const iconItem = r.createItemBounds("icon")
       const labelItem = r.createItemBounds("label")
+      const stereotypeItem = r.createItemBounds("stereotype")
       const iconMeta = {
         raw: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>',
         viewBox: "0 0 24 24",
+        width: 24,
+        height: 24,
+        href: "actor-icon",
       }
       const actor = new ActorSymbol({
         label: id,
@@ -44,6 +48,7 @@ describe("GuideBuilder (refactored common implementation)", () => {
           bounds: bound,
           icon: iconItem,
           label: labelItem,
+          stereotype: stereotypeItem,
         },
         theme: DefaultTheme,
       })
