@@ -12,6 +12,33 @@
 type Fn = (...a: any[]) => any;
 
 /**
+ * Entry:
+ *  - Fluent の入口（初期化子）
+ *  - 戻り値は意味を持たない
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Entry<Args extends any[] = any[]> =
+  (...args: Args) => unknown;
+
+/**
+ * Step:
+ *  - 中間子（required / optional / group すべて共通）
+ *  - 状態を変更するだけ
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Step<Args extends any[] = any[]> =
+  (...args: Args) => unknown;
+
+/**
+ * Terminal:
+ *  - 終端子
+ *  - 戻り値が Fluent チェーンの結果になる
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Terminal<Args extends any[] = any[], Result = unknown> =
+  (...args: Args) => Result;
+
+/**
  * FluentSpec:
  * - init: 初期子（入口）。ここからチェーンが開始される
  * - required: AND必須（全て呼ぶ必要がある）
