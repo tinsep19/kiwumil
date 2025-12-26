@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="424.5978064360911" 
+     width="379.20000000000005" 
      height="496.00000000000006" 
-     viewBox="0 0 424.5978064360911 496.00000000000006">
+     viewBox="0 0 379.20000000000005 496.00000000000006">
   <rect width="100%" height="100%" fill="white"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -24,12 +24,12 @@
       <g id="__builtin__:diagram/0">
         <!-- Title -->
         
-      <text x="212.29890321804555" y="51"
+      <text x="189.60000000000002" y="51"
             text-anchor="middle"
             font-size="18"
             font-family="Arial"
             fill="black">
-        <tspan x="212.29890321804555" dy="0">Actor with Stereotype Example</tspan>
+        <tspan x="189.60000000000002" dy="0">Actor with Stereotype Example</tspan>
       </text>
     
         
@@ -37,15 +37,15 @@
       </g>
     
 
-      <line x1="104" y1="245.54274152674944" x2="208.18002664823715" y2="101.1534121271215"
+      <line x1="207.11434689507493" y1="229.8" x2="291.3516297687389" y2="98.9397676318381"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="149.6" y1="117.96268189054126" x2="230.72426946708856" y2="93.52734896576834"
+      <line x1="149.6" y1="115.49198312236287" x2="208.66846185774094" y2="89.56335821864356"
             stroke="black" stroke-width="2"/>
     
 
-      <line x1="125.09569821402489" y1="366.20000000000005" x2="234.09658674003353" y2="104.55151111039585"
+      <line x1="129.22888086642598" y1="366.20000000000005" x2="293.0091885607278" y2="99.43752607971214"
             stroke="black" stroke-width="2"/>
     
 
@@ -53,19 +53,19 @@
         
         <!-- Actor Icon -->
         
-        <svg x="40" y="241" width="64" height="64" viewBox="0 0 64 64"
+        <svg x="143.2" y="241" width="64" height="64" viewBox="0 0 64 64"
              fill="black">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="72" y="321"
+      <text x="175.2" y="321"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="72" dy="0">User</tspan>
+        <tspan x="175.2" dy="0">User</tspan>
       </text>
     
       </g>
@@ -135,17 +135,17 @@
 
       <g id="uml:usecase/4">
         <!-- Ellipse -->
-        <ellipse cx="284.2989032180456" cy="90.83919189857866" rx="100.2989032180456" ry="15.839191898578665" 
+        <ellipse cx="313.19999999999993" cy="86.2" rx="36.76955262170047" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="284.2989032180456" y="95.63919189857867"
+      <text x="313.19999999999993" y="91"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="284.2989032180456" dy="0">Login</tspan>
+        <tspan x="313.19999999999993" dy="0">Login</tspan>
       </text>
     
       </g>
@@ -153,17 +153,17 @@
 
       <g id="uml:usecase/5">
         <!-- Ellipse -->
-        <ellipse cx="307.0989032180456" cy="90.83919189857866" rx="77.49890321804561" ry="15.839191898578665" 
+        <ellipse cx="284.4" cy="86.2" rx="77.4989032180456" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="307.0989032180456" y="95.63919189857867"
+      <text x="284.4" y="91"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="307.0989032180456" dy="0">Manage System</tspan>
+        <tspan x="284.4" dy="0">Manage System</tspan>
       </text>
     
       </g>
