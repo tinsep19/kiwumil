@@ -134,10 +134,10 @@ export class UsecaseSymbol implements ISymbol {
     builder.ct([sqrt2, this.rx]).le([1, width]).required()
     builder.ct([sqrt2, this.ry]).le([1, height]).required()
     
-    // For proper ellipse sizing, we want rx and ry to fill the bounds
-    // rx = width/2 and ry = height/2 (weak constraints for flexibility)
-    builder.ct([1, this.rx]).eq([0.5, width]).weak()
-    builder.ct([1, this.ry]).eq([0.5, height]).weak()
+    // Minimize rx and ry (weak constraints for flexibility)
+    // This encourages the ellipse to be as small as possible while still fitting the label
+    builder.ct([1, this.rx]).eq([0, 1]).weak()
+    builder.ct([1, this.ry]).eq([0, 1]).weak()
 
     // Ellipse bounds constraints
     // Ellipse width = 2 * rx, height = 2 * ry
