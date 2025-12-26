@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="200" 
-     height="150" 
-     viewBox="0 0 200 150">
+     width="388.53691167949216" 
+     height="213.35676759431465" 
+     viewBox="0 0 388.53691167949216 213.35676759431465">
   <rect width="100%" height="100%" fill="white"/>
   
   
       <g id="__builtin__:diagram/0">
         <!-- Title -->
         
-      <text x="100" y="51"
+      <text x="194.26845583974608" y="51"
             text-anchor="middle"
             font-size="18"
             font-family="Arial"
             fill="black">
-        <tspan x="100" dy="0">UML Relations Example</tspan>
+        <tspan x="194.26845583974608" dy="0">UML Relations Example</tspan>
       </text>
     
         
@@ -23,14 +23,14 @@
     
 
       <g>
-        <line x1="40" y1="75" x2="40" y2="125"
+        <line x1="97.13422791987304" y1="106.67838379715732" x2="97.13422791987304" y2="156.67838379715732"
               stroke="black" stroke-width="2"
               stroke-dasharray="5,5"/>
-        <line x1="40" y1="125" x2="35" y2="116.33974596215562"
+        <line x1="97.13422791987304" y1="156.67838379715732" x2="92.13422791987304" y2="148.01812975931293"
               stroke="black" stroke-width="2"/>
-        <line x1="40" y1="125" x2="45" y2="116.33974596215562"
+        <line x1="97.13422791987304" y1="156.67838379715732" x2="102.13422791987304" y2="148.01812975931293"
               stroke="black" stroke-width="2"/>
-        <text x="40" y="95" 
+        <text x="97.13422791987304" y="126.67838379715732" 
               font-size="12" 
               fill="black"
               text-anchor="middle">«include»</text>
@@ -38,14 +38,14 @@
     
 
       <g>
-        <line x1="40" y1="125" x2="120" y2="75"
+        <line x1="149.8026713997334" y1="166.37865548504374" x2="238.7342402797587" y2="96.97811210927091"
               stroke="black" stroke-width="2"
               stroke-dasharray="5,5"/>
-        <line x1="120" y1="75" x2="115.30611396367064" y2="83.82991698024122"
+        <line x1="238.7342402797587" y1="96.97811210927091" x2="234.9829666884935" y2="106.24784492329938"
               stroke="black" stroke-width="2"/>
-        <line x1="120" y1="75" x2="110.00612456363885" y2="75.34993394019034"
+        <line x1="238.7342402797587" y1="96.97811210927091" x2="228.83077938088323" y2="98.36428028970379"
               stroke="black" stroke-width="2"/>
-        <text x="80" y="95" 
+        <text x="194.26845583974605" y="126.67838379715732" 
               font-size="12" 
               fill="black"
               text-anchor="middle">«extend»</text>
@@ -53,26 +53,26 @@
     
 
       <g>
-        <line x1="120" y1="75" x2="40" y2="75"
+        <line x1="234.26845583974605" y1="90.83919189857866" x2="154.26845583974608" y2="90.83919189857866"
               stroke="black" stroke-width="2"/>
-        <polygon points="40,75 50.392304845413264,69 50.392304845413264,81"
+        <polygon points="154.26845583974608,90.83919189857866 164.66076068515935,84.83919189857866 164.66076068515935,96.83919189857866"
                  fill="white" stroke="black" stroke-width="2"/>
       </g>
     
 
       <g id="uml:usecase/1">
         <!-- Ellipse -->
-        <ellipse cx="40" cy="75" rx="2" ry="2" 
+        <ellipse cx="97.13422791987304" cy="90.83919189857866" rx="57.134227919873034" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="40" y="91"
+      <text x="97.13422791987304" y="95.63919189857866"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="40" dy="0">UseCase A</tspan>
+        <tspan x="97.13422791987304" dy="0">UseCase A</tspan>
       </text>
     
       </g>
@@ -80,17 +80,17 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="40" cy="125" rx="2" ry="2" 
+        <ellipse cx="97.13422791987304" cy="172.51757569573599" rx="57.134227919873034" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="40" y="141"
+      <text x="97.13422791987304" y="177.31757569573597"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="40" dy="0">UseCase B</tspan>
+        <tspan x="97.13422791987304" dy="0">UseCase B</tspan>
       </text>
     
       </g>
@@ -98,17 +98,17 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="120" cy="75" rx="2" ry="2" 
+        <ellipse cx="291.4026837596191" cy="90.83919189857866" rx="57.134227919873034" ry="15.839191898578662" 
                  fill="white" stroke="black" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="120" y="91"
+      <text x="291.4026837596191" y="95.63919189857866"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="black">
-        <tspan x="120" dy="0">UseCase C</tspan>
+        <tspan x="291.4026837596191" dy="0">UseCase C</tspan>
       </text>
     
       </g>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="224" 
-     height="186.4" 
-     viewBox="0 0 224 186.4">
+     width="297.5391052434009" 
+     height="213.35676759431465" 
+     viewBox="0 0 297.5391052434009 213.35676759431465">
   <rect width="100%" height="100%" fill="#1e1e1e"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -24,12 +24,12 @@
       <g id="__builtin__:diagram/0">
         <!-- Title -->
         
-      <text x="112" y="51"
+      <text x="148.76955262170046" y="51"
             text-anchor="middle"
             font-size="18"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="112" dy="0">Usecase with Actor (Dark Theme)</tspan>
+        <tspan x="148.76955262170046" dy="0">Usecase with Actor (Dark Theme)</tspan>
       </text>
     
         
@@ -37,11 +37,11 @@
       </g>
     
 
-      <line x1="104" y1="105.85714285714286" x2="184" y2="75"
+      <line x1="104" y1="133.4731778299262" x2="186.23016935536748" y2="96.27151477087045"
             stroke="#569cd6" stroke-width="2"/>
     
 
-      <line x1="40" y1="125" x2="40" y2="125"
+      <line x1="87.56910033134568" y1="188.35676759431465" x2="67.66788079821592" y2="157.6165601511831"
             stroke="#569cd6" stroke-width="2"/>
     
 
@@ -49,14 +49,14 @@
         
         <!-- Actor Icon -->
         
-        <svg x="40" y="86.2" width="64" height="64" viewBox="0 0 64 64"
+        <svg x="40" y="113.15676759431464" width="64" height="64" viewBox="0 0 64 64"
              fill="#4ec9b0">
           <use href="#uml-actor" />
         </svg>
       
         <!-- Label -->
         
-      <text x="72" y="166.2"
+      <text x="72" y="193.15676759431463"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
@@ -69,17 +69,17 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="184" cy="75" rx="2" ry="2" 
+        <ellipse cx="220.76955262170048" cy="90.83919189857866" rx="36.76955262170047" ry="15.839191898578662" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="184" y="91"
+      <text x="220.76955262170048" y="95.63919189857866"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="184" dy="0">Login</tspan>
+        <tspan x="220.76955262170048" dy="0">Login</tspan>
       </text>
     
       </g>
@@ -87,17 +87,17 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="40" cy="125" rx="2" ry="2" 
+        <ellipse cx="81.86072144624362" cy="172.51757569573599" rx="41.86072144624361" ry="15.839191898578662" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="40" y="141"
+      <text x="81.8607214462436" y="177.31757569573597"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="40" dy="0">Logout</tspan>
+        <tspan x="81.8607214462436" dy="0">Logout</tspan>
       </text>
     
       </g>
