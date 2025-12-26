@@ -83,8 +83,9 @@ export const UMLPlugin = {
           const bound = r.createLayoutBounds("layout")
           const rx = r.createVariable("rx")
           const ry = r.createVariable("ry")
+          const ellipseItem = r.createItemBounds("ellipse")
           const labelItem = r.createItemBounds("label")
-          const characs = { id: symbolId, bounds: bound, rx, ry, label: labelItem }
+          const characs = { id: symbolId, bounds: bound, rx, ry, ellipse: ellipseItem, label: labelItem }
           const usecase = new UsecaseSymbol({
             label,
             characs,

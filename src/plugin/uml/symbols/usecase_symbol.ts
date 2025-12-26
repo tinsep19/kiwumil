@@ -12,6 +12,7 @@ import { TextItem } from "../../../item"
 export type IUsecaseSymbolCharacs = ISymbolCharacs<{ 
   rx: Variable
   ry: Variable
+  ellipse: ItemBounds
   label: ItemBounds
 }>
 
@@ -28,6 +29,7 @@ export class UsecaseSymbol implements ISymbol {
   readonly label: string
   readonly rx: Variable
   readonly ry: Variable
+  private readonly ellipseBounds: ItemBounds
   private readonly items: { label: TextItem }
 
   constructor(options: UsecaseSymbolOptions) {
@@ -35,6 +37,7 @@ export class UsecaseSymbol implements ISymbol {
     this.bounds = options.characs.bounds
     this.rx = options.characs.rx
     this.ry = options.characs.ry
+    this.ellipseBounds = options.characs.ellipse
     this.theme = options.theme
     this.label = options.label
 
@@ -95,18 +98,13 @@ export class UsecaseSymbol implements ISymbol {
   }
 
   toSVG(): string {
-    const { x, y, width, height } = getBoundsValues(this.bounds)
-
-    // 負の値や極端に小さい値を安全な値にクランプ（二次防御）
-    const safeWidth = Math.max(10, Math.abs(width))
-    const safeHeight = Math.max(10, Math.abs(height))
-
-    const cx = x + safeWidth / 2
-    const cy = y + safeHeight / 2
+    const ellipseBoundsValues = getBoundsValues(this.ellipseBounds)
     
-    // rx, ry を線形変数から取得し、最小値でクランプ
-    const rx = Math.max(2, this.rx.value())
-    const ry = Math.max(2, this.ry.value())
+    // Calculate center and radii from ellipse bounds
+    const cx = ellipseBoundsValues.centerX
+    const cy = ellipseBoundsValues.centerY
+    const rx = Math.max(2, ellipseBoundsValues.width / 2)
+    const ry = Math.max(2, ellipseBoundsValues.height / 2)
 
     // テーマからスタイルを取得
     const style = this.theme
@@ -136,6 +134,15 @@ export class UsecaseSymbol implements ISymbol {
     // rx = width/2 and ry = height/2 (weak constraints for flexibility)
     builder.ct([1, this.rx]).eq([0.5, width]).weak()
     builder.ct([1, this.ry]).eq([0.5, height]).weak()
+
+    // Ellipse bounds constraints
+    // Ellipse width = 2 * rx, height = 2 * ry
+    builder.ct([1, this.ellipseBounds.width]).eq([2, this.rx]).strong()
+    builder.ct([1, this.ellipseBounds.height]).eq([2, this.ry]).strong()
+    
+    // Ellipse center aligns with bounds center
+    builder.ct([1, this.ellipseBounds.centerX]).eq([1, this.bounds.centerX]).strong()
+    builder.ct([1, this.ellipseBounds.centerY]).eq([1, this.bounds.centerY]).strong()
 
     // Label constraints
     const labelBounds = this.items.label.bounds
