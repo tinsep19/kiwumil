@@ -6,13 +6,10 @@ import { getBoundsValues } from "../../../core"
 import type { IconMeta } from "../../../icon"
 import { IconItem, TextItem } from "../../../item"
 
-// Icon size constant
-const ICON_BASE_SIZE = 60
-
 export type ActorSymbolCharacs = ISymbolCharacs<{
   icon: ItemBounds
   label: ItemBounds
-  stereotype?: ItemBounds
+  stereotype: ItemBounds
 }>
 
 export interface ActorSymbolOptions {
@@ -29,7 +26,7 @@ export class ActorSymbol implements ISymbol {
   protected readonly theme: Theme
   readonly label: string
   readonly stereotype?: string
-  private readonly items: { icon: IconItem; label: TextItem; stereotype?: TextItem }
+  private readonly items: { icon: IconItem; label: TextItem; stereotype: TextItem }
 
   constructor(options: ActorSymbolOptions) {
     this.id = options.characs.id
@@ -47,8 +44,6 @@ export class ActorSymbol implements ISymbol {
     const iconItem = new IconItem({
       bounds: options.characs.icon,
       icon: options.icon,
-      width: ICON_BASE_SIZE,
-      height: ICON_BASE_SIZE,
       color: style.strokeColor,
     })
 
@@ -63,18 +58,16 @@ export class ActorSymbol implements ISymbol {
       padding: { top: 4, right: 8, bottom: 4, left: 8 },
     })
 
-    // Create TextItem for stereotype if provided
-    const stereotypeItem = options.stereotype && options.characs.stereotype
-      ? new TextItem({
-          bounds: options.characs.stereotype,
-          text: `<<${options.stereotype}>>`,
-          alignment: "center",
-          fontSize: style.fontSize,
-          fontFamily: style.fontFamily,
-          textColor: style.textColor,
-          padding: { top: 2, right: 8, bottom: 2, left: 8 },
-        })
-      : undefined
+    // Create TextItem for stereotype (always created, even if no text)
+    const stereotypeItem = new TextItem({
+      bounds: options.characs.stereotype,
+      text: options.stereotype ? `<<${options.stereotype}>>` : "",
+      alignment: "center",
+      fontSize: style.fontSize,
+      fontFamily: style.fontFamily,
+      textColor: style.textColor,
+      padding: { top: 2, right: 8, bottom: 2, left: 8 },
+    })
 
     this.items = { icon: iconItem, label: labelItem, stereotype: stereotypeItem }
   }
@@ -127,7 +120,7 @@ export class ActorSymbol implements ISymbol {
   toSVG(): string {
     return `
       <g id="${this.id}">
-        ${this.items.stereotype ? `<!-- Stereotype -->\n${this.items.stereotype.render()}` : ""}
+        ${this.stereotype ? `<!-- Stereotype -->\n${this.items.stereotype.render()}` : ""}
         <!-- Actor Icon -->
         ${this.items.icon.render()}
         <!-- Label -->
@@ -138,28 +131,61 @@ export class ActorSymbol implements ISymbol {
 
   ensureLayoutBounds(builder: LinearConstraintBuilder): void {
     const bounds = this.bounds
-    const style = this.theme ? getStyleForSymbol(this.theme, "actor") : this.getFallbackStyle()
+    const iconBounds = this.items.icon.bounds
+    const stereotypeBounds = this.items.stereotype.bounds
+    const labelBounds = this.items.label.bounds
 
-    // Layout constraints for icon, label, and optional stereotype
-    const stereotypeHeight = this.items.stereotype ? style.fontSize + 5 : 0
+    // Get default sizes from items
+    const iconSize = this.items.icon.getDefaultSize()
+    const stereotypeDefaultSize = this.stereotype 
+      ? this.items.stereotype.getDefaultSize() 
+      : { width: 0, height: 0 }
+    const labelDefaultSize = this.items.label.getDefaultSize()
 
-    // Position stereotype at top if present
-    if (this.items.stereotype) {
-      builder.ct([1, this.items.stereotype.bounds.x]).eq([1, bounds.x]).strong()
-      builder.ct([1, this.items.stereotype.bounds.y]).eq([1, bounds.y]).strong()
-      builder.ct([1, this.items.stereotype.bounds.width]).eq([1, bounds.width]).strong()
-    }
+    // 1. Icon's center aligns with bounds.centerX and bounds.centerY (strong)
+    builder.ct([1, iconBounds.centerX]).eq([1, bounds.centerX]).strong()
+    builder.ct([1, iconBounds.centerY]).eq([1, bounds.centerY]).strong()
 
-    // Position icon below stereotype (or at top if no stereotype)
-    builder.ct([1, this.items.icon.bounds.x]).eq([1, bounds.x], [0.5, bounds.width], [-ICON_BASE_SIZE / 2, 1]).strong()
-    builder.ct([1, this.items.icon.bounds.y]).eq([1, bounds.y], [stereotypeHeight + 5, 1]).strong()
-    builder.ct([1, this.items.icon.bounds.width]).eq([ICON_BASE_SIZE, 1]).strong()
-    builder.ct([1, this.items.icon.bounds.height]).eq([ICON_BASE_SIZE, 1]).strong()
+    // 2. Icon's size must match the size from IconMeta (strong)
+    builder.ct([1, iconBounds.width]).eq([iconSize.width, 1]).strong()
+    builder.ct([1, iconBounds.height]).eq([iconSize.height, 1]).strong()
 
-    // Position label at bottom
-    builder.ct([1, this.items.label.bounds.x]).eq([1, bounds.x]).strong()
-    builder.ct([1, this.items.label.bounds.bottom]).eq([1, bounds.bottom]).strong()
-    builder.ct([1, this.items.label.bounds.width]).eq([1, bounds.width]).strong()
+    // 3. Stereotype's bottom center aligns with icon's top center (strong)
+    builder.ct([1, stereotypeBounds.centerX]).eq([1, iconBounds.centerX]).strong()
+    builder.ct([1, stereotypeBounds.bottom]).eq([1, iconBounds.top]).strong()
+
+    // 4. Label's top center aligns with icon's bottom center (strong)
+    builder.ct([1, labelBounds.centerX]).eq([1, iconBounds.centerX]).strong()
+    builder.ct([1, labelBounds.top]).eq([1, iconBounds.bottom]).strong()
+
+    // 5. Stereotype and label default sizes (weak constraint)
+    // If no text is specified, size defaults to (0, 0), otherwise default to TextItem's default size
+    builder.ct([1, stereotypeBounds.width]).eq([stereotypeDefaultSize.width, 1]).weak()
+    builder.ct([1, stereotypeBounds.height]).eq([stereotypeDefaultSize.height, 1]).weak()
+    builder.ct([1, labelBounds.width]).eq([labelDefaultSize.width, 1]).weak()
+    builder.ct([1, labelBounds.height]).eq([labelDefaultSize.height, 1]).weak()
+
+    // 6. Stereotype and label minimum sizes (medium constraint)
+    builder.ct([1, stereotypeBounds.width]).ge([stereotypeDefaultSize.width, 1]).medium()
+    builder.ct([1, stereotypeBounds.height]).ge([stereotypeDefaultSize.height, 1]).medium()
+    builder.ct([1, labelBounds.width]).ge([labelDefaultSize.width, 1]).medium()
+    builder.ct([1, labelBounds.height]).ge([labelDefaultSize.height, 1]).medium()
+
+    // 7. Ensure bounds is large enough to contain all centered items (medium)
+    // Since icon, stereotype, and label are all centered at bounds.centerX,
+    // bounds.width must be at least as wide as the widest item
+    builder.ct([1, bounds.width]).ge([iconSize.width, 1]).medium()
+    builder.ct([1, bounds.width]).ge([stereotypeDefaultSize.width, 1]).medium()
+    builder.ct([1, bounds.width]).ge([labelDefaultSize.width, 1]).medium()
+    
+    // Similarly for height - bounds must contain the entire vertical stack
+    // Total height is stereotype + icon + label
+    builder.ct([1, bounds.height]).ge([stereotypeDefaultSize.height, 1], [iconSize.height, 1], [labelDefaultSize.height, 1]).medium()
+
+    // 8. Bounds auto-expansion with weak constraint
+    // Weak constraint to suggest minimal size, but allows growth based on content
+    builder.ct([1, bounds.width]).ge([1, 1]).weak()
+    builder.ct([1, bounds.height]).ge([1, 1]).weak()
   }
 
   render(): string {

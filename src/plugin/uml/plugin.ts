@@ -41,7 +41,7 @@ export const UMLPlugin = {
           const bound = r.createLayoutBounds("layout")
           const iconItem = r.createItemBounds("icon")
           const labelItem = r.createItemBounds("label")
-          const stereotypeItem = stereotype ? r.createItemBounds("stereotype") : undefined
+          const stereotypeItem = r.createItemBounds("stereotype")
 
           // Get icon from icons factory
           const iconGetter = icons.actor
