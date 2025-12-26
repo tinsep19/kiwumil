@@ -12,34 +12,31 @@
 type Fn = (...a: any[]) => any;
 
 /**
- * flow namespace:
- * Helper types to reduce noise when defining FluentSpec
+ * Entry:
+ *  - Fluent の入口（初期化子）
+ *  - 戻り値は意味を持たない
  */
-export namespace flow {
-  /**
-   * Entry:
-   *  - Fluent の入口（初期化子）
-   *  - 戻り値は意味を持たない
-   */
-  export type Entry<Args extends any[] = any[]> =
-    (...args: Args) => unknown;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Entry<Args extends any[] = any[]> =
+  (...args: Args) => unknown;
 
-  /**
-   * Step:
-   *  - 中間子（required / optional / group すべて共通）
-   *  - 状態を変更するだけ
-   */
-  export type Step<Args extends any[] = any[]> =
-    (...args: Args) => unknown;
+/**
+ * Step:
+ *  - 中間子（required / optional / group すべて共通）
+ *  - 状態を変更するだけ
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Step<Args extends any[] = any[]> =
+  (...args: Args) => unknown;
 
-  /**
-   * Terminal:
-   *  - 終端子
-   *  - 戻り値が Fluent チェーンの結果になる
-   */
-  export type Terminal<Args extends any[] = any[], Result = unknown> =
-    (...args: Args) => Result;
-}
+/**
+ * Terminal:
+ *  - 終端子
+ *  - 戻り値が Fluent チェーンの結果になる
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Terminal<Args extends any[] = any[], Result = unknown> =
+  (...args: Args) => Result;
 
 /**
  * FluentSpec:

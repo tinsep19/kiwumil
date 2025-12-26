@@ -3,7 +3,7 @@
 
 import type { BoundId } from "./types"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
-import type { Fluent, flow } from "./fluent_builder_generator"
+import type { Fluent, Entry, Step, Terminal } from "./fluent_builder_generator"
 
 /**
  * HintTarget: 制約適用の対象となるシンボルの境界情報
@@ -59,19 +59,19 @@ export type BoundsOnlyTarget = Omit<HintTarget, "boundId">
  */
 export type ArrangeBuilder = Fluent<{
   init: {
-    arrange: flow.Entry<[targets: HintTarget[]]>;
+    arrange: Entry<[targets: HintTarget[]]>;
   };
   requiredGroups: {
     axis: {
-      x: flow.Step;
-      y: flow.Step;
+      x: Step;
+      y: Step;
     };
   };
   optional: {
-    gap: flow.Step<[space: number]>;
+    gap: Step<[space: number]>;
   };
   terminal: {
-    in: flow.Terminal<[container: ContainerBounds]>;
+    in: Terminal<[container: ContainerBounds]>;
   };
 }>;
 
@@ -95,20 +95,20 @@ export type ArrangeBuilder = Fluent<{
  */
 export type FlowBuilder = Fluent<{
   init: {
-    flow: flow.Entry<[targets: HintTarget[]]>;
+    flow: Entry<[targets: HintTarget[]]>;
   };
   requiredGroups: {
     direction: {
-      horizontal: flow.Step;
-      vertical: flow.Step;
+      horizontal: Step;
+      vertical: Step;
     };
   };
   optional: {
-    wrap: flow.Step<[threshold: number]>;
-    gap: flow.Step<[space: number]>;
+    wrap: Step<[threshold: number]>;
+    gap: Step<[space: number]>;
   };
   terminal: {
-    in: flow.Terminal<[container: ContainerBounds]>;
+    in: Terminal<[container: ContainerBounds]>;
   };
 }>;
 
@@ -128,18 +128,18 @@ export type FlowBuilder = Fluent<{
  */
 export type AlignBuilder = Fluent<{
   init: {
-    align: flow.Entry<[targets: HintTarget[]]>;
+    align: Entry<[targets: HintTarget[]]>;
   };
   terminal: {
-    left: flow.Terminal;
-    right: flow.Terminal;
-    top: flow.Terminal;
-    bottom: flow.Terminal;
-    centerX: flow.Terminal;
-    centerY: flow.Terminal;
-    width: flow.Terminal;
-    height: flow.Terminal;
-    size: flow.Terminal;
+    left: Terminal;
+    right: Terminal;
+    top: Terminal;
+    bottom: Terminal;
+    centerX: Terminal;
+    centerY: Terminal;
+    width: Terminal;
+    height: Terminal;
+    size: Terminal;
   };
 }>;
 
