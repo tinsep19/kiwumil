@@ -119,6 +119,10 @@ describe("Bounds Validation", () => {
 
     test("should clamp negative height to safe value in SVG output", () => {
       const bounds = context.variables.createBounds("usecase")
+      const rxVar = context.variables.createVariable("usecase.rx")
+      const ryVar = context.variables.createVariable("usecase.ry")
+      const ellipseItem = context.variables.createBounds("usecase.ellipse", "item")
+      const labelItem = context.variables.createBounds("usecase.label", "item")
 
       // Set negative height
       context.createConstraint("test-usecase-negative-height", (builder) => {
@@ -130,9 +134,8 @@ describe("Bounds Validation", () => {
       context.solve()
 
       const usecase = new UsecaseSymbol({
-        id: "test-usecase",
-        bounds: bounds,
         label: "TestUsecase",
+        characs: { id: "test-usecase", bounds: bounds, rx: rxVar, ry: ryVar, ellipse: ellipseItem, label: labelItem },
         theme: DefaultTheme,
       })
       const svg = usecase.toSVG()
@@ -152,6 +155,10 @@ describe("Bounds Validation", () => {
 
     test("should render with valid positive dimensions for normal bounds", () => {
       const bounds = context.variables.createBounds("usecase")
+      const rxVar = context.variables.createVariable("usecase.rx")
+      const ryVar = context.variables.createVariable("usecase.ry")
+      const ellipseItem = context.variables.createBounds("usecase.ellipse", "item")
+      const labelItem = context.variables.createBounds("usecase.label", "item")
 
       context.createConstraint("test-usecase-normal", (builder) => {
         builder.ct([1, bounds.x]).eq([10, 1]).strong()
@@ -162,9 +169,8 @@ describe("Bounds Validation", () => {
       context.solve()
 
       const usecase = new UsecaseSymbol({
-        id: "test-usecase",
-        bounds: bounds,
         label: "TestUsecase",
+        characs: { id: "test-usecase", bounds: bounds, rx: rxVar, ry: ryVar, ellipse: ellipseItem, label: labelItem },
         theme: DefaultTheme,
       })
       const svg = usecase.toSVG()
@@ -181,6 +187,51 @@ describe("Bounds Validation", () => {
       const ry = parseFloat(ryMatch![1])
       expect(rx).toBeGreaterThanOrEqual(2) // Minimum clamped value
       expect(ry).toBeGreaterThanOrEqual(2) // Minimum clamped value
+    })
+
+    test("should constrain rx and ry as linear free variables", () => {
+      const bounds = context.variables.createBounds("usecase-constraints")
+      const rxVar = context.variables.createVariable("usecase-constraints.rx")
+      const ryVar = context.variables.createVariable("usecase-constraints.ry")
+      const ellipseItem = context.variables.createBounds("usecase-constraints.ellipse", "item")
+      const labelItem = context.variables.createBounds("usecase-constraints.label", "item")
+
+      // Set specific dimensions
+      context.createConstraint("test-usecase-constraints", (builder) => {
+        builder.ct([1, bounds.x]).eq([0, 1]).strong()
+        builder.ct([1, bounds.y]).eq([0, 1]).strong()
+        builder.ct([1, bounds.width]).eq([100, 1]).strong()
+        builder.ct([1, bounds.height]).eq([50, 1]).strong()
+      })
+
+      const usecase = new UsecaseSymbol({
+        label: "TestUsecase",
+        characs: { id: "test-usecase-constraints", bounds: bounds, rx: rxVar, ry: ryVar, ellipse: ellipseItem, label: labelItem },
+        theme: DefaultTheme,
+      })
+
+      // Apply the constraints
+      context.createConstraint("usecase-layout-constraints", (builder) => {
+        usecase.ensureLayoutBounds(builder)
+      })
+      context.solve()
+
+      // Verify rx and ry satisfy the constraints:
+      // 2 * rx <= width (2 * rx <= 100, so rx <= 50)
+      // 2 * ry <= height (2 * ry <= 50, so ry <= 25)
+      // rx = 0.5 * width (weak constraint, so rx ≈ 50)
+      // ry = 0.5 * height (weak constraint, so ry ≈ 25)
+      
+      const rxValue = rxVar.value()
+      const ryValue = ryVar.value()
+      
+      // Check that rx and ry are properly constrained
+      expect(rxValue).toBeLessThanOrEqual(50)
+      expect(ryValue).toBeLessThanOrEqual(25)
+      
+      // With weak equality constraints, they should be close to half the dimensions
+      expect(rxValue).toBeCloseTo(50, 1)
+      expect(ryValue).toBeCloseTo(25, 1)
     })
   })
 })

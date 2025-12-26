@@ -65,14 +65,18 @@ describe("Layout pipeline", () => {
   function createUsecase(id: string) {
     return symbols.register("test", "usecase", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
+      const rx = r.createVariable("rx")
+      const ry = r.createVariable("ry")
+      const ellipseItem = r.createItemBounds("ellipse")
+      const labelItem = r.createItemBounds("label")
+      const characs = { id: symbolId, bounds: bound, rx, ry, ellipse: ellipseItem, label: labelItem }
       const usecase = new UsecaseSymbol({
-        id: symbolId,
-        bounds: bound,
         label: id,
+        characs,
         theme: DefaultTheme,
       })
       r.setSymbol(usecase)
-      r.setCharacs({ id: symbolId, bounds: bound })
+      r.setCharacs(characs)
       r.setConstraint((builder) => {
         usecase.ensureLayoutBounds(builder)
       })

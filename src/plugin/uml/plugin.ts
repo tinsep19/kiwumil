@@ -75,19 +75,23 @@ export const UMLPlugin = {
       /**
        * Usecase Symbol を作成
        * @param label - Usecase のラベル
-       * @returns 生成された Usecase の ISymbolCharacs
+       * @returns 生成された Usecase の IUsecaseSymbolCharacs
        */
       usecase(label: string) {
         return symbols.register(plugin, "usecase", (symbolId, r) => {
           const bound = r.createLayoutBounds("layout")
+          const rx = r.createVariable("rx")
+          const ry = r.createVariable("ry")
+          const ellipseItem = r.createItemBounds("ellipse")
+          const labelItem = r.createItemBounds("label")
+          const characs = { id: symbolId, bounds: bound, rx, ry, ellipse: ellipseItem, label: labelItem }
           const usecase = new UsecaseSymbol({
-            id: symbolId,
-            bounds: bound,
             label,
+            characs,
             theme,
           })
           r.setSymbol(usecase)
-          r.setCharacs({ id: symbolId, bounds: bound })
+          r.setCharacs(characs)
           r.setConstraint((builder) => {
             usecase.ensureLayoutBounds(builder)
           })

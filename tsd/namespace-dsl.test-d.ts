@@ -38,6 +38,7 @@ const CustomPlugin = {
 
           builder.setSymbol({
             id: symbolId,
+            bounds,
             render: () => `<text>${label}</text>`,
             getConnectionPoint: (src) => src,
           })
