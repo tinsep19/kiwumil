@@ -196,12 +196,15 @@ describe("Bounds Validation", () => {
       const ellipseItem = context.variables.createBounds("usecase-constraints.ellipse", "item")
       const labelItem = context.variables.createBounds("usecase-constraints.label", "item")
 
-      // Set specific dimensions
+      // Set specific dimensions and rx/ry values
       context.createConstraint("test-usecase-constraints", (builder) => {
         builder.ct([1, bounds.x]).eq([0, 1]).strong()
         builder.ct([1, bounds.y]).eq([0, 1]).strong()
         builder.ct([1, bounds.width]).eq([100, 1]).strong()
         builder.ct([1, bounds.height]).eq([50, 1]).strong()
+        // Set rx and ry to specific values to test the constraints
+        builder.ct([1, rxVar]).eq([40, 1]).strong()
+        builder.ct([1, ryVar]).eq([20, 1]).strong()
       })
 
       const usecase = new UsecaseSymbol({
@@ -216,24 +219,30 @@ describe("Bounds Validation", () => {
       })
       context.solve()
 
-      // Verify rx and ry satisfy the constraints:
-      // √2 * rx <= width (√2 * rx <= 100, so rx <= 100/√2 ≈ 70.7)
-      // √2 * ry <= height (√2 * ry <= 50, so ry <= 50/√2 ≈ 35.4)
-      // √2 * rx >= label.width (label fitting constraint)
-      // √2 * ry >= label.height (label fitting constraint)
+      // Verify the new constraint system:
+      // 1. ellipseBounds fits within bounds
+      // 2. ellipseBounds.width = 2 * rx and ellipseBounds.height = 2 * ry
+      // 3. Label is centered within ellipse bounds
       
       const rxValue = rxVar.value()
       const ryValue = ryVar.value()
-      const sqrt2 = Math.sqrt(2)
+      const ellipseBoundsValues = getBoundsValues(ellipseItem)
+      const boundsValues = getBoundsValues(bounds)
+      const labelBoundsValues = getBoundsValues(labelItem)
       
-      // Check that rx and ry satisfy the upper bound constraints
-      expect(rxValue).toBeLessThanOrEqual(100 / sqrt2 + 0.1) // Allow small tolerance
-      expect(ryValue).toBeLessThanOrEqual(50 / sqrt2 + 0.1)
+      // Check that ellipse dimensions match rx and ry
+      expect(ellipseBoundsValues.width).toBeCloseTo(2 * rxValue, 1)
+      expect(ellipseBoundsValues.height).toBeCloseTo(2 * ryValue, 1)
       
-      // The actual values are determined by the label fitting constraints (medium strength)
-      // combined with the weak rx = width/2, ry = height/2 preferences
-      expect(rxValue).toBeGreaterThan(0)
-      expect(ryValue).toBeGreaterThan(0)
+      // Check that ellipse bounds fit within bounds
+      expect(ellipseBoundsValues.x).toBeGreaterThanOrEqual(boundsValues.x - 0.1)
+      expect(ellipseBoundsValues.right).toBeLessThanOrEqual(boundsValues.right + 0.1)
+      expect(ellipseBoundsValues.y).toBeGreaterThanOrEqual(boundsValues.y - 0.1)
+      expect(ellipseBoundsValues.bottom).toBeLessThanOrEqual(boundsValues.bottom + 0.1)
+      
+      // Check that label is centered within ellipse bounds
+      expect(labelBoundsValues.centerX).toBeCloseTo(ellipseBoundsValues.centerX, 1)
+      expect(labelBoundsValues.centerY).toBeCloseTo(ellipseBoundsValues.centerY, 1)
     })
   })
 })
