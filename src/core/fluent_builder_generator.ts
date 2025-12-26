@@ -2,7 +2,7 @@
  * ============================================================
  * Fluent Builder (TypeScript) - Generic Type Generator
  *  - FluentSpec を「初期子/必須/グループ必須/オプション/グループオプション/終端子」で規定
- *  - BuildFluent<Spec> で fluent builder の型を生成
+ *  - Fluent<Spec> で fluent builder の型を生成
  *  - required / requiredGroups が満たされるまで terminal は補完に出ない
  *  - optionalGroup は「グループ内のどれか1つ」を最大1回だけ（呼ぶと補完から消える）
  * ============================================================
@@ -45,7 +45,7 @@ type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
 type RequiredGroupNames<T extends FluentSpec> = ObjKeys<NonNullable<T["requiredGroups"]>>;
 
 // ---- Builder生成
-export type BuildFluent<T extends FluentSpec> = {
+export type Fluent<T extends FluentSpec> = {
   [K in keyof T["init"] & string]: (
     ...a: Args<T["init"][K]>
   ) => Chain<
