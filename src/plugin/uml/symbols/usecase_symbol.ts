@@ -126,8 +126,8 @@ export class UsecaseSymbol implements ISymbol {
     // rx and ry are linear free variables constrained by the bounds dimensions
     // The ellipse should fit within the layout bounds: rx * 2 <= width and ry * 2 <= height
     const { width, height } = this.bounds
-    builder.ct([2, this.rx]).le([1, width])
-    builder.ct([2, this.ry]).le([1, height])
+    builder.ct([2, this.rx]).le([1, width]).required()
+    builder.ct([2, this.ry]).le([1, height]).required()
     
     // For proper ellipse sizing, we want rx and ry to fill the bounds
     // rx = width/2 and ry = height/2 (weak constraints for flexibility)
