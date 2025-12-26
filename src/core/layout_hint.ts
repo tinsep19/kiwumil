@@ -45,11 +45,13 @@ export type BoundsOnlyTarget = Omit<HintTarget, "boundId">
 // ============================================================================
 
 /**
- * ArrangeSpec: Specification for arrange builder
+ * ArrangeBuilder: Type-safe fluent builder for sequential arrangements
  * 
  * Required: axis selection (x or y)
  * Optional: gap setting
  * Terminal: in (finalize with container)
+ * 
+ * Ensures axis is selected before terminal methods are available.
  * 
  * @example
  * ```typescript
@@ -59,7 +61,7 @@ export type BoundsOnlyTarget = Omit<HintTarget, "boundId">
  *   .in(container)    // Terminal: Finalize in container
  * ```
  */
-export type ArrangeSpec = {
+export type ArrangeBuilder = Fluent<{
   init: {
     arrange: flow.Entry<[targets: HintTarget[]]>;
   };
@@ -75,22 +77,16 @@ export type ArrangeSpec = {
   terminal: {
     in: flow.Terminal<[container: ContainerBounds]>;
   };
-};
+}>;
 
 /**
- * ArrangeBuilder: Type-safe fluent builder for sequential arrangements
- * 
- * Generated from ArrangeSpec using Fluent.
- * Ensures axis is selected before terminal methods are available.
- */
-export type ArrangeBuilder = Fluent<ArrangeSpec>;
-
-/**
- * FlowSpec: Specification for flow builder
+ * FlowBuilder: Type-safe fluent builder for flowing layouts with wrapping
  * 
  * Required: direction selection (horizontal or vertical)
  * Optional: wrap threshold and gap setting
  * Terminal: in (finalize with container)
+ * 
+ * Similar to CSS flexbox - ensures direction is selected before terminal.
  * 
  * @example
  * ```typescript
@@ -101,7 +97,7 @@ export type ArrangeBuilder = Fluent<ArrangeSpec>;
  *   .in(container)    // Terminal: Finalize
  * ```
  */
-export type FlowSpec = {
+export type FlowBuilder = Fluent<{
   init: {
     flow: flow.Entry<[targets: HintTarget[]]>;
   };
@@ -118,21 +114,14 @@ export type FlowSpec = {
   terminal: {
     in: flow.Terminal<[container: ContainerBounds]>;
   };
-};
+}>;
 
 /**
- * FlowBuilder: Type-safe fluent builder for flowing layouts with wrapping
+ * AlignBuilder: Type-safe fluent builder for alignment constraints
  * 
- * Generated from FlowSpec using Fluent.
- * Similar to CSS flexbox - ensures direction is selected before terminal.
- */
-export type FlowBuilder = Fluent<FlowSpec>;
-
-/**
- * AlignSpec: Specification for align builder
- * 
- * Required groups: one alignment method must be selected
  * Terminal: all alignment methods are terminal (directly apply constraints)
+ * 
+ * All methods are terminal and directly apply alignment constraints.
  * 
  * @example
  * ```typescript
@@ -141,7 +130,7 @@ export type FlowBuilder = Fluent<FlowSpec>;
  * hint.align(targets).size()      // Align both width and height
  * ```
  */
-export type AlignSpec = {
+export type AlignBuilder = Fluent<{
   init: {
     align: flow.Entry<[targets: HintTarget[]]>;
   };
@@ -156,13 +145,6 @@ export type AlignSpec = {
     height: flow.Terminal;
     size: flow.Terminal;
   };
-};
+}>;
 
-/**
- * AlignBuilder: Type-safe fluent builder for alignment constraints
- * 
- * Generated from AlignSpec using Fluent.
- * All methods are terminal and directly apply alignment constraints.
- */
-export type AlignBuilder = Fluent<AlignSpec>;
 
