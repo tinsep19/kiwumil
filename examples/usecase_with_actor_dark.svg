@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
-     width="224" 
-     height="186.4" 
-     viewBox="0 0 224 186.4">
+     width="276" 
+     height="194.8" 
+     viewBox="0 0 276 194.8">
   <rect width="100%" height="100%" fill="#1e1e1e"/>
   <defs>
 <symbol id="uml-actor" viewBox="0 0 64 64">
@@ -24,12 +24,12 @@
       <g id="__builtin__:diagram/0">
         <!-- Title -->
         
-      <text x="112" y="51"
+      <text x="138" y="51"
             text-anchor="middle"
             font-size="18"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="112" dy="0">Usecase with Actor (Dark Theme)</tspan>
+        <tspan x="138" dy="0">Usecase with Actor (Dark Theme)</tspan>
       </text>
     
         
@@ -37,11 +37,11 @@
       </g>
     
 
-      <line x1="104" y1="105.85714285714286" x2="184" y2="75"
+      <line x1="104" y1="110.77971014492753" x2="184.67202970369956" y2="88.72997339860481"
             stroke="#569cd6" stroke-width="2"/>
     
 
-      <line x1="40" y1="125" x2="40" y2="125"
+      <line x1="69.43366336633663" y1="161.4" x2="71.3553212473646" y2="147.41971061363262"
             stroke="#569cd6" stroke-width="2"/>
     
 
@@ -69,17 +69,17 @@
 
       <g id="uml:usecase/2">
         <!-- Ellipse -->
-        <ellipse cx="184" cy="75" rx="2" ry="2" 
+        <ellipse cx="210" cy="86.2" rx="26" ry="11.2" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="184" y="91"
+      <text x="210" y="91"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="184" dy="0">Login</tspan>
+        <tspan x="210" dy="0">Login</tspan>
       </text>
     
       </g>
@@ -87,17 +87,17 @@
 
       <g id="uml:usecase/3">
         <!-- Ellipse -->
-        <ellipse cx="40" cy="125" rx="2" ry="2" 
+        <ellipse cx="69.6" cy="158.60000000000002" rx="29.599999999999998" ry="11.2" 
                  fill="#2d2d2d" stroke="#569cd6" stroke-width="2"/>
         
         <!-- Label -->
         
-      <text x="40" y="141"
+      <text x="69.6" y="163.4"
             text-anchor="middle"
             font-size="12"
             font-family="Arial"
             fill="#d4d4d4">
-        <tspan x="40" dy="0">Logout</tspan>
+        <tspan x="69.6" dy="0">Logout</tspan>
       </text>
     
       </g>

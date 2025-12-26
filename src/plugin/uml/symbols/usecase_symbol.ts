@@ -143,6 +143,22 @@ export class UsecaseSymbol implements ISymbol {
     const labelBounds = this.items.label.bounds
     builder.ct([1, labelBounds.centerX]).eq([1, this.ellipseBounds.centerX]).strong()
     builder.ct([1, labelBounds.centerY]).eq([1, this.ellipseBounds.centerY]).strong()
+
+    // Get label default size
+    const labelDefaultSize = this.items.label.getDefaultSize()
+
+    // Label default size (weak constraint)
+    builder.ct([1, labelBounds.width]).eq([labelDefaultSize.width, 1]).weak()
+    builder.ct([1, labelBounds.height]).eq([labelDefaultSize.height, 1]).weak()
+
+    // Label minimum size (medium constraint)
+    builder.ct([1, labelBounds.width]).ge([labelDefaultSize.width, 1]).medium()
+    builder.ct([1, labelBounds.height]).ge([labelDefaultSize.height, 1]).medium()
+
+    // Ensure ellipse is large enough to contain the label (medium constraint)
+    // Since label is centered, rx must be at least labelWidth/2 and ry must be at least labelHeight/2
+    builder.ct([2, this.rx]).ge([1, labelBounds.width]).medium()
+    builder.ct([2, this.ry]).ge([1, labelBounds.height]).medium()
   }
 
   render(): string {
