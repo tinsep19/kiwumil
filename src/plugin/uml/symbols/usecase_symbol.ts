@@ -1,32 +1,74 @@
 // src/plugin/uml/symbols/usecase_symbol.ts
-import type { LinearConstraintBuilder, Variable, ISymbolCharacs } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
-import { getStyleForSymbol } from "../../../theme"
+import type { LinearConstraintBuilder, Variable, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds, ItemBounds } from "../../../core"
+import { getStyleForSymbol, type Theme } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+import { TextItem } from "../../../item"
 
 /**
  * IUsecaseSymbolCharacs: ユースケースシンボルの特性
  * ISymbolCharacs を拡張し、rx と ry プロパティを必須にする
  */
-export type IUsecaseSymbolCharacs = ISymbolCharacs<{ rx: Variable; ry: Variable }>
-
-export interface UsecaseSymbolOptions extends SymbolBaseOptions {
-  label: string
+export type IUsecaseSymbolCharacs = ISymbolCharacs<{ 
   rx: Variable
   ry: Variable
+  label: ItemBounds
+}>
+
+export interface UsecaseSymbolOptions {
+  label: string
+  characs: IUsecaseSymbolCharacs
+  theme: Theme
 }
 
-export class UsecaseSymbol extends SymbolBase {
+export class UsecaseSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
   readonly rx: Variable
   readonly ry: Variable
+  private readonly items: { label: TextItem }
 
   constructor(options: UsecaseSymbolOptions) {
-    super(options)
+    this.id = options.characs.id
+    this.bounds = options.characs.bounds
+    this.rx = options.characs.rx
+    this.ry = options.characs.ry
+    this.theme = options.theme
     this.label = options.label
-    this.rx = options.rx
-    this.ry = options.ry
+
+    // Get style from theme
+    const style = this.theme
+      ? getStyleForSymbol(this.theme, "usecase")
+      : this.getFallbackStyle()
+
+    // Create TextItem for label
+    const labelItem = new TextItem({
+      bounds: options.characs.label,
+      text: options.label,
+      alignment: "center",
+      fontSize: style.fontSize,
+      fontFamily: style.fontFamily,
+      textColor: style.textColor,
+      padding: { top: 4, right: 8, bottom: 4, left: 8 },
+    })
+
+    this.items = { label: labelItem }
+  }
+
+  private getFallbackStyle() {
+    return {
+      strokeColor: "black",
+      strokeWidth: 2,
+      fillColor: "white",
+      textColor: "black",
+      fontSize: 12,
+      fontFamily: "Arial",
+      backgroundColor: "white",
+      horizontalGap: 80,
+      verticalGap: 50,
+    }
   }
 
   getDefaultSize() {
@@ -69,17 +111,7 @@ export class UsecaseSymbol extends SymbolBase {
     // テーマからスタイルを取得
     const style = this.theme
       ? getStyleForSymbol(this.theme, "usecase")
-      : {
-          strokeColor: "black",
-          strokeWidth: 2,
-          fillColor: "white",
-          textColor: "black",
-          fontSize: 12,
-          fontFamily: "Arial",
-          backgroundColor: "white",
-          horizontalGap: 80,
-          verticalGap: 50,
-        }
+      : this.getFallbackStyle()
 
     return `
       <g id="${this.id}">
@@ -88,11 +120,7 @@ export class UsecaseSymbol extends SymbolBase {
                  fill="${style.fillColor}" stroke="${style.strokeColor}" stroke-width="${style.strokeWidth}"/>
         
         <!-- Label -->
-        <text x="${cx}" y="${cy + 5}" 
-              text-anchor="middle" font-size="${style.fontSize}" font-family="${style.fontFamily}"
-              fill="${style.textColor}">
-          ${this.label}
-        </text>
+        ${this.items.label.render()}
       </g>
     `
   }
@@ -108,5 +136,25 @@ export class UsecaseSymbol extends SymbolBase {
     // rx = width/2 and ry = height/2 (weak constraints for flexibility)
     builder.ct([1, this.rx]).eq([0.5, width]).weak()
     builder.ct([1, this.ry]).eq([0.5, height]).weak()
+
+    // Label constraints
+    const labelBounds = this.items.label.bounds
+    const labelDefaultSize = this.items.label.getDefaultSize()
+
+    // Label is centered within the bounds
+    builder.ct([1, labelBounds.centerX]).eq([1, this.bounds.centerX]).strong()
+    builder.ct([1, labelBounds.centerY]).eq([1, this.bounds.centerY]).strong()
+
+    // Label default size (weak constraint)
+    builder.ct([1, labelBounds.width]).eq([labelDefaultSize.width, 1]).weak()
+    builder.ct([1, labelBounds.height]).eq([labelDefaultSize.height, 1]).weak()
+
+    // Label minimum size (medium constraint)
+    builder.ct([1, labelBounds.width]).ge([labelDefaultSize.width, 1]).medium()
+    builder.ct([1, labelBounds.height]).ge([labelDefaultSize.height, 1]).medium()
+  }
+
+  render(): string {
+    return this.toSVG()
   }
 }

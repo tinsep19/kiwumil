@@ -121,6 +121,7 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("usecase")
       const rxVar = context.variables.createVariable("usecase.rx")
       const ryVar = context.variables.createVariable("usecase.ry")
+      const labelItem = context.variables.createBounds("usecase.label", "item")
 
       // Set negative height
       context.createConstraint("test-usecase-negative-height", (builder) => {
@@ -132,11 +133,8 @@ describe("Bounds Validation", () => {
       context.solve()
 
       const usecase = new UsecaseSymbol({
-        id: "test-usecase",
-        bounds: bounds,
         label: "TestUsecase",
-        rx: rxVar,
-        ry: ryVar,
+        characs: { id: "test-usecase", bounds: bounds, rx: rxVar, ry: ryVar, label: labelItem },
         theme: DefaultTheme,
       })
       const svg = usecase.toSVG()
@@ -158,6 +156,7 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("usecase")
       const rxVar = context.variables.createVariable("usecase.rx")
       const ryVar = context.variables.createVariable("usecase.ry")
+      const labelItem = context.variables.createBounds("usecase.label", "item")
 
       context.createConstraint("test-usecase-normal", (builder) => {
         builder.ct([1, bounds.x]).eq([10, 1]).strong()
@@ -168,11 +167,8 @@ describe("Bounds Validation", () => {
       context.solve()
 
       const usecase = new UsecaseSymbol({
-        id: "test-usecase",
-        bounds: bounds,
         label: "TestUsecase",
-        rx: rxVar,
-        ry: ryVar,
+        characs: { id: "test-usecase", bounds: bounds, rx: rxVar, ry: ryVar, label: labelItem },
         theme: DefaultTheme,
       })
       const svg = usecase.toSVG()
@@ -195,6 +191,7 @@ describe("Bounds Validation", () => {
       const bounds = context.variables.createBounds("usecase-constraints")
       const rxVar = context.variables.createVariable("usecase-constraints.rx")
       const ryVar = context.variables.createVariable("usecase-constraints.ry")
+      const labelItem = context.variables.createBounds("usecase-constraints.label", "item")
 
       // Set specific dimensions
       context.createConstraint("test-usecase-constraints", (builder) => {
@@ -205,11 +202,8 @@ describe("Bounds Validation", () => {
       })
 
       const usecase = new UsecaseSymbol({
-        id: "test-usecase-constraints",
-        bounds: bounds,
         label: "TestUsecase",
-        rx: rxVar,
-        ry: ryVar,
+        characs: { id: "test-usecase-constraints", bounds: bounds, rx: rxVar, ry: ryVar, label: labelItem },
         theme: DefaultTheme,
       })
 
