@@ -1,5 +1,6 @@
 // src/plugin/uml/plugin.ts
 import { ActorSymbol, SystemBoundarySymbol, UsecaseSymbol } from "./symbols"
+import type { IUsecaseSymbolCharacs } from "./symbols"
 import { Association, Extend, Generalize, Include } from "./relationships"
 import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
 import type { RelationshipId, Relationships } from "../../model"
@@ -75,19 +76,23 @@ export const UMLPlugin = {
       /**
        * Usecase Symbol を作成
        * @param label - Usecase のラベル
-       * @returns 生成された Usecase の ISymbolCharacs
+       * @returns 生成された Usecase の IUsecaseSymbolCharacs
        */
       usecase(label: string) {
         return symbols.register(plugin, "usecase", (symbolId, r) => {
           const bound = r.createLayoutBounds("layout")
+          const rx = r.createVariable("rx")
+          const ry = r.createVariable("ry")
           const usecase = new UsecaseSymbol({
             id: symbolId,
             bounds: bound,
             label,
+            rx,
+            ry,
             theme,
           })
           r.setSymbol(usecase)
-          r.setCharacs({ id: symbolId, bounds: bound })
+          r.setCharacs({ id: symbolId, bounds: bound, rx, ry })
           r.setConstraint((builder) => {
             usecase.ensureLayoutBounds(builder)
           })
