@@ -32,29 +32,36 @@ describe("UserHintRegistration", () => {
     }).characs
   }
 
-  test("should register a user hint with variables and constraints", () => {
+  test("should register a user hint with a constraint", () => {
+    const rect1 = createRectangle("rect1")
+    
     const registration = context.hints.register("custom-guide", (builder) => {
-      const xVar = builder.createHintVariable({ baseName: "guide_x", name: "custom" })
-      builder.createConstraint("custom-guide/init", (cb) => {
-        cb.ct([1, xVar.variable]).eq([150, 1]).strong()
+      const xVar = builder.createVariable("guide_x")
+      builder.setConstraint((cb) => {
+        cb.ct([1, xVar]).eq([150, 1]).strong()
+        cb.ct([1, rect1.bounds.x]).eq([1, xVar]).strong()
       })
       return builder.build()
     })
 
     expect(registration.id).toBe("hint:custom-guide/0")
-    expect(registration.variables).toHaveLength(1)
-    expect(registration.constraints).toHaveLength(1)
-    expect(registration.variables[0]?.name).toBe("hint:guide_x_custom")
+    expect(registration.constraint).toBeDefined()
   })
 
   test("should allow multiple user hint registrations", () => {
     const reg1 = context.hints.register("guide-x", (builder) => {
-      builder.createHintVariable({ baseName: "guide_x", name: "first" })
+      const xVar = builder.createVariable("x")
+      builder.setConstraint((cb) => {
+        cb.ct([1, xVar]).eq([100, 1]).strong()
+      })
       return builder.build()
     })
 
     const reg2 = context.hints.register("guide-y", (builder) => {
-      builder.createHintVariable({ baseName: "guide_y", name: "second" })
+      const yVar = builder.createVariable("y")
+      builder.setConstraint((cb) => {
+        cb.ct([1, yVar]).eq([200, 1]).strong()
+      })
       return builder.build()
     })
 
@@ -67,6 +74,10 @@ describe("UserHintRegistration", () => {
 
   test("should find registered hint by ID", () => {
     const registration = context.hints.register("my-hint", (builder) => {
+      const v = builder.createVariable("v")
+      builder.setConstraint((cb) => {
+        cb.ct([1, v]).eq([0, 1]).strong()
+      })
       return builder.build()
     })
 
@@ -84,20 +95,14 @@ describe("UserHintRegistration", () => {
     const rect2 = createRectangle("rect2")
 
     context.hints.register("align-guide", (builder) => {
-      const guideX = builder.createHintVariable({ baseName: "align_x", name: "guide" })
+      const guideX = builder.createVariable("align_x")
       
-      // Set guide to x=200
-      builder.createConstraint("guide/init", (cb) => {
-        cb.ct([1, guideX.variable]).eq([200, 1]).strong()
-      })
-
-      // Align both rectangles to the guide
-      builder.createConstraint("guide/align-rect1", (cb) => {
-        cb.ct([1, rect1.bounds.x]).eq([1, guideX.variable]).strong()
-      })
-
-      builder.createConstraint("guide/align-rect2", (cb) => {
-        cb.ct([1, rect2.bounds.x]).eq([1, guideX.variable]).strong()
+      builder.setConstraint((cb) => {
+        // Set guide to x=200
+        cb.ct([1, guideX]).eq([200, 1]).strong()
+        // Align both rectangles to the guide
+        cb.ct([1, rect1.bounds.x]).eq([1, guideX]).strong()
+        cb.ct([1, rect2.bounds.x]).eq([1, guideX]).strong()
       })
 
       return builder.build()
@@ -108,20 +113,6 @@ describe("UserHintRegistration", () => {
     // Both rectangles should be aligned at x=200
     expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(200, 1)
     expect(context.valueOf(rect2.bounds.x)).toBeCloseTo(200, 1)
-  })
-
-  test("should track variables created through builder", () => {
-    const initialVarCount = context.hints.getHintVariables().length
-
-    context.hints.register("multi-var-hint", (builder) => {
-      builder.createHintVariable({ baseName: "var1" })
-      builder.createHintVariable({ baseName: "var2" })
-      builder.createHintVariable({ baseName: "var3" })
-      return builder.build()
-    })
-
-    const allVars = context.hints.getHintVariables()
-    expect(allVars.length).toBe(initialVarCount + 3)
   })
 
   test("should maintain backward compatibility with createHintVariable", () => {
@@ -138,13 +129,28 @@ describe("UserHintRegistration", () => {
   test("should throw error on ID mismatch", () => {
     expect(() => {
       context.hints.register("test-hint", (builder) => {
+        const v = builder.createVariable("v")
+        builder.setConstraint((cb) => {
+          cb.ct([1, v]).eq([0, 1]).strong()
+        })
         // Build with wrong ID
         return {
           id: "wrong-id",
-          variables: [],
-          constraints: [],
+          constraint: builder.setConstraint((cb) => {
+            cb.ct([1, v]).eq([0, 1]).strong()
+          }),
         }
       })
     }).toThrow("UserHint registration id mismatch")
+  })
+
+  test("should throw error if constraint is not set", () => {
+    expect(() => {
+      context.hints.register("test-hint", (builder) => {
+        builder.createVariable("v")
+        // Don't call setConstraint
+        return builder.build()
+      })
+    }).toThrow("UserHintRegistrationBuilder: constraint not set")
   })
 })

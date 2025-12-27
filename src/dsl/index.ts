@@ -13,16 +13,15 @@ export { isRectMatrix } from "./matrix_utils"
 export type { Matrix, IsRectMatrix } from "./matrix_utils"
 export { toSymbolId } from "./symbol_helpers"
 export {
-  createArrangeHorizontalConstraint,
-  createArrangeVerticalConstraint,
-  createAlignLeftConstraint,
-  createAlignRightConstraint,
-  createAlignTopConstraint,
-  createAlignBottomConstraint,
-  createAlignCenterXConstraint,
-  createAlignCenterYConstraint,
-  createAlignWidthConstraint,
-  createAlignHeightConstraint,
-  createEncloseConstraint,
-  createGuideValueConstraint,
+  createArrangeHorizontalSpec,
+  createArrangeVerticalSpec,
+  createAlignLeftSpec,
+  createAlignRightSpec,
+  createAlignTopSpec,
+  createAlignBottomSpec,
+  createAlignCenterXSpec,
+  createAlignCenterYSpec,
+  createAlignWidthSpec,
+  createAlignHeightSpec,
+  createEncloseSpec,
 } from "./hint_builder_helpers"

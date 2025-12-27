@@ -4,11 +4,10 @@ import { KiwiSolver } from "@/kiwi"
 import { DefaultTheme } from "@/theme"
 import { RectangleSymbol } from "@/plugin/core"
 import {
-  createArrangeHorizontalConstraint,
-  createArrangeVerticalConstraint,
-  createAlignLeftConstraint,
-  createAlignCenterXConstraint,
-  createGuideValueConstraint,
+  createArrangeHorizontalSpec,
+  createArrangeVerticalSpec,
+  createAlignLeftSpec,
+  createAlignCenterXSpec,
 } from "@/dsl"
 
 describe("Hint Builder Helpers with UserHintRegistration", () => {
@@ -39,7 +38,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     }).characs
   }
 
-  test("createArrangeHorizontalConstraint should arrange symbols horizontally", () => {
+  test("createArrangeHorizontalSpec should arrange symbols horizontally", () => {
     const rect1 = createRectangle("rect1")
     const rect2 = createRectangle("rect2")
     const rect3 = createRectangle("rect3")
@@ -51,7 +50,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     ]
 
     context.hints.register("horizontal-layout", (builder) => {
-      createArrangeHorizontalConstraint(builder, targets, 20, "arrange/horizontal")
+      builder.setConstraint(createArrangeHorizontalSpec(targets, 20))
       return builder.build()
     })
 
@@ -67,7 +66,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     expect(x3).toBeCloseTo(x2 + w2 + 20, 1)
   })
 
-  test("createArrangeVerticalConstraint should arrange symbols vertically", () => {
+  test("createArrangeVerticalSpec should arrange symbols vertically", () => {
     const rect1 = createRectangle("rect1")
     const rect2 = createRectangle("rect2")
     const rect3 = createRectangle("rect3")
@@ -79,7 +78,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     ]
 
     context.hints.register("vertical-layout", (builder) => {
-      createArrangeVerticalConstraint(builder, targets, 15, "arrange/vertical")
+      builder.setConstraint(createArrangeVerticalSpec(targets, 15))
       return builder.build()
     })
 
@@ -95,7 +94,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     expect(y3).toBeCloseTo(y2 + h2 + 15, 1)
   })
 
-  test("createAlignLeftConstraint should align symbols to left edge", () => {
+  test("createAlignLeftSpec should align symbols to left edge", () => {
     const rect1 = createRectangle("rect1")
     const rect2 = createRectangle("rect2")
     const rect3 = createRectangle("rect3")
@@ -107,7 +106,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     ]
 
     context.hints.register("left-align", (builder) => {
-      createAlignLeftConstraint(builder, targets, "align/left")
+      builder.setConstraint(createAlignLeftSpec(targets))
       return builder.build()
     })
 
@@ -121,37 +120,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     expect(x3).toBeCloseTo(x1, 1)
   })
 
-  test("createGuideValueConstraint should constrain guide to specific value", () => {
-    const rect1 = createRectangle("rect1")
-    const rect2 = createRectangle("rect2")
-
-    context.hints.register("guide-x-250", (builder) => {
-      const guideX = builder.createHintVariable({ baseName: "guide_x", name: "main" })
-      
-      // Set guide to x=250
-      createGuideValueConstraint(builder, guideX.variable, 250, "guide/value")
-      
-      // Align rectangles to guide
-      const targets = [
-        { boundId: rect1.bounds.boundId, bounds: rect1.bounds },
-        { boundId: rect2.bounds.boundId, bounds: rect2.bounds },
-      ]
-      
-      builder.createConstraint("guide/align", (cb) => {
-        cb.ct([1, rect1.bounds.x]).eq([1, guideX.variable]).strong()
-        cb.ct([1, rect2.bounds.x]).eq([1, guideX.variable]).strong()
-      })
-
-      return builder.build()
-    })
-
-    context.solve()
-
-    expect(context.valueOf(rect1.bounds.x)).toBeCloseTo(250, 1)
-    expect(context.valueOf(rect2.bounds.x)).toBeCloseTo(250, 1)
-  })
-
-  test("should combine multiple helper functions in one registration", () => {
+  test("should combine multiple specs in one constraint", () => {
     const rect1 = createRectangle("rect1")
     const rect2 = createRectangle("rect2")
     const rect3 = createRectangle("rect3")
@@ -163,10 +132,11 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
     ]
 
     context.hints.register("combined-layout", (builder) => {
-      // Arrange vertically
-      createArrangeVerticalConstraint(builder, targets, 10, "arrange/vert")
-      // And align centers horizontally
-      createAlignCenterXConstraint(builder, targets, "align/centerX")
+      builder.setConstraint((cb) => {
+        // Combine multiple constraint specs
+        createArrangeVerticalSpec(targets, 10)(cb)
+        createAlignCenterXSpec(targets)(cb)
+      })
       return builder.build()
     })
 
@@ -189,11 +159,10 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
   })
 
   test("helper functions should work with empty targets gracefully", () => {
-    const targets: HintTarget[] = []
+    const targets: any[] = []
 
     context.hints.register("empty-targets", (builder) => {
-      const result = createAlignLeftConstraint(builder, targets, "align/left")
-      expect(result).toBeNull()
+      builder.setConstraint(createAlignLeftSpec(targets))
       return builder.build()
     })
 

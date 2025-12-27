@@ -31,10 +31,8 @@ export interface HintVariable {
 export interface UserHintRegistration {
   /** Unique identifier for this hint */
   id: string
-  /** Variables created for this hint */
-  variables: HintVariable[]
-  /** Constraints created for this hint */
-  constraints: LayoutConstraint[]
+  /** Constraint created for this hint */
+  constraint: LayoutConstraint
 }
 
 /**
@@ -45,8 +43,7 @@ export interface UserHintRegistration {
 export class UserHintRegistrationBuilder {
   private readonly id: string
   private readonly hints: Hints
-  private readonly _variables: HintVariable[] = []
-  private readonly _constraints: LayoutConstraint[] = []
+  private _constraint?: LayoutConstraint
 
   constructor(id: string, hints: Hints) {
     this.id = id
@@ -54,28 +51,26 @@ export class UserHintRegistrationBuilder {
   }
 
   /**
-   * Create a hint variable for this user hint.
-   * The variable name will be prefixed with "hint:" automatically.
+   * Create a variable for this user hint.
+   * The variable name will be prefixed with the hint ID automatically.
    * 
-   * @param options Configuration for the hint variable
-   * @returns HintVariable containing the created variable and metadata
+   * @param variableId Variable identifier (will be prefixed with hint ID)
+   * @returns Variable created by the solver
    */
-  createHintVariable(options?: HintVariableOptions): HintVariable {
-    const hintVar = this.hints.createHintVariable(options)
-    this._variables.push(hintVar)
-    return hintVar
+  createVariable(variableId: string): Variable {
+    const fullVariableId = `${this.id}#${variableId}`
+    return this.hints.createVariableForBuilder(fullVariableId)
   }
 
   /**
-   * Create a constraint for this user hint.
+   * Set the constraint for this user hint.
    * 
-   * @param constraintId Identifier for the constraint
    * @param spec Constraint specification function
    * @returns Created LayoutConstraint
    */
-  createConstraint(constraintId: string, spec: ConstraintSpec): LayoutConstraint {
-    const constraint = this.hints.createConstraintForBuilder(constraintId, spec)
-    this._constraints.push(constraint)
+  setConstraint(spec: ConstraintSpec): LayoutConstraint {
+    const constraint = this.hints.createConstraintForBuilder(this.id, spec)
+    this._constraint = constraint
     return constraint
   }
 
@@ -84,10 +79,12 @@ export class UserHintRegistrationBuilder {
    * This is called by the Hints.register method after the factory function completes.
    */
   build(): UserHintRegistration {
+    if (!this._constraint) {
+      throw new Error("UserHintRegistrationBuilder: constraint not set")
+    }
     return {
       id: this.id,
-      variables: this._variables,
-      constraints: this._constraints,
+      constraint: this._constraint,
     }
   }
 }
@@ -98,7 +95,6 @@ export class Hints {
   private readonly registrations: UserHintRegistration[] = []
   private readonly registrations_index: Record<string, UserHintRegistration> = {}
   private hintVarCounter = 0
-  private hintRegistrationCounter = 0
 
   constructor(
     private readonly solver: CassowarySolver,
@@ -132,6 +128,17 @@ export class Hints {
   }
 
   /**
+   * Create a variable for use by UserHintRegistrationBuilder.
+   * This is an internal method used by the builder pattern.
+   * 
+   * @param variableId Full variable identifier
+   * @returns Created Variable
+   */
+  createVariableForBuilder(variableId: string): Variable {
+    return this.solver.createVariable(variableId)
+  }
+
+  /**
    * Create a constraint for use by UserHintRegistrationBuilder.
    * This is an internal method used by the builder pattern.
    * 
@@ -154,9 +161,9 @@ export class Hints {
    * @example
    * ```typescript
    * const registration = hints.register("custom-guide", (builder) => {
-   *   const xVar = builder.createHintVariable({ baseName: "guide_x", name: "my-guide" });
-   *   builder.createConstraint("guide/init", (cb) => {
-   *     cb.ct([1, xVar.variable]).eq([100, 1]).strong();
+   *   const xVar = builder.createVariable("guide_x");
+   *   builder.setConstraint((cb) => {
+   *     cb.ct([1, xVar]).eq([100, 1]).strong();
    *   });
    *   return builder.build();
    * });
@@ -180,10 +187,8 @@ export class Hints {
     this.registrations.push(registration)
     this.registrations_index[hintId] = registration
 
-    // Add constraints to the main constraints list
-    for (const constraint of registration.constraints) {
-      this.constraints.push(constraint)
-    }
+    // Add constraint to the main constraints list
+    this.constraints.push(registration.constraint)
 
     return registration
   }
@@ -208,7 +213,7 @@ export class Hints {
   }
 
   private createHintId(hintName: string): string {
-    const idIndex = this.hintRegistrationCounter++
+    const idIndex = this.registrations.length
     return `hint:${hintName}/${idIndex}`
   }
 
