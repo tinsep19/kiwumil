@@ -8,4 +8,10 @@ export type { RelationshipId } from "./types"
 export type { Point, SymbolId } from "../core"
 export { LayoutContext } from "./layout_context"
 export { LayoutVariables } from "./layout_variables"
-export { Hints, type HintVariable, type HintVariableOptions } from "./hints"
+export {
+  Hints,
+  UserHintRegistrationBuilder,
+  type HintVariable,
+  type HintVariableOptions,
+  type UserHintRegistration,
+} from "./hints"
