@@ -4,144 +4,143 @@
 
 Hints クラスにユーザー作成レイアウトヒントを管理する UserHintRegistration システムを実装しました。これは SymbolRegistration パターンと同様のアーキテクチャを提供します。
 
-## 実装内容
+## 実装内容（最終版）
 
-### 1. UserHintRegistration 型と Builder の追加
+### 1. UserHintRegistration 型と Builder
 
-**新しい型定義:**
-- `UserHintRegistration`: ユーザーヒント登録情報を保持
-- `UserHintRegistrationBuilder`: ヒント構築用のビルダークラス
-
-**ファイル:** `src/model/hints.ts`
-
+**型定義:**
 ```typescript
 export interface UserHintRegistration {
   id: string
-  variables: HintVariable[]
-  constraints: LayoutConstraint[]
+  constraint: LayoutConstraint  // 単数形
 }
+```
 
+**ビルダークラス:**
+```typescript
 export class UserHintRegistrationBuilder {
-  createHintVariable(options?: HintVariableOptions): HintVariable
-  createConstraint(constraintId: string, spec: ConstraintSpec): LayoutConstraint
+  createVariable(variableId: string): Variable
+  setConstraint(spec: ConstraintSpec): LayoutConstraint
   build(): UserHintRegistration
 }
 ```
 
-### 2. Hints クラスへの登録システム追加
+**変更点:**
+- `constraints` 配列を `constraint` 単数形に変更
+- `variables` フィールドを削除
+- `createHintVariable` を `createVariable` に変更し、Variable を直接返す
+- `createConstraint` を `setConstraint` に変更（単数形）
 
-**新しいメソッド:**
-- `register()`: ユーザーヒントの登録
-- `getAllRegistrations()`: 全登録の取得
-- `findRegistrationById()`: ID による登録の検索
-- `createConstraintForBuilder()`: Builder 用制約作成ヘルパー
+### 2. Hints クラスの変更
 
-**実装の特徴:**
-- SymbolRegistration と同様のファクトリーパターン
-- 自動 ID 生成 (`hint:{name}/{index}`)
-- 登録済みヒントの索引管理
+**主要な変更:**
+- `hintRegistrationCounter` を削除し、`registrations.length` で ID 生成
+- `createVariableForBuilder()` メソッドを追加
+- `register()` メソッドを単一制約に対応
 
-### 3. ヒントビルダーヘルパー関数の作成
+**ID 生成:**
+```typescript
+private createHintId(hintName: string): string {
+  const idIndex = this.registrations.length
+  return `hint:${hintName}/${idIndex}`
+}
+```
 
-**新しいモジュール:** `src/dsl/hint_builder_helpers.ts`
+### 3. ヒントビルダーヘルパー関数の完全書き直し
 
-共通レイアウトパターン用のファクトリー関数を提供:
+**新しいアプローチ:**
+- `LayoutConstraint` を返すのではなく `ConstraintSpec` を返す
+- 関数名を `create*Constraint` から `create*Spec` に変更
+- 複数の仕様を1つの `setConstraint` 呼び出しで組み合わせ可能
 
-**配置関数:**
-- `createArrangeHorizontalConstraint`
-- `createArrangeVerticalConstraint`
+**提供する仕様生成関数:**
+- `createArrangeHorizontalSpec` / `createArrangeVerticalSpec`
+- `createAlignLeftSpec` / `Right` / `Top` / `Bottom`
+- `createAlignCenterXSpec` / `CenterYSpec`
+- `createAlignWidthSpec` / `HeightSpec`
+- `createEncloseSpec`
 
-**整列関数:**
-- `createAlignLeftConstraint` / `Right` / `Top` / `Bottom`
-- `createAlignCenterXConstraint` / `CenterY`
-- `createAlignWidthConstraint` / `Height`
+### 4. テストの更新
 
-**コンテナ関数:**
-- `createEncloseConstraint`
+**テスト変更:**
+- UserHintRegistration テスト: 8 テスト → 8 テスト（内容更新）
+- hint_builder_helpers テスト: 6 テスト → 5 テスト（簡素化）
+- すべてのテストが新しい API で動作
 
-**ガイド関数:**
-- `createGuideValueConstraint`
+## 設計判断（レビューフィードバック反映後）
 
-### 4. テストの作成
+### 1. SymbolRegistration との完全な整合性
 
-**テストファイル:**
-- `tests/user_hint_registration.test.ts`: 基本的な登録システムのテスト
-- `tests/hint_builder_helpers.test.ts`: ヘルパー関数のテスト
+| 項目 | SymbolRegistration | UserHintRegistration |
+|------|-------------------|---------------------|
+| 登録型 | `{ symbol, characs, constraint }` | `{ id, constraint }` |
+| 制約フィールド | `constraint` (単数) | `constraint` (単数) |
+| 変数作成 | `createVariable(key)` | `createVariable(variableId)` |
+| 制約設定 | `setConstraint(spec)` | `setConstraint(spec)` |
+| ID生成 | `registrations.length` | `registrations.length` |
 
-**テストカバレッジ:**
-- 基本的な登録と検索
-- 複数登録の管理
-- 制約の機能性検証
-- 空ターゲットのハンドリング
-- ヘルパー関数の組み合わせ
+### 2. 単一制約パターン
 
-## 設計判断
+1つの登録に1つの制約を持つことで：
+- 責任の明確化
+- SymbolRegistration との一貫性
+- 複雑さの軽減
 
-### 1. 責任の分離
+### 3. ConstraintSpec パターン
 
-- **Hints クラス**: 状態管理と低レベル API
-- **UserHintRegistrationBuilder**: ヒント固有のファクトリーメソッド
-- **Hint Builder Helpers**: 高レベルのパターンファクトリー
+ヘルパー関数が ConstraintSpec を返すことで：
+- 複数の仕様を簡単に組み合わせ可能
+- Builder の単一制約パターンに適合
+- より柔軟な使用が可能
 
-### 2. 後方互換性の維持
-
-既存の API を完全に保持:
-- `createHintVariable()` は引き続き使用可能
-- `arrangeHorizontal()`, `alignLeft()` などのメソッドも維持
-- 新旧 API の混在が可能
-
-### 3. SymbolRegistration との一貫性
-
-| SymbolRegistration | UserHintRegistration |
-|-------------------|---------------------|
-| `Symbols.register()` | `Hints.register()` |
-| `SymbolRegistrationBuilder` | `UserHintRegistrationBuilder` |
-| `SymbolRegistration` | `UserHintRegistration` |
-
-## 使用例
+## 使用例（最終版）
 
 ```typescript
 // 基本的な登録
 const registration = context.hints.register("custom-guide", (builder) => {
-  const guideX = builder.createHintVariable({ baseName: "guide_x", name: "custom" })
-  builder.createConstraint("init", (cb) => {
-    cb.ct([1, guideX.variable]).eq([150, 1]).strong()
+  const guideX = builder.createVariable("guide_x")
+  builder.setConstraint((cb) => {
+    cb.ct([1, guideX]).eq([150, 1]).strong()
+    cb.ct([1, rect1.bounds.x]).eq([1, guideX]).strong()
   })
   return builder.build()
 })
 
 // ヘルパー関数を使用
 context.hints.register("layout", (builder) => {
-  createArrangeHorizontalConstraint(builder, targets, 20, "arrange")
-  createAlignLeftConstraint(builder, targets, "align")
+  builder.setConstraint(createArrangeHorizontalSpec(targets, 20))
+  return builder.build()
+})
+
+// 複数の仕様を組み合わせ
+context.hints.register("complex", (builder) => {
+  builder.setConstraint((cb) => {
+    createArrangeVerticalSpec(targets, 10)(cb)
+    createAlignCenterXSpec(targets)(cb)
+  })
   return builder.build()
 })
 ```
 
 ## テスト結果
 
-全テスト成功:
-- 233 pass
+すべてのテストが成功:
+- 232 pass
 - 2 skip
 - 0 fail
 
 ビルド・型チェック・リンティングすべて成功。
 
-## ドキュメント
+## レビューフィードバック対応
 
-新しいドキュメント作成:
-- `docs/design/user-hint-registration.md`: 詳細な設計ドキュメント
+@tinsep19 からの以下のフィードバックに対応:
 
-## 今後の展開
+1. ✅ `hintRegistrationCounter` を廃止し `registrations.length` を使用
+2. ✅ `constraints` を `constraint` (単数形) に変更
+3. ✅ `variables` フィールドを削除
+4. ✅ `_variables` を廃止
+5. ✅ `createHintVariable` を `createVariable` に変更し HintVariable を廃止
 
-1. HintFactory への統合（オプション）
-2. より多くのヘルパー関数の追加
-3. 実例の追加
-4. パフォーマンス最適化の検討
+## 結論
 
-## メモ
-
-- ヘルパー関数は UserHintRegistrationBuilder と組み合わせて使用
-- 既存コードへの影響なし（100% 後方互換）
-- TypeScript の型推論が完全に機能
-- 問題なく既存テストすべてパス
+UserHintRegistration は SymbolRegistration パターンに完全に準拠した形で実装されました。単一制約パターンにより、シンプルで一貫性のある API を提供しています。
