@@ -189,7 +189,7 @@ describe("Hint Builder Helpers with UserHintRegistration", () => {
   })
 
   test("helper functions should work with empty targets gracefully", () => {
-    const targets: any[] = []
+    const targets: HintTarget[] = []
 
     context.hints.register("empty-targets", (builder) => {
       const result = createAlignLeftConstraint(builder, targets, "align/left")

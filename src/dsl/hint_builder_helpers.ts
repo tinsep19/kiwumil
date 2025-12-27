@@ -67,7 +67,7 @@ export function createArrangeVerticalConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align left
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignLeftConstraint(
   builder: UserHintRegistrationBuilder,
@@ -91,7 +91,7 @@ export function createAlignLeftConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align right
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignRightConstraint(
   builder: UserHintRegistrationBuilder,
@@ -117,7 +117,7 @@ export function createAlignRightConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align top
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignTopConstraint(
   builder: UserHintRegistrationBuilder,
@@ -141,7 +141,7 @@ export function createAlignTopConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align bottom
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignBottomConstraint(
   builder: UserHintRegistrationBuilder,
@@ -167,7 +167,7 @@ export function createAlignBottomConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align center horizontally
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignCenterXConstraint(
   builder: UserHintRegistrationBuilder,
@@ -193,7 +193,7 @@ export function createAlignCenterXConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align center vertically
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignCenterYConstraint(
   builder: UserHintRegistrationBuilder,
@@ -219,7 +219,7 @@ export function createAlignCenterYConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align width
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignWidthConstraint(
   builder: UserHintRegistrationBuilder,
@@ -243,7 +243,7 @@ export function createAlignWidthConstraint(
  * @param builder UserHintRegistrationBuilder to use for creating constraints
  * @param targets Array of targets to align height
  * @param constraintId Unique identifier for the constraint
- * @returns Created LayoutConstraint or null if no targets
+ * @returns Created LayoutConstraint or null if targets array is empty
  */
 export function createAlignHeightConstraint(
   builder: UserHintRegistrationBuilder,
@@ -264,8 +264,12 @@ export function createAlignHeightConstraint(
 /**
  * Create enclosure constraints (container encompasses children)
  * 
+ * Note: This function uses container.container if available (for ContainerBounds),
+ * otherwise falls back to container.bounds (for regular LayoutBounds). This allows
+ * the function to work with both container symbols and regular symbols used as containers.
+ * 
  * @param builder UserHintRegistrationBuilder to use for creating constraints
- * @param container Container target
+ * @param container Container target (may have container property or just bounds)
  * @param childTargets Array of child targets to enclose
  * @param constraintId Unique identifier for the constraint
  * @returns Created LayoutConstraint
@@ -276,6 +280,7 @@ export function createEncloseConstraint(
   childTargets: HintTarget[],
   constraintId: string
 ): LayoutConstraint {
+  // Use container.container if available (ContainerBounds), otherwise use bounds
   const containerBounds = container.container ?? container.bounds
 
   return builder.createConstraint(constraintId, (cb) => {
