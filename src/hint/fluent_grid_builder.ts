@@ -3,16 +3,7 @@
 import type { ISymbolCharacs, Variable, AnchorX, AnchorY, IContainerSymbolCharacs } from "../core"
 import { createBrandVariableFactory, type Width, type Height } from "../core"
 import type { HintFactory } from "../dsl"
-
-/**
- * Cell represents a bounded area in the grid
- */
-export interface Cell {
-  left: Variable
-  top: Variable
-  right: Variable
-  bottom: Variable
-}
+import type { Grid, Cell } from "./grid"
 
 /**
  * GridSymbol: Minimal interface required for grid symbols
@@ -24,12 +15,12 @@ type GridSymbol = Pick<ISymbolCharacs, "id" | "bounds">
  * FluentGridBuilder provides a fluent API for grid-based layouts
  * Returns guide variables for grid lines and dimension variables for cell sizes
  */
-export class FluentGridBuilder {
+export class FluentGridBuilder implements Grid {
   private readonly symbols: (GridSymbol | null)[][]
-  private readonly rows: number
-  private readonly cols: number
+  public readonly rows: number
+  public readonly cols: number
   private readonly diagram: IContainerSymbolCharacs
-  private container?: IContainerSymbolCharacs
+  public container?: IContainerSymbolCharacs
 
   // Grid coordinate arrays - using AnchorX and AnchorY instead of GuideBuilder
   public readonly x: AnchorX[] = []
