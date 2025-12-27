@@ -1,7 +1,6 @@
 // src/dsl/hint_builder_helpers.ts
 import type { UserHintRegistrationBuilder } from "../model"
 import type { HintTarget, LayoutConstraint, Variable } from "../core"
-import type { Theme } from "../theme"
 
 /**
  * Helper functions for creating layout hint constraints using UserHintRegistrationBuilder.
