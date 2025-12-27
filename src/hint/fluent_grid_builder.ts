@@ -3,7 +3,7 @@
 import type { ISymbolCharacs, Variable, AnchorX, AnchorY, IContainerSymbolCharacs } from "../core"
 import { createBrandVariableFactory, type Width, type Height } from "../core"
 import type { HintFactory } from "../dsl"
-import type { Grid, Cell } from "./grid"
+import { Grid } from "./grid"
 
 /**
  * GridSymbol: Minimal interface required for grid symbols
@@ -15,18 +15,18 @@ type GridSymbol = Pick<ISymbolCharacs, "id" | "bounds">
  * FluentGridBuilder provides a fluent API for grid-based layouts
  * Returns guide variables for grid lines and dimension variables for cell sizes
  */
-export class FluentGridBuilder implements Grid {
+export class FluentGridBuilder {
   private readonly symbols: (GridSymbol | null)[][]
-  public readonly rows: number
-  public readonly cols: number
+  private readonly rows: number
+  private readonly cols: number
   private readonly diagram: IContainerSymbolCharacs
-  public container?: IContainerSymbolCharacs
+  private container?: IContainerSymbolCharacs
 
   // Grid coordinate arrays - using AnchorX and AnchorY instead of GuideBuilder
-  public readonly x: AnchorX[] = []
-  public readonly y: AnchorY[] = []
-  public readonly width: Width[] = []
-  public readonly height: Height[] = []
+  private readonly x: AnchorX[] = []
+  private readonly y: AnchorY[] = []
+  private readonly width: Width[] = []
+  private readonly height: Height[] = []
 
   constructor(
     private readonly hint: HintFactory,
@@ -65,59 +65,20 @@ export class FluentGridBuilder implements Grid {
    * Specify the container for this grid layout
    * @param container - The container symbol
    */
-  in(container: IContainerSymbolCharacs): this {
+  in(container: IContainerSymbolCharacs): Grid {
     this.container = container
     this.applyLayout()
-    return this
+    return new Grid(this.rows, this.cols, this.x, this.y, this.width, this.height, container)
   }
 
   /**
    * Apply layout directly without specifying a container
    * Uses the diagram as the container
    */
-  layout(): this {
+  layout(): Grid {
     this.container = this.diagram
     this.applyLayout()
-    return this
-  }
-
-  /**
-   * Get a cell area based on grid indices
-   * @param bounds - Grid indices {top, left, bottom, right}
-   * @returns Cell with left, top, right, bottom anchors
-   */
-  getArea(bounds: { top: number; left: number; bottom: number; right: number }): Cell {
-    const { top, left, bottom, right } = bounds
-
-    // Validate bounds
-    if (top < 0 || top > this.rows || bottom < 0 || bottom > this.rows) {
-      throw new Error(`Invalid row indices: top=${top}, bottom=${bottom}. Must be in [0, ${this.rows}]`)
-    }
-    if (left < 0 || left > this.cols || right < 0 || right > this.cols) {
-      throw new Error(`Invalid column indices: left=${left}, right=${right}. Must be in [0, ${this.cols}]`)
-    }
-    if (top >= bottom) {
-      throw new Error(`Invalid row indices: top=${top} must be less than bottom=${bottom}`)
-    }
-    if (left >= right) {
-      throw new Error(`Invalid column indices: left=${left} must be less than right=${right}`)
-    }
-
-    const xLeft = this.x[left]
-    const yTop = this.y[top]
-    const xRight = this.x[right]
-    const yBottom = this.y[bottom]
-
-    if (!xLeft || !yTop || !xRight || !yBottom) {
-      throw new Error(`Grid coordinates not properly initialized`)
-    }
-
-    return {
-      left: xLeft,
-      top: yTop,
-      right: xRight,
-      bottom: yBottom,
-    }
+    return new Grid(this.rows, this.cols, this.x, this.y, this.width, this.height, this.diagram)
   }
 
   /**

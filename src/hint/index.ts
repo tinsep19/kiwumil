@@ -1,5 +1,5 @@
 export { FluentGridBuilder } from "./fluent_grid_builder"
-export { type Grid, type Cell } from "./grid"
+export { Grid, type Cell } from "./grid"
 export { FluentArrangeBuilder } from "./fluent_arrange_builder"
 export { GuideBuilderImpl, type GuideBuilderX, type GuideBuilderY } from "./guide_builder"
 export { ConstraintHelper } from "./constraint_helper"
