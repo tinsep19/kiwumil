@@ -3,7 +3,7 @@
 
 import type { BoundId } from "./types"
 import type { LayoutBounds, ContainerBounds } from "./bounds"
-import type { Fluent, Entry, Step, Terminal } from "./fluent_builder_generator"
+import type { Fluent, Entry, Step, Terminal } from "../hint/fluent_builder_generator"
 
 /**
  * HintTarget: 制約適用の対象となるシンボルの境界情報
