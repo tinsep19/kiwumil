@@ -75,11 +75,12 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   build(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
+    const { symbols, relationships } = context
 
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
-    const diagramRegistration = context.symbols.register("__builtin__", "diagram", (id, r) => {
+    const diagramRegistration = symbols.register("__builtin__", "diagram", (id, r) => {
       const bounds = r.createLayoutBounds("bounds")
       const container = r.createContainerBounds("container")
       const title = r.createItemBounds("title")
@@ -124,8 +125,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
-    const el = namespaceBuilder.buildElementNamespace(context.symbols, this.currentTheme, icon)
-    const rel = namespaceBuilder.buildRelationshipNamespace(context.relationships, this.currentTheme, icon)
+    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
+    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
 
     const hint = new HintFactory({
       context,
@@ -135,8 +136,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // invoke callback: object-style only
     block({ el, rel, hint, icon })
 
-    const relationshipList = context.relationships.getAll()
-    const symbolRegistrations = context.symbols
+    const relationshipList = relationships.getAll()
+    const symbolRegistrations = symbols
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
     const symbolList = symbolRegistrations.map((reg) => reg.symbol)
@@ -156,7 +157,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       symbols: allSymbols,
       relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(context.symbols, context.relationships, this.currentTheme, iconsRegistry)
+        const renderer = new SvgRenderer(symbols, relationships, this.currentTheme, iconsRegistry)
 
         if (typeof target === "string") {
           renderer.saveToFile(target)
