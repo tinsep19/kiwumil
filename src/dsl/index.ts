@@ -12,3 +12,16 @@ export type {
 export { isRectMatrix } from "./matrix_utils"
 export type { Matrix, IsRectMatrix } from "./matrix_utils"
 export { toSymbolId } from "./symbol_helpers"
+export {
+  createArrangeHorizontalSpec,
+  createArrangeVerticalSpec,
+  createAlignLeftSpec,
+  createAlignRightSpec,
+  createAlignTopSpec,
+  createAlignBottomSpec,
+  createAlignCenterXSpec,
+  createAlignCenterYSpec,
+  createAlignWidthSpec,
+  createAlignHeightSpec,
+  createEncloseSpec,
+} from "./hint_builder_helpers"

@@ -1,33 +1,76 @@
 import type { Theme } from "../theme"
-import type { CassowarySolver, LayoutConstraint, Variable } from "../core"
+import type { CassowarySolver, LayoutConstraint, Variable, ConstraintSpec } from "../core"
 import type { HintTarget } from "../core"
 
-export interface HintVariableOptions {
-  /**
-   * Variable name suffix. If not provided, an auto-incremented counter is used.
-   * Full variable name will be: hint:{baseName}_{suffix}
-   */
-  name?: string
-  /**
-   * Base name for the variable (e.g., "anchor_x", "guide_y")
-   * Defaults to "var"
-   */
-  baseName?: string
+/**
+ * UserHintRegistration: registration result type for user-created hints
+ * Similar to SymbolRegistration but for layout hints
+ */
+export interface UserHintRegistration {
+  /** Unique identifier for this hint */
+  id: string
+  /** Constraint created for this hint */
+  constraint: LayoutConstraint
 }
 
-export interface HintVariable {
-  /** The created Variable */
-  variable: Variable
-  /** Full variable name with hint: prefix */
-  name: string
-  /** Constraint IDs associated with this hint variable (if any) */
-  constraintIds: string[]
+/**
+ * UserHintRegistrationBuilder:
+ * Helper builder for creating user hint registrations.
+ * Provides factory methods for creating variables and constraints specific to the hint.
+ */
+export class UserHintRegistrationBuilder {
+  private readonly id: string
+  private readonly hints: Hints
+  private _constraint?: LayoutConstraint
+
+  constructor(id: string, hints: Hints) {
+    this.id = id
+    this.hints = hints
+  }
+
+  /**
+   * Create a variable for this user hint.
+   * The variable name will be prefixed with the hint ID automatically.
+   * 
+   * @param variableId Variable identifier (will be prefixed with hint ID)
+   * @returns Variable created by the solver
+   */
+  createVariable(variableId: string): Variable {
+    const fullVariableId = `${this.id}#${variableId}`
+    return this.hints.createVariableForBuilder(fullVariableId)
+  }
+
+  /**
+   * Set the constraint for this user hint.
+   * 
+   * @param spec Constraint specification function
+   * @returns Created LayoutConstraint
+   */
+  setConstraint(spec: ConstraintSpec): LayoutConstraint {
+    const constraint = this.hints.createConstraintForBuilder(this.id, spec)
+    this._constraint = constraint
+    return constraint
+  }
+
+  /**
+   * Build and return the final UserHintRegistration.
+   * This is called by the Hints.register method after the factory function completes.
+   */
+  build(): UserHintRegistration {
+    if (!this._constraint) {
+      throw new Error("UserHintRegistrationBuilder: constraint not set")
+    }
+    return {
+      id: this.id,
+      constraint: this._constraint,
+    }
+  }
 }
 
 export class Hints {
   private readonly constraints: LayoutConstraint[] = []
-  private readonly hintVariables: HintVariable[] = []
-  private hintVarCounter = 0
+  private readonly registrations: UserHintRegistration[] = []
+  private readonly registrations_index: Record<string, UserHintRegistration> = {}
 
   constructor(
     private readonly solver: CassowarySolver,
@@ -35,36 +78,93 @@ export class Hints {
   ) {}
 
   /**
-   * Create a hint variable using the KiwiSolver API.
-   * The variable is held in Hints scope and not registered to Symbols.
-   * Variable names are automatically prefixed with "hint:".
-   *
-   * @param options Configuration for the hint variable
-   * @returns HintVariable containing the created variable and metadata
+   * Create a variable for use by UserHintRegistrationBuilder.
+   * This is an internal method used by the builder pattern.
+   * 
+   * @param variableId Full variable identifier
+   * @returns Created Variable
    */
-  createHintVariable(options?: HintVariableOptions): HintVariable {
-    const baseName = options?.baseName ?? "var"
-    const suffix = options?.name ?? `${this.hintVarCounter++}`
-    const fullName = `hint:${baseName}_${suffix}`
-
-    // Create the variable using KiwiSolver's public API
-    const variable = this.solver.createVariable(fullName)
-
-    const hintVariable: HintVariable = {
-      variable,
-      name: fullName,
-      constraintIds: [],
-    }
-
-    this.hintVariables.push(hintVariable)
-    return hintVariable
+  createVariableForBuilder(variableId: string): Variable {
+    return this.solver.createVariable(variableId)
   }
 
   /**
-   * Get all hint variables created by this Hints instance
+   * Create a constraint for use by UserHintRegistrationBuilder.
+   * This is an internal method used by the builder pattern.
+   * 
+   * @param constraintId Identifier for the constraint
+   * @param spec Constraint specification function
+   * @returns Created LayoutConstraint
    */
-  getHintVariables(): readonly HintVariable[] {
-    return [...this.hintVariables]
+  createConstraintForBuilder(constraintId: string, spec: ConstraintSpec): LayoutConstraint {
+    return this.solver.createConstraint(constraintId, spec)
+  }
+
+  /**
+   * Register a user-created hint with variables and constraints.
+   * Similar to Symbols.register, this provides a factory pattern for creating hints.
+   * 
+   * @param hintName Name for this hint (used to generate unique ID)
+   * @param factory Factory function that receives builder and creates the hint
+   * @returns UserHintRegistration containing the created hint information
+   * 
+   * @example
+   * ```typescript
+   * const registration = hints.register("custom-guide", (builder) => {
+   *   const xVar = builder.createVariable("guide_x");
+   *   builder.setConstraint((cb) => {
+   *     cb.ct([1, xVar]).eq([100, 1]).strong();
+   *   });
+   *   return builder.build();
+   * });
+   * ```
+   */
+  register(
+    hintName: string,
+    factory: (builder: UserHintRegistrationBuilder) => UserHintRegistration
+  ): UserHintRegistration {
+    const hintId = this.createHintId(hintName)
+    const builder = new UserHintRegistrationBuilder(hintId, this)
+    const registration = factory(builder)
+
+    // Validate that the returned registration matches expected ID
+    if (registration.id !== hintId) {
+      throw new Error(
+        `UserHint registration id mismatch: expected ${hintId}, got ${registration.id}`
+      )
+    }
+
+    this.registrations.push(registration)
+    this.registrations_index[hintId] = registration
+
+    // Add constraint to the main constraints list
+    this.constraints.push(registration.constraint)
+
+    return registration
+  }
+
+  /**
+   * Get all registered user hints.
+   * 
+   * @returns Read-only array of all UserHintRegistration objects
+   */
+  getAllRegistrations(): readonly UserHintRegistration[] {
+    return this.registrations
+  }
+
+  /**
+   * Find a registered user hint by ID.
+   * 
+   * @param id Hint ID to search for
+   * @returns UserHintRegistration if found, undefined otherwise
+   */
+  findRegistrationById(id: string): UserHintRegistration | undefined {
+    return this.registrations_index[id]
+  }
+
+  private createHintId(hintName: string): string {
+    const idIndex = this.registrations.length
+    return `hint:${hintName}/${idIndex}`
   }
 
   list(): LayoutConstraint[] {
