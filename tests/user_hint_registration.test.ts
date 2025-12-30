@@ -1,21 +1,19 @@
 import { describe, test, beforeEach, expect } from "bun:test"
-import { LayoutContext, Symbols } from "@/model"
+import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
 import { DefaultTheme } from "@/theme"
 import { RectangleSymbol } from "@/plugin/core"
 
 describe("UserHintRegistration", () => {
   let context: LayoutContext
-  let symbols: Symbols
 
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    symbols = new Symbols(context.variables)
   })
 
   function createRectangle(id: string) {
-    return symbols.register("test", "rectangle", (symbolId, r) => {
+    return context.symbols.register("test", "rectangle", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
       const rect = new RectangleSymbol({
         id: symbolId,

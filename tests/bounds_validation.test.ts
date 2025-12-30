@@ -3,18 +3,16 @@ import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
 import { getBoundsValues } from "@/core"
 import { ActorSymbol, UsecaseSymbol } from "@/plugin/uml"
-import { Symbols } from "@/dsl"
+// Removed unused Symbols import from "@/dsl"
 import { DefaultTheme } from "@/theme"
 
 describe("Bounds Validation", () => {
   describe("getBoundsValues", () => {
     let context: LayoutContext
-    let symbols: Symbols
 
     beforeEach(() => {
       const solver = new KiwiSolver()
       context = new LayoutContext(solver, DefaultTheme)
-      symbols = new Symbols(context.variables)
     })
 
     test("should return finite values for valid bounds", () => {
@@ -89,12 +87,10 @@ describe("Bounds Validation", () => {
 
   describe("ActorSymbol rendering guards", () => {
     let context: LayoutContext
-    let symbols: Symbols
 
     beforeEach(() => {
       const solver = new KiwiSolver()
       context = new LayoutContext(solver, DefaultTheme)
-      symbols = new Symbols(context.variables)
     })
 
     // TODO: Update these tests for the new Item-based ActorSymbol implementation
@@ -109,12 +105,10 @@ describe("Bounds Validation", () => {
 
   describe("UsecaseSymbol rendering guards", () => {
     let context: LayoutContext
-    let symbols: Symbols
 
     beforeEach(() => {
       const solver = new KiwiSolver()
       context = new LayoutContext(solver, DefaultTheme)
-      symbols = new Symbols(context.variables)
     })
 
     test("should clamp negative height to safe value in SVG output", () => {

@@ -2,7 +2,7 @@
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
-import { DiagramSymbol, Symbols, LayoutContext } from "../model"
+import { DiagramSymbol, LayoutContext } from "../model"
 import type { DiagramInfo } from "../model"
 import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
@@ -17,7 +17,6 @@ import type {
   PluginIcons,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import { Relationships } from "../model"
 import { IconRegistry } from "../icon"
 
 /**
@@ -76,13 +75,11 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   build(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
 
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
 
-    const diagramRegistration = symbols.register("__builtin__", "diagram", (id, r) => {
+    const diagramRegistration = context.symbols.register("__builtin__", "diagram", (id, r) => {
       const bounds = r.createLayoutBounds("bounds")
       const container = r.createContainerBounds("container")
       const title = r.createItemBounds("title")
@@ -127,20 +124,19 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
-    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
-    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
+    const el = namespaceBuilder.buildElementNamespace(context.symbols, this.currentTheme, icon)
+    const rel = namespaceBuilder.buildRelationshipNamespace(context.relationships, this.currentTheme, icon)
 
     const hint = new HintFactory({
       context,
-      symbols,
       diagramContainer: diagramRegistration.characs,
     })
 
     // invoke callback: object-style only
     block({ el, rel, hint, icon })
 
-    const relationshipList = relationships.getAll()
-    const symbolRegistrations = symbols
+    const relationshipList = context.relationships.getAll()
+    const symbolRegistrations = context.symbols
       .getAll()
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
     const symbolList = symbolRegistrations.map((reg) => reg.symbol)
@@ -160,7 +156,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       symbols: allSymbols,
       relationships: relationshipList,
       render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(symbols, relationships, this.currentTheme, iconsRegistry)
+        const renderer = new SvgRenderer(context.symbols, context.relationships, this.currentTheme, iconsRegistry)
 
         if (typeof target === "string") {
           renderer.saveToFile(target)

@@ -3,18 +3,24 @@ import type { Theme } from "../theme"
 import type { Variable, LayoutConstraint, ConstraintSpec, CassowarySolver } from "../core"
 import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
+import { Symbols } from "./symbols"
+import { Relationships } from "./relationships"
 
 export class LayoutContext {
   private readonly solver: CassowarySolver
   readonly variables: LayoutVariables
   readonly hints: Hints
   readonly theme: Theme
+  readonly symbols: Symbols
+  readonly relationships: Relationships
 
   constructor(solver: CassowarySolver, theme: Theme) {
     this.solver = solver
     this.theme = theme
     this.variables = new LayoutVariables(this.solver)
     this.hints = new Hints(this.solver, theme)
+    this.symbols = new Symbols(this.variables)
+    this.relationships = new Relationships()
   }
 
   solve() {

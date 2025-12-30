@@ -17,16 +17,14 @@ type ITestSymbolCharacs = ISymbolCharacs<{
 
 describe("Symbol Extensions with ISymbolCharacs", () => {
   let context: LayoutContext
-  let symbols: Symbols
 
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    symbols = new Symbols(context.variables)
   })
 
   test("should create symbol with extended fields", () => {
-    const registration = symbols.register("test-plugin", "extended-symbol", (symbolId, builder) => {
+    const registration = context.symbols.register("test-plugin", "extended-symbol", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const customVar = builder.createVariable("customVar")
 
@@ -65,7 +63,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
 
   test("should correctly handle multiple symbols with different extended fields", () => {
     // Symbol 1: with customField and customVariable
-    const reg1 = symbols.register("plugin1", "symbol1", (symbolId, builder) => {
+    const reg1 = context.symbols.register("plugin1", "symbol1", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const customVar = builder.createVariable("customVar")
 
@@ -91,7 +89,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
     })
 
     // Symbol 2: with different extended fields
-    const reg2 = symbols.register("plugin2", "symbol2", (symbolId, builder) => {
+    const reg2 = context.symbols.register("plugin2", "symbol2", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const extraVar = builder.createVariable("extraVar")
 
@@ -117,7 +115,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
     })
 
     // Verify both symbols are registered
-    expect(symbols.size).toBe(2)
+    expect(context.symbols.size).toBe(2)
 
     // Verify each symbol has its own extended fields
     const characs1 = reg1.characs as any
@@ -130,7 +128,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should preserve extended fields when retrieving symbols by id", () => {
-    const registration = symbols.register("test-plugin", "preserved-symbol", (symbolId, builder) => {
+    const registration = context.symbols.register("test-plugin", "preserved-symbol", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const testVar = builder.createVariable("testVar")
 
@@ -156,7 +154,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
     })
 
     // Retrieve by ID
-    const found = symbols.findById(registration.symbol.id)
+    const found = context.symbols.findById(registration.symbol.id)
     expect(found).toBeDefined()
 
     // Verify extended fields are preserved
@@ -167,7 +165,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should support symbols with container bounds as extended field", () => {
-    const registration = symbols.register("test-plugin", "container-symbol", (symbolId, builder) => {
+    const registration = context.symbols.register("test-plugin", "container-symbol", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const container = builder.createContainerBounds("container")
 
@@ -200,7 +198,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should support symbols with item bounds as extended field", () => {
-    const registration = symbols.register("test-plugin", "item-symbol", (symbolId, builder) => {
+    const registration = context.symbols.register("test-plugin", "item-symbol", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const item = builder.createItemBounds("item")
 
@@ -231,7 +229,7 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should support multiple variables as extended fields", () => {
-    const registration = symbols.register("test-plugin", "multi-var-symbol", (symbolId, builder) => {
+    const registration = context.symbols.register("test-plugin", "multi-var-symbol", (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       const var1 = builder.createVariable("var1")
       const var2 = builder.createVariable("var2")
