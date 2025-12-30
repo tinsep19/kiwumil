@@ -14,10 +14,10 @@ TypeDiagram("Hints API Example: Custom Anchors with Guides")
     const box2 = el.core.rectangle("Box 2")
     const box3 = el.core.rectangle("Box 3")
     
-    // Guide API を使って垂直・水平ガイドを作成
+    // Guide API を使ってガイドを作成
     // これらのガイドはアンカーとして機能し、シンボルの配置を制御する
-    const centerGuide = hint.guideX(300)  // X = 300 の垂直ガイド
-    const topGuide = hint.guideY(100)     // Y = 100 の水平ガイド
+    const centerGuide = hint.guideX(300)  // X = 300 の垂直ガイドライン（縦線）
+    const topGuide = hint.guideY(100)     // Y = 100 の水平ガイドライン（横線）
     
     // Box1 を上部のガイドに配置
     topGuide.alignTop(box1)
