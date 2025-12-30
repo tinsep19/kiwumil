@@ -10,11 +10,9 @@ describe("SvgRenderer with Symbols and Relationships", () => {
   test("should accept Symbols and Relationships instances", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
 
     // Create renderer with Symbols and Relationships instances
-    const renderer = new SvgRenderer(symbols, relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
     expect(renderer).toBeDefined()
   })
 
@@ -40,10 +38,8 @@ describe("SvgRenderer with Symbols and Relationships", () => {
   test("should handle empty Symbols and Relationships", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
 
-    const renderer = new SvgRenderer(symbols, relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
     const svg = renderer.render()
 
     // Should still produce valid SVG
@@ -55,12 +51,10 @@ describe("SvgRenderer with Symbols and Relationships", () => {
   test("should work with theme", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
 
     context.solve()
 
-    const renderer = new SvgRenderer(symbols, relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
     const svg = renderer.render()
 
     // Should include theme background color
@@ -70,11 +64,9 @@ describe("SvgRenderer with Symbols and Relationships", () => {
   test("should retrieve symbols using getAllSymbols()", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
 
     // Register a test symbol
-    symbols.register("test-plugin", "test-symbol", (id, builder) => {
+    context.symbols.register("test-plugin", "test-symbol", (id, builder) => {
       const bounds = builder.createLayoutBounds("bounds")
       const symbol = {
         id,
@@ -88,7 +80,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
     })
 
     // Create renderer and render
-    const renderer = new SvgRenderer(symbols, relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
     const svg = renderer.render()
 
     // Verify the symbol was rendered
@@ -98,11 +90,9 @@ describe("SvgRenderer with Symbols and Relationships", () => {
   test("should retrieve relationships using getAll()", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
 
     // Register test symbols
-    const symbol1 = symbols.register("test", "s1", (id, builder) => {
+    const symbol1 = context.symbols.register("test", "s1", (id, builder) => {
       const bounds = builder.createLayoutBounds("bounds")
       builder.setSymbol({ id, bounds, render: () => "" } as any)
       builder.setCharacs({ id, bounds })
@@ -110,7 +100,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
       return builder.build()
     })
 
-    const symbol2 = symbols.register("test", "s2", (id, builder) => {
+    const symbol2 = context.symbols.register("test", "s2", (id, builder) => {
       const bounds = builder.createLayoutBounds("bounds")
       builder.setSymbol({ id, bounds, render: () => "" } as any)
       builder.setCharacs({ id, bounds })
@@ -119,7 +109,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
     })
 
     // Register a test relationship
-    relationships.register("test", "rel1", (id) => {
+    context.relationships.register("test", "rel1", (id) => {
       return {
         id,
         from: symbol1.symbol.id,
@@ -132,7 +122,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
     context.solve()
 
     // Create renderer and render
-    const renderer = new SvgRenderer(symbols, relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
     const svg = renderer.render()
 
     // Verify the relationship was rendered

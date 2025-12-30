@@ -50,28 +50,30 @@ export class HintFactory {
   private guideCounter = 0
   private readonly diagramContainer: IContainerSymbolCharacs
   private readonly context: LayoutContext
-  private readonly symbols: Symbols
 
   /**
    * Creates a new HintFactory instance.
    * 
    * @param params - Configuration object
    * @param params.context - The layout context containing solver and theme
-   * @param params.symbols - The symbols registry for resolving symbol references
    * @param params.diagramContainer - The container characteristics of the root diagram container
    */
   constructor({
     context,
-    symbols,
     diagramContainer,
   }: {
     context: LayoutContext
-    symbols: Symbols
     diagramContainer: IContainerSymbolCharacs
   }) {
     this.context = context
-    this.symbols = symbols
     this.diagramContainer = diagramContainer
+  }
+
+  /**
+   * Gets the symbols registry from the context
+   */
+  private get symbols(): Symbols {
+    return this.context.symbols
   }
 
   // ============================================================================

@@ -8,17 +8,15 @@ import type { SymbolRegistration } from "@/model/symbols"
 
 describe("Symbols Index Map", () => {
   let context: LayoutContext
-  let symbols: Symbols
 
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    symbols = new Symbols(context.variables)
   })
 
   // Helper function to create a test symbol registration
   const createTestSymbol = (plugin: string, symbolName: string): SymbolRegistration => {
-    return symbols.register(plugin, symbolName, (symbolId, builder) => {
+    return context.symbols.register(plugin, symbolName, (symbolId, builder) => {
       const layout = builder.createLayoutBounds("layout")
       builder.setCharacs({
         id: symbolId,
@@ -41,13 +39,13 @@ describe("Symbols Index Map", () => {
     const registration = createTestSymbol("test-plugin", "test-symbol")
 
     // Test findById
-    const found = symbols.findById(registration.symbol.id)
+    const found = context.symbols.findById(registration.symbol.id)
     expect(found).toBeDefined()
     expect(found?.symbol.id).toBe(registration.symbol.id)
   })
 
   test("findById should return undefined for non-existent id", () => {
-    const found = symbols.findById("non-existent:id/0" as SymbolId)
+    const found = context.symbols.findById("non-existent:id/0" as SymbolId)
     expect(found).toBeUndefined()
   })
 
@@ -55,13 +53,13 @@ describe("Symbols Index Map", () => {
     const registration = createTestSymbol("test-plugin", "test-symbol")
 
     // Test findSymbolById
-    const found = symbols.findSymbolById(registration.symbol.id)
+    const found = context.symbols.findSymbolById(registration.symbol.id)
     expect(found).toBeDefined()
     expect(found?.id).toBe(registration.symbol.id)
   })
 
   test("findSymbolById should return undefined for non-existent id", () => {
-    const found = symbols.findSymbolById("non-existent:id/0" as SymbolId)
+    const found = context.symbols.findSymbolById("non-existent:id/0" as SymbolId)
     expect(found).toBeUndefined()
   })
 
@@ -72,12 +70,12 @@ describe("Symbols Index Map", () => {
     const reg3 = createTestSymbol("plugin3", "symbol3")
 
     // Test that all symbols can be found
-    expect(symbols.findById(reg1.symbol.id)?.symbol.id).toBe(reg1.symbol.id)
-    expect(symbols.findById(reg2.symbol.id)?.symbol.id).toBe(reg2.symbol.id)
-    expect(symbols.findById(reg3.symbol.id)?.symbol.id).toBe(reg3.symbol.id)
+    expect(context.symbols.findById(reg1.symbol.id)?.symbol.id).toBe(reg1.symbol.id)
+    expect(context.symbols.findById(reg2.symbol.id)?.symbol.id).toBe(reg2.symbol.id)
+    expect(context.symbols.findById(reg3.symbol.id)?.symbol.id).toBe(reg3.symbol.id)
 
     // Verify total count
-    expect(symbols.size).toBe(3)
+    expect(context.symbols.size).toBe(3)
   })
 
   test("index map should maintain consistency with registrations array", () => {
@@ -89,17 +87,17 @@ describe("Symbols Index Map", () => {
 
     // Verify all registrations can be found via index
     for (const reg of registrations) {
-      const found = symbols.findById(reg.symbol.id)
+      const found = context.symbols.findById(reg.symbol.id)
       expect(found).toBe(reg)
     }
 
     // Verify getAll returns all registrations
-    const allRegs = symbols.getAll()
+    const allRegs = context.symbols.getAll()
     expect(allRegs.length).toBe(registrations.length)
 
     // Verify each registration in getAll can be found via findById
     for (const reg of allRegs) {
-      const found = symbols.findById(reg.symbol.id)
+      const found = context.symbols.findById(reg.symbol.id)
       expect(found).toBe(reg)
     }
   })

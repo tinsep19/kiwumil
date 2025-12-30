@@ -1,20 +1,18 @@
 import { describe, beforeEach, test, expect } from "bun:test"
 import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
-import { HintFactory, Symbols } from "@/dsl"
+import { HintFactory } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 import { ActorSymbol, SystemBoundarySymbol } from "@/plugin/uml"
 
 describe("LayoutConstraints metadata", () => {
   let context: LayoutContext
   let hint: HintFactory
-  let symbols: Symbols
   const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    symbols = new Symbols(context.variables)
     
     // Create diagram container characs
     const diagramCharacs = {
@@ -23,11 +21,11 @@ describe("LayoutConstraints metadata", () => {
       container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
     }
     
-    hint = new HintFactory({ context, symbols, diagramContainer: diagramCharacs })
+    hint = new HintFactory({ context, diagramContainer: diagramCharacs })
   })
 
   function createActor(id: string) {
-    return symbols.register("test", "actor", (symbolId, r) => {
+    return context.symbols.register("test", "actor", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
       const iconItem = r.createItemBounds("icon")
       const labelItem = r.createItemBounds("label")
@@ -61,7 +59,7 @@ describe("LayoutConstraints metadata", () => {
   }
 
   function createBoundary(id: string) {
-    return symbols.register("test", "systemBoundary", (symbolId, r) => {
+    return context.symbols.register("test", "systemBoundary", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
       const container = r.createContainerBounds("container")
       const boundary = new SystemBoundarySymbol({

@@ -1,5 +1,5 @@
 import { describe, test, beforeEach, expect } from "bun:test"
-import { LayoutContext, Symbols } from "@/model"
+import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
 import { DefaultTheme } from "@/theme"
 import { HintFactory } from "@/dsl"
@@ -7,14 +7,12 @@ import { RectangleSymbol } from "@/plugin/core"
 
 describe("HintFactory with Hints integration", () => {
   let context: LayoutContext
-  let symbols: Symbols
   let hint: HintFactory
   const diagramContainerId = "__diagram__"
 
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    symbols = new Symbols(context.variables)
     
     // Create diagram container characs
     const diagramCharacs = {
@@ -23,11 +21,11 @@ describe("HintFactory with Hints integration", () => {
       container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
     }
     
-    hint = new HintFactory({ context, symbols, diagramContainer: diagramCharacs })
+    hint = new HintFactory({ context, diagramContainer: diagramCharacs })
   })
 
   function createRectangle(id: string) {
-    return symbols.register("test", "rectangle", (symbolId, r) => {
+    return context.symbols.register("test", "rectangle", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
       const rect = new RectangleSymbol({
         id: symbolId,

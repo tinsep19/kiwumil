@@ -2,7 +2,7 @@
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
-import { DiagramSymbol, Symbols, LayoutContext } from "../model"
+import { DiagramSymbol, LayoutContext } from "../model"
 import type { DiagramInfo } from "../model"
 import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
@@ -17,7 +17,6 @@ import type {
   PluginIcons,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import { Relationships } from "../model"
 import { IconRegistry } from "../icon"
 
 /**
@@ -76,8 +75,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   build(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
-    const symbols = new Symbols(context.variables)
-    const relationships = new Relationships()
+    const { symbols, relationships } = context
 
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
@@ -132,7 +130,6 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
 
     const hint = new HintFactory({
       context,
-      symbols,
       diagramContainer: diagramRegistration.characs,
     })
 

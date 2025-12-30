@@ -3,11 +3,10 @@ import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
 import { getBoundsValues } from "@/core"
 import { ActorSymbol } from "@/plugin/uml"
-import { HintFactory, Symbols } from "@/dsl"
+import { HintFactory } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 
 describe("GuideBuilder (refactored common implementation)", () => {
-  let symbols: Symbols
   let context: LayoutContext
   let hint: HintFactory
   const diagramContainerId = "__diagram__"
@@ -15,7 +14,6 @@ describe("GuideBuilder (refactored common implementation)", () => {
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    symbols = new Symbols(context.variables)
     
     // Create diagram container characs
     const diagramCharacs = {
@@ -24,11 +22,11 @@ describe("GuideBuilder (refactored common implementation)", () => {
       container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
     }
     
-    hint = new HintFactory({ context, symbols, diagramContainer: diagramCharacs })
+    hint = new HintFactory({ context, diagramContainer: diagramCharacs })
   })
 
   function createActor(id: string) {
-    return symbols.register("test", "actor", (symbolId, r) => {
+    return context.symbols.register("test", "actor", (symbolId, r) => {
       const bound = r.createLayoutBounds("layout")
       const iconItem = r.createItemBounds("icon")
       const labelItem = r.createItemBounds("label")
