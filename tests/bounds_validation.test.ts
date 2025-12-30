@@ -3,7 +3,6 @@ import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
 import { getBoundsValues } from "@/core"
 import { ActorSymbol, UsecaseSymbol } from "@/plugin/uml"
-// Removed unused Symbols import from "@/dsl"
 import { DefaultTheme } from "@/theme"
 
 describe("Bounds Validation", () => {
