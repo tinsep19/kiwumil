@@ -55,12 +55,10 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
     variableName: string,
     initialValue?: number
   ) {
-    // Create hint variable through Hints API
-    const hintVar = this.context.hints.createHintVariable({
-      baseName: axis === "x" ? "guide_x" : "guide_y",
-      name: variableName,
-    })
-    this.guideVar = hintVar.variable
+    // Create guide variable directly through LayoutVariables
+    const baseName = axis === "x" ? "guide_x" : "guide_y"
+    const fullName = `hint:${baseName}_${variableName}`
+    this.guideVar = this.context.variables.createVariable(fullName)
 
     // axis に応じて x または y プロパティを設定
     if (axis === "x") {

@@ -11,7 +11,5 @@ export { LayoutVariables } from "./layout_variables"
 export {
   Hints,
   UserHintRegistrationBuilder,
-  type HintVariable,
-  type HintVariableOptions,
   type UserHintRegistration,
 } from "./hints"

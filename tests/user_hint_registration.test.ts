@@ -115,17 +115,6 @@ describe("UserHintRegistration", () => {
     expect(context.valueOf(rect2.bounds.x)).toBeCloseTo(200, 1)
   })
 
-  test("should maintain backward compatibility with createHintVariable", () => {
-    // Old way still works
-    const hintVar = context.hints.createHintVariable({ baseName: "legacy", name: "var" })
-    
-    expect(hintVar.name).toBe("hint:legacy_var")
-    expect(hintVar.variable).toBeDefined()
-    
-    const allVars = context.hints.getHintVariables()
-    expect(allVars.some(v => v.name === "hint:legacy_var")).toBe(true)
-  })
-
   test("should throw error on ID mismatch", () => {
     expect(() => {
       context.hints.register("test-hint", (builder) => {
