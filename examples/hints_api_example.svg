@@ -14,7 +14,7 @@
             font-size="18"
             font-family="Arial"
             fill="black">
-        <tspan x="230" dy="0">Hints API Example: Custom Anchors</tspan>
+        <tspan x="230" dy="0">Hints API Example: Custom Anchors with Guides</tspan>
       </text>
     
         

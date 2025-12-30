@@ -1,80 +1,52 @@
 /**
- * Hints.createHintVariable() Example
+ * Hints API Example
  * 
- * Hints.createHintVariable() を使った高度なレイアウトの例
- * カスタムアンカー変数を作成して、複雑な制約を構築する
+ * Guide API を使った高度なレイアウトの例
+ * カスタムアンカー（ガイド）を作成して、複雑な制約を構築する
  */
 
 import { TypeDiagram } from "../src/index"
 
-// Example: カスタムアンカーを使った中央寄せレイアウト
-TypeDiagram("Hints API Example: Custom Anchors")
+// Example: ガイドを使った中央寄せレイアウト
+TypeDiagram("Hints API Example: Custom Anchors with Guides")
   .build(({ el, rel, hint }) => {
     const box1 = el.core.rectangle("Box 1")
     const box2 = el.core.rectangle("Box 2")
     const box3 = el.core.rectangle("Box 3")
     
-    // Hints API を使ってカスタムアンカー変数を作成
-    // これらの変数は Symbols に登録されず、Hints が管理する
-    const centerX = hint.getLayoutContext().hints.createHintVariable({
-      baseName: "anchor",
-      name: "centerX"
-    })
+    // Guide API を使ってガイドを作成
+    // これらのガイドはアンカーとして機能し、シンボルの配置を制御する
+    const centerGuide = hint.guideX(300)  // X = 300 の垂直ガイドライン（縦線）
+    const topGuide = hint.guideY(100)     // Y = 100 の水平ガイドライン（横線）
     
-    const topY = hint.getLayoutContext().hints.createHintVariable({
-      baseName: "anchor", 
-      name: "topY"
-    })
+    // Box1 を上部のガイドに配置
+    topGuide.alignTop(box1)
     
-    // アンカーの位置を固定
-    hint.getLayoutContext().createConstraint("anchor/centerX/value", (builder) => {
-      builder.ct([1, centerX.variable]).eq([300, 1]).required()
-    })
-    
-    hint.getLayoutContext().createConstraint("anchor/topY/value", (builder) => {
-      builder.ct([1, topY.variable]).eq([100, 1]).required()
-    })
-    
-    // Box1 を中央アンカーに左揃え、上アンカーに配置
-    hint.getLayoutContext().createConstraint("box1/align", (builder) => {
-      builder.ct([1, box1.bounds.x]).eq([1, centerX.variable]).strong()
-      builder.ct([1, box1.bounds.y]).eq([1, topY.variable]).strong()
-    })
+    // すべてのボックスを中央ガイドに左揃え
+    centerGuide.alignLeft(box1, box2, box3)
     
     // Box2 を Box1 の下に配置
     hint.arrangeVertical(box1, box2)
-    hint.getLayoutContext().createConstraint("box2/x", (builder) => {
-      // Box2 も中央アンカーに左揃え
-      builder.ct([1, box2.bounds.x]).eq([1, centerX.variable]).strong()
-    })
     
     // Box3 を Box2 の下に配置
     hint.arrangeVertical(box2, box3)
-    hint.getLayoutContext().createConstraint("box3/x", (builder) => {
-      // Box3 も中央アンカーに左揃え
-      builder.ct([1, box3.bounds.x]).eq([1, centerX.variable]).strong()
-    })
-    
-    // 作成されたヒント変数を確認（開発時のデバッグ用）
-    const hintVars = hint.getLayoutContext().hints.getHintVariables()
-    console.log("Created hint variables:", hintVars.map(v => v.name))
   })
   .render(import.meta)
 
 /**
- * この例では、Hints.createHintVariable() を使って以下を実現している：
+ * この例では、Guide API を使って以下を実現している：
  * 
- * 1. カスタムアンカー変数（centerX, topY）を作成
- * 2. アンカーの位置を固定
- * 3. 複数のシンボルをアンカーに制約で結び付ける
- * 4. Symbols に登録しないため、通常のシンボルレイアウトとは独立している
+ * 1. カスタムガイド（centerGuide, topGuide）を作成
+ * 2. ガイドの位置を固定（X=300, Y=100）
+ * 3. 複数のシンボルをガイドに整列
+ * 4. シンボル間の垂直配置を設定
  * 
  * 利点：
- * - Guide よりも柔軟な制約を記述できる
- * - 複雑なレイアウトロジックを変数として抽象化できる
- * - デバッグ時に getHintVariables() で追跡可能
+ * - ガイドを使うことで、複数のシンボルを一貫して配置できる
+ * - コードが直感的で理解しやすい
+ * - Guide API は制約を自動的に管理する
  * 
  * 注意：
  * - 通常のレイアウトには hint.guideX/Y() や hint.arrange*() を推奨
- * - createHintVariable() は高度なユースケース向け
+ * - より複雑な制約が必要な場合は、直接 LayoutContext にアクセスすることも可能
  */
