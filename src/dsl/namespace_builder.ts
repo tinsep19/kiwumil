@@ -8,6 +8,7 @@ import type {
 } from "./namespace_types"
 import type { Symbols, Relationships } from "../model"
 import type { Theme } from "../theme"
+import type { IconRegistry } from "../icon"
 
 /**
  * Namespace Builder
@@ -87,5 +88,29 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
     }
 
     return namespace as BuildRelationshipNamespace<TPlugins>
+  }
+
+  /**
+   * Icon Namespace を構築
+   *
+   * @param registry - IconRegistry インスタンス
+   * @returns プラグイン名をキーとした Icon ファクトリのオブジェクト
+   *
+   * @example
+   * ```typescript
+   * const icon = builder.buildIconNamespace(iconRegistry)
+   * const iconMeta = icon.uml.actor()
+   * ```
+   */
+  buildIconNamespace(registry: IconRegistry): BuildIconNamespace<TPlugins> {
+    const namespace: Record<string, PluginIcons> = {}
+
+    for (const plugin of this.plugins) {
+      if (typeof plugin.createIconFactory === "function") {
+        namespace[plugin.name] = plugin.createIconFactory(registry)
+      }
+    }
+
+    return namespace as BuildIconNamespace<TPlugins>
   }
 }

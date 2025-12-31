@@ -13,7 +13,6 @@ import type { Theme } from "../theme"
 import type {
   BuildElementNamespace,
   BuildRelationshipNamespace,
-  BuildIconNamespace,
   PluginIcons,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
@@ -112,17 +111,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // Create IconRegistry first - it will be shared across all icon operations
     const iconsRegistry = new IconRegistry()
 
-    // Create icon factories from plugins
-    const icon_factories: Record<string, PluginIcons> = {}
-    for (const plugin of this.plugins) {
-      if (typeof plugin.createIconFactory === "function") {
-        const iconFactory = plugin.createIconFactory(iconsRegistry)
-        icon_factories[plugin.name] = iconFactory
-      }
-    }
-
-    // create separate icon namespace: icon.<plugin>.<name>() -> IconMeta
-    const icon: BuildIconNamespace<TPlugins> = icon_factories as BuildIconNamespace<TPlugins>
+    // Build icon namespace using NamespaceBuilder
+    const icon = namespaceBuilder.buildIconNamespace(iconsRegistry)
 
     // build element namespace (symbols) then relationship namespace, passing icons to factories
     const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
