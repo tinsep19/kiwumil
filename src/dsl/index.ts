@@ -1,7 +1,7 @@
 export { TypeDiagram } from "./diagram_builder"
 export { HintFactory } from "./hint_factory"
 export { NamespaceBuilder } from "./namespace_builder"
-export { Symbols } from "../model"
+export { SymbolRegistry } from "../model"
 export type { DiagramPlugin } from "./diagram_plugin"
 export type {
   BuildElementNamespace,

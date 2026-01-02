@@ -6,7 +6,7 @@ import type {
   BuildIconNamespace,
   PluginIcons,
 } from "./namespace_types"
-import type { Symbols, Relationships } from "../model"
+import type { SymbolRegistry, RelationshipRegistry } from "../model"
 import type { Theme } from "../theme"
 import type { IconRegistry } from "../icon"
 
@@ -35,7 +35,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * ```
    */
   buildElementNamespace(
-    symbols: Symbols,
+    symbols: SymbolRegistry,
     theme: Theme,
     icons: BuildIconNamespace<TPlugins>
   ): BuildElementNamespace<TPlugins> {
@@ -69,7 +69,7 @@ export class NamespaceBuilder<TPlugins extends readonly DiagramPlugin[]> {
    * ```
    */
   buildRelationshipNamespace(
-    relationships: Relationships,
+    relationships: RelationshipRegistry,
     theme: Theme,
     icons: BuildIconNamespace<TPlugins>
   ): BuildRelationshipNamespace<TPlugins> {

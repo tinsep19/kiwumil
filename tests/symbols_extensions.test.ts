@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "bun:test"
 import { LayoutContext } from "@/model"
 import { KiwiSolver } from "@/kiwi"
-import { Symbols } from "@/dsl"
+import { SymbolRegistry } from "@/dsl"
 import { DefaultTheme } from "@/theme"
 import type { ISymbolCharacs, Variable } from "@/core"
 import type { SymbolRegistration } from "@/model/symbols"

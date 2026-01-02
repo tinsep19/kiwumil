@@ -6,7 +6,7 @@ import type { RelationshipId } from "./types"
  *
  * Relationship の収集と ID 生成を一元化する。
  */
-export class Relationships {
+export class RelationshipRegistry {
   private readonly relationships: RelationshipBase[] = []
 
   /**

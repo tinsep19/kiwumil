@@ -1,8 +1,8 @@
 // src/plugin/uml/plugin.ts
 import { ActorSymbol, SystemBoundarySymbol, UsecaseSymbol } from "./symbols"
 import { Association, Extend, Generalize, Include } from "./relationships"
-import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
-import type { RelationshipId, Relationships } from "../../model"
+import type { DiagramPlugin, PluginIcons, SymbolRegistry } from "../../dsl"
+import type { RelationshipId, RelationshipRegistry } from "../../model"
 import type { Theme } from "../../theme"
 import type { IContainerSymbolCharacs, ISymbolCharacs } from "../../core"
 import { toSymbolId } from "../../dsl"
@@ -23,7 +23,7 @@ export const UMLPlugin = {
     }
   },
 
-  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons) {
+  createSymbolFactory(symbols: SymbolRegistry, theme: Theme, icons: PluginIcons) {
     const plugin = this.name
 
     return {
@@ -126,7 +126,7 @@ export const UMLPlugin = {
     }
   },
 
-  createRelationshipFactory(relationships: Relationships, theme: Theme, _icons: PluginIcons) {
+  createRelationshipFactory(relationships: RelationshipRegistry, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {

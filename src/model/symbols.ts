@@ -121,7 +121,7 @@ export class SymbolRegistrationBuilder {
  * - プラグインは register のコールバック内で SymbolRegistrationBuilder を使って
  *   シンボルを構築して返す
  */
-export class Symbols {
+export class SymbolRegistry {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly registrations: SymbolRegistration<any>[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

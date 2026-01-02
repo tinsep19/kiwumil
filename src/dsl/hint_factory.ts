@@ -1,5 +1,5 @@
 // src/dsl/hint_factory.ts
-import { SymbolBase, Symbols, LayoutContext, type ContainerSymbol } from "../model"
+import { SymbolBase, SymbolRegistry, LayoutContext, type ContainerSymbol } from "../model"
 import type { HintTarget, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
 import {
   FluentGridBuilder,
@@ -72,7 +72,7 @@ export class HintFactory {
   /**
    * Gets the symbols registry from the context
    */
-  private get symbols(): Symbols {
+  private get symbols(): SymbolRegistry {
     return this.context.symbols
   }
 

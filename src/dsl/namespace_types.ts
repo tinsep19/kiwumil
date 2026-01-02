@@ -1,6 +1,6 @@
 // src/dsl/namespace_types.ts
 import type { DiagramPlugin } from "./diagram_plugin"
-import type { Symbols, Relationships } from "../model"
+import type { SymbolRegistry, RelationshipRegistry } from "../model"
 import type { Theme } from "../theme"
 import type { RelationshipId } from "../model"
 import type { IconMeta } from "../icon"
@@ -13,7 +13,7 @@ type SymbolEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Extract<
   TPlugins[number],
   {
     createSymbolFactory: (
-      symbols: Symbols,
+      symbols: SymbolRegistry,
       theme: Theme,
       icons: Record<string, () => IconMeta>
     ) => Record<string, (...args: any[]) => ISymbolCharacs<any>>
@@ -24,7 +24,7 @@ type RelationshipEnabledPlugins<TPlugins extends readonly DiagramPlugin[]> = Ext
   TPlugins[number],
   {
     createRelationshipFactory: (
-      relationships: Relationships,
+      relationships: RelationshipRegistry,
       theme: Theme,
       icons: Record<string, () => IconMeta>
     ) => Record<string, (...args: any[]) => RelationshipId>
