@@ -84,7 +84,7 @@ UMLPlugin は `actor`, `usecase`, `systemBoundary` などのファクトリと `
 
 ## ID 命名規則
 
-ID は `${namespace}:${name}/${index}` 形式です（例: `uml:actor/0`）。`Symbols` / `Relationships` が自動生成します。
+ID は `${namespace}:${name}/${index}` 形式です（例: `uml:actor/0`）。`SymbolRegistry` / `RelationshipRegistry` が自動生成します。
 
 ## ベストプラクティス
 

@@ -128,15 +128,15 @@ The Namespace-based DSL is constructed by composing namespaces provided by plugi
 
 - Each plugin has a unique `name` and is referenced as `el.{name}` / `rel.{name}`.
 - Both `createSymbolFactory` and `createRelationshipFactory` are optional; only the needed one can be implemented.
-- Both factories receive `Symbols` / `Relationships` instances, `Theme`, and `PluginIcons`.
-- Symbol / Relationship registration uses the `Symbols.register()` / `Relationships.register()` methods.
+- Both factories receive `SymbolRegistry` / `RelationshipRegistry` instances, `Theme`, and `PluginIcons`.
+- Symbol / Relationship registration uses the `SymbolRegistry.register()` / `RelationshipRegistry.register()` methods.
 - LayoutBounds are generated using `r.createLayoutBounds()`, `r.createContainerBounds()`, or `r.createItemBounds()` within the callback of `symbols.register()`.
 
 ### Reference Materials
 
 - Complete type definition of the DiagramPlugin interface
 - Implementation examples such as UMLPlugin
-- Centralized management pattern using Symbols / Relationships classes
+- Centralized management pattern using SymbolRegistry / RelationshipRegistry classes
 
 ➡ All of these are explained in detail in the [Plugin System documentation](./plugin-system.md). _namespace-dsl.md_ focuses on how el/rel namespaces are assembled as a result of adding plugins.
 
@@ -275,14 +275,14 @@ Inside `TypeDiagram` and `DiagramBuilder`, the following processes occur:
    - Set custom theme
 
 4. **Build (`.build(callback)`)**
-   - Create `Symbols` and `Relationships` instances
+   - Create `SymbolRegistry` and `RelationshipRegistry` instances
    - Generate layout-specific `LayoutContext`
    - Generate ID for DiagramSymbol (special Symbol representing the entire diagram)
    - Use `NamespaceBuilder` to construct `icon` namespace (calling each plugin's `createIconFactory`)
    - Use `NamespaceBuilder` to construct `el` and `rel`, passing `symbols`/`relationships` instances, `layout`, and `icons` to each plugin's `createSymbolFactory/RelationshipFactory`
-   - Plugin-specific factories register elements via `Symbols` / `Relationships`
+   - Plugin-specific factories register elements via `SymbolRegistry` / `RelationshipRegistry`
    - Execute user-provided callback function
-   - Calls like `el.uml.actor()` or `icon.uml.iconName()` add Symbol/Relationship to Symbols/Relationships
+   - Calls like `el.uml.actor()` or `icon.uml.iconName()` add Symbol/Relationship to SymbolRegistry/RelationshipRegistry
    - Actually create DiagramSymbol and add it to the beginning of the array
    - Return renderable object
 
@@ -300,9 +300,9 @@ Inside `TypeDiagram` and `DiagramBuilder`, the following processes occur:
 Namespace DSL is extended by registering any `DiagramPlugin` in addition to the default shapes from CorePlugin. For how to create plugins themselves (class structure, ID design, TypeScript patterns, etc.), detailed procedures are available in the [Plugin System documentation](./plugin-system.md), so here we only summarize the key points of the mechanism.
 
 - `TypeDiagram().use(MyPlugin)` adds namespaces as `el.myplugin` / `rel.myplugin` / `icon.myplugin`
-- Each plugin registers Symbol/Relationship via `Symbols` / `Relationships`
+- Each plugin registers Symbol/Relationship via `SymbolRegistry` / `RelationshipRegistry`
 - Defining icon factories through `createIconFactory` makes them available as `icon.myplugin.iconName()`
-- IDs are automatically generated within `Symbols.register()` / `Relationships.register()`
+- IDs are automatically generated within `SymbolRegistry.register()` / `RelationshipRegistry.register()`
 - Layout variables (`LayoutBound`) are generated with `layout.variables.createBound()` and injected into constructors
 - Plugin-specific hints and size adjustments can also be applied through the same LayoutContext
 

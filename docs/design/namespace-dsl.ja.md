@@ -128,15 +128,15 @@ Namespace ベース DSL は `DiagramPlugin` を実装したプラグインが提
 
 - 各プラグインは一意の `name` を持ち、`el.{name}` / `rel.{name}` の形で参照されます。
 - `createSymbolFactory` / `createRelationshipFactory` はどちらもオプショナルで、必要な方だけ実装できます。
-- 両ファクトリは `Symbols` / `Relationships` インスタンスと `Theme`、`PluginIcons` を受け取ります。
-- Symbol / Relationship の登録は `Symbols.register()` / `Relationships.register()` メソッドを使用します。
+- 両ファクトリは `SymbolRegistry` / `RelationshipRegistry` インスタンスと `Theme`、`PluginIcons` を受け取ります。
+- Symbol / Relationship の登録は `SymbolRegistry.register()` / `RelationshipRegistry.register()` メソッドを使用します。
 - LayoutBounds は `symbols.register()` のコールバック内で `r.createLayoutBounds()`、`r.createContainerBounds()`、または `r.createItemBounds()` を使用して生成します。
 
 ### 参考資料
 
 - DiagramPlugin インターフェースの完全な型定義
 - UMLPlugin などの実装例
-- Symbols / Relationships クラスによる集中管理パターン
+- SymbolRegistry / RelationshipRegistry クラスによる集中管理パターン
 
 ➡ これらはすべて [Plugin System ドキュメント](./plugin-system.md) で詳しく説明しています。_namespace-dsl.md_ では、プラグインを追加した結果として el/rel 名前空間がどのように組み立てられるかに焦点を当てます。
 
@@ -275,14 +275,14 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
    - カスタムテーマを設定
 
 4. **ビルド (`.build(callback)`)**
-   - `Symbols` と `Relationships` インスタンスを作成
+   - `SymbolRegistry` と `RelationshipRegistry` インスタンスを作成
    - レイアウト専用の `LayoutContext` を生成
    - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成
    - `NamespaceBuilder` を使って `icon` 名前空間を構築（各プラグインの `createIconFactory` を呼び出し）
    - `NamespaceBuilder` を使って `el` と `rel` を構築し、各プラグインの `createSymbolFactory/RelationshipFactory` に `symbols`/`relationships` インスタンスと `layout`、および `icons` を渡す
-   - プラグインごとのファクトリが `Symbols` / `Relationships` を経由して要素を登録
+   - プラグインごとのファクトリが `SymbolRegistry` / `RelationshipRegistry` を経由して要素を登録
    - ユーザーが提供したコールバック関数を実行
-   - `el.uml.actor()` や `icon.uml.iconName()` などが呼ばれ、Symbol/Relationship が Symbols/Relationships に追加される
+   - `el.uml.actor()` や `icon.uml.iconName()` などが呼ばれ、Symbol/Relationship が SymbolRegistry/RelationshipRegistry に追加される
    - DiagramSymbol を実際に作成し、配列の先頭に追加
    - レンダリング可能なオブジェクトを返す
 
@@ -300,9 +300,9 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
 Namespace DSL は、CorePlugin によるデフォルト図形に加えて任意の `DiagramPlugin` を登録することで拡張されます。プラグインそのものの作り方（クラス構成、ID 設計、TypeScript パターンなど）は [Plugin System ドキュメント](./plugin-system.md) に詳しい手順がありますので、ここでは仕組みの要点だけをまとめます。
 
 - `TypeDiagram().use(MyPlugin)` で名前空間が `el.myplugin` / `rel.myplugin` / `icon.myplugin` として追加される
-- 各プラグインは `Symbols` / `Relationships` を介して Symbol/Relationship を登録する
+- 各プラグインは `SymbolRegistry` / `RelationshipRegistry` を介して Symbol/Relationship を登録する
 - `createIconFactory` を通じてアイコンファクトリを定義すると `icon.myplugin.iconName()` として利用可能になる
-- ID は `Symbols.register()` / `Relationships.register()` 内で自動生成される
+- ID は `SymbolRegistry.register()` / `RelationshipRegistry.register()` 内で自動生成される
 - レイアウト変数 (`LayoutBound`) は `layout.variables.createBound()` で生成され、コンストラクタで注入される
 - プラグイン固有のヒントやサイズ調整も同じ LayoutContext を通じて適用できる
 
