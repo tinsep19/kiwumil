@@ -1,7 +1,7 @@
 import { expectType } from 'tsd'
 import { TypeDiagram } from '../src/dsl'
 import type { DiagramPlugin } from '../src/dsl/diagram_plugin'
-import type { Symbols } from '../src/model'
+import type { SymbolRegistry } from '../src/model'
 import type { Theme } from '../src/theme'
 import type { ISymbolCharacs } from '../src/core/symbol'
 import type { LayoutBounds } from '../src/core/bounds'
@@ -21,7 +21,7 @@ type TestSymbolCharacs = ISymbolCharacs<{
 // Step 2: Create CustomPlugin with node() method that returns TestSymbolCharacs
 const CustomPlugin = {
   name: 'custom',
-  createSymbolFactory(symbols: Symbols, theme: Theme, icons: PluginIcons) {
+  createSymbolFactory(symbols: SymbolRegistry, theme: Theme, icons: PluginIcons) {
     return {
       node(label: string): TestSymbolCharacs {
         const registration = symbols.register('custom', 'node', (symbolId, builder) => {

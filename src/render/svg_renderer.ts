@@ -1,7 +1,7 @@
 // src/render/svg_renderer.ts
 import type { ISymbol, SymbolId } from "../core"
 import type { Theme } from "../theme"
-import { DiagramSymbol, Symbols, Relationships } from "../model"
+import { DiagramSymbol, SymbolRegistry, RelationshipRegistry } from "../model"
 import { getBoundsValues } from "../core"
 import { IconRegistry } from "../icon"
 
@@ -22,14 +22,14 @@ function getSymbolLabel(symbol: ISymbol): string {
 }
 
 export class SvgRenderer {
-  private symbols: Symbols
-  private relationships: Relationships
+  private symbols: SymbolRegistry
+  private relationships: RelationshipRegistry
   private theme?: Theme
   private iconRegistry?: IconRegistry
 
   constructor(
-    symbols: Symbols,
-    relationships: Relationships,
+    symbols: SymbolRegistry,
+    relationships: RelationshipRegistry,
     theme?: Theme,
     iconRegistry?: IconRegistry
   ) {

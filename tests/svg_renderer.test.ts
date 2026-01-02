@@ -1,6 +1,6 @@
 import { describe, test, expect } from "bun:test"
 import { SvgRenderer } from "../src/render/svg_renderer"
-import { Symbols, Relationships, LayoutContext } from "../src/model"
+import { SymbolRegistry, RelationshipRegistry, LayoutContext } from "../src/model"
 import { KiwiSolver } from "../src/kiwi"
 import { DefaultTheme } from "../src/theme"
 import { TypeDiagram } from "../src/dsl"

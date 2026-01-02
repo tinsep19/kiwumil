@@ -8,7 +8,7 @@ import {
   type TextInfo,
   type ICircleSymbolCharacs,
 } from "./symbols"
-import type { DiagramPlugin, PluginIcons, Symbols } from "../../dsl"
+import type { DiagramPlugin, PluginIcons, SymbolRegistry } from "../../dsl"
 import type { Theme } from "../../theme"
 
 /**
@@ -19,7 +19,7 @@ import type { Theme } from "../../theme"
 export const CorePlugin = {
   name: "core",
 
-  createSymbolFactory(symbols: Symbols, theme: Theme, _icons: PluginIcons) {
+  createSymbolFactory(symbols: SymbolRegistry, theme: Theme, _icons: PluginIcons) {
     const plugin = this.name
 
     return {

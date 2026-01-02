@@ -84,7 +84,7 @@ Concrete plugin example: UMLPlugin provides `actor`, `usecase`, `systemBoundary`
 
 ## ID naming
 
-IDs follow `${namespace}:${name}/${index}` (e.g. `uml:actor/0`). `Symbols` / `Relationships` generate these automatically when registering.
+IDs follow `${namespace}:${name}/${index}` (e.g. `uml:actor/0`). `SymbolRegistry` / `RelationshipRegistry` generate these automatically when registering.
 
 ## Best practices
 
