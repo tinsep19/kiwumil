@@ -7,8 +7,6 @@ import type { ISymbolCharacs } from '../src/core/symbol'
 import type { LayoutBounds } from '../src/core/bounds'
 import type { Variable } from '../src/core/layout_variable'
 import type { PluginIcons } from '../src/dsl/namespace_types'
-import type { SymbolId } from '../src/core/types'
-import type { SymbolRegistrationBuilder } from '../src/model/symbols'
 
 // このテストはDSL内でエディタなどがユーザーに適切にサジェストするためのテストです
 // 拡張したCharacsのプロパティをユーザーに適切に示すために型レベルでアクセスを保証します
@@ -26,7 +24,7 @@ const CustomPlugin = {
   createSymbolFactory(symbols: SymbolRegistry, theme: Theme, icons: PluginIcons) {
     return {
       node(label: string): TestSymbolCharacs {
-        const registration = symbols.register('custom', 'node', (symbolId: SymbolId, builder: SymbolRegistrationBuilder) => {
+        const registration = symbols.register('custom', 'node', (symbolId, builder) => {
           const bounds = builder.createLayoutBounds('bounds')
           const item = builder.createLayoutBounds('item')
           const v = builder.createVariable('v')
@@ -42,10 +40,10 @@ const CustomPlugin = {
             id: symbolId,
             bounds,
             render: () => `<text>${label}</text>`,
-            getConnectionPoint: (src: any) => src,
+            getConnectionPoint: (src) => src,
           })
 
-          builder.setConstraint((cb: any) => {
+          builder.setConstraint((cb) => {
             cb.ct([1, bounds.width]).eq([100, 1]).strong()
             cb.ct([1, bounds.height]).eq([50, 1]).strong()
           })
