@@ -1,18 +1,27 @@
 // src/plugin/uml/symbols/system_boundary_symbol.ts
 import { getStyleForSymbol } from "../../../theme"
-import type { Point } from "../../../core"
+import type { Point, ISymbol, SymbolId, LayoutBounds } from "../../../core"
 import { getBoundsValues } from "../../../core"
 import { ConstraintHelper } from "../../../hint"
 import type { ContainerBounds, LinearConstraintBuilder } from "../../../core"
 import type { Theme, ContainerPadding } from "../../../theme"
-import { SymbolBase, type SymbolBaseOptions, type ContainerSymbol } from "../../../model"
 
-export interface SystemBoundarySymbolOptions extends SymbolBaseOptions {
+export interface ContainerSymbol extends ISymbol {
+  readonly container: ContainerBounds
+}
+
+export interface SystemBoundarySymbolOptions {
+  id: SymbolId
+  bounds: LayoutBounds
+  theme: Theme
   label: string
   container: ContainerBounds
 }
 
-export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol {
+export class SystemBoundarySymbol implements ContainerSymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
   readonly container: ContainerBounds
 
@@ -21,7 +30,9 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
   private constraintsApplied = false
 
   constructor(options: SystemBoundarySymbolOptions) {
-    super(options)
+    this.id = options.id
+    this.bounds = options.bounds
+    this.theme = options.theme
     this.container = options.container
     this.label = options.label
   }
@@ -135,5 +146,12 @@ export class SystemBoundarySymbol extends SymbolBase implements ContainerSymbol 
         </text>
       </g>
     `
+  }
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
   }
 }

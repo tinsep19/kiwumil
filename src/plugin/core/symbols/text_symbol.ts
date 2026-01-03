@@ -1,9 +1,9 @@
 // src/plugin/core/symbols/text_symbol.ts
-import type { LinearConstraintBuilder } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
+import type { LinearConstraintBuilder, ISymbol, SymbolId, LayoutBounds } from "../../../core"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+import type { Theme } from "../../../theme"
 
 const DEFAULT_PADDING_X = 12
 const DEFAULT_PADDING_Y = 8
@@ -21,7 +21,10 @@ export interface TextInfo {
   lineHeightFactor?: number
 }
 
-export interface TextSymbolOptions extends SymbolBaseOptions {
+export interface TextSymbolOptions {
+  id: SymbolId
+  bounds: LayoutBounds
+  theme: Theme
   info: string | TextInfo
 }
 
@@ -41,13 +44,18 @@ function fallbackStyle() {
   }
 }
 
-export class TextSymbol extends SymbolBase {
+export class TextSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   private overrides: TextOverrides
 
   readonly label: string
 
   constructor(options: TextSymbolOptions) {
-    super(options)
+    this.id = options.id
+    this.bounds = options.bounds
+    this.theme = options.theme
 
     if (typeof options.info === "string") {
       this.label = options.info
@@ -164,5 +172,12 @@ export class TextSymbol extends SymbolBase {
         </text>
       </g>
     `
+  }
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
   }
 }

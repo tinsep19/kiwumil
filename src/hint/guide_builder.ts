@@ -1,5 +1,5 @@
 // src/hint/guide_builder.ts
-import type { SymbolBase, LayoutContext } from "../model"
+import type { LayoutContext, ISymbol } from "../model"
 import type { Term, HintTarget, Variable, ISymbolCharacs } from "../core"
 
 type LayoutTarget = ISymbolCharacs
@@ -49,7 +49,7 @@ export class GuideBuilderImpl implements GuideBuilderX, GuideBuilderY {
 
   constructor(
     private readonly context: LayoutContext,
-    private readonly resolveSymbol: (id: LayoutTarget) => SymbolBase | undefined,
+    private readonly resolveSymbol: (id: LayoutTarget) => ISymbol | undefined,
     private readonly resolveTarget: (id: LayoutTarget) => HintTarget | undefined,
     private readonly axis: Axis,
     variableName: string,

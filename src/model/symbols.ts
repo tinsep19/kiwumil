@@ -1,7 +1,6 @@
 import type { ConstraintSpec } from "../core"
 import type { LayoutVariables } from "./layout_variables"
 import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint, LayoutBounds } from "../core"
-import type { SymbolBase } from "./symbol_base"
 
 /**
  * SymbolRegistration: register の戻り値型
@@ -173,11 +172,10 @@ export class SymbolRegistry {
   }
 
   /**
-   * 登録済み Symbol (SymbolBase) を列挙する読み取り専用配列
-   * 後方互換性のため、SymbolBase として返す
+   * 登録済み Symbol (ISymbol) を列挙する読み取り専用配列
    */
-  getAllSymbols(): readonly SymbolBase[] {
-    return this.registrations.map((reg) => reg.symbol as SymbolBase)
+  getAllSymbols(): readonly ISymbol[] {
+    return this.registrations.map((reg) => reg.symbol)
   }
 
   /**
@@ -189,12 +187,11 @@ export class SymbolRegistry {
   }
 
   /**
-   * 指定した ID に一致する Symbol (SymbolBase) を返す（存在しなければ undefined）
-   * 後方互換性のため、SymbolBase として返す
+   * 指定した ID に一致する Symbol (ISymbol) を返す（存在しなければ undefined）
    */
-  findSymbolById(id: SymbolId): SymbolBase | undefined {
+  findSymbolById(id: SymbolId): ISymbol | undefined {
     const registration = this.registrations_index[id]
-    return registration?.symbol as SymbolBase | undefined
+    return registration?.symbol
   }
 
   /**

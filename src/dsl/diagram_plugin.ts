@@ -25,7 +25,7 @@ export interface DiagramPlugin {
    * Symbol 用の DSL ファクトリを生成
    *
    * @param symbols - 生成した Symbol を登録するインスタンス
-   * @returns Symbol 作成関数のオブジェクト（各関数は `SymbolBase` を返す）
+   * @returns Symbol 作成関数のオブジェクト（各関数は `ISymbol` を返す）
    */
   createSymbolFactory?(symbols: SymbolRegistry, theme: Theme, icons: PluginIcons): SymbolFactoryMap
 

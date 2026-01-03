@@ -1,19 +1,27 @@
 // src/plugin/core/symbols/rectangle_symbol.ts
-import type { LinearConstraintBuilder } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
+import type { LinearConstraintBuilder, ISymbol, SymbolId, LayoutBounds } from "../../../core"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+import type { Theme } from "../../../theme"
 
-export interface RectangleSymbolOptions extends SymbolBaseOptions {
+export interface RectangleSymbolOptions {
+  id: SymbolId
+  bounds: LayoutBounds
+  theme: Theme
   label: string
 }
 
-export class RectangleSymbol extends SymbolBase {
+export class RectangleSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
 
   constructor(options: RectangleSymbolOptions) {
-    super(options)
+    this.id = options.id
+    this.bounds = options.bounds
+    this.theme = options.theme
     this.label = options.label
   }
 
@@ -93,5 +101,12 @@ export class RectangleSymbol extends SymbolBase {
     const defaultSize = this.getDefaultSize()
     builder.ct([1, this.bounds.width]).ge([defaultSize.width, 1]).weak()
     builder.ct([1, this.bounds.height]).ge([defaultSize.height, 1]).weak()
+  }
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
   }
 }

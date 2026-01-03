@@ -1,9 +1,9 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import type { LinearConstraintBuilder, Variable, ISymbolCharacs } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model/symbol_base"
+import type { LinearConstraintBuilder, Variable, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds } from "../../../core"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+import type { Theme } from "../../../theme"
 
 /**
  * ICircleSymbolCharacs: 円形シンボルの特性
@@ -11,17 +11,25 @@ import { getBoundsValues } from "../../../core"
  */
 export type ICircleSymbolCharacs = ISymbolCharacs<{ r: Variable }>
 
-export interface CircleSymbolOptions extends SymbolBaseOptions {
+export interface CircleSymbolOptions {
+  id: SymbolId
+  bounds: LayoutBounds
+  theme: Theme
   label: string
   r: Variable
 }
 
-export class CircleSymbol extends SymbolBase {
+export class CircleSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
   readonly r: Variable
 
   constructor(options: CircleSymbolOptions) {
-    super(options)
+    this.id = options.id
+    this.bounds = options.bounds
+    this.theme = options.theme
     this.label = options.label
     this.r = options.r
   }
@@ -99,5 +107,12 @@ export class CircleSymbol extends SymbolBase {
     const { width, height } = this.bounds
     builder.ct([2, this.r]).le([1, width])
     builder.ct([2, this.r]).le([1, height])
+  }
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
   }
 }
