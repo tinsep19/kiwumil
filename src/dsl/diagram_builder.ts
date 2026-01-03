@@ -13,7 +13,7 @@ import type { Theme } from "../theme"
 import type {
   BuildElementNamespace,
   BuildRelationshipNamespace,
-  PluginIcons,
+  BuildIconNamespace,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { IconRegistry } from "../icon"
@@ -28,7 +28,7 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (args: {
   el: BuildElementNamespace<TPlugins>
   rel: BuildRelationshipNamespace<TPlugins>
   hint: HintFactory
-  icon: Record<string, PluginIcons>
+  icon: BuildIconNamespace<TPlugins>
 }) => void
 
 /**
