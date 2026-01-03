@@ -14,7 +14,6 @@ import type {
   BuildElementNamespace,
   BuildRelationshipNamespace,
   BuildIconNamespace,
-  PluginIcons,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
 import { IconRegistry } from "../icon"
