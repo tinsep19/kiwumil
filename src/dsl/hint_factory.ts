@@ -1,6 +1,7 @@
 // src/dsl/hint_factory.ts
-import { SymbolBase, SymbolRegistry, LayoutContext, type ContainerSymbol } from "../model"
-import type { HintTarget, ISymbolCharacs, IContainerSymbolCharacs } from "../core"
+import { SymbolRegistry, LayoutContext } from "../model"
+import type { ContainerSymbol } from "../plugin/uml"
+import type { HintTarget, ISymbolCharacs, IContainerSymbolCharacs, ISymbol } from "../core"
 import {
   FluentGridBuilder,
   FluentArrangeBuilder,
@@ -517,7 +518,7 @@ export class HintFactory {
    * This method is primarily used by builder classes and should not be
    * called directly by end users in most cases.
    */
-  getSymbols(): readonly SymbolBase[] {
+  getSymbols(): readonly ISymbol[] {
     return this.symbols.getAllSymbols()
   }
 
@@ -591,7 +592,7 @@ export class HintFactory {
    * @param symbol - Symbol to check
    * @returns True if the symbol is a container symbol
    */
-  private isContainerSymbol(symbol: SymbolBase): symbol is ContainerSymbol {
+  private isContainerSymbol(symbol: ISymbol): symbol is ContainerSymbol {
     return typeof (symbol as ContainerSymbol).container === "object"
   }
 
@@ -604,7 +605,7 @@ export class HintFactory {
    * @param id - Symbol ID or symbol object
    * @returns Symbol if found, undefined otherwise
    */
-  private findSymbolById(id: LayoutTarget): SymbolBase | undefined {
+  private findSymbolById(id: LayoutTarget): ISymbol | undefined {
     return this.symbols.findSymbolById(toSymbolId(id))
   }
 }

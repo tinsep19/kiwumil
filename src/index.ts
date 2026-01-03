@@ -8,7 +8,7 @@ export type { TextInfo } from "./plugin"
 
 // 型定義
 export type { DiagramPlugin } from "./dsl"
-export type { DiagramInfo, SymbolBase, LayoutContext } from "./model"
+export type { DiagramInfo, ISymbol, LayoutContext } from "./model"
 export type { SymbolId, RelationshipId } from "./model"
 
 // Layout 型定義

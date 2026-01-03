@@ -1,19 +1,27 @@
 // src/plugin/core/symbols/rounded_rectangle_symbol.ts
-import type { LinearConstraintBuilder } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
+import type { LinearConstraintBuilder, ISymbol, SymbolId, LayoutBounds } from "../../../core"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+import type { Theme } from "../../../theme"
 
-export interface RoundedRectangleSymbolOptions extends SymbolBaseOptions {
+export interface RoundedRectangleSymbolOptions {
+  id: SymbolId
+  bounds: LayoutBounds
+  theme: Theme
   label: string
 }
 
-export class RoundedRectangleSymbol extends SymbolBase {
+export class RoundedRectangleSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
 
   constructor(options: RoundedRectangleSymbolOptions) {
-    super(options)
+    this.id = options.id
+    this.bounds = options.bounds
+    this.theme = options.theme
     this.label = options.label
   }
 
@@ -93,5 +101,12 @@ export class RoundedRectangleSymbol extends SymbolBase {
 
   ensureLayoutBounds(_builder: LinearConstraintBuilder): void {
     // no constraints needed
+  }
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
   }
 }

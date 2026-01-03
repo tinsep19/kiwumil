@@ -1,12 +1,19 @@
-import { SymbolBase } from "@/model"
+import { ISymbol } from "@/model"
 import { KiwiSolver, ConstraintsBuilder, LayoutBounds } from "@/kiwi"
 import { LayoutVariables } from "@/model"
-import type { Point } from "@/core/symbols"
+import type { Point, SymbolId, LayoutBounds as CoreLayoutBounds } from "@/core"
 import { DefaultTheme } from "@/theme"
+import type { Theme } from "@/theme"
 
-class DummySymbol extends SymbolBase {
-  constructor(id: string, bounds: LayoutBounds) {
-    super({ id, bounds, theme: DefaultTheme })
+class DummySymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: CoreLayoutBounds
+  protected readonly theme: Theme
+
+  constructor(id: SymbolId, bounds: CoreLayoutBounds) {
+    this.id = id
+    this.bounds = bounds
+    this.theme = DefaultTheme
   }
 
   getDefaultSize() {
@@ -24,11 +31,21 @@ class DummySymbol extends SymbolBase {
   ensureLayoutBounds(_builder: ConstraintsBuilder): void {
     // no custom constraints
   }
+
+  render(): string {
+    return this.toSVG()
+  }
 }
 
-class DummySymbolWithConstraints extends SymbolBase {
-  constructor(id: string, bounds: LayoutBounds) {
-    super({ id, bounds, theme: DefaultTheme })
+class DummySymbolWithConstraints implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: CoreLayoutBounds
+  protected readonly theme: Theme
+
+  constructor(id: SymbolId, bounds: CoreLayoutBounds) {
+    this.id = id
+    this.bounds = bounds
+    this.theme = DefaultTheme
   }
 
   getDefaultSize() {
@@ -48,9 +65,13 @@ class DummySymbolWithConstraints extends SymbolBase {
     builder.ct([1, bounds.width]).ge([20, 1]).weak()
     builder.ct([1, bounds.height]).ge([20, 1]).weak()
   }
+
+  render(): string {
+    return this.toSVG()
+  }
 }
 
-describe("SymbolBase layout bounds", () => {
+describe("Symbol layout bounds", () => {
   test("initializes layout bounds when provided via constructor", () => {
     const solver = new KiwiSolver()
     const vars = new LayoutVariables(solver)

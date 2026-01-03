@@ -1,19 +1,27 @@
 // src/plugin/core/symbols/ellipse_symbol.ts
-import type { LinearConstraintBuilder } from "../../../core"
-import { SymbolBase, type SymbolBaseOptions } from "../../../model"
+import type { LinearConstraintBuilder, ISymbol, SymbolId, LayoutBounds } from "../../../core"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
+import type { Theme } from "../../../theme"
 
-export interface EllipseSymbolOptions extends SymbolBaseOptions {
+export interface EllipseSymbolOptions {
+  id: SymbolId
+  bounds: LayoutBounds
+  theme: Theme
   label: string
 }
 
-export class EllipseSymbol extends SymbolBase {
+export class EllipseSymbol implements ISymbol {
+  readonly id: SymbolId
+  readonly bounds: LayoutBounds
+  protected readonly theme: Theme
   readonly label: string
 
   constructor(options: EllipseSymbolOptions) {
-    super(options)
+    this.id = options.id
+    this.bounds = options.bounds
+    this.theme = options.theme
     this.label = options.label
   }
 
@@ -84,5 +92,12 @@ export class EllipseSymbol extends SymbolBase {
 
   ensureLayoutBounds(_builder: LinearConstraintBuilder): void {
     // no specific constraints
+  }
+
+  /**
+   * ISymbol interface implementation - delegates to toSVG()
+   */
+  render(): string {
+    return this.toSVG()
   }
 }
