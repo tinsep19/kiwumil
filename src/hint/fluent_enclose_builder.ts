@@ -17,9 +17,6 @@ import type { LayoutContext } from "../model"
  * 
  * // With overlay elements
  * hint.enclose(child1, child2).over(overlay1).in(container);
- * 
- * // Using diagram container (shortcut)
- * hint.enclose(child1, child2).layout();
  * ```
  */
 export class FluentEncloseBuilder {
@@ -28,8 +25,7 @@ export class FluentEncloseBuilder {
   constructor(
     private readonly context: LayoutContext,
     private readonly resolveTargets: (targets: ISymbolCharacs[]) => HintTarget[],
-    private readonly childIds: ISymbolCharacs[],
-    private readonly diagramContainer: IContainerSymbolCharacs
+    private readonly childIds: ISymbolCharacs[]
   ) {}
 
   /**
@@ -66,21 +62,6 @@ export class FluentEncloseBuilder {
    */
   in(container: IContainerSymbolCharacs): void {
     this.applyEnclose(container)
-  }
-
-  /**
-   * Applies the enclosure using the diagram's root container.
-   * 
-   * This is a shortcut for `.in(diagramContainer)` and is useful
-   * when you want to enclose elements at the diagram level.
-   * 
-   * @example
-   * ```typescript
-   * hint.enclose(child1, child2).layout();
-   * ```
-   */
-  layout(): void {
-    this.applyEnclose(this.diagramContainer)
   }
 
   /**
