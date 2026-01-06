@@ -71,7 +71,7 @@ export const MyPlugin: DiagramPlugin = {
         const symbol = symbols.register('myplugin', 'mySymbol', (symbolId, r) => {
           // create bounds, instance, characs, constraints
           const iconMeta = icons.myicon() // get icon
-          return r.build()
+          return r.layout()
         })
         return symbol.id
       }
@@ -96,7 +96,7 @@ IDs follow `${namespace}:${name}/${index}` (e.g. `uml:actor/0`). `SymbolRegistry
 
 ## Testing
 
-- Unit test plugin factories by constructing `TypeDiagram().use(MyPlugin).build(...)` and assert returned ids and behavior.
+- Unit test plugin factories by constructing `TypeDiagram().use(MyPlugin).layout(...)` and assert returned ids and behavior.
 - Use `tsd` tests to verify DSL type inference and namespace typing.
 
 ---

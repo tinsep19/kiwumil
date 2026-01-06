@@ -11,7 +11,7 @@ import { UMLPlugin } from "../src/plugin/uml/plugin"
 // Example 2: Grid layout with container
 TypeDiagram("Fluent Grid: With Container")
   .use(CorePlugin, UMLPlugin)
-  .build(({ el, hint }) => {
+  .layout(({ el, hint }) => {
     const container = el.uml.systemBoundary("System")
     
     const box1 = el.core.rectangle("Service A", { width: 100, height: 60 })

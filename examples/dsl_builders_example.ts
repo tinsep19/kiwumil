@@ -25,7 +25,7 @@ import type {
  */
 function exampleArrangeBuilder() {
   TypeDiagram("Arrange Builder Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint }) => {
       const a = el.core.rectangle("A")
       const b = el.core.rectangle("B")
       const c = el.core.rectangle("C")
@@ -53,7 +53,7 @@ function exampleArrangeBuilder() {
  */
 function exampleFlowBuilder() {
   TypeDiagram("Flow Builder Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint }) => {
       const items = [
         el.core.circle("1"),
         el.core.circle("2"),
@@ -86,7 +86,7 @@ function exampleFlowBuilder() {
  */
 function exampleAlignBuilder() {
   TypeDiagram("Align Builder Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint }) => {
       const a = el.core.rectangle("A")
       const b = el.core.rectangle("B")
       const c = el.core.rectangle("C")
@@ -114,7 +114,7 @@ function exampleAlignBuilder() {
  */
 function exampleCombinedBuilders() {
   TypeDiagram("Combined Builders Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint }) => {
       const header = el.core.rectangle("Header")
       const sidebar = el.core.rectangle("Sidebar")
       const content = el.core.rectangle("Content")

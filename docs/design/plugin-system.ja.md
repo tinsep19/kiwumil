@@ -71,7 +71,7 @@ export const MyPlugin: DiagramPlugin = {
         const symbol = symbols.register('myplugin', 'mySymbol', (symbolId, r) => {
           // bounds, instance, characs, constraints を設定
           const iconMeta = icons.myicon() // アイコンを取得
-          return r.build()
+          return r.layout()
         })
         return symbol.id
       }
@@ -96,7 +96,7 @@ ID は `${namespace}:${name}/${index}` 形式です（例: `uml:actor/0`）。`S
 
 ## テスト
 
-- `TypeDiagram().use(MyPlugin).build(...)` を使ったユニットテストで動作確認。
+- `TypeDiagram().use(MyPlugin).layout(...)` を使ったユニットテストで動作確認。
 - `tsd` による型テストで DSL の型推論を検証。
 
 ---

@@ -7,7 +7,7 @@ describe("Namespace-based DSL", () => {
   test("UML Plugin - Basic usage", () => {
     const diagram = TypeDiagram("UML Test")
       .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         // Type check: el.uml should exist
         expect(el.uml).toBeDefined()
 
@@ -37,7 +37,7 @@ describe("Namespace-based DSL", () => {
   test("Core Plugin - Basic usage", () => {
     const diagram = TypeDiagram("Core Test")
       .use(CorePlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         // Type check: el.core should exist
         expect(el.core).toBeDefined()
 
@@ -64,7 +64,7 @@ describe("Namespace-based DSL", () => {
   test("Multiple Plugins", () => {
     const diagram = TypeDiagram("Multi Plugin Test")
       .use(UMLPlugin, CorePlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         // Both namespaces should exist
         expect(el.uml).toBeDefined()
         expect(el.core).toBeDefined()
@@ -84,7 +84,7 @@ describe("Namespace-based DSL", () => {
   test("ID uniqueness", () => {
     const diagram = TypeDiagram("ID Test")
       .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         const ids = [
           el.uml.actor("User1"),
           el.uml.actor("User2"),
@@ -104,7 +104,7 @@ describe("Namespace-based DSL", () => {
   test("Relationship ID uniqueness", () => {
     const diagram = TypeDiagram("Relationship ID Test")
       .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         const user = el.uml.actor("User")
         const uc1 = el.uml.usecase("UC1")
         const uc2 = el.uml.usecase("UC2")

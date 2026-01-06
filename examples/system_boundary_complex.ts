@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("System Boundary with Multiple Elements")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const admin = el.uml.actor("Admin")
     const login = el.uml.usecase("Login")

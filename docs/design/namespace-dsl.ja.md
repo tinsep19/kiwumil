@@ -55,7 +55,7 @@ import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
 TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     // UML Plugin の名前空間を使用
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
@@ -76,7 +76,7 @@ import { TypeDiagram } from 'kiwumil'
 
 // CorePlugin はデフォルトで適用されています
 TypeDiagram("Simple Diagram")
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
     
@@ -94,7 +94,7 @@ import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
 TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     // CorePlugin の名前空間（デフォルトで利用可能）
     const circle = el.core.circle("Circle")
     
@@ -255,7 +255,7 @@ type RelationshipNamespace = {
 TypeDiagram(titleOrInfo: string | DiagramInfo)
   .use(...plugins: DiagramPlugin[])     // プラグインの追加
   .theme(theme: Theme)                   // テーマの設定（オプション）
-  .build(({ el, rel, hint, icon }) => { ... })    // 図の定義
+  .layout(({ el, rel, hint, icon }) => { ... })    // 図の定義
   .render(outputPath: string)            // SVG ファイルの出力
 ```
 
@@ -274,7 +274,7 @@ TypeDiagram(titleOrInfo: string | DiagramInfo)
 3. **テーマ設定 (`.theme()`)** - オプション
    - カスタムテーマを設定
 
-4. **ビルド (`.build(callback)`)**
+4. **ビルド (`.layout(callback)`)**
    - `SymbolRegistry` と `RelationshipRegistry` インスタンスを作成
    - レイアウト専用の `LayoutContext` を生成
    - DiagramSymbol（図全体を表す特別な Symbol）の ID を生成

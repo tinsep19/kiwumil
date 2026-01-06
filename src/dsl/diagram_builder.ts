@@ -2,7 +2,7 @@
 import { NamespaceBuilder } from "./namespace_builder"
 import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
-import { DiagramSymbol, LayoutContext } from "../model"
+import { DiagramSymbol, LayoutContext, type DiagramSymbolCharacs } from "../model"
 import type { DiagramInfo } from "../model"
 import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
@@ -21,7 +21,7 @@ import { IconRegistry } from "../icon"
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
  *
- * オブジェクトスタイルで `el` (element), `rel` (relationship), `hint`, `icon` の4つのパラメータを受け取り、
+ * オブジェクトスタイルで `el` (element), `rel` (relationship), `hint`, `icon`, `diagram` の5つのパラメータを受け取り、
  * 型安全に図の要素を定義できる。
  */
 type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (args: {
@@ -29,6 +29,7 @@ type IntelliSenseBlock<TPlugins extends readonly DiagramPlugin[]> = (args: {
   rel: BuildRelationshipNamespace<TPlugins>
   hint: HintFactory
   icon: BuildIconNamespace<TPlugins>
+  diagram: DiagramSymbolCharacs
 }) => void
 
 /**
@@ -66,12 +67,12 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   }
 
   /**
-   * ダイアグラムを構築
+   * ダイアグラムのレイアウトを構築
    *
    * @param block - IntelliSense が有効な DSL ブロック
    * @returns レンダリング可能な図オブジェクト
    */
-  build(block: IntelliSenseBlock<TPlugins>) {
+  layout(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
     const { symbols, relationships } = context
@@ -124,7 +125,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     })
 
     // invoke callback: object-style only
-    block({ el, rel, hint, icon })
+    block({ el, rel, hint, icon, diagram: diagramRegistration.characs })
 
     const relationshipList = relationships.getAll()
     const symbolRegistrations = symbols
@@ -132,13 +133,6 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       .filter((reg) => reg.symbol.id !== diagramSymbol.id)
     const symbolList = symbolRegistrations.map((reg) => reg.symbol)
     const allSymbols: ISymbol[] = [diagramSymbol, ...symbolList]
-
-    if (symbolRegistrations.length > 0) {
-      hint.enclose(
-        diagramRegistration.characs,
-        symbolRegistrations.map((reg) => reg.characs)
-      )
-    }
 
     // レイアウト計算
     context.solve()
@@ -180,7 +174,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *
  * TypeDiagram("My Diagram")
  *   .use(UMLPlugin)
- *   .build(({ el, rel, hint }) => {
+ *   .layout(({ el, rel, hint }) => {
  *     // CorePlugin の図形（デフォルトで利用可能）
  *     const circle = el.core.circle("Circle")
  *
@@ -201,7 +195,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  *   author: "Architecture Team"
  * })
  *   .use(UMLPlugin)
- *   .build(({ el, rel, hint }) => {
+ *   .layout(({ el, rel, hint }) => {
  *     // ...
  *   })
  *   .render("output.svg")
@@ -212,7 +206,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
  * TypeDiagram("Mixed Diagram")
  *   .use(UMLPlugin)
  *   .theme(DarkTheme)
- *   .build(({ el, rel, hint }) => {
+ *   .layout(({ el, rel, hint }) => {
  *     el.uml.actor("User")
  *     el.core.circle("Circle")  // CorePlugin はデフォルトで利用可能
  *   })

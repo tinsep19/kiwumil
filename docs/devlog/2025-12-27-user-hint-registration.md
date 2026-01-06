@@ -103,13 +103,13 @@ const registration = context.hints.register("custom-guide", (builder) => {
     cb.ct([1, guideX]).eq([150, 1]).strong()
     cb.ct([1, rect1.bounds.x]).eq([1, guideX]).strong()
   })
-  return builder.build()
+  return builder.layout()
 })
 
 // ヘルパー関数を使用
 context.hints.register("layout", (builder) => {
   builder.setConstraint(createArrangeHorizontalSpec(targets, 20))
-  return builder.build()
+  return builder.layout()
 })
 
 // 複数の仕様を組み合わせ
@@ -118,7 +118,7 @@ context.hints.register("complex", (builder) => {
     createArrangeVerticalSpec(targets, 10)(cb)
     createAlignCenterXSpec(targets)(cb)
   })
-  return builder.build()
+  return builder.layout()
 })
 ```
 

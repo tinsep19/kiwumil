@@ -1,4 +1,4 @@
-export { DiagramSymbol, type DiagramSymbolOptions } from "./diagram_symbol"
+export { DiagramSymbol, type DiagramSymbolOptions, type DiagramSymbolCharacs } from "./diagram_symbol"
 export { RelationshipBase, type RelationshipBaseOptions } from "./relationship_base"
 export { SymbolRegistry } from "./symbols"
 export { RelationshipRegistry } from "./relationships"

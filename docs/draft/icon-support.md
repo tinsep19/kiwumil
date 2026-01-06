@@ -78,7 +78,7 @@ DSL を以下のように改修する
 ```typescript
 TypeDiagrame("tile")
   .use(MyPlugin)
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     // IconInfo provides { height, width, href } from loaded svg icon.
     const icon1: IconInfo = icon.myplugin.icon1()
     const iconSymbol = el.myplugin.icon({

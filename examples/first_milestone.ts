@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("First Milestone")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     // 1. シンボルを定義
     const user = el.uml.actor("User")
     const admin = el.uml.actor("Admin")

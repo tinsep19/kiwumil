@@ -80,7 +80,7 @@ const registration = context.hints.register("custom-guide", (builder) => {
     cb.ct([1, rect2.bounds.x]).eq([1, guideX]).strong()
   })
   
-  return builder.build()
+  return builder.layout()
 })
 
 // Access registration information
@@ -107,7 +107,7 @@ context.hints.register("layout", (builder) => {
   // Use a helper spec directly
   builder.setConstraint(createArrangeHorizontalSpec(targets, 20))
   
-  return builder.build()
+  return builder.layout()
 })
 ```
 
@@ -154,7 +154,7 @@ context.hints.register("complex-layout", (builder) => {
     createAlignCenterXSpec(targets)(cb)
   })
   
-  return builder.build()
+  return builder.layout()
 })
 ```
 
@@ -176,7 +176,7 @@ context.hints.register("guide-system", (builder) => {
     cb.ct([1, rect2.bounds.right]).eq([1, rightGuide]).strong()
   })
   
-  return builder.build()
+  return builder.layout()
 })
 ```
 

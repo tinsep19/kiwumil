@@ -5,7 +5,7 @@ import type { PluginIcons } from '../src/dsl/namespace_types'
 
 const builder = TypeDiagram('t')
 
-type BuilderCallback = Parameters<typeof builder['build']>[0]
+type BuilderCallback = Parameters<typeof builder['layout']>[0]
 
 // Define an expected parameter shape and ensure it's assignable to the builder callback type
 type ExpectedCallbackParam = {
@@ -42,4 +42,4 @@ const iconNamespaceCallback = ({ icon }: { icon: Record<string, PluginIcons> }) 
 // This assignment ensures that the builder's callback type accepts the object-form with icon namespace
 const builderCallback: BuilderCallback = iconNamespaceCallback as unknown as BuilderCallback
 
-builder.build(builderCallback)
+builder.layout(builderCallback)

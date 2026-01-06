@@ -11,7 +11,7 @@ describe("Fluent Grid API", () => {
 
     const result = TypeDiagram("Fluent Grid Test")
       .use(CorePlugin)
-      .build(({ el, hint }) => {
+      .layout(({ el, hint }) => {
         const symbol1 = el.core.rectangle("Symbol 1")
         const symbol2 = el.core.rectangle("Symbol 2")
         const symbol3 = el.core.rectangle("Symbol 3")
@@ -44,7 +44,7 @@ describe("Fluent Grid API", () => {
 
     const result = TypeDiagram("Fluent Grid with Container")
       .use(UMLPlugin)
-      .build(({ el, hint }) => {
+      .layout(({ el, hint }) => {
         const container = el.uml.systemBoundary("Container")
         const symbol1 = el.core.rectangle("A")
         const symbol2 = el.core.rectangle("B")
@@ -68,7 +68,7 @@ describe("Fluent Grid API", () => {
 
     TypeDiagram("Fluent Grid getArea")
       .use(CorePlugin)
-      .build(({ el, hint }) => {
+      .layout(({ el, hint }) => {
         const symbol1 = el.core.rectangle("1")
         const symbol2 = el.core.rectangle("2")
         const symbol3 = el.core.rectangle("3")
@@ -100,7 +100,7 @@ describe("Fluent Grid API", () => {
 
     TypeDiagram("Grid Invalid Bounds")
       .use(CorePlugin)
-      .build(({ el, hint }) => {
+      .layout(({ el, hint }) => {
         const s1 = el.core.rectangle("1")
         const s2 = el.core.rectangle("2")
 
@@ -124,7 +124,7 @@ describe("Fluent Grid API", () => {
     expect(() => {
       TypeDiagram("Non-Rect Grid")
         .use(CorePlugin)
-        .build(({ el, hint }) => {
+        .layout(({ el, hint }) => {
           const s1 = el.core.rectangle("1")
           const s2 = el.core.rectangle("2")
           const s3 = el.core.rectangle("3")
@@ -139,7 +139,7 @@ describe("Fluent Grid API", () => {
     expect(() => {
       TypeDiagram("Empty Grid")
         .use(CorePlugin)
-        .build(({ hint }) => {
+        .layout(({ hint }) => {
           hint.grid([]).layout()
         })
     }).toThrow(/non-empty/)

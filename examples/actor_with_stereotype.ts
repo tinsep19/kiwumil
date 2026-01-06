@@ -3,7 +3,7 @@ import { TypeDiagram, UMLPlugin, DefaultTheme } from "../src/index"
 TypeDiagram("Actor with Stereotype Example")
   .use(UMLPlugin)
   .theme(DefaultTheme)
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     // Create actors with and without stereotypes
 
     const actorIcon = icon.uml.actor()

@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("Nested System Boundaries")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     // Create boundaries and use cases
     const outerSystem = el.uml.systemBoundary("Outer System")
     const innerSystem = el.uml.systemBoundary("Inner System")

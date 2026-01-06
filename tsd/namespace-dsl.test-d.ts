@@ -60,7 +60,7 @@ const CustomPlugin = {
 // Step 3: Create DiagramBuilder with CustomPlugin
 const builder = TypeDiagram('Test Diagram').use(CustomPlugin)
 
-type BuilderCallback = Parameters<typeof builder['build']>[0]
+type BuilderCallback = Parameters<typeof builder['layout']>[0]
 
 // Step 4: Test within the build callback block - this is where users actually write code
 // DiagramBuilderのbuildメソッドに渡されるblockコールバック内でテストします
@@ -104,7 +104,7 @@ const testCallback: BuilderCallback = ({ el }) => {
 }
 
 // Execute the builder with the test callback
-builder.build(testCallback)
+builder.layout(testCallback)
 
 // === Additional Type Tests Outside Callback ===
 
