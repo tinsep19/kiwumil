@@ -43,7 +43,7 @@ export type Terminal<Args extends any[] = any[], Result = unknown> =
  * - init: 初期子（入口）。ここからチェーンが開始される
  * - required: AND必須（全て呼ぶ必要がある）
  * - requiredGroups: OR必須（各グループからどれか1つ必要）
- * - optional: 通常オプション（何回でも可）
+ * - optional: 通常オプション（一回のみ可）
  * - optionalGroup: ORオプション（各グループで最大1回）
  * - terminal: 終端子（複数可）。必須を満たした時だけ呼べる
  */
@@ -71,6 +71,8 @@ type ObjKeys<T> = T extends Record<string, Fn> ? Keys<T> : never;
 type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
 type RequiredGroupNames<T extends FluentSpec> = ObjKeys<NonNullable<T["requiredGroups"]>>;
 
+type OptionalConsumed<T extends FluentSpec> = ObjKeys<NonNullable<T["optional"]>>;
+
 // ---- Builder生成
 export type Fluent<T extends FluentSpec> = {
   [K in keyof T["init"] & string]: (
@@ -79,6 +81,7 @@ export type Fluent<T extends FluentSpec> = {
     T,
     RequiredKeys<T>,          // 未完了 required（AND）
     RequiredGroupNames<T>,    // 未完了 requiredGroups（OR）
+    never,                    // ロック済み optional 名集合
     never                     // ロック済み optionalGroup 名集合
   >;
 };
@@ -87,6 +90,7 @@ type Chain<
   T extends FluentSpec,
   REQ extends string,     // 未完了 required（AND）
   REQG extends string,    // 未完了 requiredGroups（OR）
+  OPT_CONSUMED extends string, // 使用済み optional 名集合
   OPTG_LOCKED extends string
 > =
   // ---- required（AND）----
@@ -95,7 +99,7 @@ type Chain<
         [K in keyof T["required"] & string]:
           K extends REQ
             ? (...a: Args<T["required"][K]>) =>
-                Chain<T, Exclude<REQ, K>, REQG, OPTG_LOCKED>
+                Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>
             : never;
       }
     : Record<string, never>)
@@ -108,18 +112,20 @@ type Chain<
             ? {
                 [M in keyof T["requiredGroups"][G] & string]:
                   (...a: Args<T["requiredGroups"][G][M]>) =>
-                    Chain<T, REQ, Exclude<REQG, G>, OPTG_LOCKED>;
+                    Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
               }
             : { [M in keyof T["requiredGroups"][G] & string]: never };
       }[keyof T["requiredGroups"] & string]
     : Record<string, never>)
   &
-  // ---- optional（何回でもOK）----
+  // ---- optional（一回のみOK）----
   (T["optional"] extends Record<string, Fn>
     ? {
         [K in keyof T["optional"] & string]:
-          (...a: Args<T["optional"][K]>) =>
-            Chain<T, REQ, REQG, OPTG_LOCKED>;
+          K extends OPT_CONSUMED
+            ? never
+            : (...a: Args<T["optional"][K]>) =>
+                Chain<T, REQ, REQG, OPT_CONSUMED | K, OPTG_LOCKED>;
       }
     : Record<string, never>)
   &
@@ -132,7 +138,7 @@ type Chain<
             : {
                 [M in keyof T["optionalGroup"][G] & string]:
                   (...a: Args<T["optionalGroup"][G][M]>) =>
-                    Chain<T, REQ, REQG, OPTG_LOCKED | G>;
+                    Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
               };
       }[keyof T["optionalGroup"] & string]
     : Record<string, never>)
