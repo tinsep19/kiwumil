@@ -10,7 +10,7 @@ import { CorePlugin } from "../src/plugin/core/plugin"
 // Example 3: Using getArea() to access cell bounds
 TypeDiagram("Fluent Grid: Cell Access")
   .use(CorePlugin)
-  .build(({ el, hint }) => {
+  .layout(({ el, hint, diagram }) => {
     const a = el.core.rectangle("A", { width: 60, height: 40 })
     const b = el.core.rectangle("B", { width: 60, height: 40 })
     const c = el.core.rectangle("C", { width: 60, height: 40 })
@@ -33,5 +33,6 @@ TypeDiagram("Fluent Grid: Cell Access")
 
     const leftColumn = grid.getArea({ top: 0, left: 0, bottom: 2, right: 1 })
     console.log("Left column bounds:", leftColumn)
+    hint.enclose(diagram, [a, b, c, d, e, f])
   })
   .render(import.meta)

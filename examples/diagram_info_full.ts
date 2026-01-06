@@ -9,7 +9,7 @@ TypeDiagram({
 })
   .use(UMLPlugin)
   .theme(BlueTheme)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     const user = el.uml.actor("User")
     const shop = el.uml.usecase("Browse Products")
     const cart = el.uml.usecase("Add to Cart")
@@ -21,5 +21,6 @@ TypeDiagram({
     
     hint.arrangeVertical(shop, cart, checkout)
     hint.arrangeHorizontal(user, shop)
+    hint.enclose(diagram, [user, shop, cart, checkout])
   })
   .render(import.meta)

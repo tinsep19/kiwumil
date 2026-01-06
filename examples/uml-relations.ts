@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("UML Relations Example")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     // Create three use cases
     const usecaseA = el.uml.usecase("UseCase A")
     const usecaseB = el.uml.usecase("UseCase B")
@@ -20,5 +20,6 @@ TypeDiagram("UML Relations Example")
     // C on the right side, at the same Y coordinate as B
     hint.arrangeVertical(usecaseA, usecaseB)
     hint.arrangeHorizontal(usecaseB, usecaseC)
+    hint.enclose(diagram, [usecaseA, usecaseB, usecaseC])
   })
   .render(import.meta)

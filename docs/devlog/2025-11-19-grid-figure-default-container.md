@@ -14,7 +14,7 @@ Grid/Figure Builder で diagram 全体をレイアウトする際、ユーザー
 import { TypeDiagram, DIAGRAM_CONTAINER_ID } from "kiwumil"
 
 TypeDiagram("Title")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     hint.grid(DIAGRAM_CONTAINER_ID).enclose([[a, b]]).layout()
   })
 ```
@@ -48,7 +48,7 @@ TypeDiagram("Title")
 import { TypeDiagram } from "kiwumil"
 
 TypeDiagram("Title")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const a = el.core.rectangle("A")
     const b = el.core.rectangle("B")
     
@@ -66,7 +66,7 @@ TypeDiagram("Title")
 import { TypeDiagram, DIAGRAM_CONTAINER_ID } from "kiwumil"
 
 TypeDiagram("Title")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     // 明示的に指定することも可能
     hint.grid(DIAGRAM_CONTAINER_ID).enclose([[a, b]]).layout()
   })
@@ -76,7 +76,7 @@ TypeDiagram("Title")
 
 ```typescript
 TypeDiagram("System")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const boundary = el.uml.systemBoundary("Cloud")
     const frontend = el.core.rectangle("Frontend")
     const backend = el.core.rectangle("Backend")

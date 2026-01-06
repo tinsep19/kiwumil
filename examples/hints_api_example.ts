@@ -9,7 +9,7 @@ import { TypeDiagram } from "../src/index"
 
 // Example: ガイドを使った中央寄せレイアウト
 TypeDiagram("Hints API Example: Custom Anchors with Guides")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     const box1 = el.core.rectangle("Box 1")
     const box2 = el.core.rectangle("Box 2")
     const box3 = el.core.rectangle("Box 3")
@@ -30,6 +30,7 @@ TypeDiagram("Hints API Example: Custom Anchors with Guides")
     
     // Box3 を Box2 の下に配置
     hint.arrangeVertical(box2, box3)
+    hint.enclose(diagram, [box1, box2, box3])
   })
   .render(import.meta)
 

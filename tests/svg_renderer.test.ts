@@ -19,7 +19,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
   test("should render SVG using getAllSymbols() and getAll()", () => {
     const diagram = TypeDiagram("Test Diagram")
       .use(CorePlugin)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         el.core.text({ label: "Test 1" })
         el.core.text({ label: "Test 2" })
       })

@@ -55,7 +55,7 @@ import { TypeDiagram, UMLPlugin } from 'kiwumil'
 
 TypeDiagram("Use Case Diagram")
   .use(UMLPlugin)
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     // Use UML Plugin namespace
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
@@ -76,7 +76,7 @@ import { TypeDiagram } from 'kiwumil'
 
 // CorePlugin is applied by default
 TypeDiagram("Simple Diagram")
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     const circle = el.core.circle("Circle")
     const rect = el.core.rectangle("Rectangle")
     
@@ -94,7 +94,7 @@ import { TypeDiagram, UMLPlugin, SequencePlugin } from 'kiwumil'
 
 TypeDiagram("Mixed Diagram")
   .use(UMLPlugin, SequencePlugin)
-  .build(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon }) => {
     // CorePlugin namespace (available by default)
     const circle = el.core.circle("Circle")
     
@@ -255,7 +255,7 @@ type RelationshipNamespace = {
 TypeDiagram(titleOrInfo: string | DiagramInfo)
   .use(...plugins: DiagramPlugin[])     // Add plugins
   .theme(theme: Theme)                   // Set theme (optional)
-  .build(({ el, rel, hint, icon }) => { ... })    // Define diagram
+  .layout(({ el, rel, hint, icon }) => { ... })    // Define diagram
   .render(outputPath: string)            // Output SVG file
 ```
 
@@ -274,7 +274,7 @@ Inside `TypeDiagram` and `DiagramBuilder`, the following processes occur:
 3. **Set theme (`.theme()`)** - Optional
    - Set custom theme
 
-4. **Build (`.build(callback)`)**
+4. **Build (`.layout(callback)`)**
    - Create `SymbolRegistry` and `RelationshipRegistry` instances
    - Generate layout-specific `LayoutContext`
    - Generate ID for DiagramSymbol (special Symbol representing the entire diagram)

@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("First Milestone")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     // 1. シンボルを定義
     const user = el.uml.actor("User")
     const admin = el.uml.actor("Admin")
@@ -25,5 +25,6 @@ TypeDiagram("First Milestone")
     hint.arrangeHorizontal(user, system_boundary)
     hint.enclose(system_boundary, [login, logout, manage_users])
     hint.arrangeVertical(login, logout, manage_users)  // ✅ 重ならない！
+    hint.enclose(diagram, [user, admin, system_boundary])
   })
   .render(import.meta)

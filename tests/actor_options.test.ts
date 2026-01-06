@@ -6,7 +6,7 @@ describe("Actor Symbol Options", () => {
     const diagram = TypeDiagram("Test")
       .use(UMLPlugin)
       .theme(DefaultTheme)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         const actor = el.uml.actor("User")
         expect(actor.id).toBeDefined()
       })
@@ -18,7 +18,7 @@ describe("Actor Symbol Options", () => {
     const diagram = TypeDiagram("Test")
       .use(UMLPlugin)
       .theme(DefaultTheme)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         const actor = el.uml.actor({ label: "User" })
         expect(actor.id).toBeDefined()
       })
@@ -30,7 +30,7 @@ describe("Actor Symbol Options", () => {
     const diagram = TypeDiagram("Test")
       .use(UMLPlugin)
       .theme(DefaultTheme)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         const actor = el.uml.actor({ label: "Admin", stereotype: "primary" })
         expect(actor.id).toBeDefined()
       })
@@ -42,7 +42,7 @@ describe("Actor Symbol Options", () => {
     TypeDiagram("Test")
       .use(UMLPlugin)
       .theme(DefaultTheme)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         const actor = el.uml.actor({ label: "Admin", stereotype: "primary" })
         const symbol = (el as any).__symbols?.symbols?.get(actor.id)
         if (symbol) {
@@ -56,7 +56,7 @@ describe("Actor Symbol Options", () => {
     TypeDiagram("Test")
       .use(UMLPlugin)
       .theme(DefaultTheme)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         const actor = el.uml.actor({ label: "User", stereotype: "<script>alert('xss')</script>" })
         const symbol = (el as any).__symbols?.symbols?.get(actor.id)
         if (symbol) {
@@ -71,7 +71,7 @@ describe("Actor Symbol Options", () => {
     TypeDiagram("Test")
       .use(UMLPlugin)
       .theme(DefaultTheme)
-      .build(({ el }) => {
+      .layout(({ el, diagram: diagramCharacs }) => {
         const actor = el.uml.actor("<User & Admin>")
         const symbol = (el as any).__symbols?.symbols?.get(actor.id)
         if (symbol) {

@@ -49,7 +49,7 @@ createRelationshipFactory(relationships: RelationshipBase[]) {
 
 **メリット**:
 - Symbol/Relationship の生成と管理が一箇所に集約
-- DiagramBuilder.build() がシンプルになる
+- DiagramBuilder.layout() がシンプルになる
 - プラグインが完全に自己完結
 - Relationship にも ID を持たせることで、将来的な拡張性を確保
 
@@ -241,7 +241,7 @@ class NamespaceBuilder<TPlugins> {
 4. 型ユーティリティの実装とテスト
 5. `NamespaceBuilder` の実装
 6. `UMLPlugin` を新形式に変換
-7. `DiagramBuilder.build()` の書き換え
+7. `DiagramBuilder.layout()` の書き換え
 8. 既存テストの実行と修正
 
 ## 参考資料

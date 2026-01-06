@@ -60,7 +60,7 @@ describe("Grid Builder", () => {
 
     const result = TypeDiagram("Grid Test")
       .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -90,7 +90,7 @@ describe("Grid Builder", () => {
 
     const result = TypeDiagram("Grid Custom Gap")
       .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -116,7 +116,7 @@ describe("Grid Builder", () => {
 
     const result = TypeDiagram("Grid Row/Col Gap")
       .use(UMLPlugin)
-      .build(({ el, rel, hint }) => {
+      .layout(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
 
         const a = el.core.rectangle("A")
@@ -141,7 +141,7 @@ describe("Grid Builder", () => {
     expect(() => {
       TypeDiagram("Grid Invalid")
         .use(UMLPlugin)
-        .build(({ el, rel, hint }) => {
+        .layout(({ el, rel, hint }) => {
           const boundaryId = el.uml.systemBoundary("Boundary")
 
           const a = el.core.rectangle("A")
@@ -158,7 +158,7 @@ describe("Grid Builder", () => {
     expect(() => {
       TypeDiagram("Grid Empty")
         .use(UMLPlugin)
-        .build(({ el, rel, hint }) => {
+        .layout(({ el, rel, hint }) => {
           // FluentGridBuilder requires non-empty matrix
           hint.grid([]).layout()
         })

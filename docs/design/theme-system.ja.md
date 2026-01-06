@@ -224,7 +224,7 @@ import { Diagram, UMLPlugin, BlueTheme, DarkTheme, DefaultTheme } from "kiwumil"
 Diagram
   .use(UMLPlugin)
   .theme(BlueTheme)  // または DarkTheme, DefaultTheme
-  .build("My Diagram", (el, rel, hint) => {
+  .layout("My Diagram", (el, rel, hint) => {
     // 図の定義...
   })
   .render("output.svg")
@@ -258,7 +258,7 @@ const myTheme: Theme = {
   }
 }
 
-Diagram.use(UMLPlugin).theme(myTheme).build(...)
+Diagram.use(UMLPlugin).theme(myTheme).layout(...)
 ```
 
 ---

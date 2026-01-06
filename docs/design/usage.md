@@ -9,7 +9,7 @@ import { TypeDiagram, UMLPlugin } from "kiwumil"
 
 TypeDiagram("First Milestone")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
 

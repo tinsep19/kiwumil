@@ -25,7 +25,7 @@ import type {
  */
 function exampleArrangeBuilder() {
   TypeDiagram("Arrange Builder Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint, diagram }) => {
       const a = el.core.rectangle("A")
       const b = el.core.rectangle("B")
       const c = el.core.rectangle("C")
@@ -42,6 +42,7 @@ function exampleArrangeBuilder() {
       // Current equivalent using existing API:
       hint.arrangeHorizontal(a, b, c)
       hint.alignCenterY(a, b, c)
+      hint.enclose(diagram, [a, b, c])
     })
     .render(import.meta)
 }
@@ -53,7 +54,7 @@ function exampleArrangeBuilder() {
  */
 function exampleFlowBuilder() {
   TypeDiagram("Flow Builder Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint, diagram }) => {
       const items = [
         el.core.circle("1"),
         el.core.circle("2"),
@@ -75,6 +76,7 @@ function exampleFlowBuilder() {
       // Current equivalent using existing API:
       // Would require custom implementation with conditional logic
       hint.arrangeHorizontal(...items)
+      hint.enclose(diagram, items)
     })
     .render(import.meta)
 }
@@ -86,7 +88,7 @@ function exampleFlowBuilder() {
  */
 function exampleAlignBuilder() {
   TypeDiagram("Align Builder Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint, diagram }) => {
       const a = el.core.rectangle("A")
       const b = el.core.rectangle("B")
       const c = el.core.rectangle("C")
@@ -103,6 +105,7 @@ function exampleAlignBuilder() {
       hint.alignLeft(a, b, c)
       hint.alignCenterY(a, b, c)
       hint.arrangeVertical(a, b, c)
+      hint.enclose(diagram, [a, b, c])
     })
     .render(import.meta)
 }
@@ -114,7 +117,7 @@ function exampleAlignBuilder() {
  */
 function exampleCombinedBuilders() {
   TypeDiagram("Combined Builders Example")
-    .build(({ el, hint }) => {
+    .layout(({ el, hint, diagram }) => {
       const header = el.core.rectangle("Header")
       const sidebar = el.core.rectangle("Sidebar")
       const content = el.core.rectangle("Content")
@@ -138,6 +141,7 @@ function exampleCombinedBuilders() {
       ])
         .gap({ row: 20, col: 20 })
         .layout()
+      hint.enclose(diagram, [header, sidebar, content, footer])
     })
     .render(import.meta)
 }

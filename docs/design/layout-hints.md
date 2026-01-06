@@ -54,7 +54,7 @@ import { TypeDiagram, UMLPlugin } from "kiwumil"
 
 TypeDiagram("First Milestone")
   .use(UMLPlugin)
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const user = el.uml.actor("User")
     const login = el.uml.usecase("Login")
 
@@ -341,7 +341,7 @@ Grid/Figure Builder は diagram 全体のレイアウトにも対応していま
 
 ```typescript
 TypeDiagram("System Architecture")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const frontend = el.core.rectangle("Frontend")
     const backend = el.core.rectangle("Backend")
     const database = el.core.rectangle("Database")
@@ -363,7 +363,7 @@ TypeDiagram("System Architecture")
 import { TypeDiagram, DIAGRAM_CONTAINER_ID } from "kiwumil"
 
 TypeDiagram("System Architecture")
-  .build(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint }) => {
     const a = el.core.circle("A")
     const b = el.core.circle("B")
     

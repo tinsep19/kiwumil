@@ -49,7 +49,7 @@ const SecondPlugin = {
 // Create a diagram builder with TestPlugin
 const builder = TypeDiagram('Test Diagram').use(TestPlugin)
 
-type BuilderCallback = Parameters<typeof builder['build']>[0]
+type BuilderCallback = Parameters<typeof builder['layout']>[0]
 
 // Test 1: Verify that icon namespace includes plugin-specific icons
 const testCallback1: BuilderCallback = ({ icon }) => {
@@ -81,14 +81,14 @@ const testCallback1: BuilderCallback = ({ icon }) => {
   }
 }
 
-builder.build(testCallback1)
+builder.layout(testCallback1)
 
 // Test 2: Verify multiple plugins work correctly
 const multiPluginBuilder = TypeDiagram('Multi Plugin Diagram')
   .use(TestPlugin)
   .use(SecondPlugin)
 
-type MultiPluginCallback = Parameters<typeof multiPluginBuilder['build']>[0]
+type MultiPluginCallback = Parameters<typeof multiPluginBuilder['layout']>[0]
 
 const testCallback2: MultiPluginCallback = ({ icon }) => {
   // Both plugin namespaces should exist
@@ -114,7 +114,7 @@ const testCallback2: MultiPluginCallback = ({ icon }) => {
   }
 }
 
-multiPluginBuilder.build(testCallback2)
+multiPluginBuilder.layout(testCallback2)
 
 // Test 3: Verify that accessing non-existent plugin namespace causes type error
 const testCallback3: BuilderCallback = ({ icon }) => {
@@ -125,7 +125,7 @@ const testCallback3: BuilderCallback = ({ icon }) => {
   const wrongPlugin = icon.secondPlugin
 }
 
-builder.build(testCallback3)
+builder.layout(testCallback3)
 
 // Test 4: Verify that accessing non-existent icon within valid plugin causes error
 const testCallback4: BuilderCallback = ({ icon }) => {
@@ -142,12 +142,12 @@ const testCallback4: BuilderCallback = ({ icon }) => {
   expectType<(() => IconMeta) | undefined>(pluginIcons.anotherIcon)
 }
 
-builder.build(testCallback4)
+builder.layout(testCallback4)
 
 // Test 5: Verify type inference works with CorePlugin (which doesn't have icons)
 const coreOnlyBuilder = TypeDiagram('Core Only Diagram')
 
-type CoreOnlyCallback = Parameters<typeof coreOnlyBuilder['build']>[0]
+type CoreOnlyCallback = Parameters<typeof coreOnlyBuilder['layout']>[0]
 
 const testCallback5: CoreOnlyCallback = ({ icon }) => {
   // CorePlugin doesn't define createIconFactory, so icon should be an empty object {}
@@ -159,7 +159,7 @@ const testCallback5: CoreOnlyCallback = ({ icon }) => {
   expectType<false>(null as unknown as HasCore)
 }
 
-coreOnlyBuilder.build(testCallback5)
+coreOnlyBuilder.layout(testCallback5)
 
 // Test 6: Verify that the icon argument type matches BuildIconNamespace exactly
 const testCallback6: BuilderCallback = ({ icon }) => {
@@ -176,7 +176,7 @@ const testCallback6: BuilderCallback = ({ icon }) => {
   expectType<PluginIcons>(null as unknown as TestPluginType)
 }
 
-builder.build(testCallback6)
+builder.layout(testCallback6)
 
 // Test 7: Verify plugin-specific icon types are propagated correctly
 const testCallback7: MultiPluginCallback = ({ icon }) => {
@@ -209,5 +209,5 @@ const testCallback7: MultiPluginCallback = ({ icon }) => {
   expectType<false>(null as unknown as HasCore)
 }
 
-multiPluginBuilder.build(testCallback7)
+multiPluginBuilder.layout(testCallback7)
 
