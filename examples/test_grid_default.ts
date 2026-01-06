@@ -12,7 +12,7 @@ import { CorePlugin } from "../src/plugin/core/plugin"
 
 TypeDiagram("Grid Default Test")
   .use(CorePlugin)
-  .layout(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     const a = el.core.rectangle("A")
     const b = el.core.rectangle("B")
     const c = el.core.rectangle("C")
@@ -24,6 +24,6 @@ TypeDiagram("Grid Default Test")
       [a, b],
       [c, d]
     ]).layout()
+    hint.enclose(diagram, [a, b, c, d])
   })
   .render(import.meta)
-

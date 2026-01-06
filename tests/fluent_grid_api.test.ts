@@ -139,7 +139,7 @@ describe("Fluent Grid API", () => {
     expect(() => {
       TypeDiagram("Empty Grid")
         .use(CorePlugin)
-        .layout(({ hint }) => {
+        .layout(({ hint, diagram: diagramCharacs }) => {
           hint.grid([]).layout()
         })
     }).toThrow(/non-empty/)

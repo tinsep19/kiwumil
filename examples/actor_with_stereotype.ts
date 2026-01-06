@@ -3,7 +3,7 @@ import { TypeDiagram, UMLPlugin, DefaultTheme } from "../src/index"
 TypeDiagram("Actor with Stereotype Example")
   .use(UMLPlugin)
   .theme(DefaultTheme)
-  .layout(({ el, rel, hint, icon }) => {
+  .layout(({ el, rel, hint, icon, diagram }) => {
     // Create actors with and without stereotypes
 
     const actorIcon = icon.uml.actor()
@@ -23,5 +23,6 @@ TypeDiagram("Actor with Stereotype Example")
     hint.arrangeVertical(admin, user, guest)
     hint.arrangeHorizontal(user, login)
     hint.arrangeHorizontal(admin, manage)
+    hint.enclose(diagram, [user, admin, guest, login, manage])
   })
   .render(import.meta)

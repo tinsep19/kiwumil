@@ -1,7 +1,7 @@
 import { TypeDiagram } from "../src/index"
 
 TypeDiagram("Core Text PoC")
-  .layout(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     const singleLine = el.core.text({
       label: "Single line text symbol",
       textAnchor: "start"
@@ -32,5 +32,6 @@ TypeDiagram("Core Text PoC")
 
     hint.arrangeVertical(singleLine, multiLine, paragraph, longLine)
     hint.alignLeft(singleLine, multiLine, paragraph, longLine)
+    hint.enclose(diagram, [singleLine, multiLine, paragraph, longLine])
   })
   .render(import.meta)

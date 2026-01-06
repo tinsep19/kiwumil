@@ -2,7 +2,7 @@ import { TypeDiagram, UMLPlugin } from "../src/index"
 
 TypeDiagram("System Boundary with Multiple Elements")
   .use(UMLPlugin)
-  .layout(({ el, rel, hint }) => {
+  .layout(({ el, rel, hint, diagram }) => {
     const user = el.uml.actor("User")
     const admin = el.uml.actor("Admin")
     const login = el.uml.usecase("Login")
@@ -26,5 +26,6 @@ TypeDiagram("System Boundary with Multiple Elements")
     // Layout boundaries
     hint.arrangeVertical(login, logout)
     hint.arrangeHorizontal(user, authSystem, admin, adminSystem)
+    hint.enclose(diagram, [user, admin, authSystem, adminSystem])
   })
   .render(import.meta)
