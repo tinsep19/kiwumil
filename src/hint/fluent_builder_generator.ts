@@ -82,17 +82,17 @@ export type Fluent<T extends FluentSpec> = {
     T,
     RequiredKeys<T>,          // 未完了 required（AND）
     RequiredGroupNames<T>,    // 未完了 requiredGroups（OR）
-    never,                    // ロック済み optional 名集合
-    never                     // ロック済み optionalGroup 名集合
+    never,                    // 使用済み optional 名集合（1回のみ）
+    never                     // ロック済み optionalGroup 名集合（グループ最大1回）
   >;
 };
 
 type Chain<
   T extends FluentSpec,
-  REQ extends string,     // 未完了 required（AND）
-  REQG extends string,    // 未完了 requiredGroups（OR）
-  OPT_CONSUMED extends string, // 使用済み optional 名集合
-  OPTG_LOCKED extends string
+  REQ extends string,            // 未完了 required（AND）
+  REQG extends string,           // 未完了 requiredGroups（OR）
+  OPT_CONSUMED extends string,   // 使用済み optional 名集合（1回のみ）
+  OPTG_LOCKED extends string     // ロック済み optionalGroup 名集合
 > =
   // ---- required（AND）----
   (T["required"] extends Record<string, Fn>
@@ -101,12 +101,12 @@ type Chain<
           (...a: Args<T["required"][K]>) =>
             Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>;
       }
-    : Record<string, never>)
+    : {})
   &
   // ---- requiredGroups（OR 必須）----
   (T["requiredGroups"] extends Record<string, Record<string, Fn>>
     ? (REQG extends never
-        ? Record<string, never>
+        ? {}
         : {
             [G in Extract<keyof T["requiredGroups"] & string, REQG>]:
               {
@@ -115,21 +115,21 @@ type Chain<
                     Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
               }
           }[Extract<keyof T["requiredGroups"] & string, REQG>])
-    : Record<string, never>)
+    : {})
   &
-  // ---- optional（一回のみOK）----
+  // ---- optional（1回のみOK）----
   (T["optional"] extends Record<string, Fn>
     ? {
         [K in Exclude<keyof T["optional"] & string, OPT_CONSUMED>]:
           (...a: Args<T["optional"][K]>) =>
             Chain<T, REQ, REQG, OPT_CONSUMED | K, OPTG_LOCKED>;
       }
-    : Record<string, never>)
+    : {})
   &
-  // ---- optionalGroup（OR オプション・最大1回）----
+  // ---- optionalGroup（OR オプション・グループ最大1回）----
   (T["optionalGroup"] extends Record<string, Record<string, Fn>>
     ? (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
-        ? Record<string, never>
+        ? {}
         : {
             [G in Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]:
               {
@@ -138,7 +138,7 @@ type Chain<
                     Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
               }
           }[Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>])
-    : Record<string, never>)
+    : {})
   &
   // ---- terminal（required + requiredGroups 完了で解禁）----
   (REQ extends never
@@ -147,5 +147,5 @@ type Chain<
             [K in keyof T["terminal"] & string]:
               (...a: Args<T["terminal"][K]>) => Ret<T["terminal"][K]>;
           }
-        : Record<string, never>)
-    : Record<string, never>);
+        : {})
+    : {});
