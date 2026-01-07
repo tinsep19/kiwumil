@@ -72,8 +72,6 @@ type ObjGroupKeys<T> = T extends Record<string, Record<string, Fn>> ? Keys<T> : 
 type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
 type RequiredGroupNames<T extends FluentSpec> = ObjGroupKeys<NonNullable<T["requiredGroups"]>>;
 
-type OptionalConsumed<T extends FluentSpec> = ObjKeys<NonNullable<T["optional"]>>;
-
 // ---- Builder生成
 export type Fluent<T extends FluentSpec> = {
   [K in keyof T["init"] & string]: (
@@ -101,11 +99,13 @@ type Chain<
           (...a: Args<T["required"][K]>) =>
             Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>;
       }
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
   // ---- requiredGroups（OR 必須）----
   (T["requiredGroups"] extends Record<string, Record<string, Fn>>
     ? (REQG extends never
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         ? {}
         : {
             [G in Extract<keyof T["requiredGroups"] & string, REQG>]:
@@ -115,6 +115,7 @@ type Chain<
                     Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
               }
           }[Extract<keyof T["requiredGroups"] & string, REQG>])
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
   // ---- optional（1回のみOK）----
@@ -124,11 +125,13 @@ type Chain<
           (...a: Args<T["optional"][K]>) =>
             Chain<T, REQ, REQG, OPT_CONSUMED | K, OPTG_LOCKED>;
       }
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
   // ---- optionalGroup（OR オプション・グループ最大1回）----
   (T["optionalGroup"] extends Record<string, Record<string, Fn>>
     ? (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         ? {}
         : {
             [G in Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]:
@@ -138,6 +141,7 @@ type Chain<
                     Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
               }
           }[Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>])
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
   // ---- terminal（required + requiredGroups 完了で解禁）----
@@ -147,5 +151,7 @@ type Chain<
             [K in keyof T["terminal"] & string]:
               (...a: Args<T["terminal"][K]>) => Ret<T["terminal"][K]>;
           }
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         : {})
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {});
