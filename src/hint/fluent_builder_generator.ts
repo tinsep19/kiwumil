@@ -65,12 +65,16 @@ type Args<F> = F extends (...a: infer A) => any ? A : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Ret<F>  = F extends (...a: any[]) => infer R ? R : never;
 
-type Keys<T> = keyof T & string;
-type ObjKeys<T> = T extends Record<string, Fn> ? Keys<T> : never;
-type ObjGroupKeys<T> = T extends Record<string, Record<string, Fn>> ? Keys<T> : never;
+type ObjKeys<T> = keyof T & string;
+type ObjGroupKeys<T> = keyof T & string;
 
 type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
 type RequiredGroupNames<T extends FluentSpec> = ObjGroupKeys<NonNullable<T["requiredGroups"]>>;
+
+// UnionToIntersection utility to safely combine group methods without indexed access
+type UnionToIntersection<U> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
 
 // ---- Builder生成
 export type Fluent<T extends FluentSpec> = {
@@ -107,17 +111,16 @@ type Chain<
     ? (REQG extends never
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         ? {}
-        : (Extract<keyof T["requiredGroups"] & string, REQG> extends never
-            // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-            ? {}
-            : {
-                [G in Extract<keyof T["requiredGroups"] & string, REQG>]:
-                  {
-                    [M in keyof T["requiredGroups"][G] & string]:
-                      (...a: Args<T["requiredGroups"][G][M]>) =>
-                        Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
-                  }
-              }[Extract<keyof T["requiredGroups"] & string, REQG>]))
+        : UnionToIntersection<
+            {
+              [G in Extract<keyof T["requiredGroups"] & string, REQG>]:
+                {
+                  [M in keyof T["requiredGroups"][G] & string]:
+                    (...a: Args<T["requiredGroups"][G][M]>) =>
+                      Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
+                }
+            }[Extract<keyof T["requiredGroups"] & string, REQG>]
+          >)
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
@@ -136,17 +139,16 @@ type Chain<
     ? (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         ? {}
-        : (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
-            // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-            ? {}
-            : {
-                [G in Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]:
-                  {
-                    [M in keyof T["optionalGroup"][G] & string]:
-                      (...a: Args<T["optionalGroup"][G][M]>) =>
-                        Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
-                  }
-              }[Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]))
+        : UnionToIntersection<
+            {
+              [G in Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]:
+                {
+                  [M in keyof T["optionalGroup"][G] & string]:
+                    (...a: Args<T["optionalGroup"][G][M]>) =>
+                      Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
+                }
+            }[Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]
+          >)
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
