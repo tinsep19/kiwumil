@@ -94,7 +94,7 @@ export type Fluent<T extends FluentSpec> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-type Empty = {}; // これを必ず返す
+type Empty = {}; // Used as consistent fallback to prevent type collapse in conditional branches
 
 type RequiredPart<
   T extends FluentSpec,
