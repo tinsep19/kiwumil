@@ -16,8 +16,12 @@ export type {
   Anchor,
   Dimension,
   VariableFactory,
+  TopLeftAnchor,
+  TopRightAnchor,
+  BottomLeftAnchor,
+  BottomRightAnchor,
 } from "./layout_variable"
-export { createBrandVariableFactory } from "./layout_variable"
+export { createBrandVariableFactory, topLeft, topRight, bottomLeft, bottomRight } from "./layout_variable"
 
 // 制約
 export type {
