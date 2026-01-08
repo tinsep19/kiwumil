@@ -107,14 +107,17 @@ type Chain<
     ? (REQG extends never
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         ? {}
-        : {
-            [G in Extract<keyof T["requiredGroups"] & string, REQG>]:
-              {
-                [M in keyof T["requiredGroups"][G] & string]:
-                  (...a: Args<T["requiredGroups"][G][M]>) =>
-                    Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
-              }
-          }[Extract<keyof T["requiredGroups"] & string, REQG>])
+        : (Extract<keyof T["requiredGroups"] & string, REQG> extends never
+            // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+            ? {}
+            : {
+                [G in Extract<keyof T["requiredGroups"] & string, REQG>]:
+                  {
+                    [M in keyof T["requiredGroups"][G] & string]:
+                      (...a: Args<T["requiredGroups"][G][M]>) =>
+                        Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
+                  }
+              }[Extract<keyof T["requiredGroups"] & string, REQG>]))
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &
@@ -133,14 +136,17 @@ type Chain<
     ? (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
         ? {}
-        : {
-            [G in Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]:
-              {
-                [M in keyof T["optionalGroup"][G] & string]:
-                  (...a: Args<T["optionalGroup"][G][M]>) =>
-                    Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
-              }
-          }[Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>])
+        : (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
+            // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+            ? {}
+            : {
+                [G in Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]:
+                  {
+                    [M in keyof T["optionalGroup"][G] & string]:
+                      (...a: Args<T["optionalGroup"][G][M]>) =>
+                        Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
+                  }
+              }[Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED>]))
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     : {})
   &

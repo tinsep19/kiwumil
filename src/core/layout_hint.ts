@@ -71,7 +71,7 @@ export type ArrangeBuilder = Fluent<{
     gap: Step<[space: number]>;
   };
   terminal: {
-    in: Terminal<[container: ContainerBounds]>;
+    in: Terminal<[container: ContainerBounds], void>;
   };
 }>;
 
@@ -108,7 +108,7 @@ export type FlowBuilder = Fluent<{
     gap: Step<[space: number]>;
   };
   terminal: {
-    in: Terminal<[container: ContainerBounds]>;
+    in: Terminal<[container: ContainerBounds], void>;
   };
 }>;
 
@@ -131,15 +131,15 @@ export type AlignBuilder = Fluent<{
     align: Entry<[targets: HintTarget[]]>;
   };
   terminal: {
-    left: Terminal;
-    right: Terminal;
-    top: Terminal;
-    bottom: Terminal;
-    centerX: Terminal;
-    centerY: Terminal;
-    width: Terminal;
-    height: Terminal;
-    size: Terminal;
+    left: Terminal<[], void>;
+    right: Terminal<[], void>;
+    top: Terminal<[], void>;
+    bottom: Terminal<[], void>;
+    centerX: Terminal<[], void>;
+    centerY: Terminal<[], void>;
+    width: Terminal<[], void>;
+    height: Terminal<[], void>;
+    size: Terminal<[], void>;
   };
 }>;
 
