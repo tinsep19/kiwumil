@@ -131,6 +131,5 @@ describe("Corner Anchor Types", () => {
     // At runtime, they have different corner values
     const corners = [tl.corner, tr.corner, bl.corner, br.corner]
     expect(corners).toEqual(["topLeft", "topRight", "bottomLeft", "bottomRight"])
-    expect(new Set(corners).size).toBe(4) // All unique
   })
 })
