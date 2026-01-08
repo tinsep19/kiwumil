@@ -26,6 +26,12 @@ export type AnchorY = Variable & { readonly [__brand]: "anchor_y" }
 export type AnchorZ = Variable & { readonly [__brand]: "anchor_z" }
 export type Anchor = { x: AnchorX; y: AnchorY }
 
+// Extended anchor types for specific corners (with branding for type safety)
+export type TopLeftAnchor = Anchor & { readonly corner: "topLeft" }
+export type TopRightAnchor = Anchor & { readonly corner: "topRight" }
+export type BottomLeftAnchor = Anchor & { readonly corner: "bottomLeft" }
+export type BottomRightAnchor = Anchor & { readonly corner: "bottomRight" }
+
 /**
  * Dimension types: Size dimension types for layout variables (branded for type safety)
  */
@@ -64,3 +70,26 @@ export function createBrandVariableFactory(factory: VariableFactory) {
     },
   }
 }
+
+/**
+ * Utility functions for creating specific anchor corner types
+ */
+export const topLeft = (anchor: Anchor): TopLeftAnchor => ({
+  ...anchor,
+  corner: "topLeft",
+})
+
+export const topRight = (anchor: Anchor): TopRightAnchor => ({
+  ...anchor,
+  corner: "topRight",
+})
+
+export const bottomLeft = (anchor: Anchor): BottomLeftAnchor => ({
+  ...anchor,
+  corner: "bottomLeft",
+})
+
+export const bottomRight = (anchor: Anchor): BottomRightAnchor => ({
+  ...anchor,
+  corner: "bottomRight",
+})
