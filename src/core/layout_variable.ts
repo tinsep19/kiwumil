@@ -74,22 +74,30 @@ export function createBrandVariableFactory(factory: VariableFactory) {
 /**
  * Utility functions for creating specific anchor corner types
  */
-export const topLeft = (anchor: Anchor): TopLeftAnchor => ({
-  ...anchor,
-  corner: "topLeft",
-})
+export function topLeft(anchor: Anchor): TopLeftAnchor {
+  return {
+    ...anchor,
+    corner: "topLeft",
+  }
+}
 
-export const topRight = (anchor: Anchor): TopRightAnchor => ({
-  ...anchor,
-  corner: "topRight",
-})
+export function topRight(anchor: Anchor): TopRightAnchor {
+  return {
+    ...anchor,
+    corner: "topRight",
+  }
+}
 
-export const bottomLeft = (anchor: Anchor): BottomLeftAnchor => ({
-  ...anchor,
-  corner: "bottomLeft",
-})
+export function bottomLeft(anchor: Anchor): BottomLeftAnchor {
+  return {
+    ...anchor,
+    corner: "bottomLeft",
+  }
+}
 
-export const bottomRight = (anchor: Anchor): BottomRightAnchor => ({
-  ...anchor,
-  corner: "bottomRight",
-})
+export function bottomRight(anchor: Anchor): BottomRightAnchor {
+  return {
+    ...anchor,
+    corner: "bottomRight",
+  }
+}
