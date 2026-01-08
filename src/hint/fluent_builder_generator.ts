@@ -65,13 +65,20 @@ type Args<F> = F extends (...a: infer A) => any ? A : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Ret<F>  = F extends (...a: any[]) => infer R ? R : never;
 
-type Keys<T> = keyof T & string;
-type ObjKeys<T> = T extends Record<string, Fn> ? Keys<T> : never;
+type ObjKeys<T> = keyof T & string;
+type ObjGroupKeys<T> = keyof T & string;
 
 type RequiredKeys<T extends FluentSpec> = ObjKeys<NonNullable<T["required"]>>;
-type RequiredGroupNames<T extends FluentSpec> = ObjKeys<NonNullable<T["requiredGroups"]>>;
+type RequiredGroupNames<T extends FluentSpec> = ObjGroupKeys<NonNullable<T["requiredGroups"]>>;
 
-type OptionalConsumed<T extends FluentSpec> = ObjKeys<NonNullable<T["optional"]>>;
+// UnionToIntersection utility to safely combine group methods without indexed access
+type UnionToIntersection<U> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
+
+type SafeUnionToIntersection<U> = 
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  [U] extends [never] ? {} : UnionToIntersection<U>;
 
 // ---- Builder生成
 export type Fluent<T extends FluentSpec> = {
@@ -81,74 +88,110 @@ export type Fluent<T extends FluentSpec> = {
     T,
     RequiredKeys<T>,          // 未完了 required（AND）
     RequiredGroupNames<T>,    // 未完了 requiredGroups（OR）
-    never,                    // ロック済み optional 名集合
-    never                     // ロック済み optionalGroup 名集合
+    never,                    // 使用済み optional 名集合（1回のみ）
+    never                     // ロック済み optionalGroup 名集合（グループ最大1回）
   >;
 };
 
-type Chain<
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type Empty = {}; // Used as consistent fallback to prevent type collapse in conditional branches
+
+type RequiredPart<
   T extends FluentSpec,
-  REQ extends string,     // 未完了 required（AND）
-  REQG extends string,    // 未完了 requiredGroups（OR）
-  OPT_CONSUMED extends string, // 使用済み optional 名集合
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
   OPTG_LOCKED extends string
 > =
-  // ---- required（AND）----
-  (T["required"] extends Record<string, Fn>
+  T["required"] extends Record<string, Fn>
+    ? ([REQ] extends [never]
+        ? Empty
+        : {
+            [K in Extract<keyof T["required"] & string, REQ>]:
+              (...a: Args<T["required"][K]>) =>
+                Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>;
+          })
+    : Empty;
+
+type RequiredGroupsPart<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  T["requiredGroups"] extends Record<string, Record<string, Fn>>
+    ? ([REQG] extends [never]
+        ? Empty
+        : SafeUnionToIntersection<{
+            [G in keyof T["requiredGroups"] & string]:
+              G extends REQG
+                ? {
+                    [M in keyof T["requiredGroups"][G] & string]:
+                      (...a: Args<T["requiredGroups"][G][M]>) =>
+                        Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
+                  }
+                : Empty;
+          }[keyof T["requiredGroups"] & string]>)
+    : Empty;
+
+type OptionalPart<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  T["optional"] extends Record<string, Fn>
     ? {
-        [K in keyof T["required"] & string]:
-          K extends REQ
-            ? (...a: Args<T["required"][K]>) =>
-                Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>
-            : never;
+        [K in Exclude<keyof T["optional"] & string, OPT_CONSUMED>]:
+          (...a: Args<T["optional"][K]>) =>
+            Chain<T, REQ, REQG, OPT_CONSUMED | K, OPTG_LOCKED>;
       }
-    : Record<string, never>)
-  &
-  // ---- requiredGroups（OR 必須）----
-  (T["requiredGroups"] extends Record<string, Record<string, Fn>>
-    ? {
-        [G in keyof T["requiredGroups"] & string]:
-          G extends REQG
-            ? {
-                [M in keyof T["requiredGroups"][G] & string]:
-                  (...a: Args<T["requiredGroups"][G][M]>) =>
-                    Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
-              }
-            : { [M in keyof T["requiredGroups"][G] & string]: never };
-      }[keyof T["requiredGroups"] & string]
-    : Record<string, never>)
-  &
-  // ---- optional（一回のみOK）----
-  (T["optional"] extends Record<string, Fn>
-    ? {
-        [K in keyof T["optional"] & string]:
-          K extends OPT_CONSUMED
-            ? never
-            : (...a: Args<T["optional"][K]>) =>
-                Chain<T, REQ, REQG, OPT_CONSUMED | K, OPTG_LOCKED>;
-      }
-    : Record<string, never>)
-  &
-  // ---- optionalGroup（OR オプション・最大1回）----
-  (T["optionalGroup"] extends Record<string, Record<string, Fn>>
-    ? {
-        [G in keyof T["optionalGroup"] & string]:
-          G extends OPTG_LOCKED
-            ? { [M in keyof T["optionalGroup"][G] & string]: never } // 補完から消える
-            : {
-                [M in keyof T["optionalGroup"][G] & string]:
-                  (...a: Args<T["optionalGroup"][G][M]>) =>
-                    Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
-              };
-      }[keyof T["optionalGroup"] & string]
-    : Record<string, never>)
-  &
-  // ---- terminal（required + requiredGroups 完了で解禁）----
-  (REQ extends never
-    ? (REQG extends never
+    : Empty;
+
+type OptionalGroupPart<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  T["optionalGroup"] extends Record<string, Record<string, Fn>>
+    ? (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
+        ? Empty
+        : SafeUnionToIntersection<{
+            [G in keyof T["optionalGroup"] & string]:
+              G extends OPTG_LOCKED
+                ? Empty
+                : {
+                    [M in keyof T["optionalGroup"][G] & string]:
+                      (...a: Args<T["optionalGroup"][G][M]>) =>
+                        Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
+                  };
+          }[keyof T["optionalGroup"] & string]>)
+    : Empty;
+
+type TerminalPart<T extends FluentSpec, REQ extends string, REQG extends string> =
+  [REQ] extends [never]
+    ? ([REQG] extends [never]
         ? {
             [K in keyof T["terminal"] & string]:
               (...a: Args<T["terminal"][K]>) => Ret<T["terminal"][K]>;
           }
-        : Record<string, never>)
-    : Record<string, never>);
+        : Empty)
+    : Empty;
+
+type Chain<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  RequiredPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  RequiredGroupsPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  OptionalPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  OptionalGroupPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  TerminalPart<T, REQ, REQG>;
+
