@@ -76,8 +76,7 @@ type UnionToIntersection<U> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
 
-// SafeUnionToIntersection: converts never to {} to prevent Chain type collapse
-type SafeUnionToIntersection<U> =
+type SafeUnionToIntersection<U> = 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   [U] extends [never] ? {} : UnionToIntersection<U>;
 
@@ -94,83 +93,105 @@ export type Fluent<T extends FluentSpec> = {
   >;
 };
 
-type Chain<
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type Empty = {}; // これを必ず返す
+
+type RequiredPart<
   T extends FluentSpec,
-  REQ extends string,            // 未完了 required（AND）
-  REQG extends string,           // 未完了 requiredGroups（OR）
-  OPT_CONSUMED extends string,   // 使用済み optional 名集合（1回のみ）
-  OPTG_LOCKED extends string     // ロック済み optionalGroup 名集合
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
 > =
-  // ---- required（AND）----
-  (T["required"] extends Record<string, Fn>
-    ? {
-        [K in Extract<keyof T["required"] & string, REQ>]:
-          (...a: Args<T["required"][K]>) =>
-            Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>;
-      }
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    : {})
-  &
-  // ---- requiredGroups（OR 必須）----
-  (T["requiredGroups"] extends Record<string, Record<string, Fn>>
+  T["required"] extends Record<string, Fn>
+    ? ([REQ] extends [never]
+        ? Empty
+        : {
+            [K in Extract<keyof T["required"] & string, REQ>]:
+              (...a: Args<T["required"][K]>) =>
+                Chain<T, Exclude<REQ, K>, REQG, OPT_CONSUMED, OPTG_LOCKED>;
+          })
+    : Empty;
+
+type RequiredGroupsPart<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  T["requiredGroups"] extends Record<string, Record<string, Fn>>
     ? ([REQG] extends [never]
-        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-        ? {}
-        : SafeUnionToIntersection<
-            {
-              [G in keyof T["requiredGroups"] & string]:
-                G extends REQG
-                  ? {
-                      [M in keyof T["requiredGroups"][G] & string]:
-                        (...a: Args<T["requiredGroups"][G][M]>) =>
-                          Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
-                    }
-                  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-                  : {};
-            }[keyof T["requiredGroups"] & string]
-          >)
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    : {})
-  &
-  // ---- optional（1回のみOK）----
-  (T["optional"] extends Record<string, Fn>
+        ? Empty
+        : SafeUnionToIntersection<{
+            [G in keyof T["requiredGroups"] & string]:
+              G extends REQG
+                ? {
+                    [M in keyof T["requiredGroups"][G] & string]:
+                      (...a: Args<T["requiredGroups"][G][M]>) =>
+                        Chain<T, REQ, Exclude<REQG, G>, OPT_CONSUMED, OPTG_LOCKED>;
+                  }
+                : Empty;
+          }[keyof T["requiredGroups"] & string]>)
+    : Empty;
+
+type OptionalPart<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  T["optional"] extends Record<string, Fn>
     ? {
         [K in Exclude<keyof T["optional"] & string, OPT_CONSUMED>]:
           (...a: Args<T["optional"][K]>) =>
             Chain<T, REQ, REQG, OPT_CONSUMED | K, OPTG_LOCKED>;
       }
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    : {})
-  &
-  // ---- optionalGroup（OR オプション・グループ最大1回）----
-  (T["optionalGroup"] extends Record<string, Record<string, Fn>>
+    : Empty;
+
+type OptionalGroupPart<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  T["optionalGroup"] extends Record<string, Record<string, Fn>>
     ? (Exclude<keyof T["optionalGroup"] & string, OPTG_LOCKED> extends never
-        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-        ? {}
-        : SafeUnionToIntersection<
-            {
-              [G in keyof T["optionalGroup"] & string]:
-                G extends OPTG_LOCKED
-                  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-                  ? {}
-                  : {
-                      [M in keyof T["optionalGroup"][G] & string]:
-                        (...a: Args<T["optionalGroup"][G][M]>) =>
-                          Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
-                    };
-            }[keyof T["optionalGroup"] & string]
-          >)
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    : {})
-  &
-  // ---- terminal（required + requiredGroups 完了で解禁）----
-  (REQ extends never
-    ? (REQG extends never
+        ? Empty
+        : SafeUnionToIntersection<{
+            [G in keyof T["optionalGroup"] & string]:
+              G extends OPTG_LOCKED
+                ? Empty
+                : {
+                    [M in keyof T["optionalGroup"][G] & string]:
+                      (...a: Args<T["optionalGroup"][G][M]>) =>
+                        Chain<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED | G>;
+                  };
+          }[keyof T["optionalGroup"] & string]>)
+    : Empty;
+
+type TerminalPart<T extends FluentSpec, REQ extends string, REQG extends string> =
+  [REQ] extends [never]
+    ? ([REQG] extends [never]
         ? {
             [K in keyof T["terminal"] & string]:
               (...a: Args<T["terminal"][K]>) => Ret<T["terminal"][K]>;
           }
-        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-        : {})
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    : {});
+        : Empty)
+    : Empty;
+
+type Chain<
+  T extends FluentSpec,
+  REQ extends string,
+  REQG extends string,
+  OPT_CONSUMED extends string,
+  OPTG_LOCKED extends string
+> =
+  RequiredPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  RequiredGroupsPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  OptionalPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  OptionalGroupPart<T, REQ, REQG, OPT_CONSUMED, OPTG_LOCKED> &
+  TerminalPart<T, REQ, REQG>;
+

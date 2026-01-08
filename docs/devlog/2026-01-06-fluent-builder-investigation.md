@@ -190,3 +190,63 @@ type Good<T, Keep> = {
 
 - `docs/draft/fluent-builder-analysis.md` - 詳細な分析レポート
 - `docs/devlog/2026-01-06-fluent-builder-investigation.md` - この調査ログ
+
+## 最終的な解決策（2026-01-08）
+
+### 問題の再確認
+
+複数回のアプローチを試みたが、以下の問題が継続していた：
+- `Extract` を使ったキーフィルタリング → 効果なし
+- `UnionToIntersection` でラップ → 効果なし
+- `SafeUnionToIntersection` で `never` を `{}` に変換 → 効果なし
+- Indexed access パターンの変更 → 効果なし
+
+すべてのアプローチで、Chain 型が依然として `never` に解決されていた。
+
+### 最終解決策: Chain 型の分解
+
+@tinsep19 が提案した解決策は、Chain 型を複数のパート型に分解し、それらを交差型で組み合わせる方法だった。
+
+**キーとなる変更**:
+
+1. **Empty 型の導入**: `type Empty = {}` を一貫して使用
+2. **Chain 型の分解**: 単一の大きな交差型を以下のパート型に分割
+   - `RequiredPart`
+   - `RequiredGroupsPart`
+   - `OptionalPart`
+   - `OptionalGroupPart`
+   - `TerminalPart`
+3. **各パート型の独立性**: 各パート型が独自の条件ロジックを持ち、`Empty` を返す
+4. **最終的な組み合わせ**: `Chain = RequiredPart & RequiredGroupsPart & OptionalPart & OptionalGroupPart & TerminalPart`
+
+### なぜこれが機能したか
+
+**推測される理由**:
+
+1. **型評価の順序**: TypeScript が各パート型を個別に評価し、その後交差を計算することで、never の伝播を防いだ
+2. **Empty の一貫性**: `{}` をインラインで使う代わりに `Empty` 型を使用することで、型の同一性が保たれた
+3. **複雑性の分散**: 各パート型が単純な構造を持つことで、TypeScript の型推論が正しく機能した
+
+### 結果
+
+- ✅ すべてのランタイムテスト (223個) がパス
+- ✅ すべての型テスト（optional-once を含む）がパス
+- ✅ Lint エラーなし
+- ✅ ビルド成功
+- ✅ Chain 型が正しく解決され、IDE 補完が機能
+
+### 教訓
+
+**TypeScript 型システムの複雑性**:
+- 同じロジックでも、構造の違いで型推論の結果が異なる
+- 大きな交差型は小さなパート型に分解する方が安全
+- `never` の伝播を避けるため、各パート型で明示的に `Empty` を返す
+
+**デバッグのアプローチ**:
+- 専門家への相談が重要（複数回のアドバイスで徐々に改善）
+- 生成された .d.ts ファイルの確認が有効
+- 型の分解とテスト駆動での検証
+
+## 完了
+
+この問題は完全に解決されました。Fluent Builder の型システムは正常に動作し、optional メソッドの「1回のみ呼び出し可能」という制約が正しく実装されています。
