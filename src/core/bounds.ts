@@ -70,6 +70,8 @@ export type BoundsMap = {
 export function getBoundsValues(bounds: Bounds): {
   x: number
   y: number
+  top: number
+  left: number
   width: number
   height: number
   right: number
@@ -88,6 +90,10 @@ export function getBoundsValues(bounds: Bounds): {
   const rawCenterY = bounds.centerY.value()
   const rawZ = bounds.z.value()
 
+  // top は y のエイリアス、left は x のエイリアス
+  const rawTop = rawY
+  const rawLeft = rawX
+
   // NaN や Infinity を検出してログ出力
   const hasInvalidValues =
     !Number.isFinite(rawX) ||
@@ -104,6 +110,8 @@ export function getBoundsValues(bounds: Bounds): {
     console.warn(`[getBoundsValues] Invalid bounds detected:`, {
       x: rawX,
       y: rawY,
+      top: rawTop,
+      left: rawLeft,
       width: rawWidth,
       height: rawHeight,
       right: rawRight,
@@ -127,6 +135,8 @@ export function getBoundsValues(bounds: Bounds): {
   return {
     x: rawX,
     y: rawY,
+    top: rawTop,
+    left: rawLeft,
     width: rawWidth,
     height: rawHeight,
     right: rawRight,

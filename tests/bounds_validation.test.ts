@@ -29,6 +29,8 @@ describe("Bounds Validation", () => {
 
       expect(values.x).toBe(10)
       expect(values.y).toBe(20)
+      expect(values.top).toBe(20)
+      expect(values.left).toBe(10)
       expect(values.width).toBe(100)
       expect(values.height).toBe(50)
     })
@@ -51,6 +53,13 @@ describe("Bounds Validation", () => {
       expect(bounds.y.value()).toBe(25)
       expect(bounds.left).toBe(bounds.x)
       expect(bounds.top).toBe(bounds.y)
+
+      // Verify that getBoundsValues returns top and left
+      const values = getBoundsValues(bounds)
+      expect(values.left).toBe(15)
+      expect(values.top).toBe(25)
+      expect(values.x).toBe(15)
+      expect(values.y).toBe(25)
     })
 
     test("should detect and warn about negative width", () => {
