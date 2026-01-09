@@ -70,6 +70,8 @@ export type BoundsMap = {
 export function getBoundsValues(bounds: Bounds): {
   x: number
   y: number
+  top: number
+  left: number
   width: number
   height: number
   right: number
@@ -80,6 +82,8 @@ export function getBoundsValues(bounds: Bounds): {
 } {
   const rawX = bounds.x.value()
   const rawY = bounds.y.value()
+  const rawTop = bounds.top.value()
+  const rawLeft = bounds.left.value()
   const rawWidth = bounds.width.value()
   const rawHeight = bounds.height.value()
   const rawRight = bounds.right.value()
@@ -92,6 +96,8 @@ export function getBoundsValues(bounds: Bounds): {
   const hasInvalidValues =
     !Number.isFinite(rawX) ||
     !Number.isFinite(rawY) ||
+    !Number.isFinite(rawTop) ||
+    !Number.isFinite(rawLeft) ||
     !Number.isFinite(rawWidth) ||
     !Number.isFinite(rawHeight) ||
     !Number.isFinite(rawRight) ||
@@ -104,6 +110,8 @@ export function getBoundsValues(bounds: Bounds): {
     console.warn(`[getBoundsValues] Invalid bounds detected:`, {
       x: rawX,
       y: rawY,
+      top: rawTop,
+      left: rawLeft,
       width: rawWidth,
       height: rawHeight,
       right: rawRight,
@@ -127,6 +135,8 @@ export function getBoundsValues(bounds: Bounds): {
   return {
     x: rawX,
     y: rawY,
+    top: rawTop,
+    left: rawLeft,
     width: rawWidth,
     height: rawHeight,
     right: rawRight,
