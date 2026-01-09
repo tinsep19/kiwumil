@@ -82,8 +82,6 @@ export function getBoundsValues(bounds: Bounds): {
 } {
   const rawX = bounds.x.value()
   const rawY = bounds.y.value()
-  const rawTop = bounds.top.value()
-  const rawLeft = bounds.left.value()
   const rawWidth = bounds.width.value()
   const rawHeight = bounds.height.value()
   const rawRight = bounds.right.value()
@@ -92,12 +90,14 @@ export function getBoundsValues(bounds: Bounds): {
   const rawCenterY = bounds.centerY.value()
   const rawZ = bounds.z.value()
 
+  // top は y のエイリアス、left は x のエイリアス
+  const rawTop = rawY
+  const rawLeft = rawX
+
   // NaN や Infinity を検出してログ出力
   const hasInvalidValues =
     !Number.isFinite(rawX) ||
     !Number.isFinite(rawY) ||
-    !Number.isFinite(rawTop) ||
-    !Number.isFinite(rawLeft) ||
     !Number.isFinite(rawWidth) ||
     !Number.isFinite(rawHeight) ||
     !Number.isFinite(rawRight) ||
