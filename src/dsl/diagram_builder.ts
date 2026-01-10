@@ -125,6 +125,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     context.solve()
 
     return {
+      symbols: symbols.getAllSymbols(),
+      relationships: relationships.getAll(),
       render: (target: string | ImportMeta | Element) => {
         const renderer = new SvgRenderer(context)
 
