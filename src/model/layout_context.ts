@@ -5,6 +5,7 @@ import { LayoutVariables } from "./layout_variables"
 import { Hints } from "./hints"
 import { SymbolRegistry } from "./symbols"
 import { RelationshipRegistry } from "./relationships"
+import { IconRegistry } from "@/icon"
 
 export class LayoutContext {
   private readonly solver: CassowarySolver
@@ -13,6 +14,7 @@ export class LayoutContext {
   readonly theme: Theme
   readonly symbols: SymbolRegistry
   readonly relationships: RelationshipRegistry
+  readonly iconRegistry: IconRegistry
 
   constructor(solver: CassowarySolver, theme: Theme) {
     this.solver = solver
@@ -21,6 +23,7 @@ export class LayoutContext {
     this.hints = new Hints(this.solver, theme)
     this.symbols = new SymbolRegistry(this.variables)
     this.relationships = new RelationshipRegistry()
+    this.iconRegistry  = new IconRegistry()
   }
 
   solve() {

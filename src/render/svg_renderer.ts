@@ -3,6 +3,8 @@ import type { ISymbol, SymbolId } from "../core"
 import type { Theme } from "../theme"
 import { DiagramSymbol, SymbolRegistry, RelationshipRegistry } from "../model"
 import { getBoundsValues } from "../core"
+
+import type { LayoutContext } from "../model"
 import { IconRegistry } from "../icon"
 
 interface RenderElement {
@@ -24,15 +26,19 @@ function getSymbolLabel(symbol: ISymbol): string {
 export class SvgRenderer {
   private symbols: SymbolRegistry
   private relationships: RelationshipRegistry
-  private theme?: Theme
-  private iconRegistry?: IconRegistry
+  private theme: Theme
+  private iconRegistry: IconRegistry
 
   constructor(
-    symbols: SymbolRegistry,
-    relationships: RelationshipRegistry,
-    theme?: Theme,
-    iconRegistry?: IconRegistry
+    context: LayoutContext
   ) {
+    const {
+      symbols,
+      relationships,
+      theme,
+      iconRegistry
+    } = context
+    
     this.symbols = symbols
     this.relationships = relationships
     this.theme = theme
