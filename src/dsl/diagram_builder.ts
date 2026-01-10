@@ -125,12 +125,13 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     context.solve()
 
     return {
-      symbols: symbols.getAllSymbols(),
-      relationships: relationships.getAll(),
-      render: (target: string | ImportMeta | Element) => {
+      render: (target: string | ImportMeta | Element | ((renderer: SvgRenderer) => void)) => {
         const renderer = new SvgRenderer(context)
 
-        if (typeof target === "string") {
+        if (typeof target === "function") {
+          // Callback pattern for tests to access renderer
+          target(renderer)
+        } else if (typeof target === "string") {
           renderer.saveToFile(target)
         } else if ("url" in target) {
           const filepath = convertMetaUrlToSvgPath(target.url)

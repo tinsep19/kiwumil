@@ -58,7 +58,7 @@ describe("Grid Builder", () => {
     let boundaryId: any
     let symbolIds: any[] = []
 
-    const result = TypeDiagram("Grid Test")
+    TypeDiagram("Grid Test")
       .use(UMLPlugin)
       .layout(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
@@ -79,16 +79,18 @@ describe("Grid Builder", () => {
         // Then enclose the grid in the boundary
         hint.enclose(boundaryId, [a, b, c, d])
       })
-
-    expect(result.symbols.length).toBeGreaterThan(4)
-    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
-    expect(result.symbols.find((s) => s.label === "A")).toBeDefined()
+      .render((renderer) => {
+        const symbols = renderer.getSymbols()
+        expect(symbols.length).toBeGreaterThan(4)
+        expect(symbols.find((s) => s.label === "Boundary")).toBeDefined()
+        expect(symbols.find((s) => s.label === "A")).toBeDefined()
+      })
   })
 
   test("should create grid layout with custom gap", () => {
     let boundaryId: any
 
-    const result = TypeDiagram("Grid Custom Gap")
+    TypeDiagram("Grid Custom Gap")
       .use(UMLPlugin)
       .layout(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
@@ -107,14 +109,16 @@ describe("Grid Builder", () => {
         
         hint.enclose(boundaryId, [a, b, c, d])
       })
-
-    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
+      .render((renderer) => {
+        const symbols = renderer.getSymbols()
+        expect(symbols.find((s) => s.label === "Boundary")).toBeDefined()
+      })
   })
 
   test("should create grid layout with row/col gap", () => {
     let boundaryId: any
 
-    const result = TypeDiagram("Grid Row/Col Gap")
+    TypeDiagram("Grid Row/Col Gap")
       .use(UMLPlugin)
       .layout(({ el, rel, hint }) => {
         boundaryId = el.uml.systemBoundary("Boundary")
@@ -133,8 +137,10 @@ describe("Grid Builder", () => {
         
         hint.enclose(boundaryId, [a, b, c, d])
       })
-
-    expect(result.symbols.find((s) => s.label === "Boundary")).toBeDefined()
+      .render((renderer) => {
+        const symbols = renderer.getSymbols()
+        expect(symbols.find((s) => s.label === "Boundary")).toBeDefined()
+      })
   })
 
   test("should throw error for non-rectangular matrix", () => {

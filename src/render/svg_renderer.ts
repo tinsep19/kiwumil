@@ -24,10 +24,10 @@ function getSymbolLabel(symbol: ISymbol): string {
 }
 
 export class SvgRenderer {
-  private symbols: SymbolRegistry
-  private relationships: RelationshipRegistry
-  private theme: Theme
-  private iconRegistry: IconRegistry
+  private readonly symbols: SymbolRegistry
+  private readonly relationships: RelationshipRegistry
+  private readonly theme: Theme
+  private readonly iconRegistry: IconRegistry
 
   constructor(
     context: LayoutContext
@@ -43,6 +43,15 @@ export class SvgRenderer {
     this.relationships = relationships
     this.theme = theme
     this.iconRegistry = iconRegistry
+  }
+
+  // Public getters for accessing symbols and relationships in tests
+  getSymbols(): readonly ISymbol[] {
+    return this.symbols.getAllSymbols()
+  }
+
+  getRelationships() {
+    return this.relationships.getAll()
   }
 
   private calculateSymbolZIndex(symbol: ISymbol): number {

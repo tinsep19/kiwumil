@@ -5,7 +5,7 @@ import { CorePlugin } from "@/plugin/core"
 
 describe("Namespace-based DSL", () => {
   test("UML Plugin - Basic usage", () => {
-    const diagram = TypeDiagram("UML Test")
+    TypeDiagram("UML Test")
       .use(UMLPlugin)
       .layout(({ el, rel, hint, diagram: diagramCharacs }) => {
         // Type check: el.uml should exist
@@ -31,13 +31,14 @@ describe("Namespace-based DSL", () => {
         
         hint.enclose(diagramCharacs, [user, login, system])
       })
-
-    expect(diagram.symbols.length).toBeGreaterThan(0)
-    expect(diagram.relationships.length).toBeGreaterThan(0)
+      .render((renderer) => {
+        expect(renderer.getSymbols().length).toBeGreaterThan(0)
+        expect(renderer.getRelationships().length).toBeGreaterThan(0)
+      })
   })
 
   test("Core Plugin - Basic usage", () => {
-    const diagram = TypeDiagram("Core Test")
+    TypeDiagram("Core Test")
       .use(CorePlugin)
       .layout(({ el, rel, hint, diagram: diagramCharacs }) => {
         // Type check: el.core should exist
@@ -61,12 +62,13 @@ describe("Namespace-based DSL", () => {
         
         hint.enclose(diagramCharacs, [circle, rect, text, styledText])
       })
-
-    expect(diagram.symbols.length).toBeGreaterThan(0)
+      .render((renderer) => {
+        expect(renderer.getSymbols().length).toBeGreaterThan(0)
+      })
   })
 
   test("Multiple Plugins", () => {
-    const diagram = TypeDiagram("Multi Plugin Test")
+    TypeDiagram("Multi Plugin Test")
       .use(UMLPlugin, CorePlugin)
       .layout(({ el, rel, hint, diagram: diagramCharacs }) => {
         // Both namespaces should exist
@@ -83,12 +85,13 @@ describe("Namespace-based DSL", () => {
         
         hint.enclose(diagramCharacs, [actor, circle])
       })
-
-    expect(diagram.symbols.length).toBeGreaterThan(0)
+      .render((renderer) => {
+        expect(renderer.getSymbols().length).toBeGreaterThan(0)
+      })
   })
 
   test("ID uniqueness", () => {
-    const diagram = TypeDiagram("ID Test")
+    TypeDiagram("ID Test")
       .use(UMLPlugin)
       .layout(({ el, rel, hint, diagram: diagramCharacs }) => {
         const ids = [
@@ -105,10 +108,11 @@ describe("Namespace-based DSL", () => {
         // All IDs should start with the UML namespace and end with a counter
         ids.forEach((id) => expect(id).toMatch(/^uml:(actor|usecase)\/\d+$/))
       })
+      .render(() => {})
   })
 
   test("Relationship ID uniqueness", () => {
-    const diagram = TypeDiagram("Relationship ID Test")
+    TypeDiagram("Relationship ID Test")
       .use(UMLPlugin)
       .layout(({ el, rel, hint, diagram: diagramCharacs }) => {
         const user = el.uml.actor("User")
@@ -132,5 +136,6 @@ describe("Namespace-based DSL", () => {
         
         hint.enclose(diagramCharacs, [user, uc1, uc2])
       })
+      .render(() => {})
   })
 })

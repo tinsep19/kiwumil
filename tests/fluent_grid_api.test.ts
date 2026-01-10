@@ -9,7 +9,7 @@ describe("Fluent Grid API", () => {
   test("should create grid with 2D array syntax", () => {
     let gridResult: any
 
-    const result = TypeDiagram("Fluent Grid Test")
+    TypeDiagram("Fluent Grid Test")
       .use(CorePlugin)
       .layout(({ el, hint }) => {
         const symbol1 = el.core.rectangle("Symbol 1")
@@ -24,25 +24,26 @@ describe("Fluent Grid API", () => {
           [null, symbol4],
         ]).layout()
       })
+      .render((renderer) => {
+        expect(renderer.getSymbols().length).toBeGreaterThanOrEqual(4)
+        expect(gridResult).toBeDefined()
+        expect(gridResult.x).toBeDefined()
+        expect(gridResult.y).toBeDefined()
+        expect(gridResult.width).toBeDefined()
+        expect(gridResult.height).toBeDefined()
 
-    expect(result.symbols.length).toBeGreaterThanOrEqual(4)
-    expect(gridResult).toBeDefined()
-    expect(gridResult.x).toBeDefined()
-    expect(gridResult.y).toBeDefined()
-    expect(gridResult.width).toBeDefined()
-    expect(gridResult.height).toBeDefined()
-
-    // Check array sizes: M=2 cols, N=3 rows
-    expect(gridResult.x.length).toBe(3) // M+1
-    expect(gridResult.y.length).toBe(4) // N+1
-    expect(gridResult.width.length).toBe(2) // M
-    expect(gridResult.height.length).toBe(3) // N
+        // Check array sizes: M=2 cols, N=3 rows
+        expect(gridResult.x.length).toBe(3) // M+1
+        expect(gridResult.y.length).toBe(4) // N+1
+        expect(gridResult.width.length).toBe(2) // M
+        expect(gridResult.height.length).toBe(3) // N
+      })
   })
 
   test("should create grid with container", () => {
     let gridResult: any
 
-    const result = TypeDiagram("Fluent Grid with Container")
+    TypeDiagram("Fluent Grid with Container")
       .use(UMLPlugin)
       .layout(({ el, hint }) => {
         const container = el.uml.systemBoundary("Container")
@@ -56,11 +57,12 @@ describe("Fluent Grid API", () => {
           [symbol3, symbol4],
         ]).in(container)
       })
-
-    expect(result.symbols.find((s) => s.label === "Container")).toBeDefined()
-    expect(gridResult).toBeDefined()
-    expect(gridResult.x.length).toBe(3) // M+1 = 2+1
-    expect(gridResult.y.length).toBe(3) // N+1 = 2+1
+      .render((renderer) => {
+        expect(renderer.getSymbols().find((s) => s.label === "Container")).toBeDefined()
+        expect(gridResult).toBeDefined()
+        expect(gridResult.x.length).toBe(3) // M+1 = 2+1
+        expect(gridResult.y.length).toBe(3) // N+1 = 2+1
+      })
   })
 
   test("should provide getArea method", () => {
