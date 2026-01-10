@@ -1,11 +1,11 @@
 // src/render/svg_renderer.ts
 import type { ISymbol, SymbolId } from "../core"
 import type { Theme } from "../theme"
-import { DiagramSymbol, SymbolRegistry, RelationshipRegistry } from "../model"
+import { DiagramSymbol } from "../model"
 import { getBoundsValues } from "../core"
 
-import type { LayoutContext } from "../model"
-import { IconRegistry } from "../icon"
+import type { LayoutContext, SymbolRegistry, RelationshipRegistry } from "../model"
+import type { IconRegistry } from "../icon"
 
 interface RenderElement {
   zIndex: number

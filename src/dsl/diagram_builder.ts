@@ -4,7 +4,6 @@ import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
 import { DiagramSymbol, LayoutContext, type DiagramSymbolCharacs } from "../model"
 import type { DiagramInfo } from "../model"
-import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
 import { KiwiSolver } from "../kiwi"
 import { convertMetaUrlToSvgPath } from "../utils"
@@ -16,7 +15,6 @@ import type {
   BuildIconNamespace,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import { IconRegistry } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型

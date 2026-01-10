@@ -23,7 +23,7 @@ export class LayoutContext {
     this.hints = new Hints(this.solver, theme)
     this.symbols = new SymbolRegistry(this.variables)
     this.relationships = new RelationshipRegistry()
-    this.iconRegistry  = new IconRegistry()
+    this.iconRegistry = new IconRegistry()
   }
 
   solve() {
