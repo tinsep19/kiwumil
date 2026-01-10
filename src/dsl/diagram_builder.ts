@@ -143,20 +143,20 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     }
   }
 }
-type Output = (renderer: SvgRenderer) => void;
+type Output = (renderer: SvgRenderer) => void
 function saveToFile(renderer: SvgRenderer, filepath: string) {
-    const svg = renderer.render()
+  const svg = renderer.render()
 
-    if (typeof Bun !== "undefined" && Bun.write) {
-      Bun.write(filepath, svg)
-      console.log(`Saved to ${filepath}`)
-    } else {
-      throw new Error("File system operations are only supported in Bun environment")
-    }
+  if (typeof Bun !== "undefined" && Bun.write) {
+    Bun.write(filepath, svg)
+    console.log(`Saved to ${filepath}`)
+  } else {
+    throw new Error("File system operations are only supported in Bun environment")
+  }
 }
 function renderToElement(renderer: SvgRenderer, el: Element) {
-    const svg = renderer.render()
-    el.innerHTML = svg
+  const svg = renderer.render()
+  el.innerHTML = svg
 }
 
 /**
