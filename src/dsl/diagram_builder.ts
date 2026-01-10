@@ -4,7 +4,6 @@ import { HintFactory } from "./hint_factory"
 import { SvgRenderer } from "../render"
 import { DiagramSymbol, LayoutContext, type DiagramSymbolCharacs } from "../model"
 import type { DiagramInfo } from "../model"
-import type { ISymbol } from "../core"
 import { CorePlugin } from "../plugin"
 import { KiwiSolver } from "../kiwi"
 import { convertMetaUrlToSvgPath } from "../utils"
@@ -16,7 +15,6 @@ import type {
   BuildIconNamespace,
 } from "./namespace_types"
 import { DefaultTheme } from "../theme"
-import { IconRegistry } from "../icon"
 
 /**
  * IntelliSense が有効な DSL ブロックのコールバック型
@@ -75,7 +73,7 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
   layout(block: IntelliSenseBlock<TPlugins>) {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, this.currentTheme)
-    const { symbols, relationships } = context
+    const { symbols, relationships, iconRegistry, theme } = context
 
     const diagramInfo =
       typeof this.titleOrInfo === "string" ? { title: this.titleOrInfo } : this.titleOrInfo
@@ -84,8 +82,8 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       const bounds = r.createLayoutBounds("bounds")
       const container = r.createContainerBounds("container")
       const title = r.createItemBounds("title")
-      const author = diagramInfo.author ? r.createItemBounds("author") : undefined
-      const createdAt = diagramInfo.createdAt ? r.createItemBounds("createdAt") : undefined
+      const author = r.createItemBounds("author")
+      const createdAt = r.createItemBounds("createdAt")
       const symbol = new DiagramSymbol({
         characs: {
           id,
@@ -105,19 +103,15 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
       })
       return r.build()
     })
-    const diagramSymbol = diagramRegistration.symbol as DiagramSymbol
-
     const namespaceBuilder = new NamespaceBuilder(this.plugins)
 
     // Create IconRegistry first - it will be shared across all icon operations
-    const iconsRegistry = new IconRegistry()
-
-    // Build icon namespace using NamespaceBuilder
-    const icon = namespaceBuilder.buildIconNamespace(iconsRegistry)
-
-    // build element namespace (symbols) then relationship namespace, passing icons to factories
-    const el = namespaceBuilder.buildElementNamespace(symbols, this.currentTheme, icon)
-    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, this.currentTheme, icon)
+    // Build icon first namespace using NamespaceBuilder
+    // build element namespace (symbols) then relationship namespace,
+    //   passing icons to factories
+    const icon = namespaceBuilder.buildIconNamespace(iconRegistry)
+    const el = namespaceBuilder.buildElementNamespace(symbols, theme, icon)
+    const rel = namespaceBuilder.buildRelationshipNamespace(relationships, theme, icon)
 
     const hint = new HintFactory({
       context,
@@ -127,23 +121,17 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     // invoke callback: object-style only
     block({ el, rel, hint, icon, diagram: diagramRegistration.characs })
 
-    const relationshipList = relationships.getAll()
-    const symbolRegistrations = symbols
-      .getAll()
-      .filter((reg) => reg.symbol.id !== diagramSymbol.id)
-    const symbolList = symbolRegistrations.map((reg) => reg.symbol)
-    const allSymbols: ISymbol[] = [diagramSymbol, ...symbolList]
-
     // レイアウト計算
     context.solve()
 
     return {
-      symbols: allSymbols,
-      relationships: relationshipList,
-      render: (target: string | ImportMeta | Element) => {
-        const renderer = new SvgRenderer(symbols, relationships, this.currentTheme, iconsRegistry)
+      render: (target: string | ImportMeta | Element | ((renderer: SvgRenderer) => void)) => {
+        const renderer = new SvgRenderer(context)
 
-        if (typeof target === "string") {
+        if (typeof target === "function") {
+          // Callback pattern for tests to access renderer
+          target(renderer)
+        } else if (typeof target === "string") {
           renderer.saveToFile(target)
         } else if ("url" in target) {
           const filepath = convertMetaUrlToSvgPath(target.url)

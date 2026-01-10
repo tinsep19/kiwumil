@@ -11,35 +11,58 @@ describe("SvgRenderer with Symbols and Relationships", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
 
-    // Create renderer with Symbols and Relationships instances
-    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
+    // Create renderer with LayoutContext
+    const renderer = new SvgRenderer(context)
     expect(renderer).toBeDefined()
   })
 
-  test("should render SVG using getAllSymbols() and getAll()", () => {
-    const diagram = TypeDiagram("Test Diagram")
-      .use(CorePlugin)
-      .layout(({ el, diagram: diagramCharacs }) => {
-        el.core.text({ label: "Test 1" })
-        el.core.text({ label: "Test 2" })
-      })
+  test("should render SVG using LayoutContext", () => {
+    const solver = new KiwiSolver()
+    const context = new LayoutContext(solver, DefaultTheme)
 
-    // Extract symbols and relationships from the builder
-    const symbols = diagram.symbols
-    const relationships = diagram.relationships
+    // Register some test symbols
+    context.symbols.register("test", "text1", (id, builder) => {
+      const bounds = builder.createLayoutBounds("bounds")
+      const symbol = {
+        id,
+        bounds,
+        render: () => `<text>Test 1</text>`,
+      }
+      builder.setSymbol(symbol as any)
+      builder.setCharacs({ id, bounds })
+      builder.setConstraint(() => {})
+      return builder.build()
+    })
 
-    // Note: diagram.render already uses the new SvgRenderer internally,
-    // so we can validate that the integration works
-    expect(symbols).toBeDefined()
-    expect(relationships).toBeDefined()
-    expect(symbols.length).toBeGreaterThan(0)
+    context.symbols.register("test", "text2", (id, builder) => {
+      const bounds = builder.createLayoutBounds("bounds")
+      const symbol = {
+        id,
+        bounds,
+        render: () => `<text>Test 2</text>`,
+      }
+      builder.setSymbol(symbol as any)
+      builder.setCharacs({ id, bounds })
+      builder.setConstraint(() => {})
+      return builder.build()
+    })
+
+    context.solve()
+
+    // Create renderer with LayoutContext and render
+    const renderer = new SvgRenderer(context)
+    const svg = renderer.render()
+
+    // Verify both symbols were rendered
+    expect(svg).toContain("Test 1")
+    expect(svg).toContain("Test 2")
   })
 
   test("should handle empty Symbols and Relationships", () => {
     const solver = new KiwiSolver()
     const context = new LayoutContext(solver, DefaultTheme)
 
-    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context)
     const svg = renderer.render()
 
     // Should still produce valid SVG
@@ -54,7 +77,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
 
     context.solve()
 
-    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context)
     const svg = renderer.render()
 
     // Should include theme background color
@@ -80,7 +103,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
     })
 
     // Create renderer and render
-    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context)
     const svg = renderer.render()
 
     // Verify the symbol was rendered
@@ -122,7 +145,7 @@ describe("SvgRenderer with Symbols and Relationships", () => {
     context.solve()
 
     // Create renderer and render
-    const renderer = new SvgRenderer(context.symbols, context.relationships, DefaultTheme)
+    const renderer = new SvgRenderer(context)
     const svg = renderer.render()
 
     // Verify the relationship was rendered
