@@ -125,23 +125,38 @@ class DiagramBuilder<TPlugins extends readonly DiagramPlugin[] = []> {
     context.solve()
 
     return {
-      render: (target: string | ImportMeta | Element | ((renderer: SvgRenderer) => void)) => {
+      render: (target: string | ImportMeta | Element | Output) => {
         const renderer = new SvgRenderer(context)
 
         if (typeof target === "function") {
           // Callback pattern for tests to access renderer
           target(renderer)
         } else if (typeof target === "string") {
-          renderer.saveToFile(target)
+          saveToFile(renderer, target)
         } else if ("url" in target) {
           const filepath = convertMetaUrlToSvgPath(target.url)
-          renderer.saveToFile(filepath)
+          saveToFile(renderer, filepath)
         } else {
-          renderer.renderToElement(target)
+          renderToElement(renderer, target)
         }
       },
     }
   }
+}
+type Output = (renderer: SvgRenderer) => void;
+function saveToFile(renderer: SvgRenderer, filepath: string) {
+    const svg = renderer.render()
+
+    if (typeof Bun !== "undefined" && Bun.write) {
+      Bun.write(filepath, svg)
+      console.log(`Saved to ${filepath}`)
+    } else {
+      throw new Error("File system operations are only supported in Bun environment")
+    }
+}
+function renderToElement(renderer: SvgRenderer, el: Element) {
+    const svg = renderer.render()
+    el.innerHTML = svg
 }
 
 /**
