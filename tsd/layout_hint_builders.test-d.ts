@@ -12,7 +12,7 @@ import type {
   AlignBuilder,
 } from "../src/core/layout_hint"
 import type { BoundId } from "../src/core/types"
-import type { LayoutBounds, ContainerBounds } from "../src/core/bounds"
+import type { LayoutBounds, ContainerBounds } from "../src/core/layout_variable"
 
 // ============================================================================
 // Test Utility Types

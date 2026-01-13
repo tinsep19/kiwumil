@@ -11,7 +11,7 @@ import type {
   AlignBuilder,
 } from "@/core/layout_hint"
 import type { BoundId } from "@/core/types"
-import type { LayoutBounds, ContainerBounds } from "@/core/bounds"
+import type { LayoutBounds, ContainerBounds } from "@/core/layout_variable"
 
 describe("HintTarget Type Utilities", () => {
   test("MinimalTarget includes only boundId and bounds", () => {

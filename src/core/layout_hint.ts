@@ -2,7 +2,7 @@
 // HintTarget interface definition and DSL builder interfaces
 
 import type { BoundId } from "./types"
-import type { LayoutBounds, ContainerBounds } from "./bounds"
+import type { LayoutBounds, ContainerBounds } from "./layout_variable"
 import type { Fluent, Entry, Step, Terminal } from "../hint"
 
 /**

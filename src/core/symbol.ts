@@ -2,7 +2,7 @@
 // シンボル関連のインターフェース
 
 import type { SymbolId, Point } from "./types"
-import type { LayoutBounds, ContainerBounds } from "./bounds"
+import type { LayoutBounds, ContainerBounds } from "./layout_variable"
 
 /**
  * ISymbol: DSL でユーザーが触れる最小限のシンボルインターフェース
