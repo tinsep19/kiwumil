@@ -55,6 +55,6 @@ export type {
   LayoutBounds,
   TypedBounds,
   BoundsMap,
-} from "./bounds"
+} from "./layout_variable"
 
-export { createBoundId, getBoundsValues } from "./bounds"
+export { createBoundId, getBoundsValues } from "./layout_variable"
