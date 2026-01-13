@@ -3,7 +3,7 @@
 
 import { expectType, expectError } from "tsd"
 import type { ArrangeBuilder, FlowBuilder, HintTarget } from "../src/core/layout_hint"
-import type { ContainerBounds } from "../src/core/bounds"
+import type { ContainerBounds } from "../src/core/layout_variable"
 
 declare const targets: HintTarget[]
 declare const container: ContainerBounds

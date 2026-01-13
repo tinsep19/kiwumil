@@ -4,7 +4,7 @@ import type { DiagramPlugin } from '../src/dsl/diagram_plugin'
 import type { SymbolRegistry } from '../src/model'
 import type { Theme } from '../src/theme'
 import type { ISymbolCharacs } from '../src/core/symbol'
-import type { LayoutBounds } from '../src/core/bounds'
+import type { LayoutBounds } from '../src/core/layout_variable'
 import type { Variable } from '../src/core/layout_variable'
 import type { PluginIcons } from '../src/dsl/namespace_types'
 
