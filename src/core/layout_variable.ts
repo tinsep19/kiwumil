@@ -128,48 +128,77 @@ export function createBoundId(value: string): BoundId {
 export type BoundsType = "layout" | "container" | "item"
 
 /**
- * Bounds は Layout オブジェクトの境界を表す変数のグループ
- * すべての computed properties (right, bottom, centerX, centerY) も事前に作成され制約が設定される
+ * BaseBounds: すべての Bounds の基底インターフェース
+ * 
+ * ✅ Phase 2: 型付き変数を使用
+ * - x, y: AnchorX, AnchorY (位置アンカー)
+ * - width, height: Width, Height (サイズ)
+ * - z: AnchorZ (深度)
+ * - computed properties (right, bottom, centerX, centerY) も型付き
+ * 
+ * NOTE: 現在の branded types は Phase 3 で domain layer の
+ * Discriminated Union 型に段階的に移行される予定です。
  */
-export interface Bounds {
+export interface BaseBounds {
   readonly boundId: BoundId
   readonly type: BoundsType
+  
+  // ✅ 型付き変数（Phase 2 で domain layer と統合）
   readonly x: AnchorX
   readonly y: AnchorY
-  readonly top: AnchorY // alias of y
-  readonly left: AnchorX // alias of x
   readonly width: Width
   readonly height: Height
+  
+  // Aliases
+  readonly top: AnchorY    // alias of y
+  readonly left: AnchorX   // alias of x
+  
+  // Computed properties
   readonly right: AnchorX
   readonly bottom: AnchorY
   readonly centerX: AnchorX
   readonly centerY: AnchorY
+  
+  // Depth
   readonly z: AnchorZ
 }
 
 /**
- * 型付き Bounds のジェネリック型
- * Bounds の type プロパティを特定のリテラル型に絞り込む
+ * LayoutBounds: 通常の Bounds (Symbol の外矩形)
  */
-export type TypedBounds<T extends BoundsType> = Bounds & { readonly type: T }
+export interface LayoutBounds extends BaseBounds {
+  readonly type: "layout"
+}
 
 /**
- * 型エイリアス: Symbol の外矩形を表す Bounds
+ * ContainerBounds: コンテナの Bounds (Symbol を内包できる矩形)
  */
-export type LayoutBounds = TypedBounds<"layout">
+export interface ContainerBounds extends BaseBounds {
+  readonly type: "container"
+}
 
 /**
- * 型エイリアス: Symbol を内包できる矩形を表す Bounds
+ * ItemBounds: アイテムの Bounds (個別の描画領域)
  */
-export type ContainerBounds = TypedBounds<"container">
+export interface ItemBounds extends BaseBounds {
+  readonly type: "item"
+}
 
 /**
- * 型エイリアス: 個別の描画領域を表す Bounds
+ * Bounds: すべての Bounds の Union 型
+ * 
+ * Discriminated Union として定義され、type フィールドで
+ * 型を判別できます。
  */
-export type ItemBounds = TypedBounds<"item">
+export type Bounds = LayoutBounds | ContainerBounds | ItemBounds
 
 /**
  * BoundsType から対応する Bounds 型へのマッピング
+ * 
+ * これにより type-safe な Bounds の取得が可能になります：
+ * - BoundsMap["layout"] -> LayoutBounds
+ * - BoundsMap["container"] -> ContainerBounds
+ * - BoundsMap["item"] -> ItemBounds
  */
 export type BoundsMap = {
   layout: LayoutBounds
