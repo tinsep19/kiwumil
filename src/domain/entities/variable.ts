@@ -1,5 +1,5 @@
-import type { VariableId } from "../../core/types"
-import type { FreeVariable } from "../../infra/solver/cassowary/types"
+import type { VariableId } from "../../core"
+import type { FreeVariable } from "../../infra/solver/cassowary"
 
 // ============================================================================
 // Variable Type Classification (Discriminated Union)

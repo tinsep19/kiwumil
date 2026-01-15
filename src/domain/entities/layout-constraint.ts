@@ -1,5 +1,5 @@
-import type { LayoutConstraintId } from "../../core/types"
-import type { LinearConstraint } from "../../infra/solver/cassowary/types"
+import type { LayoutConstraintId } from "../../core"
+import type { LinearConstraint } from "../../infra/solver/cassowary"
 
 // ============================================================================
 // Constraint Types
