@@ -57,3 +57,9 @@ export type {
 } from "./layout_variable"
 
 export { createBoundId, getBoundsValues } from "./layout_variable"
+
+// DI Container
+export { DiContainer } from "./di-container"
+export { createDiContainer } from "./create-di-container"
+export { SERVICE_TOKENS } from "./service-tokens"
+export type { ServiceToken } from "./service-tokens"
