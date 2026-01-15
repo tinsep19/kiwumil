@@ -35,3 +35,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Migration planning temporary files
+docs/migration-plan/**/*.tmp
+docs/migration-plan/**/*.draft
+docs/migration-plan/**/*~
