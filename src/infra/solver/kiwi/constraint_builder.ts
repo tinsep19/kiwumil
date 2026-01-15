@@ -1,6 +1,11 @@
 import * as kiwi from "@lume/kiwi"
 import type { LinearConstraintBuilder, Term, OpRhsBuilder, StrengthBuilder } from "../../../core/solver"
 
+/**
+ * Zero term constant: represents the value 0 in constraint expressions
+ */
+const ZERO_TERM: Term = [0, 1] as const
+
 interface PendingConstraint {
   lhs?: Term[]
   rhs?: Term[]
@@ -55,7 +60,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
     this.ensureExpr()
     this.tmp = {
       ...this.tmp,
-      rhs: [[0, 1]],
+      rhs: [ZERO_TERM],
       op: kiwi.Operator.Eq,
     }
     return this
@@ -65,7 +70,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
     this.ensureExpr()
     this.tmp = {
       ...this.tmp,
-      rhs: [[0, 1]],
+      rhs: [ZERO_TERM],
       op: kiwi.Operator.Ge,
     }
     return this
@@ -75,7 +80,7 @@ export class KiwiConstraintBuilder implements LinearConstraintBuilder {
     this.ensureExpr()
     this.tmp = {
       ...this.tmp,
-      rhs: [[0, 1]],
+      rhs: [ZERO_TERM],
       op: kiwi.Operator.Le,
     }
     return this
