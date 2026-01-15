@@ -1,5 +1,5 @@
 import type { FreeVariable, LinearConstraint } from "./types"
-import type { ConstraintSpec, ConstraintStrength, SuggestHandle } from "../../../core/solver"
+import type { ConstraintSpec, ConstraintStrength, SuggestHandle } from "../../../core"
 
 /**
  * ICassowarySolver: 純粋な Cassowary 制約ソルバーのインターフェース

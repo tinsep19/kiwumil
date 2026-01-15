@@ -1,5 +1,5 @@
 import * as kiwi from "@lume/kiwi"
-import type { SuggestHandle, ConstraintStrength } from "../../../core/solver"
+import type { SuggestHandle, ConstraintStrength } from "../../../core"
 
 /**
  * KiwiSuggestHandle: SuggestHandle の Kiwi 実装

@@ -1,5 +1,5 @@
 import * as kiwi from "@lume/kiwi"
-import type { FreeVariable } from "../cassowary/types"
+import type { FreeVariable } from "../cassowary"
 
 /**
  * 型レベルでの互換性チェック

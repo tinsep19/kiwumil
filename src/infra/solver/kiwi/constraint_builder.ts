@@ -1,5 +1,5 @@
 import * as kiwi from "@lume/kiwi"
-import type { LinearConstraintBuilder, Term, OpRhsBuilder, StrengthBuilder } from "../../../core/solver"
+import type { LinearConstraintBuilder, Term } from "../../../core"
 
 /**
  * Zero term constant: represents the value 0 in constraint expressions

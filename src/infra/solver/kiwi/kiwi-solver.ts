@@ -1,7 +1,6 @@
 import * as kiwi from "@lume/kiwi"
-import type { ICassowarySolver } from "../cassowary/cassowary-solver.interface"
-import type { FreeVariable, LinearConstraint } from "../cassowary/types"
-import type { ConstraintSpec, ConstraintStrength, SuggestHandle } from "../../../core/solver"
+import type { ICassowarySolver, FreeVariable, LinearConstraint } from "../cassowary"
+import type { ConstraintSpec, ConstraintStrength, SuggestHandle } from "../../../core"
 import { KiwiConstraintBuilder } from "./constraint_builder"
 import { KiwiSuggestHandle } from "./suggest_handle"
 
