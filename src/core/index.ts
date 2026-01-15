@@ -63,3 +63,7 @@ export { DiContainer } from "./di-container"
 export { createDiContainer } from "./create-di-container"
 export { SERVICE_TOKENS } from "./service-tokens"
 export type { ServiceToken } from "./service-tokens"
+
+// LayoutContext
+export { LayoutContext } from "./layout_context"
+export { createLayoutContext } from "./create-layout-context"
