@@ -53,7 +53,6 @@ export type {
   ContainerBounds,
   ItemBounds,
   LayoutBounds,
-  TypedBounds,
   BoundsMap,
 } from "./layout_variable"
 
