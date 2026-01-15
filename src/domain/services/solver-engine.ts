@@ -1,5 +1,5 @@
-import type { ISolverEngine } from "../interfaces/solver-engine.interface"
-import type { ICassowarySolver } from "../../infra/solver/cassowary/cassowary-solver.interface"
+import type { ISolverEngine } from "../interfaces"
+import type { ICassowarySolver } from "../../infra/solver/cassowary"
 
 /**
  * SolverEngine: ISolverEngine の実装

@@ -1,4 +1,4 @@
-import type { IVariableFactory } from "../interfaces/variable-factory.interface"
+import type { IVariableFactory } from "../interfaces"
 import type { 
   Variable, 
   AnchorX, 
@@ -8,9 +8,9 @@ import type {
   Height,
   GenericVariable,
   VariableType
-} from "../entities/variable"
-import type { ICassowarySolver } from "../../infra/solver/cassowary/cassowary-solver.interface"
-import { VariableImpl } from "../entities/variable"
+} from "../entities"
+import type { ICassowarySolver } from "../../infra/solver/cassowary"
+import { VariableImpl } from "../entities"
 
 /**
  * VariableFactory: IVariableFactory の実装

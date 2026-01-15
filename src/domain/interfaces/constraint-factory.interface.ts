@@ -1,10 +1,9 @@
 import type { 
-  LayoutConstraint, 
   GeometricConstraint, 
   LayoutHint, 
   SymbolInternalConstraint 
-} from "../entities/layout-constraint"
-import type { ConstraintSpec } from "../../core/solver"
+} from "../entities"
+import type { ConstraintSpec } from "../../core"
 
 /**
  * IConstraintFactory: 制約を生成するファクトリ

@@ -7,7 +7,7 @@ import type {
   Height,
   GenericVariable,
   VariableType
-} from "../entities/variable"
+} from "../entities"
 
 /**
  * IVariableFactory: 変数を生成するファクトリ

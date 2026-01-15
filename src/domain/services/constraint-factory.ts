@@ -1,11 +1,11 @@
-import type { IConstraintFactory } from "../interfaces/constraint-factory.interface"
+import type { IConstraintFactory } from "../interfaces"
 import type { 
   GeometricConstraint, 
   LayoutHint, 
   SymbolInternalConstraint 
-} from "../entities/layout-constraint"
-import type { ConstraintSpec } from "../../core/solver"
-import type { ICassowarySolver } from "../../infra/solver/cassowary/cassowary-solver.interface"
+} from "../entities"
+import type { ConstraintSpec } from "../../core"
+import type { ICassowarySolver } from "../../infra/solver/cassowary"
 
 /**
  * ConstraintFactory: IConstraintFactory の実装
