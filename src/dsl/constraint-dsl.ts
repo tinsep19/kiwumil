@@ -1,5 +1,5 @@
 import { LinearConstraint } from "@/domain/entities/linear-constraint"
-import type { Term, Operator, ConstraintStrength } from "@/domain/entities/linear-constraint"
+import type { Term, Operator } from "@/domain/entities/linear-constraint"
 
 /**
  * ct - Constraint DSL のエントリーポイント
