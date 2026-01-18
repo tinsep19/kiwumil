@@ -8,7 +8,7 @@ describe("LoaderFactory", () => {
       const registry = new IconRegistry()
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
       const loaderFn = factory.cacheLoader("icons/test.svg")
-      
+
       expect(typeof loaderFn).toBe("function")
     })
 
@@ -16,7 +16,7 @@ describe("LoaderFactory", () => {
       const registry = new IconRegistry()
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
       const loaderFn = factory.cacheLoader("icons/test.svg")
-      
+
       // Should throw on first and second call since file doesn't exist
       expect(() => loaderFn()).toThrow()
     })
@@ -26,7 +26,7 @@ describe("LoaderFactory", () => {
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
       const loader1 = factory.cacheLoader("icons/icon1.svg")
       const loader2 = factory.cacheLoader("icons/icon2.svg")
-      
+
       expect(loader1).not.toBe(loader2)
     })
 
@@ -34,14 +34,14 @@ describe("LoaderFactory", () => {
       const registry = new IconRegistry()
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
       const loaderFn = factory.cacheLoader("nonexistent/icon.svg")
-      
+
       expect(() => loaderFn()).toThrow()
     })
 
     test("should register icon to IconRegistry when loaded", () => {
       const registry = new IconRegistry()
       const factory = new LoaderFactory("testplugin", import.meta.url, registry)
-      
+
       // Since we can't easily test with a real file, we'll just verify
       // that the registry can still emit symbols (empty in this case)
       const symbols = registry.emit_symbols()
@@ -55,7 +55,7 @@ describe("LoaderFactory", () => {
       const factory = new LoaderFactory("test", "", registry)
       // Access private method through reflection for testing
       const extractIconName = (factory as any).extractIconName.bind(factory)
-      
+
       expect(extractIconName("icons/actor.svg")).toBe("actor")
       expect(extractIconName("path/to/icon.svg")).toBe("icon")
       expect(extractIconName("icon.svg")).toBe("icon")

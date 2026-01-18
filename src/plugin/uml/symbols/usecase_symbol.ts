@@ -1,4 +1,12 @@
-import type { LinearConstraintBuilder, Variable, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds, ItemBounds } from "../../../core"
+import type {
+  LinearConstraintBuilder,
+  Variable,
+  ISymbolCharacs,
+  ISymbol,
+  SymbolId,
+  LayoutBounds,
+  ItemBounds,
+} from "../../../core"
 import { getStyleForSymbol, type Theme } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
@@ -10,7 +18,7 @@ const sqrt2 = Math.sqrt(2)
  * IUsecaseSymbolCharacs: ユースケースシンボルの特性
  * ISymbolCharacs を拡張し、rx と ry プロパティを必須にする
  */
-export type IUsecaseSymbolCharacs = ISymbolCharacs<{ 
+export type IUsecaseSymbolCharacs = ISymbolCharacs<{
   rx: Variable
   ry: Variable
   ellipse: ItemBounds
@@ -43,9 +51,7 @@ export class UsecaseSymbol implements ISymbol {
     this.label = options.label
 
     // Get style from theme
-    const style = this.theme
-      ? getStyleForSymbol(this.theme, "usecase")
-      : this.getFallbackStyle()
+    const style = this.theme ? getStyleForSymbol(this.theme, "usecase") : this.getFallbackStyle()
 
     // Create TextItem for label
     const labelItem = new TextItem({
@@ -100,7 +106,7 @@ export class UsecaseSymbol implements ISymbol {
 
   toSVG(): string {
     const ellipseBoundsValues = getBoundsValues(this.ellipseBounds)
-    
+
     // Calculate center and radii from ellipse bounds
     const cx = ellipseBoundsValues.centerX
     const cy = ellipseBoundsValues.centerY
@@ -108,9 +114,7 @@ export class UsecaseSymbol implements ISymbol {
     const ry = Math.max(2, ellipseBoundsValues.height / 2)
 
     // テーマからスタイルを取得
-    const style = this.theme
-      ? getStyleForSymbol(this.theme, "usecase")
-      : this.getFallbackStyle()
+    const style = this.theme ? getStyleForSymbol(this.theme, "usecase") : this.getFallbackStyle()
 
     return `
       <g id="${this.id}">

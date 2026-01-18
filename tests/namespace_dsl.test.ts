@@ -28,7 +28,7 @@ describe("Namespace-based DSL", () => {
         // Check relationship ID format
         expect(rel1).toMatch(/^uml:association\/\d+$/)
         expect(rel2).toMatch(/^uml:include\/\d+$/)
-        
+
         hint.enclose(diagramCharacs, [user, login, system])
       })
       .render((renderer) => {
@@ -59,7 +59,7 @@ describe("Namespace-based DSL", () => {
         expect(rect.id).toMatch(/^core:rectangle\/\d+$/)
         expect(text.id).toMatch(/^core:text\/\d+$/)
         expect(styledText.id).toMatch(/^core:text\/\d+$/)
-        
+
         hint.enclose(diagramCharacs, [circle, rect, text, styledText])
       })
       .render((renderer) => {
@@ -82,7 +82,7 @@ describe("Namespace-based DSL", () => {
         // IDs should have different namespaces
         expect(actor.id).toMatch(/^uml:/)
         expect(circle.id).toMatch(/^core:/)
-        
+
         hint.enclose(diagramCharacs, [actor, circle])
       })
       .render((renderer) => {
@@ -133,7 +133,7 @@ describe("Namespace-based DSL", () => {
         expect(relIds[0]).toBe("uml:association/0")
         expect(relIds[1]).toBe("uml:association/1")
         expect(relIds[2]).toBe("uml:include/2")
-        
+
         hint.enclose(diagramCharacs, [user, uc1, uc2])
       })
       .render(() => {})

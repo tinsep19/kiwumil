@@ -24,31 +24,35 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should create symbol with extended fields", () => {
-    const registration = context.symbols.register("test-plugin", "extended-symbol", (symbolId, builder) => {
-      const layout = builder.createLayoutBounds("layout")
-      const customVar = builder.createVariable("customVar")
+    const registration = context.symbols.register(
+      "test-plugin",
+      "extended-symbol",
+      (symbolId, builder) => {
+        const layout = builder.createLayoutBounds("layout")
+        const customVar = builder.createVariable("customVar")
 
-      // Set characs with extended fields
-      builder.setCharacs({
-        id: symbolId,
-        bounds: layout,
-        customField: "test-value",
-        customVariable: customVar,
-      })
+        // Set characs with extended fields
+        builder.setCharacs({
+          id: symbolId,
+          bounds: layout,
+          customField: "test-value",
+          customVariable: customVar,
+        })
 
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
+        builder.setSymbol({
+          id: symbolId,
+          render: () => "<svg></svg>",
+          getConnectionPoint: (src) => src,
+        })
 
-      builder.setConstraint((cb) => {
-        cb.ct([1, layout.width]).eq([100, 1]).strong()
-        cb.ct([1, layout.height]).eq([100, 1]).strong()
-      })
+        builder.setConstraint((cb) => {
+          cb.ct([1, layout.width]).eq([100, 1]).strong()
+          cb.ct([1, layout.height]).eq([100, 1]).strong()
+        })
 
-      return builder.build()
-    })
+        return builder.build()
+      }
+    )
 
     expect(registration).toBeDefined()
     expect(registration.symbol.id).toContain("test-plugin:extended-symbol")
@@ -128,30 +132,34 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should preserve extended fields when retrieving symbols by id", () => {
-    const registration = context.symbols.register("test-plugin", "preserved-symbol", (symbolId, builder) => {
-      const layout = builder.createLayoutBounds("layout")
-      const testVar = builder.createVariable("testVar")
+    const registration = context.symbols.register(
+      "test-plugin",
+      "preserved-symbol",
+      (symbolId, builder) => {
+        const layout = builder.createLayoutBounds("layout")
+        const testVar = builder.createVariable("testVar")
 
-      builder.setCharacs({
-        id: symbolId,
-        bounds: layout,
-        preservedField: "should-persist",
-        preservedVariable: testVar,
-      })
+        builder.setCharacs({
+          id: symbolId,
+          bounds: layout,
+          preservedField: "should-persist",
+          preservedVariable: testVar,
+        })
 
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
+        builder.setSymbol({
+          id: symbolId,
+          render: () => "<svg></svg>",
+          getConnectionPoint: (src) => src,
+        })
 
-      builder.setConstraint((cb) => {
-        cb.ct([1, layout.width]).eq([60, 1]).strong()
-        cb.ct([1, layout.height]).eq([60, 1]).strong()
-      })
+        builder.setConstraint((cb) => {
+          cb.ct([1, layout.width]).eq([60, 1]).strong()
+          cb.ct([1, layout.height]).eq([60, 1]).strong()
+        })
 
-      return builder.build()
-    })
+        return builder.build()
+      }
+    )
 
     // Retrieve by ID
     const found = context.symbols.findById(registration.symbol.id)
@@ -165,29 +173,33 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should support symbols with container bounds as extended field", () => {
-    const registration = context.symbols.register("test-plugin", "container-symbol", (symbolId, builder) => {
-      const layout = builder.createLayoutBounds("layout")
-      const container = builder.createContainerBounds("container")
+    const registration = context.symbols.register(
+      "test-plugin",
+      "container-symbol",
+      (symbolId, builder) => {
+        const layout = builder.createLayoutBounds("layout")
+        const container = builder.createContainerBounds("container")
 
-      builder.setCharacs({
-        id: symbolId,
-        bounds: layout,
-        container: container,
-      })
+        builder.setCharacs({
+          id: symbolId,
+          bounds: layout,
+          container: container,
+        })
 
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
+        builder.setSymbol({
+          id: symbolId,
+          render: () => "<svg></svg>",
+          getConnectionPoint: (src) => src,
+        })
 
-      builder.setConstraint((cb) => {
-        cb.ct([1, layout.width]).eq([200, 1]).strong()
-        cb.ct([1, layout.height]).eq([200, 1]).strong()
-      })
+        builder.setConstraint((cb) => {
+          cb.ct([1, layout.width]).eq([200, 1]).strong()
+          cb.ct([1, layout.height]).eq([200, 1]).strong()
+        })
 
-      return builder.build()
-    })
+        return builder.build()
+      }
+    )
 
     expect(registration).toBeDefined()
     expect(registration.characs.bounds).toBeDefined()
@@ -198,29 +210,33 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should support symbols with item bounds as extended field", () => {
-    const registration = context.symbols.register("test-plugin", "item-symbol", (symbolId, builder) => {
-      const layout = builder.createLayoutBounds("layout")
-      const item = builder.createItemBounds("item")
+    const registration = context.symbols.register(
+      "test-plugin",
+      "item-symbol",
+      (symbolId, builder) => {
+        const layout = builder.createLayoutBounds("layout")
+        const item = builder.createItemBounds("item")
 
-      builder.setCharacs({
-        id: symbolId,
-        bounds: layout,
-        itemBounds: item,
-      })
+        builder.setCharacs({
+          id: symbolId,
+          bounds: layout,
+          itemBounds: item,
+        })
 
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
+        builder.setSymbol({
+          id: symbolId,
+          render: () => "<svg></svg>",
+          getConnectionPoint: (src) => src,
+        })
 
-      builder.setConstraint((cb) => {
-        cb.ct([1, layout.width]).eq([80, 1]).strong()
-        cb.ct([1, layout.height]).eq([80, 1]).strong()
-      })
+        builder.setConstraint((cb) => {
+          cb.ct([1, layout.width]).eq([80, 1]).strong()
+          cb.ct([1, layout.height]).eq([80, 1]).strong()
+        })
 
-      return builder.build()
-    })
+        return builder.build()
+      }
+    )
 
     expect(registration).toBeDefined()
     const characs = registration.characs as any
@@ -229,33 +245,37 @@ describe("Symbol Extensions with ISymbolCharacs", () => {
   })
 
   test("should support multiple variables as extended fields", () => {
-    const registration = context.symbols.register("test-plugin", "multi-var-symbol", (symbolId, builder) => {
-      const layout = builder.createLayoutBounds("layout")
-      const var1 = builder.createVariable("var1")
-      const var2 = builder.createVariable("var2")
-      const var3 = builder.createVariable("var3")
+    const registration = context.symbols.register(
+      "test-plugin",
+      "multi-var-symbol",
+      (symbolId, builder) => {
+        const layout = builder.createLayoutBounds("layout")
+        const var1 = builder.createVariable("var1")
+        const var2 = builder.createVariable("var2")
+        const var3 = builder.createVariable("var3")
 
-      builder.setCharacs({
-        id: symbolId,
-        bounds: layout,
-        variable1: var1,
-        variable2: var2,
-        variable3: var3,
-      })
+        builder.setCharacs({
+          id: symbolId,
+          bounds: layout,
+          variable1: var1,
+          variable2: var2,
+          variable3: var3,
+        })
 
-      builder.setSymbol({
-        id: symbolId,
-        render: () => "<svg></svg>",
-        getConnectionPoint: (src) => src,
-      })
+        builder.setSymbol({
+          id: symbolId,
+          render: () => "<svg></svg>",
+          getConnectionPoint: (src) => src,
+        })
 
-      builder.setConstraint((cb) => {
-        cb.ct([1, layout.width]).eq([90, 1]).strong()
-        cb.ct([1, layout.height]).eq([90, 1]).strong()
-      })
+        builder.setConstraint((cb) => {
+          cb.ct([1, layout.width]).eq([90, 1]).strong()
+          cb.ct([1, layout.height]).eq([90, 1]).strong()
+        })
 
-      return builder.build()
-    })
+        return builder.build()
+      }
+    )
 
     const characs = registration.characs as any
     expect(characs.variable1).toBeDefined()

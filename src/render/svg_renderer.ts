@@ -29,16 +29,9 @@ export class SvgRenderer {
   private readonly theme: Theme
   private readonly iconRegistry: IconRegistry
 
-  constructor(
-    context: LayoutContext
-  ) {
-    const {
-      symbols,
-      relationships,
-      theme,
-      iconRegistry
-    } = context
-    
+  constructor(context: LayoutContext) {
+    const { symbols, relationships, theme, iconRegistry } = context
+
     this.symbols = symbols
     this.relationships = relationships
     this.theme = theme

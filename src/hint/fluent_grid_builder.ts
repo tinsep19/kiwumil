@@ -59,8 +59,6 @@ export class FluentGridBuilder {
     this.diagram = diagramContainer
   }
 
-
-
   /**
    * Specify the container for this grid layout
    * @param container - The container symbol
@@ -86,19 +84,21 @@ export class FluentGridBuilder {
    */
   private applyLayout(): void {
     const context = this.hint.getLayoutContext()
-    
+
     // Early validation: container must be set and valid
     if (!this.container) {
       throw new Error("FluentGridBuilder: container must be set before applying layout")
     }
-    
+
     const containerTarget = this.hint.getConstraintTarget(this.container)
     if (!containerTarget || !containerTarget.container) {
-      throw new Error(`FluentGridBuilder: container "${this.container.id}" not found or is not a container symbol`)
+      throw new Error(
+        `FluentGridBuilder: container "${this.container.id}" not found or is not a container symbol`
+      )
     }
-    
+
     const containerBounds = containerTarget.container
-    
+
     // Create branded variables for type safety
     // Width and Height types ensure that only dimension variables are used in dimension constraints
     const brandFactory = createBrandVariableFactory((id) => context.variables.createVariable(id))
@@ -134,10 +134,7 @@ export class FluentGridBuilder {
         const xCurr = this.x[col]
         const widthVar = this.width[col]
         if (xNext && xCurr && widthVar) {
-          builder
-            .ct([1, xNext])
-            .eq([1, xCurr], [1, widthVar])
-            .required()
+          builder.ct([1, xNext]).eq([1, xCurr], [1, widthVar]).required()
         }
       }
 
@@ -147,20 +144,23 @@ export class FluentGridBuilder {
         const yCurr = this.y[row]
         const heightVar = this.height[row]
         if (yNext && yCurr && heightVar) {
-          builder
-            .ct([1, yNext])
-            .eq([1, yCurr], [1, heightVar])
-            .required()
+          builder.ct([1, yNext]).eq([1, yCurr], [1, heightVar]).required()
         }
       }
 
       // Container width = sum of all column widths
       const widthTerms: [number, Variable][] = this.width.map((w) => [1, w as Variable])
-      builder.ct([1, containerBounds.width]).eq(...widthTerms).required()
+      builder
+        .ct([1, containerBounds.width])
+        .eq(...widthTerms)
+        .required()
 
       // Container height = sum of all row heights
       const heightTerms: [number, Variable][] = this.height.map((h) => [1, h as Variable])
-      builder.ct([1, containerBounds.height]).eq(...heightTerms).required()
+      builder
+        .ct([1, containerBounds.height])
+        .eq(...heightTerms)
+        .required()
 
       // Align grid origin to container origin
       const x0 = this.x[0]
@@ -176,7 +176,7 @@ export class FluentGridBuilder {
       for (let col = 0; col < this.cols; col++) {
         const symbolRow = this.symbols[row]
         if (!symbolRow) continue
-        
+
         const gridSymbol = symbolRow[col]
         if (!gridSymbol || gridSymbol === null) continue
 
@@ -196,14 +196,20 @@ export class FluentGridBuilder {
         // x[left] <= symbol.bounds.left; symbol.bounds.left <= x[right]
         // And align bottom and right
         const symbolId = gridSymbol.id
-        
+
         // Create constraints to bound the symbol within its cell
         // Each constraint must be created separately with its own builder callback
-        if (!symbolBounds || !symbolBounds.top || !symbolBounds.bottom || !symbolBounds.left || !symbolBounds.right) {
+        if (
+          !symbolBounds ||
+          !symbolBounds.top ||
+          !symbolBounds.bottom ||
+          !symbolBounds.left ||
+          !symbolBounds.right
+        ) {
           console.warn(`Skipping symbol at ${row},${col} - invalid symbol bounds`)
           continue
         }
-        
+
         // Create constraints to bound the symbol within its cell
         // All constraints for one symbol in a single createConstraint call
         context.createConstraint(`grid/symbol/${symbolId}/bounds`, (builder) => {
@@ -223,7 +229,7 @@ export class FluentGridBuilder {
           builder.ct([1, symbolBounds.right]).ge([1, xLeft]).medium()
           builder.ct([1, symbolBounds.right]).le([1, xRight]).medium()
         })
-        
+
         // Ensure the cell is at least as large as the symbol
         const cellWidth = this.width[col]
         const cellHeight = this.height[row]

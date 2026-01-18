@@ -11,7 +11,7 @@ export type IconMeta = {
 
 /**
  * Parse SVG content and extract all required IconMeta properties.
- * 
+ *
  * @param content - Raw SVG content as a string
  * @param id - Symbol ID for the icon (used as href)
  * @returns IconMeta with all required properties
@@ -37,7 +37,7 @@ export function parse(content: string, id: string): IconMeta {
       width = parseFloat(viewBoxParts[2])
     }
   }
-  
+
   if (width === undefined || isNaN(width)) {
     throw new Error(`Failed to extract width from SVG content`)
   }
@@ -54,7 +54,7 @@ export function parse(content: string, id: string): IconMeta {
       height = parseFloat(viewBoxParts[3])
     }
   }
-  
+
   if (height === undefined || isNaN(height)) {
     throw new Error(`Failed to extract height from SVG content`)
   }
@@ -64,7 +64,7 @@ export function parse(content: string, id: string): IconMeta {
     height,
     viewBox,
     href: id,
-    raw: content
+    raw: content,
   }
 }
 
@@ -113,9 +113,7 @@ export class IconLoader {
         "code" in e &&
         (e as { code?: unknown }).code === "ENOENT"
       ) {
-        throw new Error(
-          `Icon file not found: ${this.relPath} resolved to ${filePath}`
-        )
+        throw new Error(`Icon file not found: ${this.relPath} resolved to ${filePath}`)
       }
       // If it's an Error, use its message
       if (e instanceof Error) {

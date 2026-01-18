@@ -18,11 +18,13 @@ describe("Fluent Grid API", () => {
         const symbol4 = el.core.rectangle("Symbol 4")
 
         // Pass symbol IDs directly - they will be resolved internally
-        gridResult = hint.grid([
-          [symbol1, symbol2],
-          [null, symbol3],
-          [null, symbol4],
-        ]).layout()
+        gridResult = hint
+          .grid([
+            [symbol1, symbol2],
+            [null, symbol3],
+            [null, symbol4],
+          ])
+          .layout()
       })
       .render((renderer) => {
         expect(renderer.getSymbols().length).toBeGreaterThanOrEqual(4)
@@ -52,10 +54,12 @@ describe("Fluent Grid API", () => {
         const symbol3 = el.core.rectangle("C")
         const symbol4 = el.core.rectangle("D")
 
-        gridResult = hint.grid([
-          [symbol1, symbol2],
-          [symbol3, symbol4],
-        ]).in(container)
+        gridResult = hint
+          .grid([
+            [symbol1, symbol2],
+            [symbol3, symbol4],
+          ])
+          .in(container)
       })
       .render((renderer) => {
         expect(renderer.getSymbols().find((s) => s.label === "Container")).toBeDefined()
@@ -76,10 +80,12 @@ describe("Fluent Grid API", () => {
         const symbol3 = el.core.rectangle("3")
         const symbol4 = el.core.rectangle("4")
 
-        gridResult = hint.grid([
-          [symbol1, symbol2],
-          [symbol3, symbol4],
-        ]).layout()
+        gridResult = hint
+          .grid([
+            [symbol1, symbol2],
+            [symbol3, symbol4],
+          ])
+          .layout()
 
         // Test getArea
         const cell = gridResult.getArea({ top: 0, left: 0, bottom: 1, right: 1 })

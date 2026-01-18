@@ -13,14 +13,14 @@ describe("LayoutConstraints metadata", () => {
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    
+
     // Create diagram container characs
     const diagramCharacs = {
       id: diagramContainerId,
       bounds: context.variables.createBounds(diagramContainerId, "layout"),
       container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
     }
-    
+
     hint = new HintFactory({ context, diagramContainer: diagramCharacs })
   })
 

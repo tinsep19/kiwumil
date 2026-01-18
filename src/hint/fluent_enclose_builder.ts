@@ -4,17 +4,17 @@ import type { LayoutContext } from "../model"
 
 /**
  * FluentEncloseBuilder provides a fluent API for creating enclosure relationships.
- * 
+ *
  * This builder allows chaining methods to specify:
  * - Children to enclose
  * - Overlay elements (optional)
  * - Container to use
- * 
+ *
  * @example
  * ```typescript
  * // With explicit container
  * hint.enclose(child1, child2).in(container);
- * 
+ *
  * // With overlay elements
  * hint.enclose(child1, child2).over(overlay1).in(container);
  * ```
@@ -30,13 +30,13 @@ export class FluentEncloseBuilder {
 
   /**
    * Specifies overlay elements that should be rendered on top of the enclosed children.
-   * 
+   *
    * Overlay elements are also enclosed within the container but may have different
    * visual treatment or z-ordering.
-   * 
+   *
    * @param overtaken - Symbols to use as overlays
    * @returns This builder for method chaining
-   * 
+   *
    * @example
    * ```typescript
    * hint.enclose(child1, child2).over(border, label).in(container);
@@ -49,12 +49,12 @@ export class FluentEncloseBuilder {
 
   /**
    * Specifies the container to use for enclosing the children.
-   * 
+   *
    * This finalizes the enclosure relationship by applying constraints
    * to ensure the container bounds contain all children and overlays.
-   * 
+   *
    * @param container - Container symbol
-   * 
+   *
    * @example
    * ```typescript
    * hint.enclose(child1, child2).in(systemBoundary);
@@ -66,7 +66,7 @@ export class FluentEncloseBuilder {
 
   /**
    * Internal method to apply the enclosure constraints.
-   * 
+   *
    * @param container - Container to use
    */
   private applyEnclose(container: IContainerSymbolCharacs): void {

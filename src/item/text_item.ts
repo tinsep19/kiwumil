@@ -149,10 +149,7 @@ export class TextItem extends Item {
       .map((line, index) => {
         const dy = index === 0 ? 0 : lineHeight
         // Escape XML special characters
-        const escaped = line
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
+        const escaped = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         // Use space for empty lines to maintain spacing
         return `<tspan x="${textX}" dy="${dy}">${escaped || " "}</tspan>`
       })

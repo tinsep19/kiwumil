@@ -32,7 +32,7 @@ describe("UserHintRegistration", () => {
 
   test("should register a user hint with a constraint", () => {
     const rect1 = createRectangle("rect1")
-    
+
     const registration = context.hints.register("custom-guide", (builder) => {
       const xVar = builder.createVariable("guide_x")
       builder.setConstraint((cb) => {
@@ -94,7 +94,7 @@ describe("UserHintRegistration", () => {
 
     context.hints.register("align-guide", (builder) => {
       const guideX = builder.createVariable("align_x")
-      
+
       builder.setConstraint((cb) => {
         // Set guide to x=200
         cb.ct([1, guideX]).eq([200, 1]).strong()

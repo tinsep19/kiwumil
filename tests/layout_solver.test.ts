@@ -15,14 +15,14 @@ describe("Layout pipeline", () => {
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    
+
     // Create diagram container characs
     const diagramCharacs = {
       id: diagramContainerId,
       bounds: context.variables.createBounds(diagramContainerId, "layout"),
       container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
     }
-    
+
     hint = new HintFactory({ context, diagramContainer: diagramCharacs })
   })
 
@@ -67,7 +67,14 @@ describe("Layout pipeline", () => {
       const ry = r.createVariable("ry")
       const ellipseItem = r.createItemBounds("ellipse")
       const labelItem = r.createItemBounds("label")
-      const characs = { id: symbolId, bounds: bound, rx, ry, ellipse: ellipseItem, label: labelItem }
+      const characs = {
+        id: symbolId,
+        bounds: bound,
+        rx,
+        ry,
+        ellipse: ellipseItem,
+        label: labelItem,
+      }
       const usecase = new UsecaseSymbol({
         label: id,
         characs,

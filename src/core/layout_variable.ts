@@ -32,11 +32,7 @@ export type TopRightAnchor = Anchor & { readonly corner: "topRight" }
 export type BottomLeftAnchor = Anchor & { readonly corner: "bottomLeft" }
 export type BottomRightAnchor = Anchor & { readonly corner: "bottomRight" }
 
-export type CornerAnchor =
-  | TopLeftAnchor
-  | TopRightAnchor
-  | BottomLeftAnchor
-  | BottomRightAnchor;
+export type CornerAnchor = TopLeftAnchor | TopRightAnchor | BottomLeftAnchor | BottomRightAnchor
 
 /**
  * Dimension types: Size dimension types for layout variables (branded for type safety)

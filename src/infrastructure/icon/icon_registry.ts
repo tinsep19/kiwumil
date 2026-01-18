@@ -60,7 +60,7 @@ export class IconRegistry {
   /**
    * Create a LoaderFactory for the given plugin
    * This method is used by plugins in createIconFactory to get a factory for creating icon loaders
-   * 
+   *
    * @param plugin - Plugin name
    * @param importMeta - import.meta from the plugin
    * @returns LoaderFactory instance

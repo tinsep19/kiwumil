@@ -67,8 +67,8 @@ describe("SvgRenderer with Symbols and Relationships", () => {
 
     // Should still produce valid SVG
     expect(svg).toContain('<?xml version="1.0" encoding="UTF-8"?>')
-    expect(svg).toContain('<svg')
-    expect(svg).toContain('</svg>')
+    expect(svg).toContain("<svg")
+    expect(svg).toContain("</svg>")
   })
 
   test("should work with theme", () => {

@@ -1,5 +1,12 @@
 // src/plugin/uml/symbols/actor_symbol.ts
-import type { LinearConstraintBuilder, ItemBounds, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds } from "../../../core"
+import type {
+  LinearConstraintBuilder,
+  ItemBounds,
+  ISymbolCharacs,
+  ISymbol,
+  SymbolId,
+  LayoutBounds,
+} from "../../../core"
 import { getStyleForSymbol, type Theme } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"
@@ -36,9 +43,7 @@ export class ActorSymbol implements ISymbol {
     this.stereotype = options.stereotype
 
     // Get style from theme
-    const style = this.theme
-      ? getStyleForSymbol(this.theme, "actor")
-      : this.getFallbackStyle()
+    const style = this.theme ? getStyleForSymbol(this.theme, "actor") : this.getFallbackStyle()
 
     // Create IconItem for actor figure
     const iconItem = new IconItem({
@@ -137,8 +142,8 @@ export class ActorSymbol implements ISymbol {
 
     // Get default sizes from items
     const iconSize = this.items.icon.getDefaultSize()
-    const stereotypeDefaultSize = this.stereotype 
-      ? this.items.stereotype.getDefaultSize() 
+    const stereotypeDefaultSize = this.stereotype
+      ? this.items.stereotype.getDefaultSize()
       : { width: 0, height: 0 }
     const labelDefaultSize = this.items.label.getDefaultSize()
 
@@ -177,10 +182,13 @@ export class ActorSymbol implements ISymbol {
     builder.ct([1, bounds.width]).ge([iconSize.width, 1]).medium()
     builder.ct([1, bounds.width]).ge([stereotypeDefaultSize.width, 1]).medium()
     builder.ct([1, bounds.width]).ge([labelDefaultSize.width, 1]).medium()
-    
+
     // Similarly for height - bounds must contain the entire vertical stack
     // Total height is stereotype + icon + label
-    builder.ct([1, bounds.height]).ge([stereotypeDefaultSize.height, 1], [iconSize.height, 1], [labelDefaultSize.height, 1]).medium()
+    builder
+      .ct([1, bounds.height])
+      .ge([stereotypeDefaultSize.height, 1], [iconSize.height, 1], [labelDefaultSize.height, 1])
+      .medium()
 
     // 8. Bounds auto-expansion with weak constraint
     // Weak constraint to suggest minimal size, but allows growth based on content

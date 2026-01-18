@@ -1,8 +1,5 @@
 // src/plugin/uml/relationships/extend.ts
-import {
-  RelationshipBase,
-  type RelationshipBaseOptions,
-} from "../../../model"
+import { RelationshipBase, type RelationshipBaseOptions } from "../../../model"
 import type { ISymbol, SymbolId } from "../../../core"
 import { getBoundsValues } from "../../../core"
 

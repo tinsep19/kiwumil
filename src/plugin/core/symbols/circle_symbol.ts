@@ -1,5 +1,12 @@
 // src/plugin/core/symbols/circle_symbol.ts
-import type { LinearConstraintBuilder, Variable, ISymbolCharacs, ISymbol, SymbolId, LayoutBounds } from "../../../core"
+import type {
+  LinearConstraintBuilder,
+  Variable,
+  ISymbolCharacs,
+  ISymbol,
+  SymbolId,
+  LayoutBounds,
+} from "../../../core"
 import { getStyleForSymbol } from "../../../theme"
 import type { Point } from "../../../core"
 import { getBoundsValues } from "../../../core"

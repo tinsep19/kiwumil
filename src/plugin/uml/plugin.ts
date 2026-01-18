@@ -84,7 +84,14 @@ export const UMLPlugin = {
           const ry = r.createVariable("ry")
           const ellipseItem = r.createItemBounds("ellipse")
           const labelItem = r.createItemBounds("label")
-          const characs = { id: symbolId, bounds: bound, rx, ry, ellipse: ellipseItem, label: labelItem }
+          const characs = {
+            id: symbolId,
+            bounds: bound,
+            rx,
+            ry,
+            ellipse: ellipseItem,
+            label: labelItem,
+          }
           const usecase = new UsecaseSymbol({
             label,
             characs,
@@ -126,7 +133,11 @@ export const UMLPlugin = {
     }
   },
 
-  createRelationshipFactory(relationships: RelationshipRegistry, theme: Theme, _icons: PluginIcons) {
+  createRelationshipFactory(
+    relationships: RelationshipRegistry,
+    theme: Theme,
+    _icons: PluginIcons
+  ) {
     const plugin = this.name
 
     return {

@@ -31,7 +31,7 @@ export class UserHintRegistrationBuilder {
   /**
    * Create a variable for this user hint.
    * The variable name will be prefixed with the hint ID automatically.
-   * 
+   *
    * @param variableId Variable identifier (will be prefixed with hint ID)
    * @returns Variable created by the solver
    */
@@ -42,7 +42,7 @@ export class UserHintRegistrationBuilder {
 
   /**
    * Set the constraint for this user hint.
-   * 
+   *
    * @param spec Constraint specification function
    * @returns Created LayoutConstraint
    */
@@ -80,7 +80,7 @@ export class Hints {
   /**
    * Create a variable for use by UserHintRegistrationBuilder.
    * This is an internal method used by the builder pattern.
-   * 
+   *
    * @param variableId Full variable identifier
    * @returns Created Variable
    */
@@ -91,7 +91,7 @@ export class Hints {
   /**
    * Create a constraint for use by UserHintRegistrationBuilder.
    * This is an internal method used by the builder pattern.
-   * 
+   *
    * @param constraintId Identifier for the constraint
    * @param spec Constraint specification function
    * @returns Created LayoutConstraint
@@ -103,11 +103,11 @@ export class Hints {
   /**
    * Register a user-created hint with variables and constraints.
    * Similar to Symbols.register, this provides a factory pattern for creating hints.
-   * 
+   *
    * @param hintName Name for this hint (used to generate unique ID)
    * @param factory Factory function that receives builder and creates the hint
    * @returns UserHintRegistration containing the created hint information
-   * 
+   *
    * @example
    * ```typescript
    * const registration = hints.register("custom-guide", (builder) => {
@@ -145,7 +145,7 @@ export class Hints {
 
   /**
    * Get all registered user hints.
-   * 
+   *
    * @returns Read-only array of all UserHintRegistration objects
    */
   getAllRegistrations(): readonly UserHintRegistration[] {
@@ -154,7 +154,7 @@ export class Hints {
 
   /**
    * Find a registered user hint by ID.
-   * 
+   *
    * @param id Hint ID to search for
    * @returns UserHintRegistration if found, undefined otherwise
    */

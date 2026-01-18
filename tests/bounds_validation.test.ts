@@ -137,7 +137,14 @@ describe("Bounds Validation", () => {
 
       const usecase = new UsecaseSymbol({
         label: "TestUsecase",
-        characs: { id: "test-usecase", bounds: bounds, rx: rxVar, ry: ryVar, ellipse: ellipseItem, label: labelItem },
+        characs: {
+          id: "test-usecase",
+          bounds: bounds,
+          rx: rxVar,
+          ry: ryVar,
+          ellipse: ellipseItem,
+          label: labelItem,
+        },
         theme: DefaultTheme,
       })
       const svg = usecase.toSVG()
@@ -172,7 +179,14 @@ describe("Bounds Validation", () => {
 
       const usecase = new UsecaseSymbol({
         label: "TestUsecase",
-        characs: { id: "test-usecase", bounds: bounds, rx: rxVar, ry: ryVar, ellipse: ellipseItem, label: labelItem },
+        characs: {
+          id: "test-usecase",
+          bounds: bounds,
+          rx: rxVar,
+          ry: ryVar,
+          ellipse: ellipseItem,
+          label: labelItem,
+        },
         theme: DefaultTheme,
       })
       const svg = usecase.toSVG()
@@ -211,7 +225,14 @@ describe("Bounds Validation", () => {
 
       const usecase = new UsecaseSymbol({
         label: "TestUsecase",
-        characs: { id: "test-usecase-constraints", bounds: bounds, rx: rxVar, ry: ryVar, ellipse: ellipseItem, label: labelItem },
+        characs: {
+          id: "test-usecase-constraints",
+          bounds: bounds,
+          rx: rxVar,
+          ry: ryVar,
+          ellipse: ellipseItem,
+          label: labelItem,
+        },
         theme: DefaultTheme,
       })
 
@@ -225,23 +246,23 @@ describe("Bounds Validation", () => {
       // 1. ellipseBounds fits within bounds
       // 2. ellipseBounds.width = 2 * rx and ellipseBounds.height = 2 * ry
       // 3. Label is centered within ellipse bounds
-      
+
       const rxValue = rxVar.value()
       const ryValue = ryVar.value()
       const ellipseBoundsValues = getBoundsValues(ellipseItem)
       const boundsValues = getBoundsValues(bounds)
       const labelBoundsValues = getBoundsValues(labelItem)
-      
+
       // Check that ellipse dimensions match rx and ry
       expect(ellipseBoundsValues.width).toBeCloseTo(2 * rxValue, 1)
       expect(ellipseBoundsValues.height).toBeCloseTo(2 * ryValue, 1)
-      
+
       // Check that ellipse bounds fit within bounds
       expect(ellipseBoundsValues.x).toBeGreaterThanOrEqual(boundsValues.x - 0.1)
       expect(ellipseBoundsValues.right).toBeLessThanOrEqual(boundsValues.right + 0.1)
       expect(ellipseBoundsValues.y).toBeGreaterThanOrEqual(boundsValues.y - 0.1)
       expect(ellipseBoundsValues.bottom).toBeLessThanOrEqual(boundsValues.bottom + 0.1)
-      
+
       // Check that label is centered within ellipse bounds
       expect(labelBoundsValues.centerX).toBeCloseTo(ellipseBoundsValues.centerX, 1)
       expect(labelBoundsValues.centerY).toBeCloseTo(ellipseBoundsValues.centerY, 1)

@@ -63,9 +63,7 @@ export class RectItem extends Item {
 
     // If corner radius is specified, add rx and ry attributes
     const cornerAttrs =
-      this.cornerRadius > 0
-        ? ` rx="${this.cornerRadius}" ry="${this.cornerRadius}"`
-        : ""
+      this.cornerRadius > 0 ? ` rx="${this.cornerRadius}" ry="${this.cornerRadius}"` : ""
 
     return `
       <rect x="${x}" y="${y}" width="${width}" height="${height}"${cornerAttrs}

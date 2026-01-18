@@ -22,7 +22,13 @@ export type {
   BottomRightAnchor,
   CornerAnchor,
 } from "./layout_variable"
-export { createBrandVariableFactory, topLeft, topRight, bottomLeft, bottomRight } from "./layout_variable"
+export {
+  createBrandVariableFactory,
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight,
+} from "./layout_variable"
 
 // 制約
 export type {

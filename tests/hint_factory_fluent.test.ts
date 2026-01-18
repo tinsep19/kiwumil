@@ -13,14 +13,14 @@ describe("HintFactory Fluent API", () => {
   beforeEach(() => {
     const solver = new KiwiSolver()
     context = new LayoutContext(solver, DefaultTheme)
-    
+
     // Create diagram container characs
     const diagramCharacs = {
       id: diagramContainerId,
       bounds: context.variables.createBounds(diagramContainerId, "layout"),
       container: context.variables.createBounds(`${diagramContainerId}.container`, "container"),
     }
-    
+
     hint = new HintFactory({ context, diagramContainer: diagramCharacs })
   })
 
@@ -70,9 +70,7 @@ describe("HintFactory Fluent API", () => {
     const rect3 = createRectangle("rect3")
 
     // Test horizontal and vertical aliases
-    const result = hint
-      .horizontal(rect1, rect2)
-      .vertical(rect1, rect3)
+    const result = hint.horizontal(rect1, rect2).vertical(rect1, rect3)
 
     expect(result).toBe(hint)
 
@@ -106,9 +104,7 @@ describe("HintFactory Fluent API", () => {
     const child2 = createRectangle("child2")
 
     // Old API: enclose(container, [children]) - returns this for chaining
-    const result = hint
-      .enclose(container, [child1, child2])
-      .alignCenterX(child1, child2)
+    const result = hint.enclose(container, [child1, child2]).alignCenterX(child1, child2)
 
     expect(result).toBe(hint)
 
@@ -186,7 +182,10 @@ describe("HintFactory Fluent API", () => {
     // All rectangles should have same size
     expect(context.valueOf(rect1.bounds.width)).toBeCloseTo(context.valueOf(rect2.bounds.width), 1)
     expect(context.valueOf(rect1.bounds.width)).toBeCloseTo(context.valueOf(rect3.bounds.width), 1)
-    expect(context.valueOf(rect1.bounds.height)).toBeCloseTo(context.valueOf(rect2.bounds.height), 1)
+    expect(context.valueOf(rect1.bounds.height)).toBeCloseTo(
+      context.valueOf(rect2.bounds.height),
+      1
+    )
 
     // rect1 and rect3 should be centered
     expect(context.valueOf(rect1.bounds.centerX)).toBeCloseTo(

@@ -83,7 +83,7 @@ describe("Item Classes", () => {
       })
 
       const svg = textItem.render()
-      expect(svg).toContain("text-anchor=\"middle\"")
+      expect(svg).toContain('text-anchor="middle"')
       expect(svg).toContain("&lt;")
       expect(svg).toContain("&gt;")
       expect(svg).toContain("&amp;")

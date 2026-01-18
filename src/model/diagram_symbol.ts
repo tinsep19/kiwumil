@@ -57,30 +57,32 @@ export class DiagramSymbol implements ISymbol {
     })
 
     // Create TextItem for author if provided
-    const authorItem = options.info.author && options.characs.author
-      ? new TextItem({
-          bounds: options.characs.author,
-          text: `Author: ${options.info.author}`,
-          alignment: "right",
-          fontSize: style.fontSize * 0.75,
-          fontFamily: style.fontFamily,
-          textColor: style.textColor,
-          padding: { top: 4, right: 10, bottom: 4, left: 10 },
-        })
-      : undefined
+    const authorItem =
+      options.info.author && options.characs.author
+        ? new TextItem({
+            bounds: options.characs.author,
+            text: `Author: ${options.info.author}`,
+            alignment: "right",
+            fontSize: style.fontSize * 0.75,
+            fontFamily: style.fontFamily,
+            textColor: style.textColor,
+            padding: { top: 4, right: 10, bottom: 4, left: 10 },
+          })
+        : undefined
 
     // Create TextItem for createdAt if provided
-    const createdAtItem = options.info.createdAt && options.characs.createdAt
-      ? new TextItem({
-          bounds: options.characs.createdAt,
-          text: `Created: ${options.info.createdAt}`,
-          alignment: "right",
-          fontSize: style.fontSize * 0.75,
-          fontFamily: style.fontFamily,
-          textColor: style.textColor,
-          padding: { top: 4, right: 10, bottom: 4, left: 10 },
-        })
-      : undefined
+    const createdAtItem =
+      options.info.createdAt && options.characs.createdAt
+        ? new TextItem({
+            bounds: options.characs.createdAt,
+            text: `Created: ${options.info.createdAt}`,
+            alignment: "right",
+            fontSize: style.fontSize * 0.75,
+            fontFamily: style.fontFamily,
+            textColor: style.textColor,
+            padding: { top: 4, right: 10, bottom: 4, left: 10 },
+          })
+        : undefined
 
     this.items = { title: titleItem, author: authorItem, createdAt: createdAtItem }
   }

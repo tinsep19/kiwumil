@@ -59,10 +59,14 @@ export class Grid {
 
     // Validate bounds
     if (top < 0 || top > this.rows || bottom < 0 || bottom > this.rows) {
-      throw new Error(`Invalid row indices: top=${top}, bottom=${bottom}. Must be in [0, ${this.rows}]`)
+      throw new Error(
+        `Invalid row indices: top=${top}, bottom=${bottom}. Must be in [0, ${this.rows}]`
+      )
     }
     if (left < 0 || left > this.cols || right < 0 || right > this.cols) {
-      throw new Error(`Invalid column indices: left=${left}, right=${right}. Must be in [0, ${this.cols}]`)
+      throw new Error(
+        `Invalid column indices: left=${left}, right=${right}. Must be in [0, ${this.cols}]`
+      )
     }
     if (top >= bottom) {
       throw new Error(`Invalid row indices: top=${top} must be less than bottom=${bottom}`)

@@ -71,11 +71,13 @@ describe("Grid Builder", () => {
         symbolIds = [a, b, c, d]
 
         // Use FluentGridBuilder - grid takes only the 2D array
-        hint.grid([
-          [a, b],
-          [c, d],
-        ]).layout()
-        
+        hint
+          .grid([
+            [a, b],
+            [c, d],
+          ])
+          .layout()
+
         // Then enclose the grid in the boundary
         hint.enclose(boundaryId, [a, b, c, d])
       })
@@ -102,11 +104,13 @@ describe("Grid Builder", () => {
 
         // FluentGridBuilder doesn't have gap() method yet
         // Use the default gap for now
-        hint.grid([
-          [a, b],
-          [c, d],
-        ]).layout()
-        
+        hint
+          .grid([
+            [a, b],
+            [c, d],
+          ])
+          .layout()
+
         hint.enclose(boundaryId, [a, b, c, d])
       })
       .render((renderer) => {
@@ -130,11 +134,13 @@ describe("Grid Builder", () => {
 
         // FluentGridBuilder doesn't have gap() method
         // Use the default gap for now
-        hint.grid([
-          [a, b],
-          [c, d],
-        ]).layout()
-        
+        hint
+          .grid([
+            [a, b],
+            [c, d],
+          ])
+          .layout()
+
         hint.enclose(boundaryId, [a, b, c, d])
       })
       .render((renderer) => {

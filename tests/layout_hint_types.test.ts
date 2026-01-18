@@ -20,7 +20,7 @@ describe("HintTarget Type Utilities", () => {
       boundId: "test" as BoundId,
       bounds: {} as LayoutBounds,
     }
-    
+
     expect(minimal.boundId).toBeDefined()
     expect(minimal.bounds).toBeDefined()
   })
@@ -32,7 +32,7 @@ describe("HintTarget Type Utilities", () => {
       bounds: {} as LayoutBounds,
       container: {} as ContainerBounds, // Required
     }
-    
+
     expect(withContainer.container).toBeDefined()
   })
 
@@ -42,7 +42,7 @@ describe("HintTarget Type Utilities", () => {
       bounds: {} as LayoutBounds,
       container: {} as ContainerBounds, // Optional
     }
-    
+
     expect(boundsOnly.bounds).toBeDefined()
   })
 
@@ -52,13 +52,12 @@ describe("HintTarget Type Utilities", () => {
       bounds: {} as LayoutBounds,
       container: {} as ContainerBounds, // Optional
     }
-    
+
     expect(target.boundId).toBeDefined()
     expect(target.bounds).toBeDefined()
     expect(target.container).toBeDefined()
   })
 })
-
 
 describe("Builder Interface Types", () => {
   test("ArrangeBuilder has arrange init method", () => {
@@ -66,7 +65,7 @@ describe("Builder Interface Types", () => {
     // This is a compile-time test to ensure the type is well-formed
     type HasArrange = ArrangeBuilder extends { arrange: (...args: any[]) => any } ? true : false
     const hasArrange: HasArrange = true
-    
+
     expect(hasArrange).toBe(true)
   })
 
@@ -74,7 +73,7 @@ describe("Builder Interface Types", () => {
     // The new fluent builder has flow() as the init method
     type HasFlow = FlowBuilder extends { flow: (...args: any[]) => any } ? true : false
     const hasFlow: HasFlow = true
-    
+
     expect(hasFlow).toBe(true)
   })
 
@@ -82,7 +81,7 @@ describe("Builder Interface Types", () => {
     // The new fluent builder has align() as the init method
     type HasAlign = AlignBuilder extends { align: (...args: any[]) => any } ? true : false
     const hasAlign: HasAlign = true
-    
+
     expect(hasAlign).toBe(true)
   })
 })
@@ -90,57 +89,57 @@ describe("Builder Interface Types", () => {
 describe("Type Utility Patterns", () => {
   test("Pick extracts specific fields", () => {
     type OnlyBounds = Pick<HintTarget, "bounds">
-    
+
     const obj: OnlyBounds = {
       bounds: {} as LayoutBounds,
     }
-    
+
     expect(obj.bounds).toBeDefined()
   })
 
   test("Omit excludes specific fields", () => {
     type WithoutContainer = Omit<HintTarget, "container">
-    
+
     const obj: WithoutContainer = {
       boundId: "test" as BoundId,
       bounds: {} as LayoutBounds,
     }
-    
+
     expect(obj.boundId).toBeDefined()
     expect(obj.bounds).toBeDefined()
   })
 
   test("Required makes all fields required", () => {
     type AllRequired = Required<HintTarget>
-    
+
     const obj: AllRequired = {
       boundId: "test" as BoundId,
       bounds: {} as LayoutBounds,
       container: {} as ContainerBounds, // No longer optional
     }
-    
+
     expect(obj.container).toBeDefined()
   })
 
   test("Partial makes all fields optional", () => {
     type AllOptional = Partial<HintTarget>
-    
+
     const obj: AllOptional = {
       // All fields are optional
     }
-    
+
     expect(obj).toBeDefined()
   })
 
   test("Combined utilities work together", () => {
     // Extract specific fields and make them required
     type SpecificRequired = Required<Pick<HintTarget, "boundId" | "bounds">>
-    
+
     const obj: SpecificRequired = {
       boundId: "test" as BoundId,
       bounds: {} as LayoutBounds,
     }
-    
+
     expect(obj.boundId).toBeDefined()
     expect(obj.bounds).toBeDefined()
   })
