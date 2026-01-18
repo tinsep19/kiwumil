@@ -1,7 +1,7 @@
 // src/domain/ports/relationship.ts
 // 関連のインターフェース定義
 
-import type { RelationshipId } from "../../core/types"
+import type { RelationshipId } from "../../model/types"
 import type { RenderModel } from "./symbol"
 
 /**
