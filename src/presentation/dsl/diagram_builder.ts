@@ -1,5 +1,5 @@
 // src/presentation/dsl/diagram_builder.ts
-import { NamespaceBuilder } from "../../dsl/namespace_builder"
+import { NamespaceBuilder } from "../namespace-dsl/namespace_builder"
 import { HintFactory } from "../../dsl/hint_factory"
 import { SvgRenderer } from "../../render"
 import { DiagramSymbol, LayoutContext, type DiagramSymbolCharacs } from "../../model"
@@ -13,7 +13,7 @@ import type {
   BuildElementNamespace,
   BuildRelationshipNamespace,
   BuildIconNamespace,
-} from "../../dsl/namespace_types"
+} from "../namespace-dsl/namespace_types"
 import { DefaultTheme } from "../../theme"
 
 /**
