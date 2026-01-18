@@ -119,8 +119,9 @@ export interface CassowarySolver {
 
   /**
    * 制約を作成して登録
+   * 注: 実装は LayoutConstraint を返すが、内部的には複数の LinearConstraint を持つ
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): LinearConstraint[]
+  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): unknown
 
   /**
    * 編集用ハンドルを作成
