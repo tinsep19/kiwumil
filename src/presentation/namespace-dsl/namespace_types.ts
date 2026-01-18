@@ -1,5 +1,5 @@
 // src/presentation/namespace-dsl/namespace_types.ts
-import type { DiagramPlugin } from "../../dsl/diagram_plugin"
+import type { DiagramPlugin } from "../../dsl"
 import type { SymbolRegistry, RelationshipRegistry } from "../../model"
 import type { Theme } from "../../theme"
 import type { RelationshipId } from "../../model"

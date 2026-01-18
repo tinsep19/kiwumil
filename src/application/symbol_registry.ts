@@ -1,6 +1,6 @@
 // src/application/symbol_registry.ts
 import type { ConstraintSpec } from "../core"
-import type { LayoutVariables } from "../model/layout_variables"
+import type { LayoutVariables } from "../model"
 import type { SymbolId, ISymbol, ISymbolCharacs, LayoutConstraint, LayoutBounds } from "../core"
 
 /**

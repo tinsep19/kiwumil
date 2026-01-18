@@ -1,5 +1,5 @@
 // src/presentation/namespace-dsl/namespace_builder.ts
-import type { DiagramPlugin } from "../../dsl/diagram_plugin"
+import type { DiagramPlugin } from "../../dsl"
 import type {
   BuildElementNamespace,
   BuildRelationshipNamespace,

@@ -4,8 +4,35 @@ import prettier from "eslint-config-prettier";
 import directoryEntryImport from "./eslint-rules/directory-entry-import.js";
 
 export default [
+  // Transitional: allow direct cross-directory imports except for new Clean Architecture layers.
+  // We keep the rule strict in src/{domain,application,presentation,infrastructure}.
   {
     files: ["src/**/*.ts"],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint,
+      local: directoryEntryImport,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "local/require-directory-index-import": "off",
+    },
+  },
+  {
+    files: [
+      "src/domain/**/*.ts",
+      "src/application/**/*.ts",
+      "src/presentation/**/*.ts",
+      "src/infrastructure/**/*.ts",
+    ],
     languageOptions: {
       parser: tsparser,
       parserOptions: {

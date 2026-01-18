@@ -1,8 +1,7 @@
 // src/application/layout_context.ts
 import type { Theme } from "../theme"
 import type { Variable, LayoutConstraint, ConstraintSpec, CassowarySolver } from "../core"
-import { LayoutVariables } from "../model/layout_variables"
-import { Hints } from "../model/hints"
+import { LayoutVariables, Hints } from "../model"
 import { SymbolRegistry } from "./symbol_registry"
 import { RelationshipRegistry } from "./relationship_registry"
 import { IconRegistry } from "../icon"

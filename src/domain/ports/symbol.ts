@@ -1,8 +1,7 @@
 // src/domain/ports/symbol.ts
 // シンボルのインターフェース定義
 
-import type { SymbolId, Point } from "../../core/types"
-import type { LayoutBounds } from "../../core/layout_variable"
+import type { SymbolId, Point, LayoutBounds } from "../../core"
 
 /**
  * ISymbol: 図の要素が実装すべきインターフェース

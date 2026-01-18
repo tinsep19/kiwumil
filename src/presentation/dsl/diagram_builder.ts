@@ -6,21 +6,20 @@
 // - LoadPluginsUsecase
 // - BuildDiagramUsecase
 // - RenderUsecase
-import { NamespaceBuilder } from "../namespace-dsl/namespace_builder"
-import { HintFactory } from "../../dsl/hint_factory"
+import {
+  NamespaceBuilder,
+  type BuildElementNamespace,
+  type BuildRelationshipNamespace,
+  type BuildIconNamespace,
+} from "../namespace-dsl"
+import { HintFactory, type DiagramPlugin } from "../../dsl"
 import { SvgRenderer } from "../../render"
 import { DiagramSymbol, LayoutContext, type DiagramSymbolCharacs } from "../../model"
 import type { DiagramInfo } from "../../model"
 import { CorePlugin } from "../../plugin"
 import { KiwiSolver } from "../../kiwi" // TODO: Should be injected via DI
 import { convertMetaUrlToSvgPath } from "../../utils"
-import type { DiagramPlugin } from "../../dsl/diagram_plugin"
 import type { Theme } from "../../theme"
-import type {
-  BuildElementNamespace,
-  BuildRelationshipNamespace,
-  BuildIconNamespace,
-} from "../namespace-dsl/namespace_types"
 import { DefaultTheme } from "../../theme"
 
 /**

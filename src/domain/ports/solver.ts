@@ -1,8 +1,7 @@
 // src/domain/ports/solver.ts
 // Cassowary ソルバーの抽象化インターフェース
 
-import type { VariableId, LayoutConstraintId } from "../../core/types"
-import type { Variable } from "../../core/layout_variable"
+import type { VariableId, LayoutConstraintId, Variable } from "../../core"
 
 /**
  * ConstraintStrength: 制約の強度
