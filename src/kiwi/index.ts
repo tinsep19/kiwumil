@@ -1,3 +1,3 @@
-export { KiwiSolver, isKiwiVariable, isBrandedKiwi } from "./kiwi_solver"
-// Note: Variables export removed to avoid circular dependency
-// Import directly from "@/model" instead
+// Re-export from infrastructure for backward compatibility
+export { KiwiSolver, isKiwiVariable, isBrandedKiwi } from "../infrastructure/kiwi/kiwi_solver"
+

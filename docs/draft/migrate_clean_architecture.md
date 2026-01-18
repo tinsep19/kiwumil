@@ -329,5 +329,165 @@
     - namespace-dsl
       プラグインが提供する語彙/アイコンを名前空間で分けて、
       型情報とともにユーザーに提供する
-      
+
+## 移行ステップ
+
+既存のコードを段階的に新しい構造へ移行していきます。ストラングラーパターンを採用し、テストを壊さないように再エクスポートを活用します。
+
+### 0. 準備
+
+- 現在のテストがすべてパスすることを確認
+- git の作業ブランチを作成
+
+### 1. Composition Root の確定
+
+- `src/dsl/diagram_builder.ts` の実装を `src/presentation/dsl/diagram_builder.ts` へ移動
+- 旧パス `src/dsl/diagram_builder.ts` は再エクスポート専用ファイルとして残す
+  ```typescript
+  // src/dsl/diagram_builder.ts (旧パスに残す再エクスポート)
+  export { TypeDiagram } from '../presentation/dsl/diagram_builder'
+  ```
+- `TypeDiagram` 関数は `src/index.ts` → `src/presentation/index.ts` 経由で再エクスポート
+- **重要**: コピーではなく移動すること。二重メンテナンスを避けるため
+
+### 2. 新しいディレクトリ構造の作成
+
+以下のディレクトリを作成:
+
+```
+src/
+  domain/
+    entity/
+    service/
+    ports/
+  application/
+    usecase/
+  infrastructure/
+    kiwi/
+    render/
+    icon/
+  presentation/
+    dsl/
+    namespace-dsl/
+```
+
+### 3. Ports の定義
+
+`src/domain/ports/` 配下にインターフェースを作成:
+
+- `solver.ts`: CassowarySolver の抽象化
+  - `ConstraintExpr`, `LinearConstraint`, `VariableFactory`, `ConstraintRegistrar` など
+- `symbol.ts`: `ISymbol` インターフェース
+- `relationship.ts`: `IRelationship` インターフェース
+- `renderer.ts`: レンダラーのインターフェース
+- `icon_provider.ts`: `IconProvider = () => IconRef`
+
+### 4. Domain Entity の実装
+
+`src/domain/entity/` 配下に以下を実装:
+
+- `layout_variable.ts`: 既存の `src/core/layout_variable.ts` をベースに移動
+- `plane_variable.ts`: GuideX/GuideY/GridArea
+- `layout_constraint.ts`: `LayoutConstraint<T>` クラス
+- `bounds.ts`: 既存のコードをベースに移動・整理
+- `icon/icon_ref.ts`: アイコン参照（domain は参照のみ）
+- `item/`: 既存の `src/item/` から移動
+
+### 5. Domain Service の実装
+
+`src/domain/service/` 配下に:
+
+- `variable_factory.ts`: Ports の solver を使用して変数を作成
+- `constraint_registrar.ts`: Ports の solver を使用して制約を登録
+
+### 6. Infrastructure の実装
+
+`src/infrastructure/kiwi/` に既存の Kiwi 実装を移動:
+
+- 既存の `src/kiwi/` のファイルを移動
+- `LinearConstraintImpl` クラスで `ConstraintExpr` を保持し、`isSatisfied()` を実装
+- Tolerance ロジック（abs + rel）を追加
+
+`src/infrastructure/icon/` に:
+
+- 既存の `src/icon/icon_loader.ts` を移動
+- `IconAsset` と `IconRegistry` は `src/application/` に配置
+
+`src/infrastructure/render/` に:
+
+- 既存の `src/render/` から移動
+
+### 7. Application Layer の実装
+
+`src/application/` 配下に:
+
+- `layout_context.ts`: 既存の `src/model/layout_context.ts` をベースに移動
+- `symbol_registry.ts`, `relationship_registry.ts`: 既存の `src/model/` から移動
+- `icon_registry.ts`, `icon_asset.ts`: アイコンのアプリケーション層実装
+- `plugin.ts`: プラグインインターフェース（既存の `src/dsl/diagram_plugin.ts` から移動）
+
+`src/application/usecase/` に以下の Usecase を実装:
+
+- `create_diagram_context.ts`: `CreateDiagramContextUsecase`
+- `load_plugins.ts`: `LoadPluginsUsecase`
+- `build_diagram.ts`: `BuildDiagramUsecase`
+- `render.ts`: `RenderUsecase`
+
+### 8. Presentation Layer の整理
+
+`src/presentation/dsl/` に:
+
+- ステップ 1 で移動した `diagram_builder.ts`
+- 既存の `src/dsl/` から他の必要なファイルを移動
+
+`src/presentation/namespace-dsl/` に:
+
+- 既存の `src/dsl/namespace_builder.ts`, `namespace_types.ts` を移動
+
+### 9. 再エクスポートの整理
+
+各旧パスに再エクスポート用のファイルを配置:
+
+```typescript
+// src/model/index.ts (例)
+export * from '../application/layout_context'
+export * from '../application/symbol_registry'
+// ...
+```
+
+`src/index.ts` を更新し、新しいパスからエクスポート:
+
+```typescript
+export { TypeDiagram } from './presentation'
+export type { DiagramPlugin } from './application'
+// ...
+```
+
+### 10. 段階的な移行
+
+小さいコミット単位で移行:
+
+1. まず Ports インターフェースのみ作成（破壊的変更なし）
+2. Infrastructure 実装を新パスに移動、旧パスから再エクスポート
+3. Domain Entity/Service を新パスに実装、既存コードから徐々に参照を変更
+4. Application Layer 実装
+5. Usecase 実装（最初は既存コードを薄くラップ）
+6. Presentation の整理
+7. 再エクスポートを段階的に削除（すべての参照が新パスになってから）
+
+### 11. テストの確認
+
+各ステップで `npm test` を実行し、すべてのテストがパスすることを確認:
+
+```bash
+npm test
+```
+
+### 12. 最終クリーンアップ
+
+すべての移行が完了したら:
+
+- 不要な再エクスポートを削除
+- `docs/draft/migrate_clean_architecture.md` を `docs/design/clean_architecture.md` へ移動
+- README.md を更新（必要に応じて）
     
