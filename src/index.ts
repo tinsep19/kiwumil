@@ -1,5 +1,5 @@
 // メインエントリポイント
-export { TypeDiagram } from "./dsl"
+export { TypeDiagram } from "./presentation"
 export { SymbolRegistry, RelationshipRegistry } from "./model"
 
 // プラグイン
