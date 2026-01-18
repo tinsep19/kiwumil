@@ -1,7 +1,7 @@
 // src/domain/ports/solver.ts
 // Cassowary ソルバーの抽象化インターフェース
 
-import type { VariableId, LayoutConstraintId, Variable } from "../../core"
+import type { Variable, VariableId } from "../../core"
 import type { Fluent, Entry, Step, Terminal } from "../../hint/fluent_builder_generator"
 
 /**
@@ -30,20 +30,7 @@ export interface ConstraintExpr {
   strength: ConstraintStrength
 }
 
-/**
- * LinearConstraint: 線形制約のインターフェース
- * - 登録状態の確認
- * - 満足度の評価（tolerance を使用）
- * - 制約の削除
- */
-export interface LinearConstraint {
-  readonly strength: ConstraintStrength
-  isSatisfied(): boolean
-  isRegistered(): boolean
-  dispose(): void
-}
-
-type LinearConstraintBuilder = Fluent<{
+export type ConstraintBuilder<R=void> = Fluent<{
   init: {
     ct: Entry<[...lhs: Term[]]>
   }
@@ -58,107 +45,80 @@ type LinearConstraintBuilder = Fluent<{
     }
   }
   terminal: {
-    required: Terminal
-    strong: Terminal
-    medium: Terminal
-    weak: Terminal
+    required: Terminal<[[],[R]]>
+    strong:   Terminal<[[],[R]]>
+    medium:   Terminal<[[],[R]]>
+    weak:     Terminal<[[],[R]]>
   }
 }>
 
-export abstract class AbstractLinearConstraintBuilder {
+
+export class DefaultConstraintBuilder<R> implements ConstraintBuilder<R>{
   private pending: Partial<ConstraintExpr> = {}
-  private constraints: LinearConstraint[] = []
-  constructor(private solver: CassowarySolver) {}
-  getConstraints() {
-    return this.constraints
+  constructor(
+   private process: (expr: ConstraintExpr) => R
+  ){}
+  private init(part: Partial<ConstraintExpr>) {
+    this.pending = part
+    return this
   }
-  ct(...lhs: Term[]) {
-    this.pending = { ...this.pending, lhs }
+  private update(part: Partial<ConstraintExpr>) {
+    this.pending = {...this.pending, ...part }
+    return this
   }
-  eq(...rhs: Term[]) {
-    this.pending = { ...this.pending, op: "eq", rhs }
-  }
-  eq0() {
-    this.pending = { ...this.pending, op: "eq", rhs: [[0, 1]] }
-  }
-  le(...rhs: Term[]) {
-    this.pending = { ...this.pending, op: "le", rhs }
-  }
-  le0() {
-    this.pending = { ...this.pending, op: "le", rhs: [[0, 1]] }
-  }
-  ge(...rhs: Term[]) {
-    this.pending = { ...this.pending, op: "ge", rhs }
-  }
-  ge0() {
-    this.pending = { ...this.pending, op: "ge", rhs: [[0, 1]] }
-  }
-  required() {
-    this.pending = { ...this.pending, strength: "required" }
-    this.finalize(this.pending)
-  }
-  strong() {
-    this.pending = { ...this.pending, strength: "strong" }
-    this.finalize(this.pending)
-  }
-  medium() {
-    this.pending = { ...this.pending, strength: "medium" }
-    this.finalize(this.pending)
-  }
-  weak() {
-    this.pending = { ...this.pending, strength: "weak" }
-    this.finalize(this.pending)
-  }
+  
+  ct(...lhs: Term[]) { return this.init({ lhs }) }
+
+  eq(...rhs: Term[]) { return this.update({ op: "eq", rhs }) }
+  le(...rhs: Term[]) { return this.update({ op: "le", rhs }) }
+  ge(...rhs: Term[]) { return this.update({ op: "ge", rhs }) }
+  eq0() { return this.update({ op: "eq", rhs: [[0, 1]] }) }
+  le0() { return this.update({ op: "le", rhs: [[0, 1]] }) }
+  ge0() { return this.update({ op: "ge", rhs: [[0, 1]] }) }
+
+  required() { return this.finalize({ strength: "required" }) }
+  strong()   { return this.finalize({ strength: "strong"   }) }
+  medium()   { return this.finalize({ strength: "medium"   }) }
+  weak()     { return this.finalize({ strength: "weak"     }) }
 
   isPendingComplete(pending: Partial<ConstraintExpr>): pending is ConstraintExpr {
     const { lhs, rhs, op, strength } = pending
     return lhs !== undefined && rhs !== undefined && op !== undefined && strength !== undefined
   }
-  abstract finalize(expr: Partial<ConstraintExpr>): void
-  // 最初に isPendingCompleteでConstraintExprになっているか確認
-  // 各Solver実装への変換処理/制約の登録を行う
+  
+  finalize(part: Partial<ConstraintExpr>): R {
+    const expr = { ...this.pending, ...part }
+    if (!this.isPendingComplete(expr)) {
+      throw "pending expr is not complete!"
+    }
+    this.init({})
+    return this.process(expr)
+  }
 }
 
-/**
- * LhsBuilder: 制約の左辺を構築するインターフェース
- */
-// export interface LhsBuilder {
-//   ct(...lhs: Term[]): OpRhsBuilder
-// }
-
-/**
- * OpRhsBuilder: 演算子と右辺を構築するインターフェース
- */
-// export interface OpRhsBuilder {
-//   eq(...rhs: Term[]): StrengthBuilder
-//   ge(...rhs: Term[]): StrengthBuilder
-//   le(...rhs: Term[]): StrengthBuilder
-//   eq0(): StrengthBuilder
-//   ge0(): StrengthBuilder
-//   le0(): StrengthBuilder
-// }
-
-/**
- * StrengthBuilder: 制約の強度を設定するインターフェース
- */
-// export interface StrengthBuilder {
-//   required(): void
-//   strong(): void
-//   medium(): void
-//   weak(): void
-// }
-
-/**
- * LinearConstraintBuilder: 制約を構築する Fluent API インターフェース
- */
-// export interface LinearConstraintBuilder extends LhsBuilder, OpRhsBuilder, StrengthBuilder {
-//   getRawConstraints(): LinearConstraint[]
-// }
+export class ConstraintExprBuilder extends DefaultConstraintBuilder<ConstraintExpr> {
+  constructor() {
+    super(expr => expr)
+  }
+}
 
 /**
  * ConstraintSpec: 制約を構築するコールバック関数
  */
-export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
+export type ConstraintSpec = (builder: ConstraintBuilder) => void
+
+/**
+ * LinearConstraint: 線形制約のインターフェース
+ * - 登録状態の確認
+ * - 満足度の評価（tolerance を使用）
+ * - 制約の削除
+ */
+export interface LinearConstraint {
+  readonly strength: ConstraintStrength
+  isSatisfied(): boolean
+  isRegistered(): boolean
+  dispose(): void
+}
 
 /**
  * SuggestHandle: レイアウト変数への値の提案を行うハンドル
@@ -166,17 +126,10 @@ export type ConstraintSpec = (builder: LinearConstraintBuilder) => void
 export interface SuggestHandle {
   suggest(value: number): void
   strength(): ConstraintStrength
+  variable(): Variable
   dispose(): void
 }
 
-/**
- * SuggestHandleFactory: SuggestHandle を作成するファクトリ
- */
-export interface SuggestHandleFactory {
-  strong(): SuggestHandle
-  medium(): SuggestHandle
-  weak(): SuggestHandle
-}
 
 /**
  * CassowarySolver: Cassowary アルゴリズムのソルバー抽象化
@@ -197,10 +150,12 @@ export interface CassowarySolver {
    * 制約を作成して登録
    * 注: 実装は LayoutConstraint を返すが、内部的には複数の LinearConstraint を持つ
    */
-  createConstraint(id: LayoutConstraintId, spec: ConstraintSpec): unknown
+  createConstraint(expr: ConstraintExpr): LinearConstraint
 
   /**
-   * 編集用ハンドルを作成
+   * 制約の登録を解除
    */
-  createHandle(variable: Variable): SuggestHandleFactory
+  removeConstraint(constraint: LinearConstraint): void
+
+  createHandle(variable: Variable, strength: ConstraintStrength): SuggestHandle
 }
