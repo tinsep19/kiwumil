@@ -1,6 +1,6 @@
-// src/item/rect_item.ts
+// src/domain/entity/item/rect_item.ts
 import { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
-import { getBoundsValues } from "../core"
+import { getBoundsValues } from "../layout_variable"
 
 /**
  * RectItemOptions: Configuration options for RectItem
