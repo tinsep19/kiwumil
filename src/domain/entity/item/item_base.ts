@@ -1,5 +1,5 @@
-// src/item/item_base.ts
-import type { ItemBounds } from "../core"
+// src/domain/entity/item/item_base.ts
+import type { ItemBounds } from "../layout_variable"
 
 /**
  * ItemBaseOptions: Base options for all Item types

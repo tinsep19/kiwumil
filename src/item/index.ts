@@ -1,5 +1,11 @@
-// src/item/index.ts
-export { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
-export { TextItem, type TextItemOptions, type TextAlignment, type Padding } from "./text_item"
-export { RectItem, type RectItemOptions } from "./rect_item"
-export { IconItem, type IconItemOptions } from "./icon_item"
+// Re-export from domain entity for backward compatibility
+export { Item, TextItem, RectItem, IconItem } from "../domain/entity/item"
+export type {
+  ItemBaseOptions,
+  EstimateSize,
+  TextItemOptions,
+  TextAlignment,
+  Padding,
+  RectItemOptions,
+  IconItemOptions,
+} from "../domain/entity/item"

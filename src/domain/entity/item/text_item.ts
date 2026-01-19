@@ -1,6 +1,6 @@
-// src/item/text_item.ts
+// src/domain/entity/item/text_item.ts
 import { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
-import { getBoundsValues } from "../core"
+import { getBoundsValues } from "../layout_variable"
 
 /**
  * TextAlignment: Text alignment options

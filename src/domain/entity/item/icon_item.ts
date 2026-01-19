@@ -1,7 +1,7 @@
-// src/item/icon_item.ts
+// src/domain/entity/item/icon_item.ts
 import { Item, type ItemBaseOptions, type EstimateSize } from "./item_base"
-import { getBoundsValues } from "../core"
-import type { IconMeta } from "../icon"
+import { getBoundsValues } from "../layout_variable"
+import type { IconMeta } from "../../../icon"
 
 /**
  * IconItemOptions: Configuration options for IconItem
