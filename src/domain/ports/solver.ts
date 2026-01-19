@@ -1,8 +1,17 @@
 // src/domain/ports/solver.ts
 // Cassowary ソルバーの抽象化インターフェース
 
-import type { Variable, VariableId } from "../../core"
-import type { Fluent, Entry, Step, Terminal } from "../../hint/fluent_builder_generator"
+import type {
+  Fluent, 
+  Entry, 
+  Step, 
+  Terminal
+} from "../../hint/fluent_builder_generator"
+
+export interface Variable {
+  name(): string
+  value(): number
+}
 
 /**
  * ConstraintStrength: 制約の強度
@@ -45,10 +54,10 @@ export type ConstraintBuilder<R=void> = Fluent<{
     }
   }
   terminal: {
-    required: Terminal<[[],[R]]>
-    strong:   Terminal<[[],[R]]>
-    medium:   Terminal<[[],[R]]>
-    weak:     Terminal<[[],[R]]>
+    required: Terminal<[],R>
+    strong:   Terminal<[],R>
+    medium:   Terminal<[],R>
+    weak:     Terminal<[],R>
   }
 }>
 
@@ -107,6 +116,7 @@ export class ConstraintExprBuilder extends DefaultConstraintBuilder<ConstraintEx
  */
 export type ConstraintSpec = (builder: ConstraintBuilder) => void
 
+
 /**
  * LinearConstraint: 線形制約のインターフェース
  * - 登録状態の確認
@@ -139,7 +149,7 @@ export interface CassowarySolver {
   /**
    * レイアウト変数を作成
    */
-  createVariable(id: VariableId): Variable
+  createVariable(name?: string): Variable
 
   /**
    * 変数の値を更新
