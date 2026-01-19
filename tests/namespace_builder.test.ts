@@ -1,6 +1,6 @@
 // tests/namespace_builder.test.ts
 import { NamespaceBuilder } from "@/dsl/namespace_builder"
-import { IconRegistry } from "@/icon/icon_registry"
+import { IconRegistry } from "@/icon"
 import type { DiagramPlugin } from "@/dsl/diagram_plugin"
 import type { PluginIcons } from "@/dsl/namespace_types"
 

@@ -1,6 +1,5 @@
 import { describe, test, expect } from "bun:test"
-import { LoaderFactory } from "../src/icon/loader_factory"
-import { IconRegistry } from "../src/icon/icon_registry"
+import { LoaderFactory, IconRegistry } from "../src/icon"
 
 describe("LoaderFactory", () => {
   describe("cacheLoader", () => {

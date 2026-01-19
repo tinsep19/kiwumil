@@ -1,4 +1,4 @@
-import { IconRegistry } from "../src/icon/icon_registry"
+import { IconRegistry } from "../src/icon"
 
 describe("IconRegistry", () => {
   test("register and emit symbols", () => {

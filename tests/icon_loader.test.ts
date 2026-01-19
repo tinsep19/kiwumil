@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test"
-import { IconLoader, parse } from "../src/icon/icon_loader"
+import { IconLoader, parse } from "../src/icon"
 import * as fs from "fs"
 import * as path from "path"
 
