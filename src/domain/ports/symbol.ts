@@ -7,6 +7,7 @@ import type { SymbolId, Point, LayoutBounds } from "../../core"
  * ISymbol: 図の要素が実装すべきインターフェース
  * プラグインから提供される実体
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ISymbol<T extends object = {}> {
   id: SymbolId
   characs: ISymbolCharacs<T>

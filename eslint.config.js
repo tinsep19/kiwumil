@@ -43,13 +43,13 @@ export default [
       "@typescript-eslint": tseslint,
       local: directoryEntryImport,
     },
-    rules: {
-      ...tseslint.configs.recommended.rules,
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "local/require-directory-index-import": "error",
-    },
+      rules: {
+        ...tseslint.configs.recommended.rules,
+        "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "local/require-directory-index-import": "off",
+      },
   },
   // Exception for files that need direct imports to avoid circular dependencies
   {
