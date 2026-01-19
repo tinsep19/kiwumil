@@ -1,5 +1,4 @@
-import { IconRegistry } from "../src/icon/icon_registry"
-import { SvgGenerator } from "../src/icon/svg_generator"
+import { IconRegistry, SvgGenerator } from "../src/icon"
 
 describe("SvgGenerator", () => {
   test("emit document includes defs and body", () => {

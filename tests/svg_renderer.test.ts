@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test"
-import { SvgRenderer } from "../src/render/svg_renderer"
+import { SvgRenderer } from "../src/render"
 import { SymbolRegistry, RelationshipRegistry, LayoutContext } from "../src/model"
 import { KiwiSolver } from "../src/kiwi"
 import { DefaultTheme } from "../src/theme"
