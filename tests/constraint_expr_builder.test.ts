@@ -1,9 +1,10 @@
 import { describe, test, expect } from "bun:test"
-import { ConstraintExprBuilder } from "@/domain/ports/solver"
+import { DefaultConstraintBuilder } from "@/domain/dsl/constraint_builder"
+import type { Constraint } from "@/domain/value/constraint/constraint"
 
 describe("ConstraintExprBuilder", () => {
   test("builds expected constraint expressions", () => {
-    const builder = new ConstraintExprBuilder()
+    const builder = new DefaultConstraintBuilder<Constraint>(expr => expr)
     const expr = builder
       .ct([1, 10], [2, 20])
       .eq([3, 30])
@@ -29,7 +30,7 @@ describe("ConstraintExprBuilder", () => {
   })
 
   test("supports zero-sided shortcuts", () => {
-    const builder = new ConstraintExprBuilder()
+    const builder = new DefaultConstraintBuilder<Constraint>(expr => expr)
     const eq0Expr = builder.ct([1, 10]).eq0().required()
     expect(eq0Expr.rhs).toEqual([[0, 1]])
     expect(eq0Expr.op).toBe("eq")
@@ -45,7 +46,7 @@ describe("ConstraintExprBuilder", () => {
   })
 
   test("throws when required is called before rhs is set", () => {
-    const builder = new ConstraintExprBuilder()
+    const builder = new DefaultConstraintBuilder<Constraint>(expr => expr)
     expect(() => {
       builder.ct([1, 10]).required()
     }).toThrow("pending expr is not complete!")

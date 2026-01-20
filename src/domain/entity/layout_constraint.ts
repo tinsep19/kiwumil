@@ -1,11 +1,9 @@
 import { ConstraintRegistrar } from "@/domain/service/constraint_registrar"
 import type { Constraint } from "@/domain/value/constraint/constraint"
-import {
-  LinearConstraint,
-  ConstraintSpec,
-  ConstraintBuilder,
-  DefaultConstraintBuilder,
-} from "@/domain/ports/solver.ts"
+import type { LinearConstraint } from "@/domain/ports/solver.ts"
+import type { ConstraintSpec } from "@/domain/dsl/constraint_spec"
+import type { ConstraintBuilder } from "@/domain/dsl/constraint_builder"
+import { DefaultConstraintBuilder } from "@/domain/dsl/constraint_builder"
 
 export type LayoutConstraintId = string
 export type ConstraintType = "geometric" | "user-hint" | "symbol-internal" | "item-internal"
