@@ -2,7 +2,7 @@ import { ConstraintRegistrar } from "@/domain/service/constraint_registrar"
 import {
   LinearConstraint,
   ConstraintSpec,
-  ConstraintExpr,
+  Constraint,
   ConstraintBuilder,
   DefaultConstraintBuilder,
 } from "@/domain/ports/solver.ts"
@@ -20,7 +20,7 @@ class LayoutConstraint<T extends ConstraintType> {
     readonly type: T,
     private readonly registrar: ConstraintRegistrar
   ) {
-    this.builder = new DefaultConstraintBuilder<void>((expr:ConstraintExpr) => {
+    this.builder = new DefaultConstraintBuilder<void>((expr:Constraint) => {
       const linearConstraint = this.registrar.register(expr)
       this._constraints.push(linearConstraint)
     })
