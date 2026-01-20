@@ -1,8 +1,5 @@
-import {
-  CassowarySolver,
-  Constraint,
-  LinearConstraint,
-} from "../ports"
+import type { CassowarySolver, LinearConstraint } from "../ports"
+import type { Constraint } from "../value/constraint/constraint"
 
 export interface ConstraintRegistrar {
   register(expr: Constraint): LinearConstraint
