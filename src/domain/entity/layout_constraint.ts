@@ -1,8 +1,8 @@
 import { ConstraintRegistrar } from "@/domain/service/constraint_registrar"
+import type { Constraint } from "@/domain/value/constraint/constraint"
 import {
   LinearConstraint,
   ConstraintSpec,
-  Constraint,
   ConstraintBuilder,
   DefaultConstraintBuilder,
 } from "@/domain/ports/solver.ts"
