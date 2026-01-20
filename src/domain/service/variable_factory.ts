@@ -1,7 +1,5 @@
-import { 
-  CassowarySolver,
-  FreeVariable
-} from "@/domain/ports"
+import type { CassowarySolver } from "@/domain/ports"
+import type { FreeVariable } from "@/domain/value/constraint/free_variable"
 
 export interface VariableFactory {
   create(name?: string) : FreeVariable
