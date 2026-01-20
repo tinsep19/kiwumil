@@ -1,10 +1,10 @@
 import { 
   CassowarySolver,
-  Variable
+  FreeVariable
 } from "@/domain/ports"
 
 export interface VariableFactory {
-  create(name?: string) : Variable
+  create(name?: string) : FreeVariable
 }
 export function createVariableFactory(solver: CassowarySolver) {
   return {

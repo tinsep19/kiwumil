@@ -1,4 +1,4 @@
-import { Variable } from "@/domain/ports/solver"
+import { FreeVariable } from "@/domain/ports/solver"
 import { VariableFactory } from "@/domain/service/variable_factory"
 import { GeometricConstraint } from "@/domain/entity/layout_constraint"
 
@@ -8,7 +8,7 @@ export class LayoutVariableFactory {
     private readonly factory: VariableFactory
   ){ }
 
-  private createVariable(id: string) : Variable {
+  private createVariable(id: string) : FreeVariable {
     const variable = this.factory.create(id)
     this.constraints.addConstraint(builder => {
       builder.ct([1, variable]).ge0().required()

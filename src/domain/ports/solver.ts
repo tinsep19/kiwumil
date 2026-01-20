@@ -8,7 +8,7 @@ import type {
   Terminal
 } from "../../hint/fluent_builder_generator"
 
-export interface Variable {
+export interface FreeVariable {
   name(): string
   value(): number
 }
@@ -26,13 +26,13 @@ export type ConstraintOperator = "eq" | "le" | "ge"
 /**
  * Term: 係数と変数（または定数）からなる項
  */
-export type Term = [number, Variable | number]
+export type Term = [number, FreeVariable | number]
 
 /**
- * ConstraintExpr: 制約式の抽象構文木（AST）
+ * Constraint: 制約式の抽象構文木（AST）
  * あとで isSatisfied() を評価可能にするために保持する
  */
-export interface ConstraintExpr {
+export interface Constraint {
   lhs: Term[]
   rhs: Term[]
   op: ConstraintOperator
@@ -63,15 +63,15 @@ export type ConstraintBuilder<R=void> = Fluent<{
 
 
 export class DefaultConstraintBuilder<R> implements ConstraintBuilder<R>{
-  private pending: Partial<ConstraintExpr> = {}
+  private pending: Partial<Constraint> = {}
   constructor(
-   private process: (expr: ConstraintExpr) => R
+   private process: (expr: Constraint) => R
   ){}
-  private init(part: Partial<ConstraintExpr>) {
+  private init(part: Partial<Constraint>) {
     this.pending = part
     return this
   }
-  private update(part: Partial<ConstraintExpr>) {
+  private update(part: Partial<Constraint>) {
     this.pending = {...this.pending, ...part }
     return this
   }
@@ -90,12 +90,12 @@ export class DefaultConstraintBuilder<R> implements ConstraintBuilder<R>{
   medium()   { return this.finalize({ strength: "medium"   }) }
   weak()     { return this.finalize({ strength: "weak"     }) }
 
-  isPendingComplete(pending: Partial<ConstraintExpr>): pending is ConstraintExpr {
+  isPendingComplete(pending: Partial<Constraint>): pending is Constraint {
     const { lhs, rhs, op, strength } = pending
     return lhs !== undefined && rhs !== undefined && op !== undefined && strength !== undefined
   }
   
-  finalize(part: Partial<ConstraintExpr>): R {
+  finalize(part: Partial<Constraint>): R {
     const expr = { ...this.pending, ...part }
     if (!this.isPendingComplete(expr)) {
       throw "pending expr is not complete!"
@@ -105,7 +105,7 @@ export class DefaultConstraintBuilder<R> implements ConstraintBuilder<R>{
   }
 }
 
-export class ConstraintExprBuilder extends DefaultConstraintBuilder<ConstraintExpr> {
+export class ConstraintExprBuilder extends DefaultConstraintBuilder<Constraint> {
   constructor() {
     super(expr => expr)
   }
@@ -136,7 +136,7 @@ export interface LinearConstraint {
 export interface SuggestHandle {
   suggest(value: number): void
   strength(): ConstraintStrength
-  variable(): Variable
+  variable(): FreeVariable
   dispose(): void
 }
 
@@ -149,7 +149,7 @@ export interface CassowarySolver {
   /**
    * レイアウト変数を作成
    */
-  createVariable(name?: string): Variable
+  createVariable(name?: string): FreeVariable
 
   /**
    * 変数の値を更新
@@ -160,12 +160,12 @@ export interface CassowarySolver {
    * 制約を作成して登録
    * 注: 実装は LayoutConstraint を返すが、内部的には複数の LinearConstraint を持つ
    */
-  createConstraint(expr: ConstraintExpr): LinearConstraint
+  createConstraint(expr: Constraint): LinearConstraint
 
   /**
    * 制約の登録を解除
    */
   removeConstraint(constraint: LinearConstraint): void
 
-  createHandle(variable: Variable, strength: ConstraintStrength): SuggestHandle
+  createHandle(variable: FreeVariable, strength: ConstraintStrength): SuggestHandle
 }
