@@ -1,8 +1,6 @@
 // src/domain/ports/solver.ts
 // Cassowary ソルバーの抽象化インターフェース
 
-import type { ConstraintBuilder } from "../dsl/constraint_builder"
-import type { ConstraintSpec } from "../dsl/constraint_spec"
 import type { FreeVariable } from "../value/constraint/free_variable"
 import type { Constraint } from "../value/constraint/constraint"
 import type { ConstraintStrength } from "../value/constraint/constraint_strength"
