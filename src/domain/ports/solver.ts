@@ -10,7 +10,6 @@ import type {
 import type { FreeVariable } from "../value/constraint/free_variable"
 import type { Constraint } from "../value/constraint/constraint"
 import type { ConstraintStrength } from "../value/constraint/constraint_strength"
-import type { ConstraintOperator } from "../value/constraint/constraint_operator"
 import type { Term } from "../value/constraint/term"
 
 export type ConstraintBuilder<R=void> = Fluent<{
