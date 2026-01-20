@@ -1,5 +1,7 @@
 // src/domain/value/constraint/constraint.ts
 // 制約関連の基本型定義
+//
+// このモジュールは、レイアウト制約システムで使用される基本的な型を定義します。
 
 import type { Variable } from "../../../core/layout_variable"
 
