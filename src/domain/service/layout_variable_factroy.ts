@@ -1,4 +1,4 @@
-import { FreeVariable } from "@/domain/ports/solver"
+import type { FreeVariable } from "@/domain/value/constraint/free_variable"
 import { VariableFactory } from "@/domain/service/variable_factory"
 import { GeometricConstraint } from "@/domain/entity/layout_constraint"
 

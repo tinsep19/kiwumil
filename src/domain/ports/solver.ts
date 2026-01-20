@@ -7,37 +7,10 @@ import type {
   Step, 
   Terminal
 } from "../../hint/fluent_builder_generator"
-
-export interface FreeVariable {
-  name(): string
-  value(): number
-}
-
-/**
- * ConstraintStrength: 制約の強度
- */
-export type ConstraintStrength = "required" | "strong" | "medium" | "weak"
-
-/**
- * ConstraintOperator: 制約の演算子
- */
-export type ConstraintOperator = "eq" | "le" | "ge"
-
-/**
- * Term: 係数と変数（または定数）からなる項
- */
-export type Term = [number, FreeVariable | number]
-
-/**
- * Constraint: 制約式の抽象構文木（AST）
- * あとで isSatisfied() を評価可能にするために保持する
- */
-export interface Constraint {
-  lhs: Term[]
-  rhs: Term[]
-  op: ConstraintOperator
-  strength: ConstraintStrength
-}
+import type { FreeVariable } from "../value/constraint/free_variable"
+import type { Constraint } from "../value/constraint/constraint"
+import type { ConstraintStrength } from "../value/constraint/constraint_strength"
+import type { Term } from "../value/constraint/term"
 
 export type ConstraintBuilder<R=void> = Fluent<{
   init: {
