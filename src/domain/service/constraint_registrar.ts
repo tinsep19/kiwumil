@@ -6,14 +6,13 @@ export interface ConstraintRegistrar {
   remove(ct: LinearConstraint): void
 }
 
-export function createConstraintRegistrar(solver: CassowarySolver) : ConstraintRegistrar {
-   return {
-     register(expr: Constraint) {
-       return solver.createConstraint(expr)
-     },
-     remove(ct: LinearConstraint) {
-       solver.removeConstraint(ct)
-     }
-   } satisfies ConstraintRegistrar 
+export function createConstraintRegistrar(solver: CassowarySolver): ConstraintRegistrar {
+  return {
+    register(expr: Constraint) {
+      return solver.createConstraint(expr)
+    },
+    remove(ct: LinearConstraint) {
+      solver.removeConstraint(ct)
+    },
+  } satisfies ConstraintRegistrar
 }
-

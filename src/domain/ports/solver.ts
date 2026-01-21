@@ -5,7 +5,6 @@ import type { FreeVariable } from "../value/constraint/free_variable"
 import type { Constraint } from "../value/constraint/constraint"
 import type { ConstraintStrength } from "../value/constraint/constraint_strength"
 
-
 /**
  * LinearConstraint: 線形制約のインターフェース
  * - 登録状態の確認
@@ -16,7 +15,56 @@ export interface LinearConstraint {
   readonly strength: ConstraintStrength
   isSatisfied(): boolean
   isRegistered(): boolean
-  dispose(): void
+}
+
+export class DefaultLinearConstraint<T> implements LinearConstraint {
+  private registered: boolean = true
+
+  constructor(
+    readonly constraint: Constraint,
+    readonly rawConstraint: T
+  ) {}
+
+  get strength() {
+    return this.constraint.strength
+  }
+  isRegistered() {
+    return this.registered
+  }
+
+  // ConstraintRegistrar.remove(ct: LinearConstraint) の内部で
+  // rawConstraintを登録解除した後、無効化したことを通知する
+  dispose() {
+    this.registered = false
+  }
+
+  isSatisfied() {
+    const lhs = this.constraint.lhs.reduce(
+      (sum, [a, x]) => sum + a * (typeof x == "number" ? x : x.value()),
+      0
+    )
+    const rhs = this.constraint.rhs.reduce(
+      (sum, [a, x]) => sum + a * (typeof x == "number" ? x : x.value()),
+      0
+    )
+
+    const absTol = 1e-6
+    const relTol = 1e-9
+    const scale = Math.max(1, Math.abs(lhs), Math.abs(rhs))
+    const tol = absTol + relTol * scale
+
+    const op = this.constraint.op
+    switch (op) {
+      case "eq":
+        return Math.abs(lhs - rhs) <= tol
+      case "le":
+        return lhs <= rhs + tol
+      case "ge":
+        return lhs + tol >= rhs
+      default:
+        throw new Error(`${op} is not ConstraintOperation`)
+    }
+  }
 }
 
 /**
@@ -28,7 +76,6 @@ export interface SuggestHandle {
   variable(): FreeVariable
   dispose(): void
 }
-
 
 /**
  * CassowarySolver: Cassowary アルゴリズムのソルバー抽象化
@@ -47,7 +94,6 @@ export interface CassowarySolver {
 
   /**
    * 制約を作成して登録
-   * 注: 実装は LayoutConstraint を返すが、内部的には複数の LinearConstraint を持つ
    */
   createConstraint(expr: Constraint): LinearConstraint
 

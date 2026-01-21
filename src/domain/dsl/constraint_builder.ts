@@ -4,7 +4,7 @@ import type { Fluent, Entry, Step, Terminal } from "./fluent_builder_generator"
 import type { Constraint } from "../value/constraint/constraint"
 import type { Term } from "../value/constraint/term"
 
-export type ConstraintBuilder<R=void> = Fluent<{
+export type ConstraintBuilder<R = void> = Fluent<{
   init: {
     ct: Entry<[...lhs: Term[]]>
   }
@@ -19,47 +19,66 @@ export type ConstraintBuilder<R=void> = Fluent<{
     }
   }
   terminal: {
-    required: Terminal<[],R>
-    strong:   Terminal<[],R>
-    medium:   Terminal<[],R>
-    weak:     Terminal<[],R>
+    required: Terminal<[], R>
+    strong: Terminal<[], R>
+    medium: Terminal<[], R>
+    weak: Terminal<[], R>
   }
 }>
 
-
-export class DefaultConstraintBuilder<R> implements ConstraintBuilder<R>{
+export class DefaultConstraintBuilder<R> implements ConstraintBuilder<R> {
   private pending: Partial<Constraint> = {}
-  constructor(
-   private process: (expr: Constraint) => R
-  ){}
+  constructor(private process: (expr: Constraint) => R) {}
   private init(part: Partial<Constraint>) {
     this.pending = part
     return this
   }
   private update(part: Partial<Constraint>) {
-    this.pending = {...this.pending, ...part }
+    this.pending = { ...this.pending, ...part }
     return this
   }
-  
-  ct(...lhs: Term[]) { return this.init({ lhs }) }
 
-  eq(...rhs: Term[]) { return this.update({ op: "eq", rhs }) }
-  le(...rhs: Term[]) { return this.update({ op: "le", rhs }) }
-  ge(...rhs: Term[]) { return this.update({ op: "ge", rhs }) }
-  eq0() { return this.update({ op: "eq", rhs: [[0, 1]] }) }
-  le0() { return this.update({ op: "le", rhs: [[0, 1]] }) }
-  ge0() { return this.update({ op: "ge", rhs: [[0, 1]] }) }
+  ct(...lhs: Term[]) {
+    return this.init({ lhs })
+  }
 
-  required() { return this.finalize({ strength: "required" }) }
-  strong()   { return this.finalize({ strength: "strong"   }) }
-  medium()   { return this.finalize({ strength: "medium"   }) }
-  weak()     { return this.finalize({ strength: "weak"     }) }
+  eq(...rhs: Term[]) {
+    return this.update({ op: "eq", rhs })
+  }
+  le(...rhs: Term[]) {
+    return this.update({ op: "le", rhs })
+  }
+  ge(...rhs: Term[]) {
+    return this.update({ op: "ge", rhs })
+  }
+  eq0() {
+    return this.update({ op: "eq", rhs: [[0, 1]] })
+  }
+  le0() {
+    return this.update({ op: "le", rhs: [[0, 1]] })
+  }
+  ge0() {
+    return this.update({ op: "ge", rhs: [[0, 1]] })
+  }
+
+  required() {
+    return this.finalize({ strength: "required" })
+  }
+  strong() {
+    return this.finalize({ strength: "strong" })
+  }
+  medium() {
+    return this.finalize({ strength: "medium" })
+  }
+  weak() {
+    return this.finalize({ strength: "weak" })
+  }
 
   isPendingComplete(pending: Partial<Constraint>): pending is Constraint {
     const { lhs, rhs, op, strength } = pending
     return lhs !== undefined && rhs !== undefined && op !== undefined && strength !== undefined
   }
-  
+
   finalize(part: Partial<Constraint>): R {
     const expr = { ...this.pending, ...part }
     if (!this.isPendingComplete(expr)) {
