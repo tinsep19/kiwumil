@@ -6,15 +6,13 @@ export class LayoutVariableFactory {
   constructor(
     private readonly constraints: GeometricConstraint,
     private readonly factory: VariableFactory
-  ){ }
+  ) {}
 
-  private createVariable(id: string) : FreeVariable {
+  private createVariable(id: string): FreeVariable {
     const variable = this.factory.create(id)
-    this.constraints.addConstraint(builder => {
+    this.constraints.addConstraint((builder) => {
       builder.ct([1, variable]).ge0().required()
     })
     return variable
   }
-  
 }
-
