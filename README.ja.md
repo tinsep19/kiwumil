@@ -102,17 +102,11 @@ Kiwumil は GitHub Packages に公開されています。パッケージのイ�
 bun install @tinsep19/kiwumil
 ```
 
-または
-
-```bash
-npm install @tinsep19/kiwumil
-```
-
 ---
 
 ## 🔧 開発（ローカル）
 
-- 依存導入: `bun install`（または `npm install`/`pnpm install`）
+- 依存導入: `bun install`
 - テスト: `bun run test`
 - 型テスト: `bun run test:types`
 
