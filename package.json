@@ -22,7 +22,7 @@
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun --minify && tsc --emitDeclarationOnly --outDir dist",
     "prepublishOnly": "bun run build",
-    "postinstall": "node scripts/patch-scope-manager.mjs",
+    "postinstall": "bun scripts/patch-scope-manager.mjs",
     "examples": "ls examples/*.ts | xargs -L1 bun run",
     "test": "bun test && bun run test:types",
     "test:types": "tsc --emitDeclarationOnly --outDir dist && tsd --tsconfig tsconfig.tsd.json --files \"tsd/**/*.test-d.ts\"",
