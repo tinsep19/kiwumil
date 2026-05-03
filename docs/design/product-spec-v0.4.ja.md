@@ -43,6 +43,11 @@ Kiwumil は、TypeScript により図を意味構造として記述し、資料�
 - JSON Import
 - AI生成UI
 
+#### この文書の扱い（スコープのSSOT）
+
+本書（製品仕様書）が v0.4.0 のスコープ（Included/Excluded）に関する **Single Source of Truth** とする。
+他の設計メモ/上位設計に、将来候補として PNG/PDF や JSON Import、UML/SysML 等が言及される場合があるが、v0.4.0 の受入条件には含めない。
+
 ---
 
 ## 4. 主要ユースケース
