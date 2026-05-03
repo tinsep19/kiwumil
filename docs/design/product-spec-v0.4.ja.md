@@ -142,19 +142,28 @@ kiwumil validate src/system.ts
 
 ### SPEC-DATA-01 Semantic IR
 
-- nodes[]
-- edges[]
-- groups[]
-- constraints[]
-- styles[]
+Semantic IR は、**ユーザーが DSL で記述した内容（意味・属性・関係・グループ化・Hint・スタイル参照）を素直に保持する JSON 表現**とする。
+
+- 座標（x/y/width/height）や配線（polyline 等）のような幾何情報は含めない（それらは後段の Geometry / Routing の責務）
+- 参照は ID ベース（edge は source/target の node ID を参照）
+- 主要構成（最低限）:
+  - nodes[]
+  - edges[]
+  - groups[]
+  - constraints[]（Hint を含む）
+  - styles[]
 
 ### SPEC-DATA-02 安定ID
 
-再生成時に不要なID変動を抑制。
+再生成時に不要な ID 変動を抑制する。
 
-### SPEC-DATA-03 JSON Export
+### SPEC-DATA-03 JSON Export（Semantic IR dump）
 
-Git diffしやすい整形JSON。
+JSON Export は **Semantic IR を診断用途で出力**する。
+
+- Git diff しやすい整形 JSON（改行・インデントを固定）
+- **決定論のために正規化して出力**する（例: 配列は ID 等で安定ソートし、同一入力は同一 JSON になる）
+- schemaVersion を付与し、将来の変更に備える（例: "0.4"）
 
 ---
 

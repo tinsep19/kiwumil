@@ -161,7 +161,7 @@ infra.awsLambda
 ## 5. 非機能要件
 
 ### NFR-01 Git Friendly
-JSON/YAML/TSなど差分しやすい形式でシリアライズ可能であること。
+JSON/YAML/TSなど差分しやすい形式でシリアライズ可能であること。特に JSON export は決定論のため正規化（安定ソート/整形）されること。
 
 ### NFR-02 安定ID
 要素IDは変更に強く、差分比較しやすいこと。
