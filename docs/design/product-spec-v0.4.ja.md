@@ -10,11 +10,11 @@ Kiwumil は、TypeScript により図を意味構造として記述し、資料�
 
 | ID | 提供価値 | 内容 |
 |---|---|---|
-| VAL-01 | Git管理可能な図 | 差分比較・レビュー可能 |
-| VAL-02 | 高品質自動作図 | 手調整を最小化 |
-| VAL-03 | Semantic First | 図を意味モデルとして保持 |
-| VAL-04 | 拡張可能 | Plugin / Exporter追加可能 |
-| VAL-05 | 開発ワークフロー統合 | Bun CLI / CI利用可能 |
+| VAL-0001 | Git管理可能な図 | 差分比較・レビュー可能 |
+| VAL-0002 | 高品質自動作図 | 手調整を最小化 |
+| VAL-0003 | Semantic First | 図を意味モデルとして保持 |
+| VAL-0004 | 拡張可能 | Plugin / Exporter追加可能 |
+| VAL-0005 | 開発ワークフロー統合 | Bun CLI / CI利用可能 |
 
 ---
 
@@ -54,23 +54,23 @@ Kiwumil は、TypeScript により図を意味構造として記述し、資料�
 
 | UC-ID | ユースケース | 優先 |
 |---|---|---|
-| UC-01 | README 用構成図作成 | 高 |
-| UC-02 | システム全体構成図作成 | 高 |
-| UC-03 | アーキテクチャ説明図作成 | 高 |
-| UC-04 | 提案資料向け図生成 | 中 |
-| UC-05 | IRをJSON出力して検証 | 中 |
+| UC-0001 | README 用構成図作成 | 高 |
+| UC-0002 | システム全体構成図作成 | 高 |
+| UC-0003 | アーキテクチャ説明図作成 | 高 |
+| UC-0004 | 提案資料向け図生成 | 中 |
+| UC-0005 | IRをJSON出力して検証 | 中 |
 
 ---
 
 ## 5. 機能仕様
 
-### SPEC-FUNC-01 図生成DSL
+### SPEC-FUNC-0001 図生成DSL
 
 - TypeScript chainable API
 - 型補完対応
 - deterministic build
 
-### SPEC-FUNC-02 ノード作成
+### SPEC-FUNC-0002 ノード作成
 
 属性:
 - id
@@ -79,7 +79,7 @@ Kiwumil は、TypeScript により図を意味構造として記述し、資料�
 - metadata
 - style
 
-### SPEC-FUNC-03 エッジ作成
+### SPEC-FUNC-0003 エッジ作成
 
 属性:
 - source
@@ -94,11 +94,11 @@ Kiwumil は、TypeScript により図を意味構造として記述し、資料�
 - flow
 - composition
 
-### SPEC-FUNC-04 グループ / コンテナ
+### SPEC-FUNC-0004 グループ / コンテナ
 
 ノードを論理グループ化し、内包レイアウト可能。
 
-### SPEC-FUNC-05 自動レイアウト
+### SPEC-FUNC-0005 自動レイアウト
 
 kiwi.js による制約ベース配置。
 
@@ -110,7 +110,7 @@ Hint対応:
 - sameSpacing
 - insideContainer
 
-### SPEC-FUNC-06 配線
+### SPEC-FUNC-0006 配線
 
 ELK による直交配線。
 
@@ -120,12 +120,12 @@ ELK による直交配線。
 - 重なり抑制
 - 平行線分離
 
-### SPEC-FUNC-07 Export
+### SPEC-FUNC-0007 Export
 
 - SVG
 - JSON(IR dump)
 
-### SPEC-FUNC-08 Plugin API
+### SPEC-FUNC-0008 Plugin API
 
 追加可能:
 - Node種別
@@ -133,7 +133,7 @@ ELK による直交配線。
 - DSL sugar
 - style preset
 
-### SPEC-FUNC-09 CLI
+### SPEC-FUNC-0009 CLI
 
 ```bash
 kiwumil render src/system.ts -o out.svg
@@ -145,7 +145,7 @@ kiwumil validate src/system.ts
 
 ## 6. データ仕様
 
-### SPEC-DATA-01 Semantic IR
+### SPEC-DATA-0001 Semantic IR
 
 Semantic IR は、**ユーザーが DSL で記述した内容（意味・属性・関係・グループ化・Hint・スタイル参照）を素直に保持する JSON 表現**とする。
 
@@ -158,17 +158,18 @@ Semantic IR は、**ユーザーが DSL で記述した内容（意味・属性�
   - constraints[]（Hint を含む）
   - styles[]
 
-### SPEC-DATA-02 安定ID
+### SPEC-DATA-0002 安定ID
 
 再生成時に不要な ID 変動を抑制する。
 
-### SPEC-DATA-03 JSON Export（Semantic IR dump）
+### SPEC-DATA-0003 JSON Export（Semantic IR dump）
 
 JSON Export は **Semantic IR を診断用途で出力**する。
 
 - Git diff しやすい整形 JSON（改行・インデントを固定）
 - **決定論のために正規化して出力**する（例: 配列は ID 等で安定ソートし、同一入力は同一 JSON になる）
 - schemaVersion を付与し、将来の変更に備える（例: "0.4"）
+- JSON のトップレベル構造（キーの詳細やネスト構造）は、製品仕様では固定しない（決定論・正規化・version付与を満たすことを要件とする）
 
 ---
 
@@ -176,9 +177,9 @@ JSON Export は **Semantic IR を診断用途で出力**する。
 
 | ID | 条件 | 目標 |
 |---|---|---|
-| PERF-01 | 100要素 | 1秒以内 |
-| PERF-02 | 500要素 | 3秒以内 |
-| PERF-03 | 同一入力 | 同一出力 |
+| PERF-0001 | 100要素 | 1秒以内 |
+| PERF-0002 | 500要素 | 3秒以内 |
+| PERF-0003 | 同一入力 | 同一出力 |
 
 ---
 
@@ -257,13 +258,13 @@ roundedRect(
 
 | REQ-ID | 要求 | 対応SPEC | 確認方法（CHK） | 合否基準 |
 |---|---|---|---|---|
-| REQ-001 | Git管理しやすい図を作成できる | SPEC-FUNC-07, SPEC-DATA-03, SPEC-FUNC-09 | Git diff / CLI運用確認 | 差分がJSON/SVGで追跡可能 |
-| REQ-002 | 高品質な自動作図ができる | SPEC-FUNC-05, SPEC-FUNC-06, SPEC-UX-02 | サンプル図レビュー | 手修正5分以内で資料転用可能 |
-| REQ-003 | Semantic Firstで意味構造を保持できる | SPEC-DATA-01, SPEC-FUNC-01 | IR / JSON確認 | ノード・関係・グループ情報が欠落しない |
-| REQ-004 | 拡張可能な基盤である | SPEC-FUNC-08, Plugin仕様 | Plugin試作 | 独自語彙3種を1日以内に追加可能 |
-| REQ-005 | 開発ワークフローへ統合できる | SPEC-FUNC-09, OPS-01 | CI組込試験 | 非対話CLI実行成功 |
-| REQ-006 | 学習コストが低い | SPEC-UX-01 | 初回利用テスト | サンプル図作成30分以内 |
-| REQ-007 | 資料転用しやすい | SPEC-UX-02, Theme仕様 | PowerPoint貼付確認 | レイアウト崩れなく利用可能 |
+| REQ-0001 | Git管理しやすい図を作成できる | SPEC-FUNC-0007, SPEC-DATA-0003, SPEC-FUNC-0009 | Git diff / CLI運用確認 | 差分がJSON/SVGで追跡可能 |
+| REQ-0002 | 高品質な自動作図ができる | SPEC-FUNC-0005, SPEC-FUNC-0006, SPEC-UX-0002 | サンプル図レビュー | 手修正5分以内で資料転用可能 |
+| REQ-0003 | Semantic Firstで意味構造を保持できる | SPEC-DATA-0001, SPEC-FUNC-0001 | IR / JSON確認 | ノード・関係・グループ情報が欠落しない |
+| REQ-0004 | 拡張可能な基盤である | SPEC-FUNC-0008, Plugin仕様 | Plugin試作 | 独自語彙3種を1日以内に追加可能 |
+| REQ-0005 | 開発ワークフローへ統合できる | SPEC-FUNC-0009, OPS-0001 | CI組込試験 | 非対話CLI実行成功 |
+| REQ-0006 | 学習コストが低い | SPEC-UX-0001 | 初回利用テスト | サンプル図作成30分以内 |
+| REQ-0007 | 資料転用しやすい | SPEC-UX-0002, Theme仕様 | PowerPoint貼付確認 | レイアウト崩れなく利用可能 |
 
 ---
 
